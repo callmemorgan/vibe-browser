@@ -1,0 +1,1767 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <title>Iframe Media Pausing</title>
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
+  <meta content="Bikeshed version 3c53a5b02, updated Thu Nov 27 17:03:30 2025 +0000" name="generator">
+  <link href="https://github.com/WICG/iframe-media-pausing" rel="canonical">
+  <meta content="8250cbf1c7c6b6c8156370b4f4f8494684ad998d" name="revision">
+  <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example " counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+</style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: 8px;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
+}
+
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
+
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+ <body class="h-entry">
+  <div class="head">
+   <h1 class="no-ref p-name" id="title">Iframe Media Pausing</h1>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#CG-DRAFT">Draft Community Group Report</a>,
+    <time class="dt-updated" datetime="2026-01-27">27 January 2026</time></p>
+   <div data-fill-with="spec-metadata">
+    <dl>
+     <dt>This version:
+     <dd><a class="u-url" href="https://github.com/WICG/iframe-media-pausing">https://github.com/WICG/iframe-media-pausing</a>
+     <dt>Issue Tracking:
+     <dd><a href="https://github.com/wicg/iframe-media-pausing/issues/">GitHub</a>
+     <dt class="editor">Editor:
+     <dd class="editor h-card p-author vcard"><a class="fn p-name u-url url" href="https://github.com/gabrielsanbrito">Gabriel Santana Brito</a> (<a class="org p-org" href="https://microsoft.com/">Microsoft</a>) <a class="email u-email" href="mailto:gabrielbrito@microsoft.com">gabrielbrito@microsoft.com</a>
+    </dl>
+   </div>
+   <div data-fill-with="warning"></div>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2026 the Contributors to the Iframe Media Pausing Specification, published by the <a href="https://www.w3.org/community/wicg/">Web Platform Incubator Community Group</a> under the <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>.
+A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/">summary</a> is available.
+</p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="heading no-num no-ref no-toc settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>This specification defines a new permission policy that allows the
+user-agent to pause media playback in iframes which are not visible to
+the user.</p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <h2 class="heading no-num no-ref no-toc settled" id="status"><span class="content">Status of this document</span></h2>
+  <div data-fill-with="status">
+   <p>
+  This specification was published by the <a href="https://www.w3.org/community/wicg/">Web Platform Incubator Community Group</a>.
+  It is not a W3C Standard nor is it on the W3C Standards Track.
+
+  Please note that under the
+  <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>
+  there is a limited opt-out and other conditions apply.
+
+  Learn more about
+  <a href="http://www.w3.org/community/">W3C Community and Business Groups</a>.
+</p>
+   <p></p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-ref no-toc" id="contents">Table of Contents</h2>
+   <ol class="toc">
+    <li>
+     <a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
+     <ol class="toc">
+      <li><a href="#goals"><span class="secno">1.1</span> <span class="content">Goals</span></a>
+     </ol>
+    <li>
+     <a href="#api"><span class="secno">2</span> <span class="content">API</span></a>
+     <ol class="toc">
+      <li><a href="#usage-example"><span class="secno">2.1</span> <span class="content">Usage example</span></a>
+     </ol>
+    <li>
+     <a href="#integration"><span class="secno">3</span> <span class="content">Integration with other specifications</span></a>
+     <ol class="toc">
+      <li><a href="#html-media-element-integration"><span class="secno">3.1</span> <span class="content">HTMLMediaElement</span></a>
+      <li><a href="#web-audio-integration"><span class="secno">3.2</span> <span class="content">Web Audio</span></a>
+      <li><a href="#autoplay-integration"><span class="secno">3.3</span> <span class="content">Autoplay</span></a>
+     </ol>
+    <li>
+     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
+     <ol class="toc">
+      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
+     </ol>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
+     </ol>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
+   <p><em>This section is non-normative.</em></p>
+   <p>Web applications that host embedded media content via iframes may wish to respond to application input by temporarily hiding the media content.
+These applications may not want to unload the entire iframe when it’s not rendered since it could generate user-perceptible performance and iframe state loss issues when showing the media content again.
+At the same time, the user could have a negative experience if the media continues to play and emit audio when not rendered.
+This proposal aims to provide web applications with the ability to control embedded media content in such a way that guarantees their users have a good experience when the iframe’s render status is changed.</p>
+   <h3 class="heading settled" data-level="1.1" id="goals"><span class="secno">1.1. </span><span class="content">Goals</span><a class="self-link" href="#goals"></a></h3>
+   <p>Propose a mechanism to allow embedder documents to limitedly control embedded
+iframe media playback based on whether the embedded iframe is rendered or not:</p>
+   <ul>
+    <li data-md>
+     <p>When the iframe is not rendered, the embedder is able to pause the iframe’s media playback; and</p>
+    <li data-md>
+     <p>When the iframe becomes rendered again, the embedder is able to resume the iframe media playback.</p>
+   </ul>
+   <h2 class="heading settled" data-level="2" id="api"><span class="secno">2. </span><span class="content">API</span><a class="self-link" href="#api"></a></h2>
+   <p>Control over media playback in <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#child-navigable" id="ref-for-child-navigable">child navigables</a> in response to changes to their <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#nav-container" id="ref-for-nav-container">container</a>’s visibility is relevant for user experience and performance reasons.
+Although simply disposing of the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#navigable-container" id="ref-for-navigable-container">navigable container</a> when not rendered would also achieve the same result (no audible media playback), it could lead to user-perceptible performance issues when the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#navigable-container" id="ref-for-navigable-container①">navigable container</a> is rendered again, since it would need to be recreated from scratch.
+Moreover, disposing of the context could also lead to loss of state that the user might expect to be preserved - e.g. form data.</p>
+   <p>This specification defines a new <a data-link-type="dfn" href="https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature" id="ref-for-policy-controlled-feature">policy-controlled feature</a> identified by the token "<dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="media-playback-while-not-visible"><code>media-playback-while-not-visible</code></dfn>" that controls whether a <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document">Document</a></code> is allowed to play media while it is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered">being rendered</a>.
+The <a data-link-type="dfn" href="https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist" id="ref-for-policy-controlled-feature-default-allowlist">default allowlist</a> for this policy is "<a data-link-type="dfn" href="https://w3c.github.io/webappsec-permissions-policy/#default-allowlist" id="ref-for-default-allowlist">*</a>", meaning that documents are allowed to play media while not rendered unless the policy is explicitly disabled.</p>
+   <p>To determine if a <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document①">Document</a></code> <var>document</var> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="allowed-to-play-media-while-not-rendered">allowed to play media while not rendered</dfn>, run the following steps:</p>
+   <ol>
+    <li data-md>
+     <p>If <var>document</var> is <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#allowed-to-use" id="ref-for-allowed-to-use">allowed to use</a> the "<a data-link-type="dfn" href="#media-playback-while-not-visible" id="ref-for-media-playback-while-not-visible"><code>media-playback-while-not-visible</code></a>" feature, then return true.</p>
+    <li data-md>
+     <p>Return false otherwise.</p>
+   </ol>
+   <h3 class="heading settled" data-level="2.1" id="usage-example"><span class="secno">2.1. </span><span class="content">Usage example</span><a class="self-link" href="#usage-example"></a></h3>
+   <div class="example" id="iframe-example">
+    <a class="self-link" href="#iframe-example"></a>
+  
+    <p>
+      Using the <code>media-playback-while-not-visible</code> permission policy to prevent an <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element" id="ref-for-the-iframe-element">iframe</a></code> and all of its children from playing media when the iframe is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered①">being rendered</a>.
+  </p>
+<pre>&lt;iframe src="https://foo.media.com" allow="media-playback-while-not-visible 'none'">&lt;/iframe>
+</pre>
+   </div>
+   <div class="example" id="application-example">
+    <a class="self-link" href="#application-example"></a>
+  
+    <p>
+      To disable the <code>media-playback-while-not-visible</code> permission policy for an entire web application, the application can send the HTTP response header below. Doing so will disable the permission policy for the application’s top-level <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document②">Document</a></code> and for all of the embedded <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element" id="ref-for-the-iframe-element①">iframe</a></code>’s.
+  </p>
+<pre>Permissions-Policy: media-playback-while-not-visible=()
+</pre>
+   </div>
+   <h2 class="heading settled" data-level="3" id="integration"><span class="secno">3. </span><span class="content">Integration with other specifications</span><a class="self-link" href="#integration"></a></h2>
+   <p>There are several ways to render audible media content on the web, which means that this specification has points of contact with other specifications.
+The "<a data-link-type="dfn" href="#media-playback-while-not-visible" id="ref-for-media-playback-while-not-visible①"><code>media-playback-while-not-visible</code></a>" strictly interacts with audible media content in two scenarios:</p>
+   <ol>
+    <li data-md>
+     <p>When the iframe is not rendered and it attempts to play audible media; and</p>
+    <li data-md>
+     <p>When the iframe is currently playing audible media and stops <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered②">being rendered</a> during playback.</p>
+   </ol>
+   <p>The following sections describe how the "<a data-link-type="dfn" href="#media-playback-while-not-visible" id="ref-for-media-playback-while-not-visible②"><code>media-playback-while-not-visible</code></a>" permission policy integrates with other specifications.</p>
+   <h3 class="heading settled" data-level="3.1" id="html-media-element-integration"><span class="secno">3.1. </span><span class="content">HTMLMediaElement</span><a class="self-link" href="#html-media-element-integration"></a></h3>
+   <p>Let <var>mediaElement</var> be an <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/media.html#htmlmediaelement" id="ref-for-htmlmediaelement">HTMLMediaElement</a></code>. Let <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document③">Document</a></code> <var>document</var> be the <var>mediaElement</var>’s <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-node-document" id="ref-for-concept-node-document">node document</a>. Let <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#navigable" id="ref-for-navigable">Navigable</a> <var>navigable</var> be the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#node-navigable" id="ref-for-node-navigable">node navigable</a> of <var>mediaElement</var>. Let <var>navigableContainer</var> be the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#nav-container" id="ref-for-nav-container①">container</a> of <var>navigable</var>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> <var>navigableContainer</var> is null if <var>navigable</var> is a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#top-level-traversable" id="ref-for-top-level-traversable">top-level traversable</a>.</p>
+   <p>Amend the definition of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#allowed-to-play" id="ref-for-allowed-to-play">allowed to play</a> so that <var>mediaElement</var> is also not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#allowed-to-play" id="ref-for-allowed-to-play①">allowed to play</a> if all the following conditions are met:</p>
+   <ul>
+    <li data-md>
+     <p><var>navigableContainer</var> is not null;</p>
+    <li data-md>
+     <p><var>document</var> is not <a data-link-type="dfn" href="#allowed-to-play-media-while-not-rendered" id="ref-for-allowed-to-play-media-while-not-rendered">allowed to play media while not rendered</a>; and</p>
+    <li data-md>
+     <p><var>navigableContainer</var> is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered③">being rendered</a>.</p>
+   </ul>
+   <p class="note" role="note"><span class="marker">Note:</span> Calling <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-play" id="ref-for-dom-media-play">play()</a></code> on <var>mediaElement</var> while it is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#allowed-to-play" id="ref-for-allowed-to-play②">allowed to play</a> will return a promise rejected with a "<code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#notallowederror" id="ref-for-notallowederror">NotAllowedError</a></code>" <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#idl-DOMException" id="ref-for-idl-DOMException">DOMException</a></code>.</p>
+   <p>When <var>navigableContainer</var> is not null and stops <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered④">being rendered</a>:</p>
+   <ol>
+    <li data-md>
+     <p>If <var>document</var> is not <a data-link-type="dfn" href="#allowed-to-play-media-while-not-rendered" id="ref-for-allowed-to-play-media-while-not-rendered①">allowed to play media while not rendered</a>:</p>
+     <ol>
+      <li data-md>
+       <p>Run the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#internal-pause-steps" id="ref-for-internal-pause-steps">internal pause steps</a> on <var>mediaElement</var>.</p>
+     </ol>
+   </ol>
+   <h3 class="heading settled" data-level="3.2" id="web-audio-integration"><span class="secno">3.2. </span><span class="content">Web Audio</span><a class="self-link" href="#web-audio-integration"></a></h3>
+   <p>Let <var>audioContext</var> be an <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#AudioContext" id="ref-for-AudioContext">AudioContext</a></code>. Let <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document④">Document</a></code> <var>document</var> be the <var>audioContext</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-global" id="ref-for-concept-relevant-global">relevant global object</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window" id="ref-for-concept-document-window">associated Document</a>. Let <var>navigable</var> be <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#navigable" id="ref-for-navigable①">Navigable</a> whose <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#nav-document" id="ref-for-nav-document">active document</a> is <var>document</var>. Let <var>navigableContainer</var> be the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#navigable-container" id="ref-for-navigable-container②">navigable container</a> whose <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#concept-bcc-content-document" id="ref-for-concept-bcc-content-document">content document</a> is <var>document</var>.</p>
+   <p>Amend the definition of <a data-link-type="dfn" href="https://webaudio.github.io/web-audio-api/#allowed-to-start" id="ref-for-allowed-to-start">allowed to start</a> so that <var>audioContext</var> is also not <a data-link-type="dfn" href="https://webaudio.github.io/web-audio-api/#allowed-to-start" id="ref-for-allowed-to-start①">allowed to start</a> if all the following conditions are met:</p>
+   <ul>
+    <li data-md>
+     <p><var>navigableContainer</var> is not null;</p>
+    <li data-md>
+     <p><var>document</var> is not <a data-link-type="dfn" href="#allowed-to-play-media-while-not-rendered" id="ref-for-allowed-to-play-media-while-not-rendered②">allowed to play media while not rendered</a>; and</p>
+    <li data-md>
+     <p><var>navigableContainer</var> is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered⑤">being rendered</a>.</p>
+   </ul>
+   <p class="note" role="note"><span class="marker">Note:</span> If <var>audioContext</var> is created while <var>navigableContainer</var> is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered⑥">being rendered</a>, it will be initialized in the <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-suspended" id="ref-for-dom-audiocontextstate-suspended">suspended</a></code> state. Furthermore, attempting to call <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-audiocontext-resume" id="ref-for-dom-audiocontext-resume">resume()</a></code> on <var>audioContext</var> while <var>navigableContainer</var> is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered⑦">being rendered</a> will return a promise rejected with <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#invalidstateerror" id="ref-for-invalidstateerror">InvalidStateError</a></code> and transition <var>audioContext</var> to the <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-interrupted" id="ref-for-dom-audiocontextstate-interrupted">interrupted</a></code> state.</p>
+   <p>When <var>navigableContainer</var> is not null and stops <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered⑧">being rendered</a>:</p>
+   <ol>
+    <li data-md>
+     <p>If <var>document</var> is not <a data-link-type="dfn" href="#allowed-to-play-media-while-not-rendered" id="ref-for-allowed-to-play-media-while-not-rendered③">allowed to play media while not rendered</a>:</p>
+     <ol>
+      <li data-md>
+       <p>If <var>audioContext</var> <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-baseaudiocontext-state" id="ref-for-dom-baseaudiocontext-state">state</a></code> is <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-running" id="ref-for-dom-audiocontextstate-running">running</a></code>:</p>
+       <ol>
+        <li data-md>
+         <p><code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-start" id="ref-for-dom-audiocontext-interruption-start">Start an interruption</a></code> on <var>audioContext</var>.</p>
+       </ol>
+     </ol>
+   </ol>
+   <p>When <var>navigableContainer</var> is not null and starts <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered⑨">being rendered</a> again:</p>
+   <ol>
+    <li data-md>
+     <p>If <var>document</var> is not <a data-link-type="dfn" href="#allowed-to-play-media-while-not-rendered" id="ref-for-allowed-to-play-media-while-not-rendered④">allowed to play media while not rendered</a>:</p>
+     <ol>
+      <li data-md>
+       <p>If <var>audioContext</var> <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-baseaudiocontext-state" id="ref-for-dom-baseaudiocontext-state①">state</a></code> is <code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-interrupted" id="ref-for-dom-audiocontextstate-interrupted①">interrupted</a></code>:</p>
+       <ol>
+        <li data-md>
+         <p><code class="idl"><a data-link-type="idl" href="https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-end" id="ref-for-dom-audiocontext-interruption-end">End the interruption</a></code> on <var>audioContext</var>.</p>
+       </ol>
+     </ol>
+   </ol>
+   <h3 class="heading settled" data-level="3.3" id="autoplay-integration"><span class="secno">3.3. </span><span class="content">Autoplay</span><a class="self-link" href="#autoplay-integration"></a></h3>
+   <p>Let <var>mediaElement</var> be an <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/media.html#htmlmediaelement" id="ref-for-htmlmediaelement①">HTMLMediaElement</a></code>. Let <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document⑤">Document</a></code> <var>document</var> be the <var>mediaElement</var>’s <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-node-document" id="ref-for-concept-node-document①">node document</a>. Let <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#navigable" id="ref-for-navigable②">Navigable</a> <var>navigable</var> be the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#node-navigable" id="ref-for-node-navigable①">node navigable</a> of <var>mediaElement</var>. Let <var>navigableContainer</var> be the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/document-sequences.html#nav-container" id="ref-for-nav-container②">container</a> of <var>navigable</var>.</p>
+   <p>Amend the definition of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#eligible-for-autoplay" id="ref-for-eligible-for-autoplay">eligible for autoplay</a> so that <var>mediaElement</var> is also not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#eligible-for-autoplay" id="ref-for-eligible-for-autoplay①">eligible for autoplay</a> if all the following conditions are met:</p>
+   <ul>
+    <li data-md>
+     <p><var>navigableContainer</var> is not null;</p>
+    <li data-md>
+     <p><var>document</var> is not <a data-link-type="dfn" href="#allowed-to-play-media-while-not-rendered" id="ref-for-allowed-to-play-media-while-not-rendered⑤">allowed to play media while not rendered</a>; and</p>
+    <li data-md>
+     <p><var>navigableContainer</var> is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered①⓪">being rendered</a>.</p>
+   </ul>
+   <p>Moreover, if <var>mediaElement</var> is currently playing because of autoplay and <var>navigableContainer</var> stops <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered①①">being rendered</a>, the user-agent MUST run the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#internal-pause-steps" id="ref-for-internal-pause-steps①">internal pause steps</a> on <var>mediaElement</var>. When <var>navigableContainer</var> starts <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered①②">being rendered</a> again, <var>mediaElement</var> MUST remain paused until playback is explicitly resumed.</p>
+   <p>The "<a data-link-type="dfn" href="#media-playback-while-not-visible" id="ref-for-media-playback-while-not-visible③"><code>media-playback-while-not-visible</code></a>" permission policy MUST NOT affect autoplay behavior if <var>navigableContainer</var> is currently <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/rendering.html#being-rendered" id="ref-for-being-rendered①③">being rendered</a>.</p>
+  </main>
+  <div data-fill-with="conformance">
+   <h2 class="heading no-num no-ref settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+   <h3 class="heading no-num no-ref settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+   <p>Conformance requirements are expressed
+    with a combination of descriptive assertions
+    and RFC 2119 terminology.
+    The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+    in the normative parts of this document
+    are to be interpreted as described in RFC 2119.
+    However, for readability,
+    these words do not appear in all uppercase letters in this specification.
+
+    </p>
+   <p>All of the text of this specification is normative
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a>
+
+    </p>
+   <p>Examples in this specification are introduced with the words “for example”
+    or are set apart from the normative text
+    with <code>class="example"</code>,
+    like this:
+
+    </p>
+   <div class="example" id="w3c-example">
+    <a class="self-link" href="#w3c-example"></a>
+        
+    <p>This is an example of an informative example.
+    </p>
+   </div>
+   <p>Informative notes begin with the word “Note”
+    and are set apart from the normative text
+    with <code>class="note"</code>,
+    like this:
+
+    </p>
+   <p class="note" role="note">Note, this is an informative note.</p>
+  </div>
+  <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <h2 class="heading no-num no-ref settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#allowed-to-play-media-while-not-rendered">allowed to play media while not rendered</a><span>, in § 2</span>
+   <li><a href="#media-playback-while-not-visible">media-playback-while-not-visible</a><span>, in § 2</span>
+  </ul>
+  <h3 class="heading no-num no-ref settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="index">
+   <li>
+    <a data-link-type="biblio">[DOM]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="85394472">Document</span>
+     <li><span class="dfn-paneled" id="5216e1a0">node document</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[HTML]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="1076ec40">HTMLMediaElement</span>
+     <li><span class="dfn-paneled" id="35972864">active document</span>
+     <li><span class="dfn-paneled" id="cbdd1b27">allowed to play</span>
+     <li><span class="dfn-paneled" id="3610bd67">allowed to use</span>
+     <li><span class="dfn-paneled" id="3349d69f">associated Document</span>
+     <li><span class="dfn-paneled" id="f8434dee">being rendered</span>
+     <li><span class="dfn-paneled" id="f23dc013">child navigable</span>
+     <li><span class="dfn-paneled" id="762210c0">container</span>
+     <li><span class="dfn-paneled" id="4a449f12">content document</span>
+     <li><span class="dfn-paneled" id="5fa58f1a">eligible for autoplay</span>
+     <li><span class="dfn-paneled" id="87fcd40c">iframe</span>
+     <li><span class="dfn-paneled" id="ddd57328">internal pause steps</span>
+     <li><span class="dfn-paneled" id="9c19b7fc">navigable</span>
+     <li><span class="dfn-paneled" id="bf63a402">navigable container</span>
+     <li><span class="dfn-paneled" id="13dd6cae">node navigable</span>
+     <li><span class="dfn-paneled" id="613edb27">play()</span>
+     <li><span class="dfn-paneled" id="e99bd18e">relevant global object</span>
+     <li><span class="dfn-paneled" id="bd736ec6">top-level traversable</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[PERMISSIONS-POLICY-1]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="1710bef4">*</span>
+     <li><span class="dfn-paneled" id="1570624a">default allowlist</span>
+     <li><span class="dfn-paneled" id="cc890cc1">policy-controlled feature</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WEBAUDIO-1.0]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="fabc7040">AudioContext</span>
+     <li><span class="dfn-paneled" id="03294253">allowed to start</span>
+     <li><span class="dfn-paneled" id="34c5f47d">interrupted</span>
+     <li><span class="dfn-paneled" id="d948b46e">interruption-end</span>
+     <li><span class="dfn-paneled" id="38de03a3">interruption-start</span>
+     <li><span class="dfn-paneled" id="01a3b75b">resume()</span>
+     <li><span class="dfn-paneled" id="caf47a45">running</span>
+     <li><span class="dfn-paneled" id="05b1cb07">state</span>
+     <li><span class="dfn-paneled" id="083955e1">suspended</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WEBIDL]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="dca2de17">DOMException</span>
+     <li><span class="dfn-paneled" id="797018a7">InvalidStateError</span>
+     <li><span class="dfn-paneled" id="ba556545">NotAllowedError</span>
+    </ul>
+  </ul>
+  <h2 class="heading no-num no-ref settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-dom">[DOM]
+   <dd>Anne van Kesteren. <a href="https://dom.spec.whatwg.org/"><cite>DOM Standard</cite></a>. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a>
+   <dt id="biblio-html">[HTML]
+   <dd>Anne van Kesteren; et al. <a href="https://html.spec.whatwg.org/multipage/"><cite>HTML Standard</cite></a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+   <dt id="biblio-permissions-policy-1">[PERMISSIONS-POLICY-1]
+   <dd>Ian Clelland. <a href="https://w3c.github.io/webappsec-permissions-policy/"><cite>Permissions Policy</cite></a>. URL: <a href="https://w3c.github.io/webappsec-permissions-policy/">https://w3c.github.io/webappsec-permissions-policy/</a>
+   <dt id="biblio-rfc2119">[RFC2119]
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-webaudio-10">[WEBAUDIO-1.0]
+   <dd>Paul Adenot; Hongchan Choi. <a href="https://webaudio.github.io/web-audio-api/"><cite>Web Audio API</cite></a>. URL: <a href="https://webaudio.github.io/web-audio-api/">https://webaudio.github.io/web-audio-api/</a>
+  </dl>
+  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <dl>
+   <dt id="biblio-webidl">[WEBIDL]
+   <dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+  </dl>
+<script>/* Boilerplate: script-dom-helper */
+"use strict";
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"01a3b75b": {"dfnID":"01a3b75b","dfnText":"resume()","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-audiocontext-resume"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#dom-audiocontext-resume"},
+"03294253": {"dfnID":"03294253","dfnText":"allowed to start","external":true,"refSections":[{"refs":[{"id":"ref-for-allowed-to-start"},{"id":"ref-for-allowed-to-start\u2460"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#allowed-to-start"},
+"05b1cb07": {"dfnID":"05b1cb07","dfnText":"state","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-baseaudiocontext-state"},{"id":"ref-for-dom-baseaudiocontext-state\u2460"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#dom-baseaudiocontext-state"},
+"083955e1": {"dfnID":"083955e1","dfnText":"suspended","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-audiocontextstate-suspended"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-suspended"},
+"1076ec40": {"dfnID":"1076ec40","dfnText":"HTMLMediaElement","external":true,"refSections":[{"refs":[{"id":"ref-for-htmlmediaelement"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-htmlmediaelement\u2460"}],"title":"3.3. Autoplay"}],"url":"https://html.spec.whatwg.org/multipage/media.html#htmlmediaelement"},
+"13dd6cae": {"dfnID":"13dd6cae","dfnText":"node navigable","external":true,"refSections":[{"refs":[{"id":"ref-for-node-navigable"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-node-navigable\u2460"}],"title":"3.3. Autoplay"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#node-navigable"},
+"1570624a": {"dfnID":"1570624a","dfnText":"default allowlist","external":true,"refSections":[{"refs":[{"id":"ref-for-policy-controlled-feature-default-allowlist"}],"title":"2. API"}],"url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist"},
+"1710bef4": {"dfnID":"1710bef4","dfnText":"*","external":true,"refSections":[{"refs":[{"id":"ref-for-default-allowlist"}],"title":"2. API"}],"url":"https://w3c.github.io/webappsec-permissions-policy/#default-allowlist"},
+"3349d69f": {"dfnID":"3349d69f","dfnText":"associated Document","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-document-window"}],"title":"3.2. Web Audio"}],"url":"https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window"},
+"34c5f47d": {"dfnID":"34c5f47d","dfnText":"interrupted","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-audiocontextstate-interrupted"},{"id":"ref-for-dom-audiocontextstate-interrupted\u2460"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-interrupted"},
+"35972864": {"dfnID":"35972864","dfnText":"active document","external":true,"refSections":[{"refs":[{"id":"ref-for-nav-document"}],"title":"3.2. Web Audio"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#nav-document"},
+"3610bd67": {"dfnID":"3610bd67","dfnText":"allowed to use","external":true,"refSections":[{"refs":[{"id":"ref-for-allowed-to-use"}],"title":"2. API"}],"url":"https://html.spec.whatwg.org/multipage/iframe-embed-object.html#allowed-to-use"},
+"38de03a3": {"dfnID":"38de03a3","dfnText":"interruption-start","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-audiocontext-interruption-start"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-start"},
+"4a449f12": {"dfnID":"4a449f12","dfnText":"content document","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-bcc-content-document"}],"title":"3.2. Web Audio"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#concept-bcc-content-document"},
+"5216e1a0": {"dfnID":"5216e1a0","dfnText":"node document","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-node-document"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-concept-node-document\u2460"}],"title":"3.3. Autoplay"}],"url":"https://dom.spec.whatwg.org/#concept-node-document"},
+"5fa58f1a": {"dfnID":"5fa58f1a","dfnText":"eligible for autoplay","external":true,"refSections":[{"refs":[{"id":"ref-for-eligible-for-autoplay"},{"id":"ref-for-eligible-for-autoplay\u2460"}],"title":"3.3. Autoplay"}],"url":"https://html.spec.whatwg.org/multipage/media.html#eligible-for-autoplay"},
+"613edb27": {"dfnID":"613edb27","dfnText":"play()","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-media-play"}],"title":"3.1. HTMLMediaElement"}],"url":"https://html.spec.whatwg.org/multipage/media.html#dom-media-play"},
+"762210c0": {"dfnID":"762210c0","dfnText":"container","external":true,"refSections":[{"refs":[{"id":"ref-for-nav-container"}],"title":"2. API"},{"refs":[{"id":"ref-for-nav-container\u2460"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-nav-container\u2461"}],"title":"3.3. Autoplay"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#nav-container"},
+"797018a7": {"dfnID":"797018a7","dfnText":"InvalidStateError","external":true,"refSections":[{"refs":[{"id":"ref-for-invalidstateerror"}],"title":"3.2. Web Audio"}],"url":"https://webidl.spec.whatwg.org/#invalidstateerror"},
+"85394472": {"dfnID":"85394472","dfnText":"Document","external":true,"refSections":[{"refs":[{"id":"ref-for-document"},{"id":"ref-for-document\u2460"}],"title":"2. API"},{"refs":[{"id":"ref-for-document\u2461"}],"title":"2.1. Usage example"},{"refs":[{"id":"ref-for-document\u2462"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-document\u2463"}],"title":"3.2. Web Audio"},{"refs":[{"id":"ref-for-document\u2464"}],"title":"3.3. Autoplay"}],"url":"https://dom.spec.whatwg.org/#document"},
+"87fcd40c": {"dfnID":"87fcd40c","dfnText":"iframe","external":true,"refSections":[{"refs":[{"id":"ref-for-the-iframe-element"},{"id":"ref-for-the-iframe-element\u2460"}],"title":"2.1. Usage example"}],"url":"https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element"},
+"9c19b7fc": {"dfnID":"9c19b7fc","dfnText":"navigable","external":true,"refSections":[{"refs":[{"id":"ref-for-navigable"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-navigable\u2460"}],"title":"3.2. Web Audio"},{"refs":[{"id":"ref-for-navigable\u2461"}],"title":"3.3. Autoplay"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#navigable"},
+"allowed-to-play-media-while-not-rendered": {"dfnID":"allowed-to-play-media-while-not-rendered","dfnText":"allowed to play media while not rendered","external":false,"refSections":[{"refs":[{"id":"ref-for-allowed-to-play-media-while-not-rendered"},{"id":"ref-for-allowed-to-play-media-while-not-rendered\u2460"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-allowed-to-play-media-while-not-rendered\u2461"},{"id":"ref-for-allowed-to-play-media-while-not-rendered\u2462"},{"id":"ref-for-allowed-to-play-media-while-not-rendered\u2463"}],"title":"3.2. Web Audio"},{"refs":[{"id":"ref-for-allowed-to-play-media-while-not-rendered\u2464"}],"title":"3.3. Autoplay"}],"url":"#allowed-to-play-media-while-not-rendered"},
+"ba556545": {"dfnID":"ba556545","dfnText":"NotAllowedError","external":true,"refSections":[{"refs":[{"id":"ref-for-notallowederror"}],"title":"3.1. HTMLMediaElement"}],"url":"https://webidl.spec.whatwg.org/#notallowederror"},
+"bd736ec6": {"dfnID":"bd736ec6","dfnText":"top-level traversable","external":true,"refSections":[{"refs":[{"id":"ref-for-top-level-traversable"}],"title":"3.1. HTMLMediaElement"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#top-level-traversable"},
+"bf63a402": {"dfnID":"bf63a402","dfnText":"navigable container","external":true,"refSections":[{"refs":[{"id":"ref-for-navigable-container"},{"id":"ref-for-navigable-container\u2460"}],"title":"2. API"},{"refs":[{"id":"ref-for-navigable-container\u2461"}],"title":"3.2. Web Audio"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#navigable-container"},
+"caf47a45": {"dfnID":"caf47a45","dfnText":"running","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-audiocontextstate-running"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-running"},
+"cbdd1b27": {"dfnID":"cbdd1b27","dfnText":"allowed to play","external":true,"refSections":[{"refs":[{"id":"ref-for-allowed-to-play"},{"id":"ref-for-allowed-to-play\u2460"},{"id":"ref-for-allowed-to-play\u2461"}],"title":"3.1. HTMLMediaElement"}],"url":"https://html.spec.whatwg.org/multipage/media.html#allowed-to-play"},
+"cc890cc1": {"dfnID":"cc890cc1","dfnText":"policy-controlled feature","external":true,"refSections":[{"refs":[{"id":"ref-for-policy-controlled-feature"}],"title":"2. API"}],"url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature"},
+"d948b46e": {"dfnID":"d948b46e","dfnText":"interruption-end","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-audiocontext-interruption-end"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-end"},
+"dca2de17": {"dfnID":"dca2de17","dfnText":"DOMException","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-DOMException"}],"title":"3.1. HTMLMediaElement"}],"url":"https://webidl.spec.whatwg.org/#idl-DOMException"},
+"ddd57328": {"dfnID":"ddd57328","dfnText":"internal pause steps","external":true,"refSections":[{"refs":[{"id":"ref-for-internal-pause-steps"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-internal-pause-steps\u2460"}],"title":"3.3. Autoplay"}],"url":"https://html.spec.whatwg.org/multipage/media.html#internal-pause-steps"},
+"e99bd18e": {"dfnID":"e99bd18e","dfnText":"relevant global object","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-relevant-global"}],"title":"3.2. Web Audio"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-global"},
+"f23dc013": {"dfnID":"f23dc013","dfnText":"child navigable","external":true,"refSections":[{"refs":[{"id":"ref-for-child-navigable"}],"title":"2. API"}],"url":"https://html.spec.whatwg.org/multipage/document-sequences.html#child-navigable"},
+"f8434dee": {"dfnID":"f8434dee","dfnText":"being rendered","external":true,"refSections":[{"refs":[{"id":"ref-for-being-rendered"}],"title":"2. API"},{"refs":[{"id":"ref-for-being-rendered\u2460"}],"title":"2.1. Usage example"},{"refs":[{"id":"ref-for-being-rendered\u2461"}],"title":"3. Integration with other specifications"},{"refs":[{"id":"ref-for-being-rendered\u2462"},{"id":"ref-for-being-rendered\u2463"}],"title":"3.1. HTMLMediaElement"},{"refs":[{"id":"ref-for-being-rendered\u2464"},{"id":"ref-for-being-rendered\u2465"},{"id":"ref-for-being-rendered\u2466"},{"id":"ref-for-being-rendered\u2467"},{"id":"ref-for-being-rendered\u2468"}],"title":"3.2. Web Audio"},{"refs":[{"id":"ref-for-being-rendered\u2460\u24ea"},{"id":"ref-for-being-rendered\u2460\u2460"},{"id":"ref-for-being-rendered\u2460\u2461"},{"id":"ref-for-being-rendered\u2460\u2462"}],"title":"3.3. Autoplay"}],"url":"https://html.spec.whatwg.org/multipage/rendering.html#being-rendered"},
+"fabc7040": {"dfnID":"fabc7040","dfnText":"AudioContext","external":true,"refSections":[{"refs":[{"id":"ref-for-AudioContext"}],"title":"3.2. Web Audio"}],"url":"https://webaudio.github.io/web-audio-api/#AudioContext"},
+"media-playback-while-not-visible": {"dfnID":"media-playback-while-not-visible","dfnText":"media-playback-while-not-visible","external":false,"refSections":[{"refs":[{"id":"ref-for-media-playback-while-not-visible"}],"title":"2. API"},{"refs":[{"id":"ref-for-media-playback-while-not-visible\u2460"},{"id":"ref-for-media-playback-while-not-visible\u2461"}],"title":"3. Integration with other specifications"},{"refs":[{"id":"ref-for-media-playback-while-not-visible\u2462"}],"title":"3.3. Autoplay"}],"url":"#media-playback-while-not-visible"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#allowed-to-play-media-while-not-rendered": {"displayText":"allowed to play media while not rendered","export":true,"for_":[],"level":"1","normative":true,"shortname":"iframe-media-pausing","spec":"iframe-media-pausing-1","status":"local","text":"allowed to play media while not rendered","type":"dfn","url":"#allowed-to-play-media-while-not-rendered"},
+"#media-playback-while-not-visible": {"displayText":"media-playback-while-not-visible","export":true,"for_":[],"level":"1","normative":true,"shortname":"iframe-media-pausing","spec":"iframe-media-pausing-1","status":"local","text":"media-playback-while-not-visible","type":"dfn","url":"#media-playback-while-not-visible"},
+"https://dom.spec.whatwg.org/#concept-node-document": {"displayText":"node document","export":true,"for_":["Node"],"level":"1","normative":true,"shortname":"dom","spec":"dom","status":"current","text":"node document","type":"dfn","url":"https://dom.spec.whatwg.org/#concept-node-document"},
+"https://dom.spec.whatwg.org/#document": {"displayText":"Document","export":true,"for_":[],"level":"1","normative":true,"shortname":"dom","spec":"dom","status":"current","text":"Document","type":"interface","url":"https://dom.spec.whatwg.org/#document"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#child-navigable": {"displayText":"child navigable","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"child navigable","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#child-navigable"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#concept-bcc-content-document": {"displayText":"content document","export":true,"for_":[],"level":"","normative":true,"shortname":"html","spec":"html","status":"anchor-block","text":"content document","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#concept-bcc-content-document"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#nav-container": {"displayText":"container","export":true,"for_":["navigable"],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"container","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#nav-container"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#nav-document": {"displayText":"active document","export":true,"for_":["navigable"],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"active document","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#nav-document"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#navigable": {"displayText":"navigable","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"navigable","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#navigable"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#navigable-container": {"displayText":"navigable container","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"navigable container","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#navigable-container"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#node-navigable": {"displayText":"node navigable","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"node navigable","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#node-navigable"},
+"https://html.spec.whatwg.org/multipage/document-sequences.html#top-level-traversable": {"displayText":"top-level traversable","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"top-level traversable","type":"dfn","url":"https://html.spec.whatwg.org/multipage/document-sequences.html#top-level-traversable"},
+"https://html.spec.whatwg.org/multipage/iframe-embed-object.html#allowed-to-use": {"displayText":"allowed to use","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"allowed to use","type":"dfn","url":"https://html.spec.whatwg.org/multipage/iframe-embed-object.html#allowed-to-use"},
+"https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element": {"displayText":"iframe","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"iframe","type":"element","url":"https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element"},
+"https://html.spec.whatwg.org/multipage/media.html#allowed-to-play": {"displayText":"allowed to play","export":true,"for_":[],"level":"","normative":true,"shortname":"html","spec":"html","status":"anchor-block","text":"allowed to play","type":"dfn","url":"https://html.spec.whatwg.org/multipage/media.html#allowed-to-play"},
+"https://html.spec.whatwg.org/multipage/media.html#dom-media-play": {"displayText":"play()","export":true,"for_":["HTMLMediaElement"],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"play()","type":"method","url":"https://html.spec.whatwg.org/multipage/media.html#dom-media-play"},
+"https://html.spec.whatwg.org/multipage/media.html#eligible-for-autoplay": {"displayText":"eligible for autoplay","export":true,"for_":[],"level":"","normative":true,"shortname":"html","spec":"html","status":"anchor-block","text":"eligible for autoplay","type":"dfn","url":"https://html.spec.whatwg.org/multipage/media.html#eligible-for-autoplay"},
+"https://html.spec.whatwg.org/multipage/media.html#htmlmediaelement": {"displayText":"HTMLMediaElement","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"HTMLMediaElement","type":"interface","url":"https://html.spec.whatwg.org/multipage/media.html#htmlmediaelement"},
+"https://html.spec.whatwg.org/multipage/media.html#internal-pause-steps": {"displayText":"internal pause steps","export":true,"for_":[],"level":"","normative":true,"shortname":"html","spec":"html","status":"anchor-block","text":"internal pause steps","type":"dfn","url":"https://html.spec.whatwg.org/multipage/media.html#internal-pause-steps"},
+"https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window": {"displayText":"associated Document","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"associated document","type":"dfn","url":"https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window"},
+"https://html.spec.whatwg.org/multipage/rendering.html#being-rendered": {"displayText":"being rendered","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"being rendered","type":"dfn","url":"https://html.spec.whatwg.org/multipage/rendering.html#being-rendered"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-global": {"displayText":"relevant global object","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"relevant global object","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-global"},
+"https://w3c.github.io/webappsec-permissions-policy/#default-allowlist": {"displayText":"*","export":true,"for_":["default allowlist"],"level":"1","normative":true,"shortname":"permissions-policy","spec":"permissions-policy-1","status":"current","text":"*","type":"dfn","url":"https://w3c.github.io/webappsec-permissions-policy/#default-allowlist"},
+"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature": {"displayText":"policy-controlled feature","export":true,"for_":[],"level":"1","normative":true,"shortname":"permissions-policy","spec":"permissions-policy-1","status":"current","text":"policy-controlled feature","type":"dfn","url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature"},
+"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist": {"displayText":"default allowlist","export":true,"for_":["policy-controlled feature"],"level":"1","normative":true,"shortname":"permissions-policy","spec":"permissions-policy-1","status":"current","text":"default allowlist","type":"dfn","url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist"},
+"https://webaudio.github.io/web-audio-api/#AudioContext": {"displayText":"AudioContext","export":true,"for_":[],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"AudioContext","type":"interface","url":"https://webaudio.github.io/web-audio-api/#AudioContext"},
+"https://webaudio.github.io/web-audio-api/#allowed-to-start": {"displayText":"allowed to start","export":true,"for_":[],"level":"","normative":true,"shortname":"webaudio","spec":"webaudio","status":"anchor-block","text":"allowed to start","type":"dfn","url":"https://webaudio.github.io/web-audio-api/#allowed-to-start"},
+"https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-end": {"displayText":"interruption-end","export":true,"for_":["AudioContext"],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"interruption-end","type":"attribute","url":"https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-end"},
+"https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-start": {"displayText":"interruption-start","export":true,"for_":["AudioContext"],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"interruption-start","type":"attribute","url":"https://webaudio.github.io/web-audio-api/#dom-audiocontext-interruption-start"},
+"https://webaudio.github.io/web-audio-api/#dom-audiocontext-resume": {"displayText":"resume()","export":true,"for_":["AudioContext"],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"resume()","type":"method","url":"https://webaudio.github.io/web-audio-api/#dom-audiocontext-resume"},
+"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-interrupted": {"displayText":"interrupted","export":true,"for_":["AudioContextState"],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"interrupted","type":"enum-value","url":"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-interrupted"},
+"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-running": {"displayText":"running","export":true,"for_":["AudioContextState"],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"running","type":"enum-value","url":"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-running"},
+"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-suspended": {"displayText":"suspended","export":true,"for_":["AudioContextState"],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"suspended","type":"enum-value","url":"https://webaudio.github.io/web-audio-api/#dom-audiocontextstate-suspended"},
+"https://webaudio.github.io/web-audio-api/#dom-baseaudiocontext-state": {"displayText":"state","export":true,"for_":["BaseAudioContext"],"level":"1","normative":true,"shortname":"webaudio","spec":"webaudio-1.0","status":"current","text":"state","type":"attribute","url":"https://webaudio.github.io/web-audio-api/#dom-baseaudiocontext-state"},
+"https://webidl.spec.whatwg.org/#idl-DOMException": {"displayText":"DOMException","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"DOMException","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-DOMException"},
+"https://webidl.spec.whatwg.org/#invalidstateerror": {"displayText":"InvalidStateError","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"InvalidStateError","type":"exception","url":"https://webidl.spec.whatwg.org/#invalidstateerror"},
+"https://webidl.spec.whatwg.org/#notallowederror": {"displayText":"NotAllowedError","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"NotAllowedError","type":"exception","url":"https://webidl.spec.whatwg.org/#notallowederror"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.displayText)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
+}
+</script>

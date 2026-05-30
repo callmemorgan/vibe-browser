@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>RDF 1.2 TriG</title>
+  <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+  <meta name="color-scheme" content="light dark">
+  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+  <script src="https://w3c.github.io/rdf-common/local-biblio.js" class="remove"></script>
+  <script src="https://w3c.github.io/rdf-common/fixup.js" class="remove"></script>
+  <script class='remove'>
+    // Use fragment identifier of test as name.
+    function data_test_display() {
+        const test_references = document.querySelectorAll('details.respec-tests-details a');
+        for( const a of test_references ) {
+            const href = a.href;
+            const test_reference = href.split('#')[1];
+            a.textContent = test_reference;
+        }
+    }
+
+    var respecConfig = {
+      localBiblio:          localBibliography,
+      specStatus:           "ED",
+      testSuiteURI:         "https://w3c.github.io/rdf-tests/rdf/rdf12/rdf-trig/",
+      edDraftURI:           "https://w3c.github.io/rdf-trig/spec/",
+      shortName:            "rdf12-trig",
+      subtitle:             "RDF Dataset Language",
+      copyrightStart:       "2010",
+
+      previousPublishDate:  "2014-02-25",
+      previousMaturity:     "REC",
+      prevRecShortname:     "trig",
+
+      editors: [
+        {
+          name: "Gregg Kellogg",
+          w3cid: "44770",
+          //retiredDate: "2025-09-06", // Respec would automatically move Gregg to the 'Former Editors' section
+          note: "until 2025-09-06",
+          extras: [
+            {name: "in memoriam", class: "former"},
+          ],
+        },
+        { name: "Dominik Tomaszuk", w3cid: "44239", orcid: "0000-0003-1806-067X" },
+      ],
+
+      formerEditors:  [
+        { name: "Gavin Carothers" , note: "RDF 1.1" },
+        { name: "Andy Seaborne" , note: "RDF 1.1" },
+      ],
+
+      authors:  [
+        { name: "Chris Bizer",
+          // link error, pls correct: url: "http://www.bizer.de",
+          company: "Freie Universität Berlin", companyURL: "http://www.fu-berlin.de/", orcid: "0000-0003-2367-0237" },
+        { name: "Richard Cyganiak", url: "http://richard.cyganiak.de",
+          company: "Freie Universität Berlin", companyURL: "http://www.fu-berlin.de/" },
+      ],
+
+      xref: [ "RDF12-CONCEPTS", "RDF12-TURTLE" ],
+      postProcess: [data_test_display],
+
+      github: "https://github.com/w3c/rdf-trig/",
+      group:           "rdf-star",
+      doJsonLd:     true,
+      wgPublicList: "public-rdf-star-wg"
+    };
+  </script>
+
+ <style>
+    /* Style Turtle script blocks to be visable */
+    pre.example script {
+        display:block;
+    }
+    .separated { border-collapse:collapse; }
+    .separated thead tr th { border:1px solid black; padding: .2em; min-width: 10vw }
+    .separated tbody tr td { border:1px solid black; text-align: center; min-width: 10vw }
+    .separated tbody tr td.r { text-align: right; padding: .5em; }
+    .separated tbody tr td:first-child,
+    .separated tbody tr td:last-child {text-align: left; padding: .5em; }
+    .separated.last-center tbody tr td:last-child {text-align: center; padding: .5em; }
+    .grammar td {
+      font-family: Menlo, Consolas, "DejaVu Sans Mono", Monaco, monospace;
+      font-size: .9em;
+      vertical-align: top;
+    }
+    .grammar-opt,
+    .grammar-alt,
+    .grammar-paren,
+    .grammar-diff,
+    .grammar-plus,
+    .grammar-star,
+    .grammar-brac { color: gray;}
+    #grammar-declaration-terminals h3 {
+      margin-top: 1em;
+    }
+    .grammar_comment { color: #A52A2A; font-style: italic; }
+    .hl-bold { font-weight: bold; color: #0a3; }
+    code { color: #ff4500; }  /* Old W3C Style */
+    var { color: #ff4500; }
+    abbr[title] {text-decoration: none;}
+    @media (max-width: 850px) {
+        table th, table td { font-size: 12px; padding: 3px 4px;}
+    }     
+    @media (max-width: 767px) {
+      table { word-break: normal; overflow-wrap: anywhere; }
+      .separated thead tr th { border:1px solid black; padding: .2em; min-width: 10vw }
+      .separated thead tr th:nth-child(2) { word-break: break-all; }
+      .separated tbody tr td:nth-child(2) {padding: 3px 2px;}
+      .separated tbody tr td:nth-child(3) {padding: 3px 2px;}
+      .separated tbody tr td { border:1px solid black; text-align: center; min-width: 10vw }
+      table.ex, .ex th, .ex td { border: none; padding: 0; }
+      table.ex { font-size: 1.4vw; }
+      .separated tbody tr td:first-child, .separated tbody tr th:first-child {max-width: 220px; overflow-wrap: anywhere;}
+    }
+    table.simple { border-collapse:collapse;}
+    table.simple th, table.simple td  { border:1px solid black; padding:0.2em; }
+
+    table.cp-definitions { border-collapse:collapse; }
+
+    table.cp-definitions,
+    table.cp-definitions th { text-align: center; padding:0.2em; padding-left: 0.3em; padding-right: 0.3em; }
+    table.cp-definitions td { border: 0px solid black; padding: 0.2em; padding-left: 0.3em; padding-right: 0.3em; }
+    table.cp-definitions td:nth-child(2) { text-align: center; }
+
+    .term2escape-yes { background-color: lightgreen; }
+    .darkmode .term2escape-yes { background-color: darkgreen; }
+  </style>
+</head>
+<body>
+<section id='abstract'>
+  <p>This document defines a textual syntax for RDF called TriG
+  that allows an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a> to be completely written in a compact and
+  natural text form, with abbreviations for common usage patterns and
+  datatypes. TriG is an extension of the
+  Turtle [[RDF12-TURTLE]] format.
+  </p>
+
+  <p>RDF 1.2 TriG shares <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a> with [[RDF12-TURTLE]]
+    as a fourth kind of <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF term</a>
+    which can be used as the
+    <a data-cite="RDF12-CONCEPTS#dfn-object">object</a> of another
+    <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">triple</a>,
+    making it possible to make statements about other statements.
+    RDF 1.2 TriG also adds shares
+    <a data-cite="RDF12-CONCEPTS#dfn-dir-lang-string">directional language-tagged strings</a>
+    with [[RDF12-TURTLE]].</p>
+
+  <p>In addition, RDF 1.2 TriG shares the <a data-cite="RDF12-TURTLE#reifying-triples">reifying triples</a> and
+    <a data-cite="RDF12-TURTLE#annotation-syntax">annotation syntax</a> extensions with [[RDF12-TURTLE]] which allows
+    <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a> to also be <a data-cite="RDF12-CONCEPTS#dfn-asserted-triple">asserted</a>.</p>
+</section>
+
+<section id='sotd' class="updateable-rec">
+  <p>This document is part of the RDF 1.2 document suite.
+  TriG is intended the meet the charter requirement of the
+  RDF &amp; SPARQL Working Group to
+  define an RDF syntax for multiple graphs. TriG is an extension of the
+  Turtle
+  syntax for RDF [[RDF12-TURTLE]]. The current document is based on
+  the original proposal by Chris Bizer and Richard Cyganiak.</p>
+
+  <section id="related" data-include="https://w3c.github.io/rdf-common/related.html"></section>
+</section>
+
+<section id="sec-intro" class="informative">
+  <h2>Introduction</h2>
+  <p>This document defines TriG, a concrete syntax for RDF as defined in the
+  RDF Concepts and Abstract Syntax document
+  [[RDF12-CONCEPTS]]. TriG is an extension of
+  Turtle [[RDF12-TURTLE]], extended
+  to support representing a complete <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.</p>
+
+  <p>This specification extends the original TriG syntax, as defined in [[[TRIG]]] [[TRIG]],
+  to support the new features introduced by [[[RDF12-CONCEPTS]]] [[RDF12-CONCEPTS]].
+  This extension is fully backward compatible:
+  any document complying with the old version complies with the new version, and parses to the same graph.
+  Furthermore, any document complying with the new version and containing only RDF 1.1 features is also compliant with the older version
+  (with the exception of the `VERSION` directive; see <a href="#sec-version"></a>).
+  Finally, none of the new syntactic constructs are valid in the old syntax.
+  This means that any TriG document using RDF 1.2 features does not
+  comply with the previous version of this specification and cannot be
+  interpreted as a different graph under it.</p>
+</section>
+
+<section id="sec-trig-intro" class="informative">
+  <h2>TriG Language</h2>
+
+  <p>A <a>TriG document</a> allows writing down an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a> in a compact textual form.
+  It consists of a sequence of directives, triple statements,
+  graph statements which contain triple-generating statements and optional blank lines.
+  Comments may be given after a <a href="#cp-number-sign"><code title="number sign">#</code></a> that is not part of another
+  lexical token and continue to the end of the line.</p>
+
+  <p>Graph statements are a pair of an
+  <a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a> or
+  <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>
+  and a group of triple statements
+  surrounded by braces (<a href="#cp-left-curly-bracket"><code title="left curly bracket">{</code></a><a href="#cp-right-curly-bracket"><code title="right curly bracket">}</code></a>).
+  The <a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a> or
+  <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>
+  of the graph statement may be used in another graph statement
+  which implies taking the union of the triples generated
+  by each graph statement.
+  An <a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a> or
+  <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>
+  used as a graph label may also reoccur
+  as part of any triple statement.
+  Optionally a graph statement may not not be labeled with an IRI.
+  Such a graph statement corresponds to the <a data-cite="RDF12-CONCEPTS#dfn-default-graph">Default Graph</a> of an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.</p>
+
+  <p>
+    The construction of an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a> from a <a>TriG document</a> is defined in
+    <a href="#sec-grammar" class="sectionRef"></a>
+    and <a href="#sec-parsing" class="sectionRef"></a>.
+  </p>
+
+  <section id="sec-version">
+    <h3>Version Announcement</h3>
+    <p>TriG uses the same version announcement mechanism as Turtle [[RDF12-TURTLE]].</p>
+  </section>
+
+  <section id="sec-triple-statements">
+    <h3>Triple Statements</h3>
+    <p>As TriG is an extention of the Turtle language it allows for any constructs from the
+      <a data-cite="RDF12-TURTLE#language-features">Turtle language</a>.
+      <a data-cite="RDF12-TURTLE#simple-triples">Simple Triples</a>,
+      <a data-cite="RDF12-TURTLE#predicate-lists">Predicate Lists</a>,
+      and <a data-cite="RDF12-TURTLE#object-lists">Object Lists</a>
+      can all be used either inside a graph statement, or on their own as in a <a>TriG document</a>.
+      When outside a graph statement, the triples are considered to be part of the <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a>
+      of the <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.</p>
+  </section>
+
+  <section id="sec-graph-statements">
+    <h3>Graph Statements</h3>
+
+    <p>A graph statement pairs an
+      <a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a> or
+      <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a> with an
+      <a data-cite="RDF12-CONCEPTS#dfn-rdf-graph">RDF graph</a>.
+      The triple statements that make up the graph are enclosed in
+      <a href="#cp-left-curly-bracket"><code title="left curly bracket">{</code></a><a href="#cp-right-curly-bracket"><code title="right curly bracket">}</code></a>.</p>
+
+    <p>In a <a>TriG document</a> a graph IRI or <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a> may be used as label
+      for more than one graph statement.
+      The graph label of a graph statement may be omitted.
+      In this case the graph is considered the <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a> of the <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.</p>
+
+    <p>A <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a> might contain only a single graph.</p>
+
+    <pre id="ex-single-graph"
+         class="example trig" data-transform="updateExample"
+         title="Dataset with single graph">
+      <!--
+      # This document encodes one graph.
+      PREFIX ex: <http://www.example.org/vocabulary#>
+      PREFIX : <http://www.example.org/exampleDocument#>
+
+      :G1 { :Monica a ex:Person ;
+          ex:name "Monica Murphy" ;
+          ex:homepage <http://www.monicamurphy.org> ;
+          ex:email <mailto:monica@monicamurphy.org> ;
+          ex:hasSkill ex:Management ,
+                      ex:Programming .
+      }
+      -->
+    </pre>
+
+    <p>An <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a> may contain a
+      <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a> and/or zero
+      or more <a data-cite="RDF12-CONCEPTS#dfn-named-graph">named graphs</a>.</p>
+
+    <pre id="ex-default-and-named-graphs"
+         class="example trig" data-transform="updateExample"
+         title="Dataset with default and named graphs">
+      <!--
+      # This document contains a default graph and two named graphs.
+
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX dc: <http://purl.org/dc/terms/>
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+      # default graph
+      {
+        <http://example.org/bob> dc:publisher "Bob" .
+        <http://example.org/alice> dc:publisher "Alice" .
+      }
+
+      <http://example.org/bob> {
+         _:a foaf:name "Bob" .
+         _:a foaf:mbox <mailto:bob@oldcorp.example.org> .
+         _:a foaf:knows _:b .
+      }
+
+      <http://example.org/alice> {
+         _:b foaf:name "Alice" .
+         _:b foaf:mbox <mailto:alice@work.example.org> .
+      }
+      -->
+    </pre>
+
+    <p>TriG provides various alternative ways to write graphs
+      and triples, giving the data writer choices for clarity:</p>
+
+    <pre id="ex-alt-named-graphs"
+         class="example trig" data-transform="updateExample"
+         title="Alternative ways to write named graphs">
+      <!--
+      # This document contains a same data as the previous example.
+
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX dc: <http://purl.org/dc/terms/>
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+      # default graph - no {} used.
+      <http://example.org/bob> dc:publisher "Bob" .
+      <http://example.org/alice> dc:publisher "Alice" .
+
+      # GRAPH keyword to highlight a named graph
+      # Abbreviation of triples using ;
+      GRAPH <http://example.org/bob>
+      {
+         [] foaf:name "Bob" ;
+            foaf:mbox <mailto:bob@oldcorp.example.org> ;
+            foaf:knows _:b .
+      }
+
+      GRAPH <http://example.org/alice>
+      {
+          _:b foaf:name "Alice" ;
+              foaf:mbox <mailto:alice@work.example.org>
+      }
+      -->
+    </pre>
+
+  </section>
+
+
+  <section id="other-terms">
+    <h3>Other Terms</h3>
+    <p>All other terms, syntax forms, and directives come from
+      <a data-cite="RDF12-TURTLE#language-features" class="sectionRef">RDF Turtle</a>.
+    </p>
+
+    <section id="terms-blanks-nodes">
+      <h4>Special Considerations for Blank Nodes</h4>
+      <p><a data-cite="RDF12-CONCEPTS#dfn-blank-node">Blank nodes</a>
+        sharing the same <a data-cite="RDF12-CONCEPTS#dfn-blank-node-identifier">identifier</a>
+        in differently labeled graph statements
+        are considered to be the same blank node.</p>
+    </section>
+  </section>
+</section>
+
+<section id="conformance">
+  <p>This specification defines conformance criteria for:</p>
+  <ul>
+    <li>TriG documents</li>
+    <li>TriG parsers</li>
+  </ul>
+
+  <p>A conforming <dfn>TriG document</dfn> is a Unicode string that conforms to the grammar
+    and additional constraints defined in <a href="#sec-grammar" class="sectionRef"></a>,
+    starting with the <a href="#grammar-production-trigDoc"><code>trigDoc</code></a> production.
+    A TriG document serializes an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.</p>
+
+  <p>A conforming <dfn>TriG parser</dfn> is a system capable of reading TriG documents
+    on behalf of an application. It makes the serialized <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>,
+    as defined in <a href="#sec-parsing" class="sectionRef"></a>,
+    available to the application, usually through some form of API.</p>
+
+  <p>The <a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a> that identifies the TriG language is:
+    <code>http://www.w3.org/ns/formats/TriG</code></p>
+
+  <p class="note">This specification does not define how TriG parsers handle
+    non-conforming input documents.</p>
+
+  <section id="sec-mime">
+    <h2>Media Type and Content Encoding</h2>
+
+    <p>The media type of TriG is <code>application/trig</code>.
+      The content encoding of TriG content is always UTF-8.</p>
+  </section>
+</section>
+
+<section id="sec-grammar">
+  <h2>TriG Grammar</h2>
+
+  <p>A <a>TriG document</a> is an <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">RDF string</a>
+    encoded in UTF-8 [[!RFC3629]].
+    Only <a data-cite="I18N-GLOSSARY#dfn-scalar-value" class="lint-ignore">Unicode scalar values</a>,
+    in the ranges <code class="codepoint">U+0000</code> to <code class="codepoint">U+D7FF</code> 
+    and <code class="codepoint">U+E000</code> to <code class="codepoint">U+10FFFF</code>,
+    are allowed. This excludes 
+    <a data-cite="I18N-GLOSSARY#dfn-surrogate" class="lint-ignore">surrogate code points</a>,
+    range <code class="codepoint">U+D800</code> to <code class="codepoint">U+DFFF</code>.
+
+  <section id="sec-grammar-ws">
+    <h3>White Space</h3>
+
+    <p id="ws-tests1" data-tests="
+      ../../rdf11/rdf-trig/index.html#trig-eval-struct-02,
+      ../../rdf11/rdf-trig/index.html#trig-subm-23,
+      ../../rdf11/rdf-trig/index.html#trig-subm-24">
+      White space (production <a href="#grammar-production-WS"><code>WS</code></a>)
+      is used to separate two terminals which would otherwise be (mis-)recognized as one terminal.
+      Rule names below in capitals indicate where white space is significant;
+      these form a possible choice of terminals for constructing a <a>TriG parser</a>.</p>
+
+    <p id="ws-tests2" data-tests="
+      ../../rdf11/rdf-trig/index.html#trig-syntax-string-08,
+      ../../rdf11/rdf-trig/index.html#trig-syntax-string-09,
+      ../../rdf11/rdf-trig/index.html#trig-syntax-string-10,
+      ../../rdf11/rdf-trig/index.html#trig-syntax-string-11">
+      White space is significant in the production <a href="#grammar-production-String"><code>String</code></a>.</p>
+  </section>
+
+  <section id="sec-grammar-comments">
+    <h3>Comments</h3>
+
+    <p id="comments-tests1" data-tests="
+      ../../rdf11/rdf-trig/index.html#comment_following_localName,
+      ../../rdf11/rdf-trig/index.html#comment_following_PNAME_NS">
+      Comments in TriG start with a <a href="#cp-number-sign"><code title="number sign">#</code></a> outside an
+      <a href="#grammar-production-IRIREF"                          ><code>IRIREF</code></a>,
+      <a href="#grammar-production-STRING_LITERAL_SINGLE_QUOTE"     ><code>STRING_LITERAL_SINGLE_QUOTE</code></a>,
+      <a href="#grammar-production-STRING_LITERAL_QUOTE"            ><code>STRING_LITERAL_QUOTE</code></a>,
+      <a href="#grammar-production-STRING_LITERAL_LONG_SINGLE_QUOTE"><code>STRING_LITERAL_LONG_SINGLE_QUOTE</code></a>, or
+      <a href="#grammar-production-STRING_LITERAL_LONG_QUOTE"       ><code>STRING_LITERAL_LONG_QUOTE</code></a>,
+       and continue to the end of line (marked by
+      <a href="#cp-line-feed"><code title="line feed">LFs</code></a>, or
+      <a href="#cp-carriage-return"><code title="carriage return">CRs</code></a>),
+      or end of file if there is no end of line after the comment marker.
+      Comments are treated as white space.</p>
+  </section>
+
+  <section id="sec-iri-references">
+    <h3>IRI References</h3>
+    <p id="iri-tests1" data-tests="
+      ../../rdf11/rdf-trig/index.html#IRI-resolution-01,
+      ../../rdf11/rdf-trig/index.html#IRI-resolution-02,
+      ../../rdf11/rdf-trig/index.html#IRI-resolution-07,
+      ../../rdf11/rdf-trig/index.html#IRI-resolution-08">
+      <a data-cite="RDF12-CONCEPTS#dfn-relative-iri">Relative IRI references</a> are resolved with base IRIs
+      as per [[[RFC3986]]] [[RFC3986]] using only the basic algorithm in section 5.2.
+      Neither Syntax-Based Normalization nor Scheme-Based Normalization
+      (described in sections 6.2.2 and 6.2.3 of RFC3986) are performed.
+      Characters additionally allowed in IRI references are treated in the same way that
+      unreserved characters are treated in URI references, per section 6.5 of [[[RFC3987]]] [[RFC3987]].
+    </p>
+    <p id="iri-tests2" data-tests="
+      ../../rdf11/rdf-trig/index.html#old_style_base,
+      ../../rdf11/rdf-trig/index.html#SPARQL_style_base,
+      ../../rdf11/rdf-trig/index.html#trig-syntax-base-01,
+      ../../rdf11/rdf-trig/index.html#trig-syntax-base-02,
+      ../../rdf11/rdf-trig/index.html#trig-syntax-base-03,
+      ../../rdf11/rdf-trig/index.html#trig-syntax-base-04">
+      The <code>@base</code> or <a href="#grammar-production-sparqlBase"><code>BASE</code></a> directive
+      defines the Base IRI used to resolve <a data-cite="RDF12-CONCEPTS#dfn-relative-iri">relative IRI references</a>
+      per [[RFC3986]] <a data-cite="RFC3986#section-5.1.1">section 5.1.1, "Base URI Embedded in Content"</a>.
+      <a data-cite="RFC3986#section-5.1.2">Section 5.1.2, "Base URI from the Encapsulating Entity"</a>
+      defines how the In-Scope Base IRI may come from an encapsulating document,
+      such as a SOAP envelope with an `xml:base` directive or a MIME multipart document with a
+      `Content-Location` header.
+      The "Retrieval URI" identified in <a data-cite="RFC3986#section-5.1.3">5.1.3, Base "URI from the Retrieval URI"</a>,
+      is the URL from which a particular <a>TriG document</a> was retrieved.
+      If none of the above specifies the Base URI, the default
+      Base URI (<a data-cite="RFC3986#section-5.1.4">section 5.1.4, "Default Base URI"</a>) is used.
+      Each <code>@base</code> or <a href="#grammar-production-sparqlBase"><code>BASE</code></a> directive sets a new In-Scope Base URI,
+      relative to the previous one.
+    </p>
+  </section>
+
+  <section id="sec-escapes">
+    <h3>Escape Sequences</h3>
+
+    <p>There are three forms of escapes used in <a>TriG document</a>s:</p>
+
+    <ul>
+      <li>
+        <p id="numeric-escape-tests1" data-tests="
+          ../../rdf11/rdf-trig/index.html#IRI_with_four_digit_numeric_escape,
+          ../../rdf11/rdf-trig/index.html#IRI_with_eight_digit_numeric_escape,
+          ../../rdf11/rdf-trig/index.html#literal_with_numeric_escape4,
+          ../../rdf11/rdf-trig/index.html#literal_with_numeric_escape8">
+          A <dfn>numeric escape sequence</dfn> represents the value of
+          a <a data-cite="I18N-GLOSSARY#dfn-code-point">Unicode code point</a>.
+        </p>
+        <p id="numeric-escape-tests2" data-tests="
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-01,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-02,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-03,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-04,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-05,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-06,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-07,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-08,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-09,
+          ../../rdf11/rdf-trig/index.html#turtle-syntax-bad-numeric-escape-10">
+          A <a>numeric escape sequence</a> MUST NOT produce a code point value
+          in the range <code class="codepoint">U+D800</code> to <code class="codepoint">U+DFFF</code>,
+          which is the range for 
+          Unicode <a data-cite="I18N-GLOSSARY#dfn-surrogate" class="lint-ignore">surrogates</a>.
+        </p>
+
+        <table id="tab-uchar">
+          <thead>
+            <tr>
+              <th>Escape sequence</th>
+              <th>Unicode code point</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>\u</code> <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a></td>
+              <td>A <a data-cite="I18N-GLOSSARY#dfn-code-point">Unicode code point</a>
+                in the ranges <code class="codepoint">U+0000</code> to <code class="codepoint">U+D7FF</code>
+                and <code class="codepoint">U+E000</code> to <code class="codepoint">U+D7FF</code>,
+                corresponding to the value encoded by the four hexadecimal digits interpreted
+                from most significant to least significant digit.</td>
+            </tr>
+
+            <tr>
+              <td><code>\U</code> <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a>
+                <a href="#grammar-production-HEX"><code>hex</code></a></td>
+              <td>A <a data-cite="I18N-GLOSSARY#dfn-code-point">Unicode code point</a>
+                in the ranges <code class="codepoint">U+0000</code> to
+                <code class="codepoint">U+D7FF</code>
+                and <code class="codepoint">U+E000</code> to <code class="codepoint">U+10FFFF</code>,
+                corresponding to the value encoded by the eight hexadecimal digits
+                interpreted from most significant to least significant digit.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>where <a href="#grammar-production-HEX"><code>hex</code></a> is a hexadecimal character</p>
+        <p style="margin-left: 2em"><code><a href="#grammar-production-HEX"><code>HEX</code></a> ::= [0-9] | [A-F] | [a-f]</code></p>
+      </li>
+
+      <li>
+        <p id="echar-tests" data-tests="
+          ../../rdf11/rdf-trig/index.html#literal_with_escaped_CHARACTER_TABULATION,
+          ../../rdf11/rdf-trig/index.html#literal_with_escaped_BACKSPACE,
+          ../../rdf11/rdf-trig/index.html#literal_with_escaped_LINE_FEED,
+          ../../rdf11/rdf-trig/index.html#literal_with_escaped_CARRIAGE_RETURN,
+          ../../rdf11/rdf-trig/index.html#literal_with_escaped_FORM_FEED,
+          ../../rdf11/rdf-trig/index.html#LITERAL_LONG2_with_1_squote,
+          ../../rdf11/rdf-trig/index.html#literal_with_REVERSE_SOLIDUS">
+          A <dfn>string escape sequence</dfn> represents a character traditionally escaped in string literals:
+        </p>
+
+        <table id="tab-echar">
+          <thead>
+            <tr>
+              <th>Escape sequence</th>
+              <th>Unicode code point</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>\t</code></td>
+              <td><code class="codepoint">U+0009</code></td>
+            </tr>
+
+            <tr>
+              <td><code>\b</code></td>
+              <td><code class="codepoint">U+0008</code></td>
+            </tr>
+
+            <tr>
+              <td><code>\n</code></td>
+              <td><code class="codepoint">U+000A</code></td>
+            </tr>
+
+            <tr>
+              <td><code>\r</code></td>
+              <td><code class="codepoint">U+000D</code></td>
+            </tr>
+
+            <tr>
+              <td><code>\f</code></td>
+              <td><code class="codepoint">U+000C</code></td>
+            </tr>
+
+            <tr>
+              <td><code>\"</code></td>
+              <td><code class="codepoing">U+0022</code></td>
+            </tr>
+
+            <tr>
+              <td><code>\'</code></td>
+              <td><code class="codepoint">U+0027</code></td>
+            </tr>
+
+            <tr>
+              <td><code>\\</code></td>
+              <td><code class="codepoint">U+005C</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+
+      <li>
+        <p id="reserved-char-tests" data-tests="
+          ../../rdf11/rdf-trig/index.html#reserved_escaped_localName">
+          A <dfn>reserved character escape sequence</dfn> consists of a
+          <a href="#cp-backslash"><code title="backslash">\</code></a>
+          followed by one of these characters <code>~.-!$&amp;'()*+,;=/?#@%_</code>,
+          and represents the character to the right of the <a href="#cp-backslash"><code title="backslash">\</code></a>.
+        </p>
+      </li>
+
+    </ul>
+
+    <table id="term2escape" class="separated last-center">
+      <caption>Context where each kind of escape sequence can be used</caption>
+      <thead>
+        <tr>
+          <th></th>
+          <th><a data-lt="numeric escape sequence">numeric<br/>escapes</a></th>
+          <th><a data-lt="string escape sequence">string<br/>escapes</a></th>
+          <th><a data-lt="reserved character escape sequence">reserved character<br/>escapes</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="r"><span style="font-weight:bold;">IRI</span>s,
+            used as <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF terms</a>
+            or as in <a href="#grammar-production-sparqlPrefix"><code>PREFIX</code></a>
+            or <a href="#grammar-production-sparqlBase"><code>BASE</code></a> declarations</td>
+          <td class="term2escape-yes">yes</td>
+          <td>no</td>
+          <td>no</td>
+        </tr>
+        <tr>
+          <td class="r"><a href="#grammar-production-PN_LOCAL"><span style="font-weight:bold;">local name</span>s</a></td>
+          <td>no</td>
+          <td>no</td>
+          <td class="term2escape-yes">yes</td>
+        </tr>
+        <tr>
+          <td class="r"><span style="font-weight:bold;"><a href="#grammar-production-String">String</a></span>s</td>
+          <td class="term2escape-yes">yes</td>
+          <td class="term2escape-yes">yes</td>
+          <td>no</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="note">%-encoded sequences are in the
+      <a href="#grammar-production-IRIREF">character range for IRIs</a>
+      and are <a href="#grammar-production-PERCENT">explicitly allowed</a> in local names.
+      These appear as a '%' followed by two hex characters and represent that same sequence
+      of three characters.
+      These sequences are <em>not</em> decoded during processing.
+      A term written as <code>&lt;http://a.example/%66oo-bar&gt;</code>
+      in TriG designates the IRI <code>http://a.example/%66oo-bar</code>
+      and not IRI <code>http://a.example/foo-bar</code>.
+      A term written as <code>ex:%66oo-bar</code> with a prefix
+      <code>PREFIX ex: &lt;http://a.example/&gt;</code> also designates
+      the IRI <code>http://a.example/%66oo-bar</code>.</p>
+
+  </section>
+
+  <section id="grammar-ebnf">
+    <h3>Grammar</h3>
+
+    <p>The <abbr title="Extended Backus–Naur Form">EBNF</abbr> used here is defined in XML 1.0
+      [[!EBNF-NOTATION]].
+    </p>
+
+    <div>
+      <p>Notes:</p>
+      <ol>
+        <li>A <a data-cite="RDF12-CONCEPTS#dfn-blank-node-identifier">blank node identifier</a> represents the same
+          <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>
+          throughout the <a>TriG document</a>.
+        </li>
+        <li>
+          Keywords in single quotes
+          ('<code class="grammar-literal">@base</code>',
+          '<code class="grammar-literal">@prefix</code>',
+          '<code class="grammar-version">@version</code>',
+          '<code class="grammar-literal">a</code>',
+          '<code class="grammar-literal">true</code>', and
+          '<code class="grammar-literal">false</code>')
+          are case-sensitive.
+          Keywords in quotation marks
+          ("<code class="grammar-literal">BASE</code>",
+          "<code class="grammar-literal">PREFIX</code>"), and
+          "<code class="grammar-literal">VERSION</code>")
+          are case-insensitive.
+        </li>
+        <li>
+          Escape sequences <a href="#grammar-production-UCHAR"><code>UCHAR</code></a>
+          and <a href="#grammar-production-ECHAR"><code>ECHAR</code></a>
+          are case sensitive.
+        </li>
+        <li>
+          When tokenizing the input and choosing grammar rules, the longest match is chosen.
+        </li>
+        <li>
+          The TriG grammar is LL(1) and LALR(1) when the rules with uppercased names
+          are used as terminals.
+        </li>
+        <li>
+          The entry point into the grammar is <a href="#grammar-production-trigDoc"><code>trigDoc</code></a>.
+        </li>
+        <li>
+          In signed numbers, no white space is allowed between the sign and the number.
+        </li>
+        <li>
+          The strings '<a href="#grammar-production-prefixID"><code class="grammar-literal">@prefix</code></a>',
+          '<a href="#grammar-production-base"><code class="grammar-literal">@base</code></a>', and
+          '<a href="#grammar-production-version"><code class="grammar-literal">@version</code></a>'
+          match the pattern for <a href="#grammar-production-LANG_DIR"><code>LANG_DIR</code></a>,
+          though neither <code class="grammar-literal">prefix</code>,
+          <code class="grammar-literal">base</code>, nor <code class="grammar-literal">version</code>
+          are <a data-cite="?LANG-SUBTAG-REGISTRY#">registered language subtags</a>.
+          This specification does not define whether a quoted literal
+          followed by either of these tokens (e.g., <code>"A"@base</code>)
+          is in the Turtle language.
+        </li>
+      </ol>
+    </div>
+
+    <div data-include="trig-bnf.html"></div>
+    <p>A text version of this grammar is available <a href="trig.bnf">here</a>.</p>
+
+  </section>
+  <section>
+    <h2>Selected Terminal Literal Strings</h2>
+    <p>This document uses some specific terminal literal strings [[EBNF-NOTATION]].
+      To clarify the Unicode code points used for these terminal literal strings, the following
+      table describes specific characters and sequences used throughout this document.</p>
+
+    <!-- Selected unicode character descriptions, taken from https://en.wikipedia.org/wiki/List_of_Unicode_characters -->
+    <table class="cp-definitions">
+      <thead>
+        <tr><th>Code</th><th>Glyph</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr id="cp-line-feed">
+          <td><code class="codepoint">U+000A</code></td>
+          <td><code title="line feed">LF</code></td>
+          <td>Line feed</td>
+        </tr>
+        <tr id="cp-carriage-return">
+          <td><code class="codepoint">U+000D</code></td>
+          <td><code title="carriage return">CR</code></td>
+          <td>Carriage return</td>
+        </tr>
+        <tr id="cp-quotation-mark">
+          <td><code class="codepoint">U+0022</code></td>
+          <td><code title="quotation mark">&quot;</code></td>
+          <td>Quotation mark</td>
+        </tr>
+        <tr id="cp-number-sign">
+          <td><code class="codepoint">U+0023</code></td>
+          <td><code title="number sign">#</code></td>
+          <td>Number sign</td>
+        </tr>
+        <tr id="cp-apostrophe">
+          <td><code class="codepoint">U+0027</code></td>
+          <td><code title="apostrophe">'</code></td>
+          <td>Apostrophe</td>
+        </tr>
+        <tr id="cp-hyphen">
+          <td><code class="codepoint">U+002D</code></td>
+          <td><code title="hyphen">-</code></td>
+          <td>Hyphen</td>
+        </tr>
+        <tr id="cp-colon">
+          <td><code class="codepoint">U+003B</code></td>
+          <td><code title="colon">:</code></td>
+          <td>Colon</td>
+        </tr>
+        <tr id="cp-at-sign">
+          <td><code class="codepoint">U+0040</code></td>
+          <td><code title="at sign">@</code></td>
+          <td>At sign</td>
+        </tr>
+        <tr id="cp-backslash">
+          <td><code class="codepoint">U+005C</code></td>
+          <td><code title="backslash">\</code></td>
+          <td>Backslash</td>
+        </tr>
+        <tr id="cp-underscore">
+          <td><code class="codepoint">U+005F</code></td>
+          <td><code title="underscore">_</code></td>
+          <td>Underscore</td>
+        </tr>
+        <tr id="cp-lowercase-a">
+          <td><code class="codepoint">U+0061</code></td>
+          <td><code title="latin small letter A">a</code></td>
+          <td>Latin small letter E</td>
+        </tr>
+        <tr id="cp-left-curly-bracket">
+          <td><code class="codepoint">U+007B</code></td>
+          <td><code title="left curly bracket">{</code></td>
+          <td>Left curly bracket</td>
+        </tr>
+        <tr id="cp-right-curly-bracket">
+          <td><code class="codepoint">U+007D</code></td>
+          <td><code title="right curly bracket">}</code></td>
+          <td>Right curly bracket</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Other short terminal literal strings are composed of specific sequences of Unicode characters:</p>
+  
+    <dl>
+      <dt id="cp-space"><code title="space">space</code></dt>
+      <dd><code class="codepoint">U+0020</code></dd>
+      <dt id="cp-triple-quote"><code>"""</code></dt>
+      <dd>three concatenated quotation mark characters, each having the code point <code class="codepoint">U+0022</code></dd>
+      <dt id="cp-triple-apostrophe"><code>'''</code></dt>
+      <dd>three concatenated apostrophe characters, each having the code point <code class="codepoint">U+0027</code></dd>
+      <dt id="cp-hyphen-hyphen" style="white-space: nowrap"><code>--</code></dt>
+      <dd>two concatenated <a href="#cp-hyphen"><code title="hyphen">-</code></a> characters</dd>
+    </dl>
+  </section>
+</section>
+
+<section id="sec-parsing" class="algorithm">
+  <h2>Parsing</h2>
+  <p>The RDF Concepts and Abstract Syntax [[!RDF12-CONCEPTS]]
+    specification defines four types of <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF term</a>:
+
+    <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a>,
+    <a data-cite="RDF12-CONCEPTS#dfn-rdf-literal">literals</a>,
+    <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank nodes</a>, and
+    <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a>.
+
+    Literals are composed of a <a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a>
+    and an optional <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a> [[!BCP47]]
+    – possibly including an <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a> –
+    or an optional <a data-cite="RDF12-CONCEPTS#dfn-datatype-iri">datatype IRI</a>.
+    An extra type, <code id="prefix" class="dfn">prefix</code>, is used during parsing to map string identifiers to namespace IRIs.
+
+    This section maps a string conforming to the grammar in <a href="#grammar-ebnf" class="sectionRef"></a>
+    to a set of triples by mapping strings matching productions and lexical tokens to <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF terms</a>
+    or their components (e.g., language tags, lexical forms of literals).
+    Grammar productions change the parser state and emit triples.</p>
+
+  <section id="sec-parsing-state">
+    <h3>Parser State</h3>
+    <p>Parsing TriG requires a state of ten items:</p>
+
+    <ul>
+      <li id="baseURI">IRI |baseURI|
+        — When the <a href="#grammar-production-base"><code>base</code></a> production is reached,
+        the second rule argument, <a href="#grammar-production-IRIREF"><code>IRIREF</code></a>, is the base URI used for <a data-cite="RDF12-CONCEPTS#dfn-relative-iri">relative IRI reference</a> resolution.</li>
+      <li id="namespaces">Map[<a class="type prefix" href="#prefix">prefix</a> -&gt; IRI] |namespaces|
+        — The second and third rule arguments (<a href="#grammar-production-PNAME_NS"><code>PNAME_NS</code></a> and <a href="#grammar-production-IRIREF"><code>IRIREF</code></a>)
+        in the <a href="#grammar-production-prefixID">prefixID</a> production
+        assign a namespace name (<a href="#grammar-production-IRIREF"><code>IRIREF</code></a>) for the prefix (<a href="#grammar-production-PNAME_NS"><code>PNAME_NS</code></a>).
+        Outside of a <a href="#grammar-production-prefixID"><code>prefixID</code></a> production, any <a href="#grammar-production-PNAME_NS"><code>PNAME_NS</code></a>
+        is substituted with the namespace.
+        Note that the prefix may be an empty string,
+        per the <a href="#grammar-production-PNAME_NS"><code>PNAME_NS</code></a> production: <code>PN_PREFIX? ":"</code>.</li>
+      <li id="bnodeLabels">Map[<span class="type string">string</span> -&gt; <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>] |bnodeLabels|
+        — A mapping from a string to a blank node.</li>
+      <li id="curSubject"><a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF Term</a> |curSubject|
+        — The |curSubject| is bound to the
+        <a href="#grammar-production-subject"><code>subject</code></a>,
+        <a href="#grammar-production-rtSubject"><code>rtSubject</code></a>,
+        <a href="#grammar-production-ttSubject"><code>ttSubject</code></a>,
+        <a href="#grammar-production-blankNodePropertyList"><code>blankNodePropertyList</code></a>,
+        <a href="#grammar-production-collection"><code>collection</code></a>,
+        <a href="#grammar-production-tripleTerm"><code>tripleTerm</code></a>, and
+        <a href="#grammar-production-annotationBlock"><code>annotationBlock</code></a>
+         productions.</li>
+      <li id="curPredicate">RDF_Term |curPredicate|
+        — The |curPredicate| is bound to the
+        the <a href="#grammar-production-verb"><code>verb</code></a> production.
+        If token matched was <a href="#cp-lowercase-a"><code title="latin-small-letter-a">a</code></a>, |curPredicate|
+        is bound to the IRI <code>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</code>.</li>
+      <li id="curObject"><a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF Term</a> |curObject| —
+        The |curObject| is bound to the
+        <a href="#grammar-production-object"><code>object</code></a>,
+        <a href="#grammar-production-rtObject"><code>rtObject</code></a>, and
+        <a href="#grammar-production-ttObject"><code>ttObject</code></a> productions.</li>
+      <li id="curReifier"><a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF Term</a> |curReifier| —
+        The |curReifier| is bound to the
+        <a href="#grammar-production-reifier"><code>reifier</code></a> and
+        <a href="#grammar-production-annotationBlock"><code>annotationBlock</code></a> productions.</li>
+      <li id="curTripleTerm"><a data-cite="RDF12-CONCEPTS#dfn-triple-term">Triple term</a> |curTripleTerm| —
+        The |curTripleTerm| is set in the <a href="#annotation">Annotations</a> constructor.
+      </li>
+      <li id="curGraph">RDF_Term |curGraph| —
+        The |curGraph| is bound to
+        the label of the graph that is the destination of triples
+        produced in parsing.  When undefined, triples are destined
+        for the <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a>.
+      </li>
+      <li id="curVersion">`xsd:string` |curVersion| –
+        The RDF version used for parsing the document into <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">Triples</a>.
+        If specified as part of a <a href="#sec-mediaReg">Media Type</a>, the default value for |curVersion| is taken from the `version` parameter.
+        The only defined value is `"1.2"`. Parser behavior for other version values is undefined.
+        This specification does not define behavior if different versions are provided for |curVersion|.
+      </li>
+    </ul>
+
+    <p>Term Constructors can create a stack of these values indicated by
+      using language such as "records the |curSubject| and |curPredicate|."</p>
+  </section>
+
+  <section  id="sec-parsing-terms">
+    <h3>RDF Term Constructors</h3>
+
+    <p>This table maps productions and lexical tokens to <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF terms</a>
+      or components of <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF terms</a> listed in <a href="#sec-parsing" class="sectionRef"></a>:</p>
+
+    <table id="tab-term-constructors" class="separated">
+      <thead>
+        <tr>                                  <th>                                                                                                                                       production                            </th><th>                                              type            </th><th>procedure</th></tr>
+      </thead>
+      <tbody>
+              <tr id="handle-IRIREF"                          ><td style="text-align:left;"            ><a class="type IRI"          href="#grammar-production-IRIREF"                          >IRIREF                          </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-iri"         >IRI          </a></td><td>The characters between <a href="#cp-less-than"><code title="less-than sign">&lt;</code></a> and <a href="#cp-greater-than"><code title="greater-than sign">&gt;</code></a> are taken, with the <a data-lt="numeric escape sequence">numeric escape sequences</a> unescaped, to form the IRI. <a data-cite="RDF12-CONCEPTS#dfn-relative-iri">Relative IRI reference</a> resolution is performed per <a href="#sec-iri-references" class="sectionRef">Section 6.3</a>. The resulting IRI MUST comply with the <a data-cite="RFC3987#section-2.2">syntactic restrictions</a> of generic IRI syntax, and SHOULD conform to <a data-cite="RFC3986#section-3.3">section 3.3</a> of [[RFC3986]] and comply with any narrower restrictions imposed by the corresponding IRI scheme specification.</td></tr>
+    <tr id="handle-PNAME_NS"                        ><td rowspan="2"><a class="type string"       href="#grammar-production-PNAME_NS"                        >PNAME_NS                        </a></td><td><a href="#prefix"                             >prefix       </a></td><td>When used in a <a href="#grammar-production-prefixID"><code>prefixID</code></a> or <a href="#grammar-production-sparqlPrefix"><code>sparqlPrefix</code></a> production, the <code>prefix</code> is the potentially empty <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">RDF string</a> that matches the first argument of the rule. That string serves as a key in the <a href="#namespaces">namespaces map</a>; the expanded second argument is stored under that key for future lookup.</td></tr>
+        <tr id="handle-PNAME-IRI"                       >                                                                                                                                                                          <td><a data-cite="RDF12-CONCEPTS#dfn-iri"         >IRI         </a></td><td>When used in a <a href="#grammar-production-PrefixedName"><code>PrefixedName</code></a> production, the <code>iri</code> is the value in the <a href="#namespaces">namespaces map</a> corresponding to the first argument of the rule.</td></tr>
+      <tr id="handle-PNAME_LN"                        ><td            ><a class="type IRI"          href="#grammar-production-PNAME_LN"                        >PNAME_LN                        </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-iri"         >IRI          </a></td><td>A potentially empty <a href="#prefix">prefix</a> is identified by the first sequence, <a href="#grammar-production-PNAME_NS"><code>PNAME_NS</code></a>. The <a href="#namespaces">namespaces map</a> <em class="rfc2119">MUST</em> have a corresponding <code>namespace</code>. The <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">RDF string</a> of the IRI is formed by unescaping the <a data-lt="reserved character escape sequence">reserved characters</a> in the second argument, <a href="#grammar-production-PN_LOCAL"><code>PN_LOCAL</code></a>, and concatenating this onto the <code>namespace</code>. The resulting IRI MUST comply with the <a data-cite="RFC3987#section-2.2">syntactic restrictions</a> of generic IRI syntax, and SHOULD comply with any narrower restrictions imposed by the corresponding IRI scheme specification.</td></tr>
+        <tr id="handle-VersionSpecifier"                ><td style="text-align:left;"            ><a class="type literal"     href="#grammar-production-VersionSpecifier"                >VersionSpecifier                </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal"     >literal     </a></td><td>The |curVersion| is taken from a literal using the matched <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">RDF string</a> lexical form and `xsd:string` datatype.</td></tr>
+        <tr id="handle-STRING_LITERAL_SINGLE_QUOTE"     ><td style="text-align:left;"            ><a class="type lexicalForm" href="#grammar-production-STRING_LITERAL_SINGLE_QUOTE"     >STRING_LITERAL_SINGLE_QUOTE     </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a></td><td>The characters between the outermost <a href="#cp-apostrophe"><code title="apostrophe">'</code></a>s are taken, with <a data-lt="numeric escape sequence">numeric</a> and <a data-lt="string escape sequence">string</a> escape sequences unescaped, to form the Unicode string of a lexical form.</td></tr>
+        <tr id="handle-STRING_LITERAL_QUOTE"            ><td style="text-align:left;"            ><a class="type lexicalForm" href="#grammar-production-STRING_LITERAL_QUOTE"            >STRING_LITERAL_QUOTE            </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a></td><td>The characters between the outermost <a href="#cp-quotation-mark"><code title="quotation mark">&quot;</code></a>s are taken, with <a data-lt="numeric escape sequence">numeric</a> and <a data-lt="string escape sequence">string</a> escape sequences unescaped, to form the Unicode string of a lexical form.</td></tr>
+        <tr id="handle-STRING_LITERAL_LONG_SINGLE_QUOTE"><td style="text-align:left;"            ><a class="type lexicalForm" href="#grammar-production-STRING_LITERAL_LONG_SINGLE_QUOTE">STRING_LITERAL_LONG_SINGLE_QUOTE</a></td><td><a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a></td><td>The characters between the outermost <a href="#cp-triple-apostrophe"><code>'''</code></a>s are taken, with <a data-lt="numeric escape sequence">numeric</a> and <a data-lt="string escape sequence">string</a> escape sequences unescaped, to form the unicode string of a lexical form.</td></tr>
+        <tr id="handle-STRING_LITERAL_LONG_QUOTE"       ><td style="text-align:left;"            ><a class="type lexicalForm" href="#grammar-production-STRING_LITERAL_LONG_QUOTE"       >STRING_LITERAL_LONG_QUOTE.      </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a></td><td>The characters between the outermost <a href="#cp-triple-quote"><code>"""</code></a>s are taken, with <a data-lt="numeric escape sequence">numeric</a> and <a data-lt="string escape sequence">string</a> escape sequences unescaped, to form the Unicode string of a lexical form.</td></tr>
+      <tr id="handle-LANG_DIR"                        ><td            ><a class="type langDir"      href="#grammar-production-LANG_DIR"                        >LANG_DIR                        </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag </a></td><td>The characters following the <a href="#cp-at-sign"><code title="at sign">@</code></a> form the <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a> and optionally the <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>, if the matched characters include <a href="#cp-hyphen-hyphen" style="white-space: nowrap"><code>--</code></a>. The <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a> MUST be well-formed according to <a data-cite="bcp47#section-2.2.9">section 2.2.9</a> of [[!BCP47]]. If present, the <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a> MUST be either `ltr` or `rtl`.</td></tr>
+        <tr id="handle-RDFLiteral"                      ><td style="text-align:left;"            ><a class="type literal"     href="#grammar-production-RDFLiteral"                      >RDFLiteral                      </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal"     >literal     </a></td><td>The literal has a lexical form of the first rule argument, <a href="#grammar-production-String"><code>String</code></a>. If the <code>'^^' iri</code> rule is matched, the <a data-cite="RDF12-CONCEPTS#dfn-datatype-iri">datatype IRI</a> is derived from the <code>iri</code>, and the literal has no language tag. If the <a href="#grammar-production-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a> rule is matched, the <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a> and <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a> are taken from <a href=#handle-LANG_DIR class="type langDir"><code>LANG_DIR</code></a>. If there is no <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>, the datatype is <code>rdf:langString</code>. If there is an <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>, the datatype is <code>rdf:dirLangString</code>. If neither matched, the datatype is <code>xsd:string</code>, and the literal has no language tag.</td></tr>
+        <tr id="handle-INTEGER"                         ><td style="text-align:left;"            ><a class="type integer"     href="#grammar-production-INTEGER"                         >INTEGER                         </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal"     >literal     </a></td><td>The literal has a lexical form of the input string, and a datatype of <code>xsd:integer</code>.</td></tr>
+        <tr id="handle-DECIMAL"                         ><td style="text-align:left;"            ><a class="type decimal"     href="#grammar-production-DECIMAL"                         >DECIMAL                         </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal"     >literal     </a></td><td>The literal has a lexical form of the input string, and a datatype of <code>xsd:decimal</code>.</td></tr>
+        <tr id="handle-DOUBLE"                          ><td style="text-align:left;"            ><a class="type double"      href="#grammar-production-DOUBLE"                          >DOUBLE                          </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal"     >literal     </a></td><td>The literal has a lexical form of the input string, and a datatype of <code>xsd:double</code>.</td></tr>
+        <tr id="handle-BooleanLiteral"                  ><td style="text-align:left;"            ><a class="type boolean"     href="#grammar-production-BooleanLiteral"                  >BooleanLiteral                  </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal"     >literal     </a></td><td>The literal has a lexical form of the <code>true</code> or <code>false</code>, depending on which matched the input, and a datatype of <code>xsd:boolean</code>.</td></tr>
+        <tr id="handle-BLANK_NODE_LABEL"                ><td style="text-align:left;"            ><a class="type bNode"       href="#grammar-production-BLANK_NODE_LABEL"                >BLANK_NODE_LABEL                </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-blank-node"  >blank node  </a></td><td>The string matching the second argument, <a href="#grammar-production-PN_LOCAL"><code>PN_LOCAL</code></a>, is a key in <a href="#bnodeLabels">bnodeLabels</a>. If there is no corresponding blank node in the map, one is allocated.</td></tr>
+        <tr id="handle-ANON"                            ><td style="text-align:left;"            ><a class="type bNode"       href="#grammar-production-ANON"                            >ANON                            </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-blank-node"  >blank node  </a></td><td>A blank node is generated.</td></tr>
+        <tr id="handle-blankNodePropertyList"           ><td style="text-align:left;"            ><a class="type bNode"       href="#grammar-production-blankNodePropertyList"           >blankNodePropertyList           </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-blank-node"  >blank node  </a></td><td>A blank node is generated. Note the rules for <code>blankNodePropertyList</code> in the next section.</td></tr>
+        <tr id="handle-collection"                      ><td style="text-align:left;" rowspan="2"><a class="type bNode"       href="#grammar-production-collection"                      >collection                      </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-blank-node"  >blank node  </a></td><td>For non-empty lists, a blank node is generated. Note the rules for <code>collection</code> in the next section.</td></tr>
+        <tr id="handle-collection-IRI"                  ><td                                                                                                                                                                          ><a data-cite="RDF12-CONCEPTS#dfn-iri"         >IRI         </a></td><td>For empty lists, the resulting IRI is <code>rdf:nil</code>. Note the rules for <code>collection</code> in the next section.</td></tr>
+        <tr id="handle-reifier"                         ><td style="text-align:left;"            ><a class="type reifier" href="#grammar-production-reifier"                              >reifier                        </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-iri"         >IRI         </a>
+                                                                                                                                                                                                                                     | <a data-cite="RDF12-CONCEPTS#dfn-blank-node" >blank node   </a></td>
+          <td>
+            The |curReifier| is taken from <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">term</a>, which is taken from the matched
+            <a href="#grammar-production-iri"><code>iri</code></a> production
+            or <a href="#grammar-production-BlankNode"><code>BlankNode</code></a> production, if any.
+            If no such production is matched, <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">term</a> is taken
+            from a fresh RDF <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>.
+          </td>
+        </tr>
+        <tr id="handle-tripleTerm"                      ><td style="text-align:left;"            ><a class="type tripleTerm"   href="#grammar-production-tripleTerm"                      >tripleTerm                     </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple term  </a></td>
+          <td>
+            The <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple term</a>
+            is composed of the terms constructed from
+            the <a href="#grammar-production-ttSubject"><code>ttSubject</code></a>,
+            <a href="#grammar-production-predicate"><code>predicate</code></a>, and
+            <a href="#grammar-production-ttObject"><code>ttObject</code></a> productions.
+          </td>
+        </tr>
+        <tr id="handle-reifiedTriple"                   ><td style="text-align:left;"            ><a class="type reifiedTriple" href="#grammar-production-reifiedTriple"                  >reifiedTriple                   </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a> | <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a></td>
+          <td>
+            The <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">term</a> is taken from the matched <a href="#grammar-production-reifier"><code>reifier</code></a>, if any,
+            or from a fresh RDF <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>.
+          </td>
+        </tr>
+        <tr id="handle-annotationBlock"                 ><td style="text-align:left;"            ><a class="type annotation" href="#grammar-production-annotationBlock"                   >annotationBlock                 </a></td><td><a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a> | <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a></td>
+          <td>
+            The <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">term</a> is taken from a previously matched <a data-cite="RDF12-CONCEPTS#dfn-reifier">reifier</a>, if any,
+            or from a fresh RDF <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p class="note">As processors which detect errors on input can result in
+      graphs which contain fewer triples than are described in the input
+      (including no triples whatsoever),
+      consumers should consider information of any errors signaled
+      when using the output triples,
+      which may be incomplete and/or include
+      <a data-cite="RDF12-CONCEPTS#dfn-ill-typed">ill-typed</a>
+      or ill-formed terms.</p>
+
+
+    
+  </section>
+  
+
+  <section id="sec-parsing-triples">
+    <h3>RDF Triples Construction</h3>
+    <p>
+      A <a>TriG document</a> defines an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF Dataset</a>
+      composed of one <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a> and zero or
+      more <a data-cite="RDF12-CONCEPTS#dfn-named-graph">named graphs</a>.
+      Each graph is composed of a set of <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">RDF triples</a>.
+    </p>
+
+    <section id="output-graph">
+      <h4>Output Graph</h4>
+      <p>The state |curGraph| is
+        initially unset. It records the label of the graph for
+        triples produced during parsing.
+        If undefined, the <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a> is used.</p>
+
+      <p>The rule
+        <a href="#grammar-production-labelOrSubject"><code>labelOrSubject</code></a>
+        sets both |curGraph|
+        and |curSubject|
+        (only one of these will be used).
+      </p>
+
+      <p>The following grammar production clauses set
+        |curGraph| to be undefined, indicating the default
+        graph:
+      </p>
+      <ul>
+        <li>
+          The grammar production clause <code>wrappedGraph</code>
+          in rule <a href="#grammar-production-block"><code>block</code></a>
+        </li>
+        <li>
+          The grammar production in rule
+          <a href="#grammar-production-triples2"><code>triples2</code></a>.
+        </li>
+      </ul>
+
+      <p>
+        The grammar production
+        <code>labelOrSubject predicateObjectList '.'</code>
+        unsets |curGraph|
+        before handling the <a href="#grammar-production-predicateObjectList"><code>predicateObjectList</code></a> production
+        in rule <a href="#grammar-production-triplesOrGraph"><code>triplesOrGraph</code></a>.
+      </p>
+    </section>
+
+    <section id="triple-output">
+      <h4>Triple Output</h4>
+      <p>
+        Each RDF triple produced is added to |curGraph|,
+        or the <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a> if |curGraph|
+        is not set at that
+        point in the parsing process.
+      </p>
+      <p>
+        The <a href="#grammar-production-subject"><code>subject</code></a>
+        production sets the |curSubject|.
+        The <a href="#grammar-production-verb"><code>verb</code></a>
+        production sets the |curPredicate|.
+      </p>
+      <p>Triples are produced at the following points in the
+        parsing process and each RDF triple produced is
+        added to the graph identified
+        by |curGraph|.
+      </p>
+    </section>
+
+    <section id="triple-production">
+      <h4 style="padding-bottom:0; margin-bottom:0;">Triple Production</h4>
+      <p style="padding-top:0; margin-top:0;">
+        Each <a class="grammarRef" href="#grammar-production-object">object</a>
+        <var>N</var> in the document produces an RDF triple:
+        <span class="ntriple">|curSubject|
+        |curPredicate| <var>N</var>.</span>
+      </p>
+    </section>
+
+    <section id="reifier">
+      <h4>Reifiers</h4>
+
+      <p id="reifier-tests" data-tests="
+        syntax/index.html#trig12-ann-5,
+        syntax/index.html#trig12-ann-6,
+        syntax/index.html#trig12-ann-7,
+        syntax/index.html#trig12-ann-8,
+        eval/index.html#trig12-annotation-06,
+        eval/index.html#trig12-annotation-08,
+        eval/index.html#trig12-annotation-09,
+        eval/index.html#trig12-annotation-11,
+        eval/index.html#trig12-annotation-12">
+        Beginning the <a href="#grammar-production-reifier"><code>reifier</code></a> production,
+        the |curReifier| is taken from the <a href="#handle-reifier"><code>reifier</code></a> term constructor.
+        Then yield the the RDF triple |curReifier| <code>rdf:reifies</code> |curTripleTerm|.</p>
+    </section>
+
+    <section id="reifiedTriple">
+      <h4>Reified Triples</h4>
+
+      <p id="reifiedTriple-tests" data-tests="
+        eval/index.html#trig12-rt-01,
+        eval/index.html#trig12-rt-02,
+        eval/index.html#trig12-rt-03,
+        eval/index.html#trig12-rt-04,
+        eval/index.html#trig12-rt-05,
+        eval/index.html#trig12-rt-06,
+        eval/index.html#trig12-rt-07,
+        eval/index.html#trig12-rt-08">
+        Beginning the <a href="#grammar-production-reifiedTriple"><code>reifiedTriple</code></a> production
+        records the |curTripleTerm|.
+        A new <a href="#grammar-production-tripleTerm"><code>tripleTerm</code></a> instance |curTripleTerm|
+        is created using the
+        <a href="#grammar-production-rtSubject"><code>rtSubject</code></a>,
+        <a href="#grammar-production-verb"><code>verb</code></a>, and
+        <a href="#grammar-production-rtObject"><code>rtObject</code></a> productions.
+
+        Finishing the <a href="#grammar-production-reifiedTriple"><code>reifiedTriple</code></a> production,
+        if the |curReifier| is not set, it is assigned a fresh RDF <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>;
+        it next yields the RDF triple |curReifier| <code>rdf:reifies</code> |curTripleTerm|,
+        and then restores the recorded value of the |curTripleTerm|.
+        The node produced by matching <a href="#grammar-production-reifiedTriple"><code>reifiedTriple</code></a>
+        is the the |curReifier|.</p>
+    </section>
+
+    <section id="annotation">
+      <h4>Annotations</h4>
+
+      <p id="annotations-test" data-tests="
+        syntax/index.html#turtle12-ann-1,
+        syntax/index.html#turtle12-ann-2,
+        syntax/index.html#turtle12-ann-3,
+        syntax/index.html#turtle12-ann-4,
+        syntax/index.html#turtle12-ann-5,
+        syntax/index.html#turtle12-ann-6,
+        syntax/index.html#turtle12-ann-7,
+        syntax/index.html#turtle12-ann-8,
+        eval/index.html#turtle12-annotation-01,
+        eval/index.html#turtle12-annotation-02,
+        eval/index.html#turtle12-annotation-03,
+        eval/index.html#turtle12-annotation-04,
+        eval/index.html#turtle12-annotation-05,
+        eval/index.html#turtle12-annotation-06,
+        eval/index.html#turtle12-annotation-08,
+        eval/index.html#turtle12-annotation-09,
+        eval/index.html#turtle12-annotation-10,
+        eval/index.html#turtle12-annotation-11,
+        eval/index.html#turtle12-annotation-12">
+        Beginning the <a href="#grammar-production-annotation"><code>annotation</code></a> production
+        records the |curSubject| and |curPredicate|.
+        A new <a href="#grammar-production-tripleTerm"><code>tripleTerm</code></a> instance |curTripleTerm|
+        is created using the |curSubject| |curPredicate| |curObject|,
+        and the value of the |curReifier| is cleared.
+        Finishing the <a href="#grammar-production-annotation"><code>annotation</code></a> production
+        restores the recorded values of the |curSubject| and |curPredicate|.</p>
+    </section>
+
+    <section id="annotationBlock">
+      <h4>Annotation Blocks</h4>
+
+      <p id="annotationBlock-tests" data-tests="
+        syntax/index.html#turtle12-ann-1,
+        syntax/index.html#turtle12-ann-2,
+        syntax/index.html#turtle12-ann-3,
+        syntax/index.html#turtle12-ann-4,
+        syntax/index.html#turtle12-ann-7,
+        syntax/index.html#turtle12-ann-8,
+        eval/index.html#turtle12-annotation-01,
+        eval/index.html#turtle12-annotation-02,
+        eval/index.html#turtle12-annotation-03,
+        eval/index.html#turtle12-annotation-04,
+        eval/index.html#turtle12-annotation-05,
+        eval/index.html#turtle12-annotation-06,
+        eval/index.html#turtle12-annotation-08,
+        eval/index.html#turtle12-annotation-09,
+        eval/index.html#turtle12-annotation-10,
+        eval/index.html#turtle12-annotation-11,
+        eval/index.html#turtle12-annotation-12">
+        Beginning the <a href="#grammar-production-annotationBlock"><code>annotationBlock</code></a> production records the |curTripleTerm|.
+        If the |curReifier| is not set, then it is assigned a fresh RDF <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>
+        and the production yields the RDF triple |curReifier| <code>rdf:reifies</code> |curTripleTerm|.
+        The |curSubject| is taken from the |curReifier|
+        Finishing the <a href="#grammar-production-annotationBlock"><code>annotationBlock</code></a> production
+        clears the value of the |curReifier|
+        and restores the |curTripleTerm|.</p>
+      <p class="note">If the |curReifier| was already set, the
+        reifying triple |curReifier| <code>rdf:reifies</code> |curTripleTerm|
+        was emitted in <a href="#reifier"></a>.</p>
+    </section>
+
+    <section id="propertyList">
+      <h4 style="padding-bottom:0; margin-bottom:0;">Property Lists</h4>
+
+      <p id="propertyList-tests" style="padding-top:0; margin-top:0;" data-tests="
+        ../../rdf11/rdf-trig/index.html#sole_blankNodePropertyList,
+        ../../rdf11/rdf-trig/index.html#blankNodePropertyList_as_subject,
+        ../../rdf11/rdf-trig/index.html#blankNodePropertyList_as_object,
+        ../../rdf11/rdf-trig/index.html#blankNodePropertyList_as_object_containing_objectList,
+        ../../rdf11/rdf-trig/index.html#blankNodePropertyList_as_object_containing_objectList_of_two_objects,
+        ../../rdf11/rdf-trig/index.html#blankNodePropertyList_with_multiple_triples,
+        ../../rdf11/rdf-trig/index.html#nested_blankNodePropertyLists,
+        ../../rdf11/rdf-trig/index.html#predicateObjectList_with_blankNodePropertyList_as_object">
+        Beginning the <a href="#grammar-production-blankNodePropertyList"><code>blankNodePropertyList</code></a> production records the |curSubject| and |curPredicate|, and sets |curSubject| to a novel <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a> <var>B</var>.
+        Finishing the <a href="#grammar-production-blankNodePropertyList"><code>blankNodePropertyList</code></a> production restores |curSubject| and |curPredicate|.
+        The node produced by matching <a href="#grammar-production-blankNodePropertyList"><code>blankNodePropertyList</code></a> is the blank node <var>B</var>.
+      </p>
+    </section>
+
+    <section id="collection">
+      <h4 style="padding-bottom:0; margin-bottom:0;"><span>Collections</span></h4>
+      <p id="collection-tests" style="padding-top:0; margin-top:0;" data-tests="
+        ../../rdf11/rdf-trig/index.html#collection_subject,
+        ../../rdf11/rdf-trig/index.html#collection_object,
+        ../../rdf11/rdf-trig/index.html#empty_collection,
+        ../../rdf11/rdf-trig/index.html#nested_collection,
+        ../../rdf11/rdf-trig/index.html#blankNodePropertyList_containing_collection">
+        Beginning the <a href="#grammar-production-collection"><code>collection</code></a> production records the |curSubject| and |curPredicate|.
+        Each <a href="#grammar-production-object"><code>object</code></a> in the <a href="#grammar-production-collection"><code>collection</code></a> production has a |curSubject| set to a novel <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a> <var>B</var> and a |curPredicate| set to <code>rdf:first</code>.
+        For each object <var>object<sub>n</sub></var> after the first produces a triple:<span class="ntriple"><var>object<sub>n-1</sub></var> <code>rdf:rest</code> <var>object<sub>n</sub></var> .</span>
+        Finishing the <a href="#grammar-production-collection"><code>collection</code></a> production creates an additional triple <span class="ntriple"><code>curSubject rdf:rest rdf:nil</code> .</span> and restores |curSubject| and |curPredicate|
+        The node produced by matching <a href="#grammar-production-collection"><code>collection</code></a> is the first blank node <var>B</var> for non-empty lists and <code>rdf:nil</code> for empty lists.
+      </p>
+    </section>
+  </section>
+</section>
+
+<section id="privacy-considerations" class="appendix informative">
+  <h2>Privacy Considerations</h2>
+  <p>The TriG format is used to express arbitrary application data,
+    which may include the expression of personally identifiable information (PII)
+    or other information which could be considered sensitive.
+    Authors publishing such information are advised to carefully
+    consider the needs and use of publishing such information,
+    as well as the applicable regulations for the regions where the data is
+    expected to be consumed and potentially revealed (e.g., 
+    <a href="https://gdpr.eu/">GDPR</a>, 
+    <a href="https://oag.ca.gov/privacy/ccpa">CCPA</a>,
+    <a href="https://termly.io/resources/infographics/privacy-laws-around-the-world/">others</a>),
+    particularly whether authorization measures are needed for access to the data.</p>
+</section>
+
+<section id="security" class="appendix informative">
+  <h2>Security Considerations</h2>
+
+  <p>The <a href="#grammar-production-STRING_LITERAL_SINGLE_QUOTE"><code>STRING_LITERAL_SINGLE_QUOTE</code></a>,
+    <a href="#grammar-production-STRING_LITERAL_QUOTE"><code>STRING_LITERAL_QUOTE</code></a>,
+    <a href="#grammar-production-STRING_LITERAL_LONG_SINGLE_QUOTE"><code>STRING_LITERAL_LONG_SINGLE_QUOTE</code></a>, and
+    <a href="#grammar-production-STRING_LITERAL_LONG_QUOTE"><code>STRING_LITERAL_LONG_QUOTE</code></a>,
+    productions allows the use of unescaped control characters.
+    Although this specification does not directly expose this content to an end user,
+    it might be presented through a user agent, which may cause the presented text to 
+    be obfuscated due to presentation of such characters.</p>
+
+  <p>TriG is a general-purpose assertion language;
+    applications may evaluate given data to infer more assertions or to dereference <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a>,
+    invoking the security considerations of the scheme for that IRI.
+    Note in particular, the privacy issues in [[RFC3023]] section 10 for HTTP IRIs.
+    Data obtained from an inaccurate or malicious data source may lead to inaccurate or misleading conclusions,
+    as well as the dereferencing of unintended IRIs.
+    Care must be taken to align the trust in consulted resources with the sensitivity of
+    the intended use of the data;
+    inferences of potential medical treatments would likely require different trust than inferences
+    for trip planning.</p>
+
+  <p>The TriG language is used to express arbitrary application data;
+    security considerations will vary by domain of use.
+    Security tools and protocols applicable to text
+    (for example, PGP encryption, checksum validation, password-protected compression)
+    may also be used on <a>TriG documents</a>.
+    Security/privacy protocols must be imposed which reflect the sensitivity of the embedded information.</p>
+
+  <p>TriG can express data which is presented to the user, such as RDF Schema labels.
+    Applications rendering strings retrieved from untrusted <a>TriG documents</a>,
+    or using unescaped characters,
+    SHOULD use warnings and other appropriate means to limit the possibility
+    that malignant strings might be used to mislead the reader.
+    The security considerations in the media type registration for XML ([[RFC3023]] section 10)
+    provide additional guidance around the expression of arbitrary data and markup.</p>
+
+  <p>TriG uses <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a> as term identifiers.
+    Applications interpreting data expressed in TriG SHOULD address the security issues of
+    [[[RFC3987]]] [[RFC3987]] Section 8, as well as
+    [[[RFC3986]]] [[RFC3986]] Section 7.</p>
+
+  <p>Multiple <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a> may have the same appearance.
+    Characters in different scripts may look similar (for instance,
+    a Cyrillic "&#1086;" (code point <code class="codepoint">U+043E</code>) may appear similar to a Latin "o" (code point <code class="codepoint">U+006F</code>)).
+    A character followed by combining characters may have the same visual representation
+    as another character (for example, LATIN SMALL LETTER "E" (code point <code class="codepoint">U+0065</code>)
+    followed by COMBINING ACUTE ACCENT (code point <code class="codepoint">U+0301</code>)
+    has the same visual representation as LATIN SMALL LETTER "E" WITH ACUTE
+    (<code class="codepoint">U+00E9</code>)).
+    <!-- (<code>foo:resum&#40751;code> and <code>f&#1086;&#1086;:resume&#769;</code>)-->
+    Any person or application that is writing or interpreting data in TriG
+    must take care to use the IRI that matches the intended semantics,
+    and avoid IRIs that may look similar.
+    Further information about matching visually similar characters can be found
+    in [[[UNICODE-SECURITY]]] [[UNICODE-SECURITY]] and
+    [[[RFC3987]]] [[RFC3987]] Section 8.</p>
+</section>
+
+<section id="sec-mediaReg" class="appendix">
+  <h2>Internet Media Type, File Extension and Macintosh File Type</h2>
+  <p>The Internet Media Type (formerly known as MIME Type) for TriG is &quot;application/trig&quot;.</p>
+  <p>It is recommended that TriG files have the extension &quot;.trig&quot; (all lowercase) on all platforms.</p>
+  <p>The information that follows has been submitted to the Internet Engineering Steering Group (IESG) for review, approval, and registration with IANA.</p>
+  <dl>
+    <dt>Type name:</dt>
+    <dd>application</dd>
+
+    <dt>Subtype name:</dt>
+    <dd>trig</dd>
+    <dt>Required parameters:</dt>
+    <dd>None</dd>
+    <dt>Optional parameters:</dt>
+    <dd>
+      <dl>
+        <dt><code>version</code></dt>
+        <dd>This parameter is optional.
+          If present, acceptable values of <code>version</code> are
+          defined in <a data-cite="RDF12-CONCEPTS#defined-version-labels">2.1 Version Labels</a> in [[RDF12-CONCEPTS]].
+        </dd>
+        <dt><code>profile</code></dt>
+        <dd>
+          This parameter is optional and is used to include additional information.
+          It does not change the semantics of the resource representation when processed
+          without knowledge of the profile.
+          The value of a profile parameter is a non-empty list of space-separated URIs.
+          For more information and background, please refer to [[RFC6906]].
+        </dd>
+      </dl>
+    </dd>
+
+    <dt>Encoding considerations:</dt>
+    <dd>The syntax of TriG is expressed over code points in Unicode [[!UNICODE]]. The encoding is always UTF-8 [[!UTF-8]].</dd>
+    <dd>Unicode code points may also be expressed using an \uXXXX (U+0000 to U+FFFF)
+      or \UXXXXXXXX syntax (for U+10000 onwards) where X is a hexadecimal digit [0-9A-Fa-f]</dd>
+    <dt>Security considerations:</dt>
+    <dd>See <a href="#security" class="sectionRef"></a>.</dd>
+    <dt>Interoperability considerations:</dt>
+    <dd>There are no known interoperability issues.</dd>
+    <dt>Published specification:</dt>
+    <dd>This specification.</dd>
+    <dt>Applications which use this media type:</dt>
+    <dd>TriG is used widely for representing RDF data.
+      There are implementations available in most common programming languages.</dd>
+    <dt>Additional information:</dt>
+    <dd>
+    <dl>
+    <dt>Magic number(s):</dt>
+    <dd>TriG documents may have the strings 'prefix' or 'base' (case
+      independent) near the beginning of the document.</dd>
+    <dt>File extension(s):</dt>
+    <dd>.trig</dd>
+    <dt>Macintosh file type code(s):</dt>
+    <dd>TEXT</dd>
+    </dl>
+
+    <dt>Base URI:</dt>
+    <dd>The TriG base directive can change the current base URI
+      for <a data-cite="RDF12-CONCEPTS#dfn-relative-iri">relative IRI references</a> in the language that are used sequentially
+      later in the document.</dd>
+    <dt>Person &amp; email address to contact for further information:</dt>
+
+    <dd>W3C RDF &amp; SPARQL Working Group &lt;public-rdf-star-wg@w3.org&gt;</dd>
+    <dt>Intended usage:</dt>
+    <dd>Common</dd>
+    <dt>Restrictions on usage:</dt>
+    <dd>None</dd>
+    <dt>Author(s):</dt>
+    <dd>The TriG specification is the product of the RDF &amp; SPARQL WG. The W3C reserves change control over this specifications.</dd>
+  </dl>
+
+  <div id="about-profile">
+    <div class="note">
+      <p>
+        The `profile` parameter may be used by clients to express their preferences
+        in the content negotiation process and by a server to indicate
+        additional information about the response.
+      </p>
+      <p>
+        If the `profile` parameter is given by a client, a server should
+        return a document that honors all the profiles in the list 
+        that are recognized by the server.
+        A server should not respond with an error solely based upon the profile value.
+      </p> 
+      <p>
+        If the `profile` parameter is given by a server, a client may choose to ignore it.
+      </p>
+    </div>
+    <div class="note">
+      <p>It is recommended that profile URIs be dereferenceable
+        and provide useful documentation at that URI.
+      </p>
+    </div>
+
+    <div class="note">
+      <p>
+        When used as a 
+        <a href="https://tools.ietf.org/html/rfc4288#section-4.3">media type parameter</a>
+        [[RFC4288]] in an
+        <a href="https://httpwg.org/specs/rfc7231.html#header.content-type">HTTP Content-Type header</a>
+        or an
+        <a href="https://httpwg.org/specs/rfc7231.html#header.accept">HTTP Accept header</a> 
+        [[RFC7231]] the value of the `profile` parameter will need to be enclosed in quotes (ASCII `"`)
+        if it contains special characters such as white space, including any space
+        used to separate multiple profile URIs.
+      </p>
+      <p>
+        It is important to note that the value of the `profile` parameter
+        contains one or more URIs and not IRIs. It might therefore be necessary
+        to convert between IRIs and URIs, as specified in
+        <a href="https://tools.ietf.org/html/rfc3986#section-5.1">section 3 Relationship between IRIs and URIs</a>
+        of [[RFC3987]].
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="Acknowledgments" class="informative">
+  <h2>Acknowledgments</h2>
+
+  <section class="informative">
+    <h3>Acknowledgments for RDF 1.1</h3>
+    <p>The editors gratefully acknowledge the work of Chris Bizer and
+      Richard Cyganiak in creating the original TriG specification.
+      Valuable contributions to this version were made by Gregg Kellogg, Eric
+      Prud'hommeaux and Sandro Hawke. </p>
+    <p>The document was improved through the review process by the wider community.</p>
+  </section>
+
+  <section class="informative">
+    <h3>Acknowledgments for RDF 1.2</h3>
+
+    <p>In addition to the editors, the following people have contributed to this specification:
+      <span id="gh-contributors"></span>
+    </p>
+
+    <p data-include="https://w3c.github.io/rdf-common/participants.html"></p>
+
+    <p class="ednote">Recognize members of the Task Force? Not an easy to find list of contributors.</p>
+  </section>
+</section>
+
+<section id="sec-changes" class="appendix informative">
+  <h2>Changes between RDF 1.1 and RDF 1.2</h2>
+
+ <p>This section describes the main differences
+   from the RDF 1.1 Recommendation.</p>
+
+  <ul>
+    <li>Syntax is aligned to the Turtle [[RDF12-TURTLE]] recommendation for <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF terms</a>.</li>
+    <li>Separated <a href="#security"></a> from <a href="#sec-mediaReg"></a>
+      and updated language.</li>
+    <li>Changes the `LANGTAG` terminal production to
+      <a href="#grammar-production-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a> to include
+      an optional <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>.</li>
+    <li>Added <a href="#triple-terms" class="sectionRef">Triple Terms</a> for representing 
+      <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a> in TriG.</li>
+    <li>Removed the `NIL` terminal production from the grammar, which was unused.</li>
+    <li>Added <a href="#sec-version"></a> and parser
+      state and productions to announce the RDF version
+      associated with the input document.
+      Note that this also includes a provision that `@version` does not match
+      <a href="#grammar-production-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a>;
+      the previous version of the grammar would allow such a match,
+      but would result in a literal with an ill-formed language tag according to [[BCP47]], and form an invalid literal.</li>
+    <li>Added the optional <code>profile</code> media type parameter
+      to allow clients and servers to convey additional profile information
+      for TriG representations without changing their semantics.</li>
+  </ul>
+</section>
+
+<section id="index"></section>
+</body>
+</html>

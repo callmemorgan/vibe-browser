@@ -1,0 +1,2912 @@
+<!doctype html>
+<head><meta charset="utf-8">
+<title>Intl Enumeration API Specification</title><script>'use strict';
+let sdoBox = {
+  init() {
+    this.$alternativeId = null;
+    this.$outer = document.createElement('div');
+    this.$outer.classList.add('toolbox-container');
+    this.$container = document.createElement('div');
+    this.$container.classList.add('toolbox');
+    this.$displayLink = document.createElement('a');
+    this.$displayLink.setAttribute('href', '#');
+    this.$displayLink.textContent = 'Syntax-Directed Operations';
+    this.$displayLink.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      referencePane.showSDOs(sdoMap[this.$alternativeId] || {}, this.$alternativeId);
+    });
+    this.$container.appendChild(this.$displayLink);
+    this.$outer.appendChild(this.$container);
+    document.body.appendChild(this.$outer);
+  },
+
+  activate(el) {
+    clearTimeout(this.deactiveTimeout);
+    Toolbox.deactivate();
+    this.$alternativeId = el.id;
+    let numSdos = Object.keys(sdoMap[this.$alternativeId] || {}).length;
+    this.$displayLink.textContent = 'Syntax-Directed Operations (' + numSdos + ')';
+    this.$outer.classList.add('active');
+    let top = el.offsetTop - this.$outer.offsetHeight;
+    let left = el.offsetLeft + 50 - 10; // 50px = padding-left(=75px) + text-indent(=-25px)
+    this.$outer.setAttribute('style', 'left: ' + left + 'px; top: ' + top + 'px');
+    if (top < document.body.scrollTop) {
+      this.$container.scrollIntoView();
+    }
+  },
+
+  deactivate() {
+    clearTimeout(this.deactiveTimeout);
+    this.$outer.classList.remove('active');
+  },
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof sdoMap == 'undefined') {
+    console.error('could not find sdo map');
+    return;
+  }
+  sdoBox.init();
+
+  let insideTooltip = false;
+  sdoBox.$outer.addEventListener('pointerenter', () => {
+    insideTooltip = true;
+  });
+  sdoBox.$outer.addEventListener('pointerleave', () => {
+    insideTooltip = false;
+    sdoBox.deactivate();
+  });
+
+  sdoBox.deactiveTimeout = null;
+  [].forEach.call(document.querySelectorAll('emu-grammar[type=definition] emu-rhs'), node => {
+    node.addEventListener('pointerenter', function () {
+      sdoBox.activate(this);
+    });
+
+    node.addEventListener('pointerleave', () => {
+      sdoBox.deactiveTimeout = setTimeout(() => {
+        if (!insideTooltip) {
+          sdoBox.deactivate();
+        }
+      }, 500);
+    });
+  });
+
+  document.addEventListener(
+    'keydown',
+    debounce(e => {
+      if (e.code === 'Escape') {
+        sdoBox.deactivate();
+      }
+    })
+  );
+});
+
+'use strict';
+function Search(menu) {
+  this.menu = menu;
+  this.$search = document.getElementById('menu-search');
+  this.$searchBox = document.getElementById('menu-search-box');
+  this.$searchResults = document.getElementById('menu-search-results');
+
+  this.loadBiblio();
+
+  document.addEventListener('keydown', this.documentKeydown.bind(this));
+
+  this.$searchBox.addEventListener(
+    'keydown',
+    debounce(this.searchBoxKeydown.bind(this), { stopPropagation: true })
+  );
+  this.$searchBox.addEventListener(
+    'keyup',
+    debounce(this.searchBoxKeyup.bind(this), { stopPropagation: true })
+  );
+
+  // Perform an initial search if the box is not empty.
+  if (this.$searchBox.value) {
+    this.search(this.$searchBox.value);
+  }
+}
+
+Search.prototype.loadBiblio = function () {
+  if (typeof biblio === 'undefined') {
+    console.error('could not find biblio');
+    this.biblio = { refToClause: {}, entries: [] };
+  } else {
+    this.biblio = biblio;
+    this.biblio.clauses = this.biblio.entries.filter(e => e.type === 'clause');
+    this.biblio.byId = this.biblio.entries.reduce((map, entry) => {
+      map[entry.id] = entry;
+      return map;
+    }, {});
+    let refParentClause = Object.create(null);
+    this.biblio.refParentClause = refParentClause;
+    let refsByClause = this.biblio.refsByClause;
+    Object.keys(refsByClause).forEach(clause => {
+      refsByClause[clause].forEach(ref => {
+        refParentClause[ref] = clause;
+      });
+    });
+  }
+};
+
+Search.prototype.documentKeydown = function (e) {
+  if (e.key === '/') {
+    e.preventDefault();
+    e.stopPropagation();
+    this.triggerSearch();
+  }
+};
+
+Search.prototype.searchBoxKeydown = function (e) {
+  e.stopPropagation();
+  e.preventDefault();
+  if (e.keyCode === 191 && e.target.value.length === 0) {
+    e.preventDefault();
+  } else if (e.keyCode === 13) {
+    e.preventDefault();
+    this.selectResult();
+  }
+};
+
+Search.prototype.searchBoxKeyup = function (e) {
+  if (e.keyCode === 13 || e.keyCode === 9) {
+    return;
+  }
+
+  this.search(e.target.value);
+};
+
+Search.prototype.triggerSearch = function () {
+  if (this.menu.isVisible()) {
+    this._closeAfterSearch = false;
+  } else {
+    this._closeAfterSearch = true;
+    this.menu.show();
+  }
+
+  this.$searchBox.focus();
+  this.$searchBox.select();
+};
+// bit 12 - Set if the result starts with searchString
+// bits 8-11: 8 - number of chunks multiplied by 2 if cases match, otherwise 1.
+// bits 1-7: 127 - length of the entry
+// General scheme: prefer case sensitive matches with fewer chunks, and otherwise
+// prefer shorter matches.
+function relevance(result) {
+  let relevance = 0;
+
+  relevance = Math.max(0, 8 - result.match.chunks) << 7;
+
+  if (result.match.caseMatch) {
+    relevance *= 2;
+  }
+
+  if (result.match.prefix) {
+    relevance += 2048;
+  }
+
+  relevance += Math.max(0, 255 - result.key.length);
+
+  return relevance;
+}
+
+Search.prototype.search = function (searchString) {
+  if (searchString === '') {
+    this.displayResults([]);
+    this.hideSearch();
+    return;
+  } else {
+    this.showSearch();
+  }
+
+  if (searchString.length === 1) {
+    this.displayResults([]);
+    return;
+  }
+
+  let results;
+
+  if (/^[\d.]*$/.test(searchString)) {
+    results = this.biblio.clauses
+      .filter(clause => clause.number.substring(0, searchString.length) === searchString)
+      .map(clause => ({ key: getKey(clause), entry: clause }));
+  } else {
+    results = [];
+
+    for (let i = 0; i < this.biblio.entries.length; i++) {
+      let entry = this.biblio.entries[i];
+      let key = getKey(entry);
+      if (!key) {
+        // biblio entries without a key aren't searchable
+        continue;
+      }
+
+      let match = fuzzysearch(searchString, key);
+      if (match) {
+        results.push({ key, entry, match });
+      }
+    }
+
+    results.forEach(result => {
+      result.relevance = relevance(result, searchString);
+    });
+
+    results = results.sort((a, b) => b.relevance - a.relevance);
+  }
+
+  if (results.length > 50) {
+    results = results.slice(0, 50);
+  }
+
+  this.displayResults(results);
+};
+Search.prototype.hideSearch = function () {
+  this.$search.classList.remove('active');
+};
+
+Search.prototype.showSearch = function () {
+  this.$search.classList.add('active');
+};
+
+Search.prototype.selectResult = function () {
+  let $first = this.$searchResults.querySelector('li:first-child a');
+
+  if ($first) {
+    document.location = $first.getAttribute('href');
+  }
+
+  this.$searchBox.value = '';
+  this.$searchBox.blur();
+  this.displayResults([]);
+  this.hideSearch();
+
+  if (this._closeAfterSearch) {
+    this.menu.hide();
+  }
+};
+
+Search.prototype.displayResults = function (results) {
+  if (results.length > 0) {
+    this.$searchResults.classList.remove('no-results');
+
+    let html = '<ul>';
+
+    results.forEach(result => {
+      let key = result.key;
+      let entry = result.entry;
+      let id = entry.id;
+      let cssClass = '';
+      let text = '';
+
+      if (entry.type === 'clause') {
+        let number = entry.number ? entry.number + ' ' : '';
+        text = number + key;
+        cssClass = 'clause';
+        id = entry.id;
+      } else if (entry.type === 'production') {
+        text = key;
+        cssClass = 'prod';
+        id = entry.id;
+      } else if (entry.type === 'op') {
+        text = key;
+        cssClass = 'op';
+        id = entry.id || entry.refId;
+      } else if (entry.type === 'term') {
+        text = key;
+        cssClass = 'term';
+        id = entry.id || entry.refId;
+      }
+
+      if (text) {
+        // prettier-ignore
+        html += `<li class=menu-search-result-${cssClass}><a href="${makeLinkToId(id)}">${text}</a></li>`;
+      }
+    });
+
+    html += '</ul>';
+
+    this.$searchResults.innerHTML = html;
+  } else {
+    this.$searchResults.innerHTML = '';
+    this.$searchResults.classList.add('no-results');
+  }
+};
+
+function getKey(item) {
+  if (item.key) {
+    return item.key;
+  }
+  switch (item.type) {
+    case 'clause':
+      return item.title || item.titleHTML;
+    case 'production':
+      return item.name;
+    case 'op':
+      return item.aoid;
+    case 'term':
+      return item.term;
+    case 'table':
+    case 'figure':
+    case 'example':
+    case 'note':
+      return item.caption;
+    case 'step':
+      return item.id;
+    default:
+      throw new Error("Can't get key for " + item.type);
+  }
+}
+
+function Menu() {
+  this.$toggle = document.getElementById('menu-toggle');
+  this.$menu = document.getElementById('menu');
+  this.$toc = document.querySelector('menu-toc > ol');
+  this.$pins = document.querySelector('#menu-pins');
+  this.$pinList = document.getElementById('menu-pins-list');
+  this.$toc = document.querySelector('#menu-toc > ol');
+  this.$specContainer = document.getElementById('spec-container');
+  this.search = new Search(this);
+
+  this._pinnedIds = {};
+  this.loadPinEntries();
+
+  // toggle menu
+  this.$toggle.addEventListener('click', this.toggle.bind(this));
+
+  // keydown events for pinned clauses
+  document.addEventListener('keydown', this.documentKeydown.bind(this));
+
+  // toc expansion
+  let tocItems = this.$menu.querySelectorAll('#menu-toc li');
+  for (let i = 0; i < tocItems.length; i++) {
+    let $item = tocItems[i];
+    $item.addEventListener('click', event => {
+      $item.classList.toggle('active');
+      event.stopPropagation();
+    });
+  }
+
+  // close toc on toc item selection
+  let tocLinks = this.$menu.querySelectorAll('#menu-toc li > a');
+  for (let i = 0; i < tocLinks.length; i++) {
+    let $link = tocLinks[i];
+    $link.addEventListener('click', event => {
+      this.toggle();
+      event.stopPropagation();
+    });
+  }
+
+  // update active clause on scroll
+  window.addEventListener('scroll', debounce(this.updateActiveClause.bind(this)));
+  this.updateActiveClause();
+
+  // prevent menu scrolling from scrolling the body
+  this.$toc.addEventListener('wheel', e => {
+    let target = e.currentTarget;
+    let offTop = e.deltaY < 0 && target.scrollTop === 0;
+    if (offTop) {
+      e.preventDefault();
+    }
+    let offBottom = e.deltaY > 0 && target.offsetHeight + target.scrollTop >= target.scrollHeight;
+
+    if (offBottom) {
+      e.preventDefault();
+    }
+  });
+}
+
+Menu.prototype.documentKeydown = function (e) {
+  e.stopPropagation();
+  if (e.keyCode === 80) {
+    this.togglePinEntry();
+  } else if (e.keyCode > 48 && e.keyCode < 58) {
+    this.selectPin(e.keyCode - 49);
+  }
+};
+
+Menu.prototype.updateActiveClause = function () {
+  this.setActiveClause(findActiveClause(this.$specContainer));
+};
+
+Menu.prototype.setActiveClause = function (clause) {
+  this.$activeClause = clause;
+  this.revealInToc(this.$activeClause);
+};
+
+Menu.prototype.revealInToc = function (path) {
+  let current = this.$toc.querySelectorAll('li.revealed');
+  for (let i = 0; i < current.length; i++) {
+    current[i].classList.remove('revealed');
+    current[i].classList.remove('revealed-leaf');
+  }
+
+  current = this.$toc;
+  let index = 0;
+  outer: while (index < path.length) {
+    let children = current.children;
+    for (let i = 0; i < children.length; i++) {
+      if ('#' + path[index].id === children[i].children[1].hash) {
+        children[i].classList.add('revealed');
+        if (index === path.length - 1) {
+          children[i].classList.add('revealed-leaf');
+          let rect = children[i].getBoundingClientRect();
+          // this.$toc.getBoundingClientRect().top;
+          let tocRect = this.$toc.getBoundingClientRect();
+          if (rect.top + 10 > tocRect.bottom) {
+            this.$toc.scrollTop =
+              this.$toc.scrollTop + (rect.top - tocRect.bottom) + (rect.bottom - rect.top);
+          } else if (rect.top < tocRect.top) {
+            this.$toc.scrollTop = this.$toc.scrollTop - (tocRect.top - rect.top);
+          }
+        }
+        current = children[i].querySelector('ol');
+        index++;
+        continue outer;
+      }
+    }
+    console.log('could not find location in table of contents', path);
+    break;
+  }
+};
+
+function findActiveClause(root, path) {
+  let clauses = getChildClauses(root);
+  path = path || [];
+
+  for (let $clause of clauses) {
+    let rect = $clause.getBoundingClientRect();
+    let $header = $clause.querySelector('h1');
+    let marginTop = Math.max(
+      parseInt(getComputedStyle($clause)['margin-top']),
+      parseInt(getComputedStyle($header)['margin-top'])
+    );
+
+    if (rect.top - marginTop <= 1 && rect.bottom > 0) {
+      return findActiveClause($clause, path.concat($clause)) || path;
+    }
+  }
+
+  return path;
+}
+
+function* getChildClauses(root) {
+  for (let el of root.children) {
+    switch (el.nodeName) {
+      // descend into <emu-import>
+      case 'EMU-IMPORT':
+        yield* getChildClauses(el);
+        break;
+
+      // accept <emu-clause>, <emu-intro>, and <emu-annex>
+      case 'EMU-CLAUSE':
+      case 'EMU-INTRO':
+      case 'EMU-ANNEX':
+        yield el;
+    }
+  }
+}
+
+Menu.prototype.toggle = function () {
+  this.$menu.classList.toggle('active');
+};
+
+Menu.prototype.show = function () {
+  this.$menu.classList.add('active');
+};
+
+Menu.prototype.hide = function () {
+  this.$menu.classList.remove('active');
+};
+
+Menu.prototype.isVisible = function () {
+  return this.$menu.classList.contains('active');
+};
+
+Menu.prototype.showPins = function () {
+  this.$pins.classList.add('active');
+};
+
+Menu.prototype.hidePins = function () {
+  this.$pins.classList.remove('active');
+};
+
+Menu.prototype.addPinEntry = function (id) {
+  let entry = this.search.biblio.byId[id];
+  if (!entry) {
+    // id was deleted after pin (or something) so remove it
+    delete this._pinnedIds[id];
+    this.persistPinEntries();
+    return;
+  }
+
+  if (entry.type === 'clause') {
+    let prefix;
+    if (entry.number) {
+      prefix = entry.number + ' ';
+    } else {
+      prefix = '';
+    }
+    // prettier-ignore
+    this.$pinList.innerHTML += `<li><a href="${makeLinkToId(entry.id)}">${prefix}${entry.titleHTML}</a></li>`;
+  } else {
+    this.$pinList.innerHTML += `<li><a href="${makeLinkToId(entry.id)}">${getKey(entry)}</a></li>`;
+  }
+
+  if (Object.keys(this._pinnedIds).length === 0) {
+    this.showPins();
+  }
+  this._pinnedIds[id] = true;
+  this.persistPinEntries();
+};
+
+Menu.prototype.removePinEntry = function (id) {
+  let item = this.$pinList.querySelector(`a[href="${makeLinkToId(id)}"]`).parentNode;
+  this.$pinList.removeChild(item);
+  delete this._pinnedIds[id];
+  if (Object.keys(this._pinnedIds).length === 0) {
+    this.hidePins();
+  }
+
+  this.persistPinEntries();
+};
+
+Menu.prototype.persistPinEntries = function () {
+  try {
+    if (!window.localStorage) return;
+  } catch (e) {
+    return;
+  }
+
+  localStorage.pinEntries = JSON.stringify(Object.keys(this._pinnedIds));
+};
+
+Menu.prototype.loadPinEntries = function () {
+  try {
+    if (!window.localStorage) return;
+  } catch (e) {
+    return;
+  }
+
+  let pinsString = window.localStorage.pinEntries;
+  if (!pinsString) return;
+  let pins = JSON.parse(pinsString);
+  for (let i = 0; i < pins.length; i++) {
+    this.addPinEntry(pins[i]);
+  }
+};
+
+Menu.prototype.togglePinEntry = function (id) {
+  if (!id) {
+    id = this.$activeClause[this.$activeClause.length - 1].id;
+  }
+
+  if (this._pinnedIds[id]) {
+    this.removePinEntry(id);
+  } else {
+    this.addPinEntry(id);
+  }
+};
+
+Menu.prototype.selectPin = function (num) {
+  document.location = this.$pinList.children[num].children[0].href;
+};
+
+let menu;
+
+document.addEventListener('DOMContentLoaded', init);
+
+function debounce(fn, opts) {
+  opts = opts || {};
+  let timeout;
+  return function (e) {
+    if (opts.stopPropagation) {
+      e.stopPropagation();
+    }
+    let args = arguments;
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      timeout = null;
+      fn.apply(this, args);
+    }, 150);
+  };
+}
+
+let CLAUSE_NODES = ['EMU-CLAUSE', 'EMU-INTRO', 'EMU-ANNEX'];
+function findContainer($elem) {
+  let parentClause = $elem.parentNode;
+  while (parentClause && CLAUSE_NODES.indexOf(parentClause.nodeName) === -1) {
+    parentClause = parentClause.parentNode;
+  }
+  return parentClause;
+}
+
+function findLocalReferences(parentClause, name) {
+  let vars = parentClause.querySelectorAll('var');
+  let references = [];
+
+  for (let i = 0; i < vars.length; i++) {
+    let $var = vars[i];
+
+    if ($var.innerHTML === name) {
+      references.push($var);
+    }
+  }
+
+  return references;
+}
+
+let REFERENCED_CLASSES = Array.from({ length: 7 }, (x, i) => `referenced${i}`);
+function chooseHighlightIndex(parentClause) {
+  let counts = REFERENCED_CLASSES.map($class => parentClause.getElementsByClassName($class).length);
+  // Find the earliest index with the lowest count.
+  let minCount = Infinity;
+  let index = null;
+  for (let i = 0; i < counts.length; i++) {
+    if (counts[i] < minCount) {
+      minCount = counts[i];
+      index = i;
+    }
+  }
+  return index;
+}
+
+function toggleFindLocalReferences($elem) {
+  let parentClause = findContainer($elem);
+  let references = findLocalReferences(parentClause, $elem.innerHTML);
+  if ($elem.classList.contains('referenced')) {
+    references.forEach($reference => {
+      $reference.classList.remove('referenced', ...REFERENCED_CLASSES);
+    });
+  } else {
+    let index = chooseHighlightIndex(parentClause);
+    references.forEach($reference => {
+      $reference.classList.add('referenced', `referenced${index}`);
+    });
+  }
+}
+
+function installFindLocalReferences() {
+  document.addEventListener('click', e => {
+    if (e.target.nodeName === 'VAR') {
+      toggleFindLocalReferences(e.target);
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', installFindLocalReferences);
+
+// The following license applies to the fuzzysearch function
+// The MIT License (MIT)
+// Copyright © 2015 Nicolas Bevacqua
+// Copyright © 2016 Brian Terlson
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+// the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+function fuzzysearch(searchString, haystack, caseInsensitive) {
+  let tlen = haystack.length;
+  let qlen = searchString.length;
+  let chunks = 1;
+  let finding = false;
+
+  if (qlen > tlen) {
+    return false;
+  }
+
+  if (qlen === tlen) {
+    if (searchString === haystack) {
+      return { caseMatch: true, chunks: 1, prefix: true };
+    } else if (searchString.toLowerCase() === haystack.toLowerCase()) {
+      return { caseMatch: false, chunks: 1, prefix: true };
+    } else {
+      return false;
+    }
+  }
+
+  let j = 0;
+  outer: for (let i = 0; i < qlen; i++) {
+    let nch = searchString[i];
+    while (j < tlen) {
+      let targetChar = haystack[j++];
+      if (targetChar === nch) {
+        finding = true;
+        continue outer;
+      }
+      if (finding) {
+        chunks++;
+        finding = false;
+      }
+    }
+
+    if (caseInsensitive) {
+      return false;
+    }
+
+    return fuzzysearch(searchString.toLowerCase(), haystack.toLowerCase(), true);
+  }
+
+  return { caseMatch: !caseInsensitive, chunks, prefix: j <= qlen };
+}
+
+let referencePane = {
+  init() {
+    this.$container = document.createElement('div');
+    this.$container.setAttribute('id', 'references-pane-container');
+
+    let $spacer = document.createElement('div');
+    $spacer.setAttribute('id', 'references-pane-spacer');
+    $spacer.classList.add('menu-spacer');
+
+    this.$pane = document.createElement('div');
+    this.$pane.setAttribute('id', 'references-pane');
+
+    this.$container.appendChild($spacer);
+    this.$container.appendChild(this.$pane);
+
+    this.$header = document.createElement('div');
+    this.$header.classList.add('menu-pane-header');
+    this.$headerText = document.createElement('span');
+    this.$header.appendChild(this.$headerText);
+    this.$headerRefId = document.createElement('a');
+    this.$header.appendChild(this.$headerRefId);
+    this.$closeButton = document.createElement('span');
+    this.$closeButton.setAttribute('id', 'references-pane-close');
+    this.$closeButton.addEventListener('click', () => {
+      this.deactivate();
+    });
+    this.$header.appendChild(this.$closeButton);
+
+    this.$pane.appendChild(this.$header);
+    let tableContainer = document.createElement('div');
+    tableContainer.setAttribute('id', 'references-pane-table-container');
+
+    this.$table = document.createElement('table');
+    this.$table.setAttribute('id', 'references-pane-table');
+
+    this.$tableBody = this.$table.createTBody();
+
+    tableContainer.appendChild(this.$table);
+    this.$pane.appendChild(tableContainer);
+
+    menu.$specContainer.appendChild(this.$container);
+  },
+
+  activate() {
+    this.$container.classList.add('active');
+  },
+
+  deactivate() {
+    this.$container.classList.remove('active');
+    this.state = null;
+  },
+
+  showReferencesFor(entry) {
+    this.activate();
+    this.state = { type: 'ref', id: entry.id };
+    this.$headerText.textContent = 'References to ';
+    let newBody = document.createElement('tbody');
+    let previousId;
+    let previousCell;
+    let dupCount = 0;
+    this.$headerRefId.textContent = '#' + entry.id;
+    this.$headerRefId.setAttribute('href', makeLinkToId(entry.id));
+    this.$headerRefId.style.display = 'inline';
+    (entry.referencingIds || [])
+      .map(id => {
+        let cid = menu.search.biblio.refParentClause[id];
+        let clause = menu.search.biblio.byId[cid];
+        if (clause == null) {
+          throw new Error('could not find clause for id ' + cid);
+        }
+        return { id, clause };
+      })
+      .sort((a, b) => sortByClauseNumber(a.clause, b.clause))
+      .forEach(record => {
+        if (previousId === record.clause.id) {
+          previousCell.innerHTML += ` (<a href="${makeLinkToId(record.id)}">${dupCount + 2}</a>)`;
+          dupCount++;
+        } else {
+          let row = newBody.insertRow();
+          let cell = row.insertCell();
+          cell.innerHTML = record.clause.number;
+          cell = row.insertCell();
+          cell.innerHTML = `<a href="${makeLinkToId(record.id)}">${record.clause.titleHTML}</a>`;
+          previousCell = cell;
+          previousId = record.clause.id;
+          dupCount = 0;
+        }
+      }, this);
+    this.$table.removeChild(this.$tableBody);
+    this.$tableBody = newBody;
+    this.$table.appendChild(this.$tableBody);
+  },
+
+  showSDOs(sdos, alternativeId) {
+    let rhs = document.getElementById(alternativeId);
+    let parentName = rhs.parentNode.getAttribute('name');
+    let colons = rhs.parentNode.querySelector('emu-geq');
+    rhs = rhs.cloneNode(true);
+    rhs.querySelectorAll('emu-params,emu-constraints').forEach(e => {
+      e.remove();
+    });
+    rhs.querySelectorAll('[id]').forEach(e => {
+      e.removeAttribute('id');
+    });
+    rhs.querySelectorAll('a').forEach(e => {
+      e.parentNode.replaceChild(document.createTextNode(e.textContent), e);
+    });
+
+    // prettier-ignore
+    this.$headerText.innerHTML = `Syntax-Directed Operations for<br><a href="${makeLinkToId(alternativeId)}" class="menu-pane-header-production"><emu-nt>${parentName}</emu-nt> ${colons.outerHTML} </a>`;
+    this.$headerText.querySelector('a').append(rhs);
+    this.showSDOsBody(sdos, alternativeId);
+  },
+
+  showSDOsBody(sdos, alternativeId) {
+    this.activate();
+    this.state = { type: 'sdo', id: alternativeId, html: this.$headerText.innerHTML };
+    this.$headerRefId.style.display = 'none';
+    let newBody = document.createElement('tbody');
+    Object.keys(sdos).forEach(sdoName => {
+      let pair = sdos[sdoName];
+      let clause = pair.clause;
+      let ids = pair.ids;
+      let first = ids[0];
+      let row = newBody.insertRow();
+      let cell = row.insertCell();
+      cell.innerHTML = clause;
+      cell = row.insertCell();
+      let html = '<a href="' + makeLinkToId(first) + '">' + sdoName + '</a>';
+      for (let i = 1; i < ids.length; ++i) {
+        html += ' (<a href="' + makeLinkToId(ids[i]) + '">' + (i + 1) + '</a>)';
+      }
+      cell.innerHTML = html;
+    });
+    this.$table.removeChild(this.$tableBody);
+    this.$tableBody = newBody;
+    this.$table.appendChild(this.$tableBody);
+  },
+};
+
+let Toolbox = {
+  init() {
+    this.$outer = document.createElement('div');
+    this.$outer.classList.add('toolbox-container');
+    this.$container = document.createElement('div');
+    this.$container.classList.add('toolbox');
+    this.$outer.appendChild(this.$container);
+    this.$permalink = document.createElement('a');
+    this.$permalink.textContent = 'Permalink';
+    this.$pinLink = document.createElement('a');
+    this.$pinLink.textContent = 'Pin';
+    this.$pinLink.setAttribute('href', '#');
+    this.$pinLink.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      menu.togglePinEntry(this.entry.id);
+      this.$pinLink.textContent = menu._pinnedIds[this.entry.id] ? 'Unpin' : 'Pin';
+    });
+
+    this.$refsLink = document.createElement('a');
+    this.$refsLink.setAttribute('href', '#');
+    this.$refsLink.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      referencePane.showReferencesFor(this.entry);
+    });
+    this.$container.appendChild(this.$permalink);
+    this.$container.appendChild(this.$pinLink);
+    this.$container.appendChild(this.$refsLink);
+    document.body.appendChild(this.$outer);
+  },
+
+  activate(el, entry, target) {
+    if (el === this._activeEl) return;
+    sdoBox.deactivate();
+    this.active = true;
+    this.entry = entry;
+    this.$pinLink.textContent = menu._pinnedIds[entry.id] ? 'Unpin' : 'Pin';
+    this.$outer.classList.add('active');
+    this.top = el.offsetTop - this.$outer.offsetHeight;
+    this.left = el.offsetLeft - 10;
+    this.$outer.setAttribute('style', 'left: ' + this.left + 'px; top: ' + this.top + 'px');
+    this.updatePermalink();
+    this.updateReferences();
+    this._activeEl = el;
+    if (this.top < document.body.scrollTop && el === target) {
+      // don't scroll unless it's a small thing (< 200px)
+      this.$outer.scrollIntoView();
+    }
+  },
+
+  updatePermalink() {
+    this.$permalink.setAttribute('href', makeLinkToId(this.entry.id));
+  },
+
+  updateReferences() {
+    this.$refsLink.textContent = `References (${(this.entry.referencingIds || []).length})`;
+  },
+
+  activateIfMouseOver(e) {
+    let ref = this.findReferenceUnder(e.target);
+    if (ref && (!this.active || e.pageY > this._activeEl.offsetTop)) {
+      let entry = menu.search.biblio.byId[ref.id];
+      this.activate(ref.element, entry, e.target);
+    } else if (
+      this.active &&
+      (e.pageY < this.top || e.pageY > this._activeEl.offsetTop + this._activeEl.offsetHeight)
+    ) {
+      this.deactivate();
+    }
+  },
+
+  findReferenceUnder(el) {
+    while (el) {
+      let parent = el.parentNode;
+      if (el.nodeName === 'EMU-RHS' || el.nodeName === 'EMU-PRODUCTION') {
+        return null;
+      }
+      if (
+        el.nodeName === 'H1' &&
+        parent.nodeName.match(/EMU-CLAUSE|EMU-ANNEX|EMU-INTRO/) &&
+        parent.id
+      ) {
+        return { element: el, id: parent.id };
+      } else if (el.nodeName === 'EMU-NT') {
+        if (
+          parent.nodeName === 'EMU-PRODUCTION' &&
+          parent.id &&
+          parent.id[0] !== '_' &&
+          parent.firstElementChild === el
+        ) {
+          // return the LHS non-terminal element
+          return { element: el, id: parent.id };
+        }
+        return null;
+      } else if (
+        el.nodeName.match(/EMU-(?!CLAUSE|XREF|ANNEX|INTRO)|DFN/) &&
+        el.id &&
+        el.id[0] !== '_'
+      ) {
+        if (
+          el.nodeName === 'EMU-FIGURE' ||
+          el.nodeName === 'EMU-TABLE' ||
+          el.nodeName === 'EMU-EXAMPLE'
+        ) {
+          // return the figcaption element
+          return { element: el.children[0].children[0], id: el.id };
+        } else {
+          return { element: el, id: el.id };
+        }
+      }
+      el = parent;
+    }
+  },
+
+  deactivate() {
+    this.$outer.classList.remove('active');
+    this._activeEl = null;
+    this.active = false;
+  },
+};
+
+function sortByClauseNumber(clause1, clause2) {
+  let c1c = clause1.number.split('.');
+  let c2c = clause2.number.split('.');
+
+  for (let i = 0; i < c1c.length; i++) {
+    if (i >= c2c.length) {
+      return 1;
+    }
+
+    let c1 = c1c[i];
+    let c2 = c2c[i];
+    let c1cn = Number(c1);
+    let c2cn = Number(c2);
+
+    if (Number.isNaN(c1cn) && Number.isNaN(c2cn)) {
+      if (c1 > c2) {
+        return 1;
+      } else if (c1 < c2) {
+        return -1;
+      }
+    } else if (!Number.isNaN(c1cn) && Number.isNaN(c2cn)) {
+      return -1;
+    } else if (Number.isNaN(c1cn) && !Number.isNaN(c2cn)) {
+      return 1;
+    } else if (c1cn > c2cn) {
+      return 1;
+    } else if (c1cn < c2cn) {
+      return -1;
+    }
+  }
+
+  if (c1c.length === c2c.length) {
+    return 0;
+  }
+  return -1;
+}
+
+function makeLinkToId(id) {
+  let hash = '#' + id;
+  if (typeof idToSection === 'undefined' || !idToSection[id]) {
+    return hash;
+  }
+  let targetSec = idToSection[id];
+  return (targetSec === 'index' ? './' : targetSec + '.html') + hash;
+}
+
+function doShortcut(e) {
+  if (!(e.target instanceof HTMLElement)) {
+    return;
+  }
+  let target = e.target;
+  let name = target.nodeName.toLowerCase();
+  if (name === 'textarea' || name === 'input' || name === 'select' || target.isContentEditable) {
+    return;
+  }
+  if (e.altKey || e.ctrlKey || e.metaKey) {
+    return;
+  }
+  if (e.key === 'm' && usesMultipage) {
+    let pathParts = location.pathname.split('/');
+    let hash = location.hash;
+    if (pathParts[pathParts.length - 2] === 'multipage') {
+      if (hash === '') {
+        let sectionName = pathParts[pathParts.length - 1];
+        if (sectionName.endsWith('.html')) {
+          sectionName = sectionName.slice(0, -5);
+        }
+        if (idToSection['sec-' + sectionName] !== undefined) {
+          hash = '#sec-' + sectionName;
+        }
+      }
+      location = pathParts.slice(0, -2).join('/') + '/' + hash;
+    } else {
+      location = 'multipage/' + hash;
+    }
+  } else if (e.key === 'u') {
+    document.documentElement.classList.toggle('show-ao-annotations');
+  } else if (e.key === '?') {
+    document.getElementById('shortcuts-help').classList.toggle('active');
+  }
+}
+
+function init() {
+  menu = new Menu();
+  let $container = document.getElementById('spec-container');
+  $container.addEventListener(
+    'mouseover',
+    debounce(e => {
+      Toolbox.activateIfMouseOver(e);
+    })
+  );
+  document.addEventListener(
+    'keydown',
+    debounce(e => {
+      if (e.code === 'Escape') {
+        if (Toolbox.active) {
+          Toolbox.deactivate();
+        }
+        document.getElementById('shortcuts-help').classList.remove('active');
+      }
+    })
+  );
+}
+
+document.addEventListener('keypress', doShortcut);
+
+document.addEventListener('DOMContentLoaded', () => {
+  Toolbox.init();
+  referencePane.init();
+});
+
+// preserve state during navigation
+
+function getTocPath(li) {
+  let path = [];
+  let pointer = li;
+  while (true) {
+    let parent = pointer.parentElement;
+    if (parent == null) {
+      return null;
+    }
+    let index = [].indexOf.call(parent.children, pointer);
+    if (index == -1) {
+      return null;
+    }
+    path.unshift(index);
+    pointer = parent.parentElement;
+    if (pointer == null) {
+      return null;
+    }
+    if (pointer.id === 'menu-toc') {
+      break;
+    }
+    if (pointer.tagName !== 'LI') {
+      return null;
+    }
+  }
+  return path;
+}
+
+function activateTocPath(path) {
+  try {
+    let pointer = document.getElementById('menu-toc');
+    for (let index of path) {
+      pointer = pointer.querySelector('ol').children[index];
+    }
+    pointer.classList.add('active');
+  } catch (e) {
+    // pass
+  }
+}
+
+function getActiveTocPaths() {
+  return [...menu.$menu.querySelectorAll('.active')].map(getTocPath).filter(p => p != null);
+}
+
+function loadStateFromSessionStorage() {
+  if (!window.sessionStorage || typeof menu === 'undefined' || window.navigating) {
+    return;
+  }
+  if (sessionStorage.referencePaneState != null) {
+    let state = JSON.parse(sessionStorage.referencePaneState);
+    if (state != null) {
+      if (state.type === 'ref') {
+        let entry = menu.search.biblio.byId[state.id];
+        if (entry != null) {
+          referencePane.showReferencesFor(entry);
+        }
+      } else if (state.type === 'sdo') {
+        let sdos = sdoMap[state.id];
+        if (sdos != null) {
+          referencePane.$headerText.innerHTML = state.html;
+          referencePane.showSDOsBody(sdos, state.id);
+        }
+      }
+      delete sessionStorage.referencePaneState;
+    }
+  }
+
+  if (sessionStorage.activeTocPaths != null) {
+    document
+      .getElementById('menu-toc')
+      .querySelectorAll('.active')
+      .forEach(e => {
+        e.classList.remove('active');
+      });
+    let active = JSON.parse(sessionStorage.activeTocPaths);
+    active.forEach(activateTocPath);
+    delete sessionStorage.activeTocPaths;
+  }
+
+  if (sessionStorage.searchValue != null) {
+    let value = JSON.parse(sessionStorage.searchValue);
+    menu.search.$searchBox.value = value;
+    menu.search.search(value);
+    delete sessionStorage.searchValue;
+  }
+
+  if (sessionStorage.tocScroll != null) {
+    let tocScroll = JSON.parse(sessionStorage.tocScroll);
+    menu.$toc.scrollTop = tocScroll;
+    delete sessionStorage.tocScroll;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadStateFromSessionStorage);
+
+window.addEventListener('pageshow', loadStateFromSessionStorage);
+
+window.addEventListener('beforeunload', () => {
+  if (!window.sessionStorage || typeof menu === 'undefined') {
+    return;
+  }
+  sessionStorage.referencePaneState = JSON.stringify(referencePane.state || null);
+  sessionStorage.activeTocPaths = JSON.stringify(getActiveTocPaths());
+  sessionStorage.searchValue = JSON.stringify(menu.search.$searchBox.value);
+  sessionStorage.tocScroll = JSON.stringify(menu.$toc.scrollTop);
+});
+
+'use strict';
+let decimalBullet = Array.from({ length: 100 }, (a, i) => '' + (i + 1));
+let alphaBullet = Array.from({ length: 26 }, (a, i) => String.fromCharCode('a'.charCodeAt(0) + i));
+
+// prettier-ignore
+let romanBullet = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv', 'xvi', 'xvii', 'xviii', 'xix', 'xx', 'xxi', 'xxii', 'xxiii', 'xxiv', 'xxv'];
+// prettier-ignore
+let bullets = [decimalBullet, alphaBullet, romanBullet, decimalBullet, alphaBullet, romanBullet];
+
+function addStepNumberText(ol, parentIndex) {
+  for (let i = 0; i < ol.children.length; ++i) {
+    let child = ol.children[i];
+    let index = parentIndex.concat([i]);
+    let applicable = bullets[Math.min(index.length - 1, 5)];
+    let span = document.createElement('span');
+    span.textContent = (applicable[i] || '?') + '. ';
+    span.style.fontSize = '0';
+    span.setAttribute('aria-hidden', 'true');
+    child.prepend(span);
+    let sublist = child.querySelector('ol');
+    if (sublist != null) {
+      addStepNumberText(sublist, index);
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('emu-alg > ol').forEach(ol => {
+    addStepNumberText(ol, []);
+  });
+});
+
+let sdoMap = JSON.parse(`{}`);
+let biblio = JSON.parse(`{"refsByClause":{"sec-defaulttimezone":["_ref_0","_ref_1"],"sec-issanctionedsingleunitidentifier":["_ref_2"],"sec-iswellformedcurrencycode":["_ref_3"],"sec-time-zone-names":["_ref_4","_ref_7"],"sec-isvalidtimezonename":["_ref_5","_ref_6"],"sec-canonicalizetimezonename":["_ref_8","_ref_9"],"sec-availablecanonicaltimezones":["_ref_10","_ref_11"],"sec-iswellformedunitidentifier":["_ref_12","_ref_13","_ref_14"],"sec-intl.supportedvaluesof":["_ref_15","_ref_16","_ref_17","_ref_18","_ref_19","_ref_20"]},"entries":[{"type":"clause","id":"sec-intro","titleHTML":"Introduction","number":""},{"type":"term","term":"ASCII-uppercase","refId":"sec-case-sensitivity-and-case-mapping"},{"type":"term","term":"ASCII-lowercase","refId":"sec-case-sensitivity-and-case-mapping"},{"type":"term","term":"ASCII-case-insensitive match","refId":"sec-case-sensitivity-and-case-mapping"},{"type":"clause","id":"sec-case-sensitivity-and-case-mapping","titleHTML":"Case Sensitivity and Case Mapping","number":"1.1","referencingIds":["_ref_3","_ref_5","_ref_6","_ref_9"]},{"type":"clause","id":"sec-language-tags","titleHTML":"Language Tags","number":"1.2"},{"type":"op","aoid":"IsWellFormedCurrencyCode","refId":"sec-iswellformedcurrencycode"},{"type":"clause","id":"sec-iswellformedcurrencycode","title":"IsWellFormedCurrencyCode ( currency )","titleHTML":"IsWellFormedCurrencyCode ( <var>currency</var> )","number":"1.3.1"},{"type":"op","aoid":"AvailableCanonicalCurrencies","refId":"sec-availablecanonicalcurrencies"},{"type":"clause","id":"sec-availablecanonicalcurrencies","titleHTML":"AvailableCanonicalCurrencies ( )","number":"1.3.2","referencingIds":["_ref_17"]},{"type":"clause","id":"sec-currency-codes","titleHTML":"Currency Codes","number":"1.3"},{"type":"op","aoid":"IsValidTimeZoneName","refId":"sec-isvalidtimezonename"},{"type":"clause","id":"sec-isvalidtimezonename","title":"IsValidTimeZoneName ( timeZone )","titleHTML":"IsValidTimeZoneName ( <var>timeZone</var> )","number":"1.4.1","referencingIds":["_ref_0","_ref_8","_ref_10"]},{"type":"op","aoid":"CanonicalizeTimeZoneName","refId":"sec-canonicalizetimezonename"},{"type":"clause","id":"sec-canonicalizetimezonename","title":"CanonicalizeTimeZoneName ( timeZone )","titleHTML":"CanonicalizeTimeZoneName ( <var>timeZone</var> )","number":"1.4.2","referencingIds":["_ref_1","_ref_4","_ref_11"]},{"type":"op","aoid":"DefaultTimeZone","refId":"sec-defaulttimezone"},{"type":"clause","id":"sec-defaulttimezone","titleHTML":"DefaultTimeZone ( )","number":"1.4.3","referencingIds":["_ref_7"]},{"type":"op","aoid":"AvailableCanonicalTimeZones","refId":"sec-availablecanonicaltimezones"},{"type":"clause","id":"sec-availablecanonicaltimezones","titleHTML":"AvailableCanonicalTimeZones ( )","number":"1.4.4","referencingIds":["_ref_19"]},{"type":"clause","id":"sec-time-zone-names","titleHTML":"Time Zone Names","number":"1.4"},{"type":"op","aoid":"IsWellFormedUnitIdentifier","refId":"sec-iswellformedunitidentifier"},{"type":"clause","id":"sec-iswellformedunitidentifier","title":"IsWellFormedUnitIdentifier ( unitIdentifier )","titleHTML":"IsWellFormedUnitIdentifier ( <var>unitIdentifier</var> )","number":"1.5.1"},{"type":"table","id":"table-sanctioned-single-unit-identifiers","number":1,"caption":"Table 1: Single units sanctioned for use in ECMAScript","referencingIds":["_ref_2"]},{"type":"op","aoid":"IsSanctionedSingleUnitIdentifier","refId":"sec-issanctionedsingleunitidentifier"},{"type":"clause","id":"sec-issanctionedsingleunitidentifier","title":"IsSanctionedSingleUnitIdentifier ( unitIdentifier )","titleHTML":"IsSanctionedSingleUnitIdentifier ( <var>unitIdentifier</var> )","number":"1.5.2","referencingIds":["_ref_12","_ref_13","_ref_14"]},{"type":"op","aoid":"AvailableCanonicalUnits","refId":"sec-availablecanonicalunits"},{"type":"clause","id":"sec-availablecanonicalunits","titleHTML":"AvailableCanonicalUnits ( )","number":"1.5.3","referencingIds":["_ref_20"]},{"type":"clause","id":"sec-measurement-unit-identifiers","titleHTML":"Measurement Unit Identifiers","number":"1.5"},{"type":"op","aoid":"AvailableCanonicalNumberingSystems","refId":"sec-availablecanonicalnumberingsystems"},{"type":"clause","id":"sec-availablecanonicalnumberingsystems","titleHTML":"AvailableCanonicalNumberingSystems ( )","number":"1.6.1","referencingIds":["_ref_18"]},{"type":"clause","id":"sec-numberingsystem-identifiers","titleHTML":"Numbering System Identifiers","number":"1.6"},{"type":"op","aoid":"AvailableCanonicalCollations","refId":"sec-availablecanonicalcollations"},{"type":"clause","id":"sec-availablecanonicalcollations","titleHTML":"AvailableCanonicalCollations ( )","number":"1.7.1","referencingIds":["_ref_16"]},{"type":"clause","id":"sec-collation-types","titleHTML":"Collation Types","number":"1.7"},{"type":"op","aoid":"AvailableCanonicalCalendars","refId":"sec-availablecanonicalcalendars"},{"type":"clause","id":"sec-availablecanonicalcalendars","titleHTML":"AvailableCanonicalCalendars ( )","number":"1.8.1","referencingIds":["_ref_15"]},{"type":"clause","id":"sec-calendar-types","titleHTML":"Calendar Types","number":"1.8"},{"type":"clause","id":"locales-currencies-tz","title":"Identification of Locales, Currencies, Time Zones, and Measurement Units, Numbering Systems, Collations, and Calendars","titleHTML":"Identification of Locales, Currencies, Time Zones, <del>and</del> Measurement Units<ins>, Numbering Systems, Collations, and Calendars</ins>","number":"1"},{"type":"term","term":"%Intl%","refId":"intl-object"},{"type":"term","term":"service constructor","id":"service-constructor"},{"type":"clause","id":"sec-intl.collator-intro","titleHTML":"Intl.Collator ( . . . )","number":"2.1.1"},{"type":"clause","id":"sec-intl.datetimeformat-intro","titleHTML":"Intl.DateTimeFormat ( . . . )","number":"2.1.2"},{"type":"clause","id":"sec-intl.displaynames-intro","titleHTML":"Intl.DisplayNames ( . . . )","number":"2.1.3"},{"type":"clause","id":"sec-intl.listformat-intro","titleHTML":"Intl.ListFormat ( . . . )","number":"2.1.4"},{"type":"clause","id":"sec-intl.locale-intro","titleHTML":"Intl.Locale ( . . . )","number":"2.1.5"},{"type":"clause","id":"sec-intl.numberformat-intro","titleHTML":"Intl.NumberFormat ( . . . )","number":"2.1.6"},{"type":"clause","id":"sec-intl.pluralrules-intro","titleHTML":"Intl.PluralRules ( . . . )","number":"2.1.7"},{"type":"clause","id":"sec-intl.relativetimeformat-intro","titleHTML":"Intl.RelativeTimeFormat ( . . . )","number":"2.1.8"},{"type":"clause","id":"sec-intl.segmenter-intro","titleHTML":"Intl.Segmenter ( . . . )","number":"2.1.9"},{"type":"clause","id":"sec-constructor-properties-of-the-intl-object","titleHTML":"Constructor Properties of the Intl Object","number":"2.1"},{"type":"clause","id":"sec-intl.getcanonicallocales","title":"Intl.getCanonicalLocales ( locales )","titleHTML":"Intl.getCanonicalLocales ( <var>locales</var> )","number":"2.2.1"},{"type":"clause","id":"sec-intl.supportedvaluesof","title":"Intl.supportedValuesOf ( key )","titleHTML":"Intl.supportedValuesOf ( <var>key</var> )","number":"2.2.2"},{"type":"clause","id":"sec-function-properties-of-the-intl-object","titleHTML":"Function Properties of the Intl Object","number":"2.2"},{"type":"clause","id":"intl-object","titleHTML":"The Intl Object","number":"2"},{"type":"clause","id":"sec-copyright-and-software-license","title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A"}]}`);
+;let usesMultipage = false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-light.min.css"><style>body {
+  display: flex;
+  word-wrap: break-word;
+  font-size: 18px;
+  line-height: 1.5;
+  font-family: Cambria, Palatino Linotype, Palatino, Liberation Serif, serif;
+  padding: 0;
+  margin: 0;
+  color: #111;
+}
+
+#spec-container {
+  padding: 0 20px;
+  flex-grow: 1;
+  flex-basis: 66%;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-bottom: 1em;
+}
+
+body.oldtoc {
+  margin: 0 auto;
+}
+
+a {
+  text-decoration: none;
+  color: #206ca7;
+}
+
+a:visited {
+  color: #206ca7;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #239dee;
+}
+
+a.e-user-code,
+span.e-user-code {
+  white-space: nowrap;
+}
+
+a.e-user-code::before,
+span.e-user-code::before {
+  display: none;
+  color: brown;
+  background-color: white;
+  border: 2pt solid brown;
+  padding: 0.3ex;
+  margin: 0 0.25em 0 0;
+  line-height: 1;
+  vertical-align: text-top;
+  text-transform: uppercase;
+  font-family: 'Comic Code', sans-serif;
+  font-weight: 900;
+  font-size: x-small;
+}
+
+a.e-user-code:hover::before,
+span.e-user-code:hover::before {
+  background-color: brown;
+  color: white;
+}
+
+html.show-ao-annotations a.e-user-code::before,
+html.show-ao-annotations span.e-user-code::before {
+  display: inline-block;
+}
+
+a.e-user-code::before,
+span.e-user-code::before {
+  content: 'UC';
+}
+
+code {
+  font-weight: bold;
+  font-family: Consolas, Monaco, monospace;
+  white-space: pre;
+}
+
+pre code {
+  font-weight: inherit;
+}
+
+pre code.hljs {
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+ol.toc {
+  list-style: none;
+  padding-left: 0;
+}
+
+ol.toc ol.toc {
+  padding-left: 2ex;
+  list-style: none;
+}
+
+var {
+  color: #2aa198;
+  transition: background-color 0.25s ease;
+  cursor: pointer;
+}
+
+var.referenced0 {
+  color: inherit;
+  background-color: #ffff33;
+  box-shadow: 0 0 0 2px #ffff33;
+}
+var.referenced1 {
+  color: inherit;
+  background-color: #ff87a2;
+  box-shadow: 0 0 0 2px #ff87a2;
+}
+var.referenced2 {
+  color: inherit;
+  background-color: #96e885;
+  box-shadow: 0 0 0 2px #96e885;
+}
+var.referenced3 {
+  color: inherit;
+  background-color: #3eeed2;
+  box-shadow: 0 0 0 2px #3eeed2;
+}
+var.referenced4 {
+  color: inherit;
+  background-color: #eacfb6;
+  box-shadow: 0 0 0 2px #eacfb6;
+}
+var.referenced5 {
+  color: inherit;
+  background-color: #82ddff;
+  box-shadow: 0 0 0 2px #82ddff;
+}
+var.referenced6 {
+  color: inherit;
+  background-color: #ffbcf2;
+  box-shadow: 0 0 0 2px #ffbcf2;
+}
+
+emu-const {
+  font-family: sans-serif;
+}
+
+emu-val {
+  font-weight: bold;
+}
+
+/* depth 1 */
+emu-alg ol,
+/* depth 4 */
+emu-alg ol ol ol ol,
+emu-alg ol.nested-thrice,
+emu-alg ol.nested-twice ol,
+emu-alg ol.nested-once ol ol {
+  list-style-type: decimal;
+}
+
+/* depth 2 */
+emu-alg ol ol,
+emu-alg ol.nested-once,
+/* depth 5 */
+emu-alg ol ol ol ol ol,
+emu-alg ol.nested-four-times,
+emu-alg ol.nested-thrice ol,
+emu-alg ol.nested-twice ol ol,
+emu-alg ol.nested-once ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+/* depth 3 */
+emu-alg ol ol ol,
+emu-alg ol.nested-twice,
+emu-alg ol.nested-once ol,
+/* depth 6 */
+emu-alg ol ol ol ol ol ol,
+emu-alg ol.nested-lots,
+emu-alg ol.nested-four-times ol,
+emu-alg ol.nested-thrice ol ol,
+emu-alg ol.nested-twice ol ol ol,
+emu-alg ol.nested-once ol ol ol ol,
+/* depth 7+ */
+emu-alg ol.nested-lots ol {
+  list-style-type: lower-roman;
+}
+
+emu-eqn {
+  display: block;
+  margin-left: 4em;
+}
+
+emu-eqn.inline {
+  display: inline;
+  margin: 0;
+}
+
+emu-eqn div:first-child {
+  margin-left: -2em;
+}
+
+emu-note {
+  margin: 1em 0;
+  display: flex;
+  flex-direction: row;
+  color: inherit;
+  border-left: 5px solid #52e052;
+  background: #e9fbe9;
+  padding: 10px 10px 10px 0;
+}
+
+emu-note > span.note {
+  flex-basis: 100px;
+  min-width: 100px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  text-transform: uppercase;
+  padding-left: 5px;
+}
+
+emu-note[type='editor'] {
+  border-left-color: #faa;
+}
+
+emu-note > div.note-contents {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: auto;
+}
+
+emu-note > div.note-contents > p:first-of-type {
+  margin-top: 0;
+}
+
+emu-note > div.note-contents > p:last-of-type {
+  margin-bottom: 0;
+}
+
+emu-table td code {
+  white-space: normal;
+}
+
+emu-figure {
+  display: block;
+}
+
+emu-example {
+  display: block;
+  margin: 1em 3em;
+}
+
+emu-example figure figcaption {
+  margin-top: 0.5em;
+  text-align: left;
+}
+
+emu-figure figure,
+emu-example figure,
+emu-table figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+emu-production {
+  display: block;
+}
+
+emu-grammar[type='example'] emu-production,
+emu-grammar[type='definition'] emu-production {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 5ex;
+}
+
+emu-grammar.inline,
+emu-production.inline,
+emu-grammar.inline emu-production emu-rhs,
+emu-production.inline emu-rhs,
+emu-grammar[collapsed] emu-production emu-rhs {
+  display: inline;
+  padding-left: 1ex;
+  margin-left: 0;
+}
+
+emu-production[collapsed] emu-rhs {
+  display: inline;
+  padding-left: 0.5ex;
+  margin-left: 0;
+}
+
+emu-grammar[collapsed] emu-production,
+emu-production[collapsed] {
+  margin: 0;
+}
+
+emu-constraints {
+  font-size: 0.75em;
+  margin-right: 0.5ex;
+}
+
+emu-gann {
+  margin-right: 0.5ex;
+}
+
+emu-gann emu-t:last-child,
+emu-gann emu-gprose:last-child,
+emu-gann emu-nt:last-child {
+  margin-right: 0;
+}
+
+emu-geq {
+  margin-left: 0.5ex;
+  font-weight: bold;
+}
+
+emu-oneof {
+  font-weight: bold;
+  margin-left: 0.5ex;
+}
+
+emu-nt {
+  display: inline-block;
+  font-style: italic;
+  white-space: nowrap;
+  text-indent: 0;
+}
+
+emu-nt a,
+emu-nt a:visited {
+  color: #333;
+}
+
+emu-rhs emu-nt {
+  margin-right: 0.5ex;
+}
+
+emu-t {
+  display: inline-block;
+  font-family: monospace;
+  font-weight: bold;
+  white-space: nowrap;
+  text-indent: 0;
+}
+
+emu-production emu-t {
+  margin-right: 0.5ex;
+}
+
+emu-rhs {
+  display: block;
+  padding-left: 75px;
+  text-indent: -25px;
+}
+
+emu-production:not([collapsed]) emu-rhs {
+  border: 0.2ex dashed transparent;
+}
+
+emu-production:not([collapsed]) emu-rhs:hover {
+  border-color: #888;
+  background-color: #f0f0f0;
+}
+
+emu-mods {
+  font-size: 0.85em;
+  vertical-align: sub;
+  font-style: normal;
+  font-weight: normal;
+}
+
+emu-params,
+emu-opt {
+  margin-right: 1ex;
+  font-family: monospace;
+}
+
+emu-params,
+emu-constraints {
+  color: #2aa198;
+}
+
+emu-opt {
+  color: #b58900;
+}
+
+emu-gprose {
+  font-size: 0.9em;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+emu-production emu-gprose {
+  margin-right: 1ex;
+}
+
+h1.shortname {
+  color: #f60;
+  font-size: 1.5em;
+  margin: 0;
+}
+
+h1.version {
+  color: #f60;
+  font-size: 1.5em;
+}
+
+h1.title {
+  color: #f60;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  position: relative;
+}
+
+h1 .secnum {
+  text-decoration: none;
+  margin-right: 5px;
+}
+
+h1 span.title {
+  order: 2;
+}
+
+h1 {
+  font-size: 2.67em;
+  margin-bottom: 0;
+  line-height: 1em;
+}
+h2 {
+  font-size: 2em;
+}
+h3 {
+  font-size: 1.56em;
+}
+h4 {
+  font-size: 1.25em;
+}
+h5 {
+  font-size: 1.11em;
+}
+h6 {
+  font-size: 1em;
+}
+
+pre code.hljs {
+  background: transparent;
+}
+
+emu-clause[id],
+emu-annex[id],
+emu-intro[id] {
+  scroll-margin-top: 2ex;
+}
+
+emu-intro h1,
+emu-clause h1,
+emu-annex h1 {
+  font-size: 2em;
+}
+emu-intro h2,
+emu-clause h2,
+emu-annex h2 {
+  font-size: 1.56em;
+}
+emu-intro h3,
+emu-clause h3,
+emu-annex h3 {
+  font-size: 1.25em;
+}
+emu-intro h4,
+emu-clause h4,
+emu-annex h4 {
+  font-size: 1.11em;
+}
+emu-intro h5,
+emu-clause h5,
+emu-annex h5 {
+  font-size: 1em;
+}
+emu-intro h6,
+emu-clause h6,
+emu-annex h6 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro h1,
+emu-clause emu-clause h1,
+emu-annex emu-annex h1 {
+  font-size: 1.56em;
+}
+emu-intro emu-intro h2,
+emu-clause emu-clause h2,
+emu-annex emu-annex h2 {
+  font-size: 1.25em;
+}
+emu-intro emu-intro h3,
+emu-clause emu-clause h3,
+emu-annex emu-annex h3 {
+  font-size: 1.11em;
+}
+emu-intro emu-intro h4,
+emu-clause emu-clause h4,
+emu-annex emu-annex h4 {
+  font-size: 1em;
+}
+emu-intro emu-intro h5,
+emu-clause emu-clause h5,
+emu-annex emu-annex h5 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex h1 {
+  font-size: 1.25em;
+}
+emu-intro emu-intro emu-intro h2,
+emu-clause emu-clause emu-clause h2,
+emu-annex emu-annex emu-annex h2 {
+  font-size: 1.11em;
+}
+emu-intro emu-intro emu-intro h3,
+emu-clause emu-clause emu-clause h3,
+emu-annex emu-annex emu-annex h3 {
+  font-size: 1em;
+}
+emu-intro emu-intro emu-intro h4,
+emu-clause emu-clause emu-clause h4,
+emu-annex emu-annex emu-annex h4 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex emu-annex h1 {
+  font-size: 1.11em;
+}
+emu-intro emu-intro emu-intro emu-intro h2,
+emu-clause emu-clause emu-clause emu-clause h2,
+emu-annex emu-annex emu-annex emu-annex h2 {
+  font-size: 1em;
+}
+emu-intro emu-intro emu-intro emu-intro h3,
+emu-clause emu-clause emu-clause emu-clause h3,
+emu-annex emu-annex emu-annex emu-annex h3 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex emu-annex emu-annex h1 {
+  font-size: 1em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro h2,
+emu-clause emu-clause emu-clause emu-clause emu-clause h2,
+emu-annex emu-annex emu-annex emu-annex emu-annex h2 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex emu-annex emu-annex emu-annex h1 {
+  font-size: 0.9em;
+}
+
+emu-clause,
+emu-intro,
+emu-annex {
+  display: block;
+}
+
+/* these values are twice the font-size for the <h1> titles for clauses */
+emu-intro,
+emu-clause,
+emu-annex {
+  margin-top: 4em;
+}
+emu-intro emu-intro,
+emu-clause emu-clause,
+emu-annex emu-annex {
+  margin-top: 3.12em;
+}
+emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex {
+  margin-top: 2.5em;
+}
+emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex {
+  margin-top: 2.22em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex emu-annex {
+  margin-top: 2em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex emu-annex emu-annex {
+  margin-top: 1.8em;
+}
+
+#spec-container > emu-intro:first-of-type,
+#spec-container > emu-clause:first-of-type,
+#spec-container > emu-annex:first-of-type {
+  margin-top: 0;
+}
+
+/* Figures and tables */
+figure {
+  display: block;
+  margin: 1em 0 3em 0;
+}
+figure object {
+  display: block;
+  margin: 0 auto;
+}
+figure table.real-table {
+  margin: 0 auto;
+}
+figure figcaption {
+  display: block;
+  color: #555555;
+  font-weight: bold;
+  text-align: center;
+}
+
+emu-table table {
+  margin: 0 auto;
+}
+
+emu-table table,
+table.real-table {
+  border-collapse: collapse;
+}
+
+emu-table td,
+emu-table th,
+table.real-table td,
+table.real-table th {
+  border: 1px solid black;
+  padding: 0.4em;
+  vertical-align: baseline;
+}
+emu-table th,
+emu-table thead td,
+table.real-table th {
+  background-color: #eeeeee;
+}
+
+emu-table td {
+  background: #fff;
+}
+
+/* Note: the left content edges of table.lightweight-table >tbody >tr >td
+   and div.display line up. */
+table.lightweight-table {
+  border-collapse: collapse;
+  margin: 0 0 0 1.5em;
+}
+table.lightweight-table td,
+table.lightweight-table th {
+  border: none;
+  padding: 0 0.5em;
+  vertical-align: baseline;
+}
+
+/* diff styles */
+ins {
+  background-color: #e0f8e0;
+  text-decoration: none;
+  border-bottom: 1px solid #396;
+}
+
+del {
+  background-color: #fee;
+}
+
+ins.block,
+del.block,
+emu-production > ins,
+emu-production > del,
+emu-grammar > ins,
+emu-grammar > del {
+  display: block;
+}
+emu-rhs > ins,
+emu-rhs > del {
+  display: inline;
+}
+
+tr.ins > td > ins {
+  border-bottom: none;
+}
+
+tr.ins > td {
+  background-color: #e0f8e0;
+}
+
+tr.del > td {
+  background-color: #fee;
+}
+
+/* Menu Styles */
+#menu-toggle {
+  font-size: 2em;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1.5em;
+  height: 1.5em;
+  z-index: 3;
+  visibility: hidden;
+  color: #1567a2;
+  background-color: #fff;
+
+  line-height: 1.5em;
+  text-align: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  cursor: pointer;
+}
+
+#menu {
+  display: flex;
+  flex-direction: column;
+  width: 33%;
+  height: 100vh;
+  max-width: 500px;
+  box-sizing: border-box;
+  background-color: #ddd;
+  overflow: hidden;
+  transition: opacity 0.1s linear;
+  padding: 0 5px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 2px solid #bbb;
+
+  z-index: 2;
+}
+
+.menu-spacer {
+  flex-basis: 33%;
+  max-width: 500px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+#menu a {
+  color: #1567a2;
+}
+
+#menu.active {
+  display: flex;
+  opacity: 1;
+  z-index: 2;
+}
+
+#menu-pins {
+  flex-grow: 1;
+  display: none;
+}
+
+#menu-pins.active {
+  display: block;
+}
+
+#menu-pins-list {
+  margin: 0;
+  padding: 0;
+  counter-reset: pins-counter;
+}
+
+#menu-pins-list > li:before {
+  content: counter(pins-counter);
+  counter-increment: pins-counter;
+  display: inline-block;
+  width: 25px;
+  text-align: center;
+  border: 1px solid #bbb;
+  padding: 2px;
+  margin: 4px;
+  box-sizing: border-box;
+  line-height: 1em;
+  background-color: #ccc;
+  border-radius: 4px;
+}
+#menu-toc > ol {
+  padding: 0;
+  flex-grow: 1;
+}
+
+#menu-toc > ol li {
+  padding: 0;
+}
+
+#menu-toc > ol,
+#menu-toc > ol ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#menu-toc > ol ol {
+  padding-left: 0.75em;
+}
+
+#menu-toc li {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#menu-toc .item-toggle {
+  display: inline-block;
+  transform: rotate(-45deg) translate(-5px, -5px);
+  transition: transform 0.1s ease;
+  text-align: center;
+  width: 20px;
+
+  color: #aab;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  cursor: pointer;
+}
+
+#menu-toc .item-toggle-none {
+  display: inline-block;
+  width: 20px;
+}
+
+#menu-toc li.active > .item-toggle {
+  transform: rotate(45deg) translate(-5px, -5px);
+}
+
+#menu-toc li > ol {
+  display: none;
+}
+
+#menu-toc li.active > ol {
+  display: block;
+}
+
+#menu-toc li.revealed > a {
+  background-color: #bbb;
+  font-weight: bold;
+  /*
+  background-color: #222;
+  color: #c6d8e4;
+  */
+}
+
+#menu-toc li.revealed-leaf > a {
+  color: #206ca7;
+  /*
+  background-color: #222;
+  color: #c6d8e4;
+  */
+}
+
+#menu-toc li.revealed > .item-toggle {
+  transform: rotate(45deg) translate(-5px, -5px);
+}
+
+#menu-toc li.revealed > ol {
+  display: block;
+}
+
+#menu-toc li > a {
+  padding: 2px 5px;
+}
+
+#menu > * {
+  margin-bottom: 5px;
+}
+
+.menu-pane-header {
+  padding: 0 5px;
+  text-transform: uppercase;
+  background-color: #aaa;
+  color: #335;
+  font-weight: bold;
+  letter-spacing: 2px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 0.8em;
+}
+
+.menu-pane-header emu-opt,
+.menu-pane-header emu-t,
+.menu-pane-header emu-nt {
+  margin-right: 0px;
+  display: inline;
+  color: inherit;
+}
+
+.menu-pane-header emu-rhs {
+  display: inline;
+  padding-left: 0px;
+  text-indent: 0px;
+}
+
+.menu-pane-header emu-geq {
+  margin-left: 0px;
+}
+
+a.menu-pane-header-production {
+  color: inherit;
+}
+
+.menu-pane-header-production {
+  text-transform: none;
+  letter-spacing: 1.5px;
+  padding-left: 0.5em;
+}
+
+#menu-toc {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+#menu-toc ol.toc {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#menu-search {
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  max-height: 300px;
+}
+
+#menu-trace-list {
+  display: none;
+}
+
+#menu-search-box {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 5px 0 0 0;
+  font-size: 1em;
+  padding: 2px;
+  background-color: #bbb;
+  border: 1px solid #999;
+}
+
+#menu-search-results {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+li.menu-search-result-clause:before {
+  content: 'clause';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+li.menu-search-result-op:before {
+  content: 'op';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+
+li.menu-search-result-prod:before {
+  content: 'prod';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+
+li.menu-search-result-term:before {
+  content: 'term';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+
+#menu-search-results ul {
+  padding: 0 5px;
+  margin: 0;
+}
+
+#menu-search-results li {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#menu-trace-list {
+  counter-reset: item;
+  margin: 0 0 0 20px;
+  padding: 0;
+}
+#menu-trace-list li {
+  display: block;
+  white-space: nowrap;
+}
+
+#menu-trace-list li .secnum:after {
+  content: ' ';
+}
+#menu-trace-list li:before {
+  content: counter(item) ' ';
+  background-color: #222;
+  counter-increment: item;
+  color: #999;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  display: inline-block;
+  text-align: center;
+  margin: 2px 4px 2px 0;
+}
+
+@media (max-width: 1000px) {
+  body {
+    margin: 0;
+    display: block;
+  }
+
+  #menu {
+    display: none;
+    padding-top: 3em;
+    width: 450px;
+  }
+
+  #menu.active {
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 0;
+    right: 300px;
+  }
+
+  #menu-toggle {
+    visibility: visible;
+  }
+
+  #spec-container {
+    padding: 0 5px;
+  }
+
+  #references-pane-spacer {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  #menu {
+    width: 100%;
+  }
+
+  h1 .secnum:empty {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Toolbox */
+.toolbox-container {
+  position: absolute;
+  display: none;
+  padding-bottom: 7px;
+}
+
+.toolbox-container.active {
+  display: inline-block;
+}
+
+.toolbox {
+  position: relative;
+  background: #ddd;
+  border: 1px solid #aaa;
+  color: #eee;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.toolbox a {
+  text-decoration: none;
+  padding: 0 5px;
+}
+
+.toolbox a:hover {
+  text-decoration: underline;
+}
+
+.toolbox:after,
+.toolbox:before {
+  top: 100%;
+  left: 15px;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.toolbox:after {
+  border-color: rgba(0, 0, 0, 0);
+  border-top-color: #ddd;
+  border-width: 10px;
+  margin-left: -10px;
+}
+.toolbox:before {
+  border-color: rgba(204, 204, 204, 0);
+  border-top-color: #aaa;
+  border-width: 12px;
+  margin-left: -12px;
+}
+
+#references-pane-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 250px;
+  display: none;
+  background-color: #ddd;
+  z-index: 1;
+}
+
+#references-pane-table-container {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#references-pane {
+  flex-grow: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#references-pane-container.active {
+  display: flex;
+}
+
+#references-pane-close:after {
+  content: '✖';
+  float: right;
+  cursor: pointer;
+}
+
+#references-pane table tbody {
+  vertical-align: baseline;
+}
+
+#references-pane table tr td:first-child {
+  text-align: right;
+  padding-right: 5px;
+}
+
+@media print {
+  #menu-toggle {
+    display: none;
+  }
+}
+
+[normative-optional],
+[legacy] {
+  border-left: 5px solid #ff6600;
+  padding: 0.5em;
+  display: block;
+  background: #ffeedd;
+}
+
+.clause-attributes-tag {
+  text-transform: uppercase;
+  color: #884400;
+}
+
+.clause-attributes-tag a {
+  color: #884400;
+}
+
+/* Shortcuts help dialog */
+
+#shortcuts-help {
+  position: fixed;
+  left: 5%;
+  margin: 0 auto;
+  right: 5%;
+  z-index: 10;
+  top: 10%;
+  top: calc(5vw + 5vh);
+  padding: 30px 90px;
+  max-width: 500px;
+  outline: solid 10000px rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+  border-width: 1px 1px 0 1px;
+  background-color: #ddd;
+  display: none;
+}
+
+#shortcuts-help.active {
+  display: block;
+}
+
+#shortcuts-help ul {
+  padding: 0;
+}
+
+#shortcuts-help li {
+  display: flex;
+  justify-content: space-between;
+}
+
+#shortcuts-help code {
+  padding: 3px 10px;
+  border-radius: 3px;
+  border-width: 1px 1px 0 1px;
+  border-color: #bbb;
+  background-color: #eee;
+  box-shadow: inset 0 -1px 0 #ccc;
+}
+</style></head><body><div id="shortcuts-help">
+<ul>
+  <li><span>Toggle shortcuts help</span><code>?</code></li>
+  <li><span>Toggle "can call user code" annotations</span><code>u</code></li>
+
+  <li><span>Jump to search box</span><code>/</code></li>
+</ul></div><div id="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; stroke:currentColor" viewBox="0 0 120 120">
+      <title>Menu</title>
+      <path stroke-width="10" stroke-linecap="round" d="M30,60 h60  M30,30 m0,5 h60  M30,90 m0,-5 h60"></path>
+    </svg></div><div id="menu-spacer" class="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-intro" title="Introduction">Introduction</a></li><li><span class="item-toggle">◢</span><a href="#locales-currencies-tz" title="Identification of Locales, Currencies, Time Zones, and Measurement Units, Numbering Systems, Collations, and Calendars"><span class="secnum">1</span> Identification of Locales, Currencies, Time Zones, <del>and</del> Measurement Units<ins>, Numbering Systems, Collations, and Calendars</ins></a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-case-sensitivity-and-case-mapping" title="Case Sensitivity and Case Mapping"><span class="secnum">1.1</span> Case Sensitivity and Case Mapping</a></li><li><span class="item-toggle-none"></span><a href="#sec-language-tags" title="Language Tags"><span class="secnum">1.2</span> Language Tags</a></li><li><span class="item-toggle">◢</span><a href="#sec-currency-codes" title="Currency Codes"><span class="secnum">1.3</span> Currency Codes</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-iswellformedcurrencycode" title="IsWellFormedCurrencyCode ( currency )"><span class="secnum">1.3.1</span> IsWellFormedCurrencyCode ( <var>currency</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-availablecanonicalcurrencies" title="AvailableCanonicalCurrencies ( )"><span class="secnum">1.3.2</span> AvailableCanonicalCurrencies ( )</a></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-time-zone-names" title="Time Zone Names"><span class="secnum">1.4</span> Time Zone Names</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-isvalidtimezonename" title="IsValidTimeZoneName ( timeZone )"><span class="secnum">1.4.1</span> IsValidTimeZoneName ( <var>timeZone</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-canonicalizetimezonename" title="CanonicalizeTimeZoneName ( timeZone )"><span class="secnum">1.4.2</span> CanonicalizeTimeZoneName ( <var>timeZone</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-defaulttimezone" title="DefaultTimeZone ( )"><span class="secnum">1.4.3</span> DefaultTimeZone ( )</a></li><li><span class="item-toggle-none"></span><a href="#sec-availablecanonicaltimezones" title="AvailableCanonicalTimeZones ( )"><span class="secnum">1.4.4</span> AvailableCanonicalTimeZones ( )</a></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-measurement-unit-identifiers" title="Measurement Unit Identifiers"><span class="secnum">1.5</span> Measurement Unit Identifiers</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-iswellformedunitidentifier" title="IsWellFormedUnitIdentifier ( unitIdentifier )"><span class="secnum">1.5.1</span> IsWellFormedUnitIdentifier ( <var>unitIdentifier</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-issanctionedsingleunitidentifier" title="IsSanctionedSingleUnitIdentifier ( unitIdentifier )"><span class="secnum">1.5.2</span> IsSanctionedSingleUnitIdentifier ( <var>unitIdentifier</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-availablecanonicalunits" title="AvailableCanonicalUnits ( )"><span class="secnum">1.5.3</span> AvailableCanonicalUnits ( )</a></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-numberingsystem-identifiers" title="Numbering System Identifiers"><span class="secnum">1.6</span> Numbering System Identifiers</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-availablecanonicalnumberingsystems" title="AvailableCanonicalNumberingSystems ( )"><span class="secnum">1.6.1</span> AvailableCanonicalNumberingSystems ( )</a></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-collation-types" title="Collation Types"><span class="secnum">1.7</span> Collation Types</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-availablecanonicalcollations" title="AvailableCanonicalCollations ( )"><span class="secnum">1.7.1</span> AvailableCanonicalCollations ( )</a></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-calendar-types" title="Calendar Types"><span class="secnum">1.8</span> Calendar Types</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-availablecanonicalcalendars" title="AvailableCanonicalCalendars ( )"><span class="secnum">1.8.1</span> AvailableCanonicalCalendars ( )</a></li></ol></li></ol></li><li><span class="item-toggle">◢</span><a href="#intl-object" title="The Intl Object"><span class="secnum">2</span> The Intl Object</a><ol class="toc"><li><span class="item-toggle">◢</span><a href="#sec-constructor-properties-of-the-intl-object" title="Constructor Properties of the Intl Object"><span class="secnum">2.1</span> Constructor Properties of the Intl Object</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-intl.collator-intro" title="Intl.Collator ( . . . )"><span class="secnum">2.1.1</span> Intl.Collator ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.datetimeformat-intro" title="Intl.DateTimeFormat ( . . . )"><span class="secnum">2.1.2</span> Intl.DateTimeFormat ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.displaynames-intro" title="Intl.DisplayNames ( . . . )"><span class="secnum">2.1.3</span> Intl.DisplayNames ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.listformat-intro" title="Intl.ListFormat ( . . . )"><span class="secnum">2.1.4</span> Intl.ListFormat ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.locale-intro" title="Intl.Locale ( . . . )"><span class="secnum">2.1.5</span> Intl.Locale ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.numberformat-intro" title="Intl.NumberFormat ( . . . )"><span class="secnum">2.1.6</span> Intl.NumberFormat ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.pluralrules-intro" title="Intl.PluralRules ( . . . )"><span class="secnum">2.1.7</span> Intl.PluralRules ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.relativetimeformat-intro" title="Intl.RelativeTimeFormat ( . . . )"><span class="secnum">2.1.8</span> Intl.RelativeTimeFormat ( . . . )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.segmenter-intro" title="Intl.Segmenter ( . . . )"><span class="secnum">2.1.9</span> Intl.Segmenter ( . . . )</a></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-function-properties-of-the-intl-object" title="Function Properties of the Intl Object"><span class="secnum">2.2</span> Function Properties of the Intl Object</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-intl.getcanonicallocales" title="Intl.getCanonicalLocales ( locales )"><span class="secnum">2.2.1</span> Intl.getCanonicalLocales ( <var>locales</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-intl.supportedvaluesof" title="Intl.supportedValuesOf ( key )"><span class="secnum">2.2.2</span> Intl.supportedValuesOf ( <var>key</var> )</a></li></ol></li></ol></li><li><span class="item-toggle-none"></span><a href="#sec-copyright-and-software-license" title="Copyright &amp; Software License"><span class="secnum">A</span> Copyright &amp; Software License</a></li></ol></div></div><div id="spec-container"><h1 class="version">Stage 3 Draft / November 3, 2022</h1><h1 class="title">Intl Enumeration API Specification</h1>
+<emu-biblio href="./biblio.json"></emu-biblio>
+
+<emu-intro id="sec-intro">
+  <h1>Introduction</h1>
+
+  <p>This proposal adds several function properties to the <code>Intl Object</code> to list supported values of options. See <a href="https://github.com/tc39/proposal-intl-enumeration/blob/master/README.md">the README</a> for more context.</p>
+</emu-intro>
+<emu-import href="./locales-currencies-tz.html"><emu-clause id="locales-currencies-tz">
+  <h1><span class="secnum">1</span> Identification of Locales, Currencies, Time Zones, <del>and</del> Measurement Units<ins>, Numbering Systems, Collations, and Calendars</ins></h1>
+
+  <p>
+    This clause describes the String values used in the ECMAScript 2023 Internationalization API Specification to identify locales, currencies, time zones, <del>and</del> measurement units<ins>, numbering systems, collations, and calendars </ins>.
+  </p>
+
+  <emu-clause id="sec-case-sensitivity-and-case-mapping">
+    <h1><span class="secnum">1.1</span> Case Sensitivity and Case Mapping</h1>
+
+    <p>
+      The String values used to identify locales, currencies, scripts, and time zones are interpreted in an ASCII-case-insensitive manner, treating the code units 0x0041 through 0x005A (corresponding to Unicode characters LATIN CAPITAL LETTER A through LATIN CAPITAL LETTER Z) as equivalent to the corresponding code units 0x0061 through 0x007A (corresponding to Unicode characters LATIN SMALL LETTER A through LATIN SMALL LETTER Z), both inclusive. No other case folding equivalences are applied.
+    </p>
+    <emu-note><span class="note">Note</span><div class="note-contents">
+      For example, <emu-val>"ß"</emu-val> (U+00DF) must not match or be mapped to <emu-val>"SS"</emu-val> (U+0053, U+0053). <emu-val>"ı"</emu-val> (U+0131) must not match or be mapped to <emu-val>"I"</emu-val> (U+0049).
+    </div></emu-note>
+    <p>
+      The <dfn>ASCII-uppercase</dfn> of a String value <var>S</var> is the String value derived from <var>S</var> by replacing each occurrence of an ASCII lowercase letter code unit (0x0061 through 0x007A, inclusive) with the corresponding ASCII uppercase letter code unit (0x0041 through 0x005A, inclusive) while preserving all other code units.
+    </p>
+    <p>
+      The <dfn>ASCII-lowercase</dfn> of a String value <var>S</var> is the String value derived from <var>S</var> by replacing each occurrence of an ASCII uppercase letter code unit (0x0041 through 0x005A, inclusive) with the corresponding ASCII lowercase letter code unit (0x0061 through 0x007A, inclusive) while preserving all other code units.
+    </p>
+    <p>
+      A String value <var>A</var> is an <dfn>ASCII-case-insensitive match</dfn> for String value <var>B</var> if the ASCII-uppercase of <var>A</var> is exactly the same sequence of code units as the ASCII-uppercase of <var>B</var>. A sequence of Unicode code points <var>A</var> is an ASCII-case-insensitive match for <var>B</var> if <var>B</var> is an ASCII-case-insensitive match for ! <emu-xref aoid="CodePointsToString"><a href="https://tc39.es/ecma262/#sec-codepointstostring">CodePointsToString</a></emu-xref>(<var>A</var>).
+    </p>
+  </emu-clause>
+
+  <emu-clause id="sec-language-tags">
+    <h1><span class="secnum">1.2</span> Language Tags</h1>
+    <p>...</p>
+  </emu-clause>
+
+  <emu-clause id="sec-currency-codes">
+    <h1><span class="secnum">1.3</span> Currency Codes</h1>
+
+    <p>
+      The ECMAScript 2023 Internationalization API Specification identifies currencies using 3-letter currency codes as defined by ISO 4217. Their canonical form is uppercase.
+    </p>
+
+    <p>
+      All well-formed 3-letter ISO 4217 currency codes are allowed. However, the set of combinations of currency code and language tag for which localized currency symbols are available is implementation dependent. Where a localized currency symbol is not available, the ISO 4217 currency code is used for formatting.
+    </p>
+
+    <emu-clause id="sec-iswellformedcurrencycode" aoid="IsWellFormedCurrencyCode">
+      <h1><span class="secnum">1.3.1</span> IsWellFormedCurrencyCode ( <var>currency</var> )</h1>
+
+      <p>
+        The IsWellFormedCurrencyCode abstract operation verifies that the <var>currency</var> argument (which must be a String value) represents a well-formed 3-letter ISO currency code. The following steps are taken:
+      </p>
+
+      <emu-alg><ol><li>If the length of <var>currency</var> is not 3, return <emu-val>false</emu-val>.</li><li>Let <var>normalized</var> be the <emu-xref href="#sec-case-sensitivity-and-case-mapping" id="_ref_3"><a href="#sec-case-sensitivity-and-case-mapping">ASCII-uppercase</a></emu-xref> of <var>currency</var>.</li><li>If <var>normalized</var> contains any code unit outside of 0x0041 through 0x005A (corresponding to Unicode characters LATIN CAPITAL LETTER A through LATIN CAPITAL LETTER Z), return <emu-val>false</emu-val>.</li><li>Return <emu-val>true</emu-val>.</li></ol></emu-alg>
+    </emu-clause>
+
+    <ins class="block">
+    <emu-clause id="sec-availablecanonicalcurrencies" type="implementation-defined abstract operation" aoid="AvailableCanonicalCurrencies">
+      <h1><span class="secnum">1.3.2</span> AvailableCanonicalCurrencies ( )</h1>
+      <p>The <emu-xref href="#implementation-defined"><a href="https://tc39.es/ecma262/#implementation-defined">implementation-defined</a></emu-xref> abstract operation AvailableCanonicalCurrencies takes no arguments and returns a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of Strings. The returned <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> is ordered as if an Array of the same values had been sorted using %Array.prototype.sort% using <emu-val>undefined</emu-val> as <var>comparefn</var>, and contains unique, well-formed, and upper case canonicalized 3-letter ISO 4217 currency codes, identifying the currencies for which the implementation provides the functionality of Intl.DisplayNames and Intl.NumberFormat objects.</p>
+    </emu-clause>
+    </ins>
+  </emu-clause>
+
+  <emu-clause id="sec-time-zone-names">
+    <h1><span class="secnum">1.4</span> Time Zone Names</h1>
+
+    <p>
+      The ECMAScript 2023 Internationalization API Specification identifies time zones using the Zone and Link names of the IANA Time Zone Database. Their canonical form is the corresponding Zone name in the casing used in the IANA Time Zone Database except as specifically overridden by <emu-xref aoid="CanonicalizeTimeZoneName" id="_ref_4"><a href="#sec-canonicalizetimezonename">CanonicalizeTimeZoneName</a></emu-xref>.
+    </p>
+
+    <p>
+      A conforming implementation must recognize <emu-val>"UTC"</emu-val> and all other Zone and Link names (and <strong>only</strong> such names), and use best available current and historical information about their offsets from UTC and their daylight saving time rules in calculations. However, the set of combinations of time zone name and language tag for which localized time zone names are available is implementation dependent.
+    </p>
+
+    <emu-clause id="sec-isvalidtimezonename" aoid="IsValidTimeZoneName">
+      <h1><span class="secnum">1.4.1</span> IsValidTimeZoneName ( <var>timeZone</var> )</h1>
+
+      <p>
+        The abstract operation IsValidTimeZoneName takes argument <var>timeZone</var>, a String value, and verifies that it represents a valid Zone or Link name of the IANA Time Zone Database.
+      </p>
+
+      <emu-alg><ol><li>If one of the Zone or Link names of the IANA Time Zone Database is an <emu-xref href="#sec-case-sensitivity-and-case-mapping" id="_ref_5"><a href="#sec-case-sensitivity-and-case-mapping">ASCII-case-insensitive match</a></emu-xref> of <var>timeZone</var>, return <emu-val>true</emu-val>.</li><li>If <var>timeZone</var> is an <emu-xref href="#sec-case-sensitivity-and-case-mapping" id="_ref_6"><a href="#sec-case-sensitivity-and-case-mapping">ASCII-case-insensitive match</a></emu-xref> of <emu-val>"UTC"</emu-val>, return <emu-val>true</emu-val>.</li><li>Return <emu-val>false</emu-val>.</li></ol></emu-alg>
+    </emu-clause>
+
+    <emu-note><span class="note">Note</span><div class="note-contents">
+      Any value returned from <emu-xref aoid="DefaultTimeZone" id="_ref_7"><a href="#sec-defaulttimezone">DefaultTimeZone</a></emu-xref> must be recognized as valid.
+    </div></emu-note>
+
+    <emu-clause id="sec-canonicalizetimezonename" type="abstract operation" aoid="CanonicalizeTimeZoneName">
+      <h1><span class="secnum">1.4.2</span> CanonicalizeTimeZoneName ( <var>timeZone</var> )</h1>
+      <p>The abstract operation CanonicalizeTimeZoneName takes argument <var>timeZone</var> (a String value that is a valid time zone name as verified by <emu-xref aoid="IsValidTimeZoneName" id="_ref_8"><a href="#sec-isvalidtimezonename">IsValidTimeZoneName</a></emu-xref>). It returns the canonical and case-regularized form of <var>timeZone</var>. It performs the following steps when called:</p>
+      <emu-alg><ol><li>Let <var>ianaTimeZone</var> be the String value of the Zone or Link name of the IANA Time Zone Database that is an <emu-xref href="#sec-case-sensitivity-and-case-mapping" id="_ref_9"><a href="#sec-case-sensitivity-and-case-mapping">ASCII-case-insensitive match</a></emu-xref> of <var>timeZone</var>.</li><li>If <var>ianaTimeZone</var> is a Link name, let <var>ianaTimeZone</var> be the String value of the corresponding Zone name as specified in the file <code>backward</code> of the IANA Time Zone Database.</li><li>If <var>ianaTimeZone</var> is <emu-val>"Etc/UTC"</emu-val> or <emu-val>"Etc/GMT"</emu-val>, return <emu-val>"UTC"</emu-val>.</li><li>Return <var>ianaTimeZone</var>.</li></ol></emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-defaulttimezone" aoid="DefaultTimeZone">
+      <h1><span class="secnum">1.4.3</span> DefaultTimeZone ( )</h1>
+
+      <p>
+        The DefaultTimeZone abstract operation returns a String value representing the valid (<emu-xref href="#sec-isvalidtimezonename" id="_ref_0"><a href="#sec-isvalidtimezonename">1.4.1</a></emu-xref>) and canonicalized (<emu-xref href="#sec-canonicalizetimezonename" id="_ref_1"><a href="#sec-canonicalizetimezonename">1.4.2</a></emu-xref>) time zone name for the <emu-xref href="#host-environment"><a href="https://tc39.es/ecma262/#host-environment">host environment</a></emu-xref>'s current time zone.
+      </p>
+    </emu-clause>
+
+    <ins class="block">
+    <emu-clause id="sec-availablecanonicaltimezones" type="implementation-defined abstract operation" aoid="AvailableCanonicalTimeZones">
+      <h1><span class="secnum">1.4.4</span> AvailableCanonicalTimeZones ( )</h1>
+      <p>The <emu-xref href="#implementation-defined"><a href="https://tc39.es/ecma262/#implementation-defined">implementation-defined</a></emu-xref> abstract operation AvailableCanonicalTimeZones takes no arguments and returns a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of Strings. The returned <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> is a sorted <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of supported Zone and Link names in the IANA Time Zone Database. It performs the following steps when called:</p>
+
+      <emu-alg><ol><li>Let <var>names</var> be a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of all supported Zone and Link names in the IANA Time Zone Database.</li><li>Let <var>result</var> be a new empty <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref>.</li><li>For each element <var>name</var> of <var>names</var>, do<ol><li><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: !&nbsp;<emu-xref aoid="IsValidTimeZoneName" id="_ref_10"><a href="#sec-isvalidtimezonename">IsValidTimeZoneName</a></emu-xref>( <var>name</var> ) is <emu-val>true</emu-val>.</li><li>Let <var>canonical</var> be !&nbsp;<emu-xref aoid="CanonicalizeTimeZoneName" id="_ref_11"><a href="#sec-canonicalizetimezonename">CanonicalizeTimeZoneName</a></emu-xref>( <var>name</var> ).</li><li>If <var>result</var> does not contain an element equal to <var>canonical</var>, then<ol><li>Append <var>canonical</var> to the end of <var>result</var>.</li></ol></li></ol></li><li>Sort <var>result</var> in order as if an Array of the same values had been sorted using %Array.prototype.sort% using <emu-val>undefined</emu-val> as <var>comparefn</var>.</li><li>Return <var>result</var>.</li></ol></emu-alg>
+    </emu-clause>
+    </ins>
+  </emu-clause>
+
+  <emu-clause id="sec-measurement-unit-identifiers">
+    <h1><span class="secnum">1.5</span> Measurement Unit Identifiers</h1>
+
+    <p>
+      The ECMAScript 2023 Internationalization API Specification identifies measurement units using a <em>core unit identifier</em> (or equivalently <em>core unit ID</em>) as defined by <a href="https://www.unicode.org/reports/tr35/tr35-general.html#Unit_Identifiers">Unicode Technical Standard #35, Part 2, Section 6.2</a>. Their canonical form is a string containing only Unicode Basic Latin lowercase letters (U+0061 LATIN SMALL LETTER A through U+007A LATIN SMALL LETTER Z) with zero or more medial hyphens (U+002D HYPHEN-MINUS).
+    </p>
+
+    <p>
+      Only a limited set of core unit identifiers are sanctioned.
+      Attempting to use an unsanctioned core unit identifier results in a RangeError.
+    </p>
+
+    <emu-clause id="sec-iswellformedunitidentifier" aoid="IsWellFormedUnitIdentifier">
+      <h1><span class="secnum">1.5.1</span> IsWellFormedUnitIdentifier ( <var>unitIdentifier</var> )</h1>
+
+      <p>
+        The IsWellFormedUnitIdentifier abstract operation verifies that the <var>unitIdentifier</var> argument (which must be a String value) represents a well-formed UTS #35 core unit identifier that is either a sanctioned single unit or a complex unit formed by division of two sanctioned single units. The following steps are taken:
+      </p>
+
+      <emu-alg><ol><li>If !&nbsp;<emu-xref aoid="IsSanctionedSingleUnitIdentifier" id="_ref_12"><a href="#sec-issanctionedsingleunitidentifier">IsSanctionedSingleUnitIdentifier</a></emu-xref>(<var>unitIdentifier</var>) is <emu-val>true</emu-val>, then<ol><li>Return <emu-val>true</emu-val>.</li></ol></li><li>Let <var>i</var> be <emu-xref aoid="StringIndexOf"><a href="https://tc39.es/ecma262/#sec-stringindexof">StringIndexOf</a></emu-xref>(<var>unitIdentifier</var>, <emu-val>"-per-"</emu-val>, 0).</li><li>If <var>i</var> is -1 or <emu-xref aoid="StringIndexOf"><a href="https://tc39.es/ecma262/#sec-stringindexof">StringIndexOf</a></emu-xref>(<var>unitIdentifier</var>, <emu-val>"-per-"</emu-val>, <var>i</var> + 1) is not -1, then<ol><li>Return <emu-val>false</emu-val>.</li></ol></li><li><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: The five-character <emu-xref href="#substring"><a href="https://tc39.es/ecma262/#substring">substring</a></emu-xref> <emu-val>"-per-"</emu-val> occurs exactly once in <var>unitIdentifier</var>, at index <var>i</var>.</li><li>Let <var>numerator</var> be the <emu-xref href="#substring"><a href="https://tc39.es/ecma262/#substring">substring</a></emu-xref> of <var>unitIdentifier</var> from 0 to <var>i</var>.</li><li>Let <var>denominator</var> be the <emu-xref href="#substring"><a href="https://tc39.es/ecma262/#substring">substring</a></emu-xref> of <var>unitIdentifier</var> from <var>i</var> + 5.</li><li>If !&nbsp;<emu-xref aoid="IsSanctionedSingleUnitIdentifier" id="_ref_13"><a href="#sec-issanctionedsingleunitidentifier">IsSanctionedSingleUnitIdentifier</a></emu-xref>(<var>numerator</var>) and !&nbsp;<emu-xref aoid="IsSanctionedSingleUnitIdentifier" id="_ref_14"><a href="#sec-issanctionedsingleunitidentifier">IsSanctionedSingleUnitIdentifier</a></emu-xref>(<var>denominator</var>) are both <emu-val>true</emu-val>, then<ol><li>Return <emu-val>true</emu-val>.</li></ol></li><li>Return <emu-val>false</emu-val>.</li></ol></emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-issanctionedsingleunitidentifier" aoid="IsSanctionedSingleUnitIdentifier" oldids="sec-issanctionedsimpleunitidentifier"><span id="sec-issanctionedsimpleunitidentifier"></span>
+      <h1><span class="secnum">1.5.2</span> IsSanctionedSingleUnitIdentifier ( <var>unitIdentifier</var> )</h1>
+
+      <p>
+        The IsSanctionedSingleUnitIdentifier abstract operation verifies that the <var>unitIdentifier</var> argument (which must be a String value) is among the single unit identifiers sanctioned in the current version of the ECMAScript Internationalization API Specification, which are a subset of the Common Locale Data Repository <a href="https://github.com/unicode-org/cldr/blob/maint/maint-38/common/validity/unit.xml">release 38 unit validity data</a>; the list may grow over time. As discussed in UTS #35, a single unit identifier is a core unit identifier that is not composed of multiplication or division of other unit identifiers. The following steps are taken:
+      </p>
+
+      <emu-alg><ol><li>If <var>unitIdentifier</var> is listed in <emu-xref href="#table-sanctioned-single-unit-identifiers" id="_ref_2"><a href="#table-sanctioned-single-unit-identifiers">Table 1</a></emu-xref> below, return <emu-val>true</emu-val>.</li><li>Else, return <emu-val>false</emu-val>.</li></ol></emu-alg>
+
+      <emu-table id="table-sanctioned-single-unit-identifiers" oldids="table-sanctioned-simple-unit-identifiers"><figure><figcaption>Table 1: Single units sanctioned for use in ECMAScript</figcaption><span id="table-sanctioned-simple-unit-identifiers"></span>
+        
+        <table class="real-table">
+          <thead>
+            <tr>
+              <th>Single Unit Identifier</th>
+            </tr>
+          </thead>
+          <tbody><tr><td>acre</td></tr>
+          <tr><td>bit</td></tr>
+          <tr><td>byte</td></tr>
+          <tr><td>celsius</td></tr>
+          <tr><td>centimeter</td></tr>
+          <tr><td>day</td></tr>
+          <tr><td>degree</td></tr>
+          <tr><td>fahrenheit</td></tr>
+          <tr><td>fluid-ounce</td></tr>
+          <tr><td>foot</td></tr>
+          <tr><td>gallon</td></tr>
+          <tr><td>gigabit</td></tr>
+          <tr><td>gigabyte</td></tr>
+          <tr><td>gram</td></tr>
+          <tr><td>hectare</td></tr>
+          <tr><td>hour</td></tr>
+          <tr><td>inch</td></tr>
+          <tr><td>kilobit</td></tr>
+          <tr><td>kilobyte</td></tr>
+          <tr><td>kilogram</td></tr>
+          <tr><td>kilometer</td></tr>
+          <tr><td>liter</td></tr>
+          <tr><td>megabit</td></tr>
+          <tr><td>megabyte</td></tr>
+          <tr><td>meter</td></tr>
+          <tr><td>mile</td></tr>
+          <tr><td>mile-scandinavian</td></tr>
+          <tr><td>milliliter</td></tr>
+          <tr><td>millimeter</td></tr>
+          <tr><td>millisecond</td></tr>
+          <tr><td>minute</td></tr>
+          <tr><td>month</td></tr>
+          <tr><td>ounce</td></tr>
+          <tr><td>percent</td></tr>
+          <tr><td>petabyte</td></tr>
+          <tr><td>pound</td></tr>
+          <tr><td>second</td></tr>
+          <tr><td>stone</td></tr>
+          <tr><td>terabit</td></tr>
+          <tr><td>terabyte</td></tr>
+          <tr><td>week</td></tr>
+          <tr><td>yard</td></tr>
+          <tr><td>year</td></tr>
+        </tbody></table>
+      </figure></emu-table>
+    </emu-clause>
+
+    <ins class="block">
+    <emu-clause id="sec-availablecanonicalunits" type="abstract operation" aoid="AvailableCanonicalUnits">
+      <h1><span class="secnum">1.5.3</span> AvailableCanonicalUnits ( )</h1>
+      <p>The abstract operation AvailableCanonicalUnits takes no arguments and returns a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of Strings. The returned <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> is ordered as if an Array of the same values had been sorted using %Array.prototype.sort% using <emu-val>undefined</emu-val> as <var>comparefn</var>, and consists of the unique values of simple unit identifiers listed in every row of <emu-xref href="#table-sanctioned-simple-unit-identifiers"><a href="https://tc39.es/ecma402/#table-sanctioned-simple-unit-identifiers">Table 2</a></emu-xref>, except the header row.</p>
+    </emu-clause>
+    </ins>
+  </emu-clause>
+
+  <ins class="block">
+  <emu-clause id="sec-numberingsystem-identifiers">
+    <h1><span class="secnum">1.6</span> Numbering System Identifiers</h1>
+
+    <p>
+      The ECMAScript 2023 Internationalization API Specification identifies numbering systems using a <em>numbering system identifier</em> as defined by <a href="https://unicode.org/reports/tr35/tr35-numbers.html#Numbering_Systems">Unicode Technical Standard #35, Part 3, Section 1</a>. Their canonical form is a string containing all lowercase letters.
+    </p>
+
+    <emu-clause id="sec-availablecanonicalnumberingsystems" type="implementation-defined abstract operation" aoid="AvailableCanonicalNumberingSystems">
+      <h1><span class="secnum">1.6.1</span> AvailableCanonicalNumberingSystems ( )</h1>
+      <p>The <emu-xref href="#implementation-defined"><a href="https://tc39.es/ecma262/#implementation-defined">implementation-defined</a></emu-xref> abstract operation AvailableCanonicalNumberingSystems takes no arguments and returns a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of Strings. The returned <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> is ordered as if an Array of the same values had been sorted using %Array.prototype.sort% using <emu-val>undefined</emu-val> as <var>comparefn</var>, and contains unique numbering systems identifiers identifying the canonical numbering systems for which the implementation provides the functionality of Intl.DateTimeFormat, Intl.NumberFormat, and Intl.RelativeTimeFormat objects. The list must include the Numbering System value of every row of <emu-xref href="#table-numbering-system-digits"><a href="https://tc39.es/ecma402/#table-numbering-system-digits">Table 4</a></emu-xref>, except the header row.</p>
+    </emu-clause>
+  </emu-clause>
+
+  <emu-clause id="sec-collation-types">
+    <h1><span class="secnum">1.7</span> Collation Types</h1>
+
+    <p>
+      The ECMAScript 2023 Internationalization API Specification identifies collations using a <em>collation type</em> as defined by <a href="https://unicode.org/reports/tr35/tr35-collation.html#Collation_Types">Unicode Technical Standard #35, Part 5, Section 3.1</a>. Their canonical form is a string containing all lowercase letters with zero or more hyphens.
+    </p>
+
+    <emu-clause id="sec-availablecanonicalcollations" type="implementation-defined abstract operation" aoid="AvailableCanonicalCollations">
+      <h1><span class="secnum">1.7.1</span> AvailableCanonicalCollations ( )</h1>
+      <p>The <emu-xref href="#implementation-defined"><a href="https://tc39.es/ecma262/#implementation-defined">implementation-defined</a></emu-xref> abstract operation AvailableCanonicalCollations takes no arguments and returns a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of Strings. The returned <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> is ordered as if an Array of the same values had been sorted using %Array.prototype.sort% using <emu-val>undefined</emu-val> as <var>comparefn</var>, and contains unique canonical collation types identifying the collations for which the implementation provides the functionality of Intl.Collator objects.</p>
+    </emu-clause>
+  </emu-clause>
+
+  <emu-clause id="sec-calendar-types">
+    <h1><span class="secnum">1.8</span> Calendar Types</h1>
+
+    <p>
+      The ECMAScript 2023 Internationalization API Specification identifies calendars using a <em>calendar type</em> as defined by <a href="https://unicode.org/reports/tr35/tr35-dates.html#Calendar_Elements">Unicode Technical Standard #35, Part 4, Section 2</a>. Their canonical form is a string containing all lower case letters with zero or more hyphens.
+    </p>
+
+    <emu-clause id="sec-availablecanonicalcalendars" type="implementation-defined abstract operation" aoid="AvailableCanonicalCalendars">
+      <h1><span class="secnum">1.8.1</span> AvailableCanonicalCalendars ( )</h1>
+      <p>The <emu-xref href="#implementation-defined"><a href="https://tc39.es/ecma262/#implementation-defined">implementation-defined</a></emu-xref> abstract operation AvailableCanonicalCalendars takes no arguments and returns a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> of Strings. The returned <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> is ordered as if an Array of the same values had been sorted using %Array.prototype.sort% using <emu-val>undefined</emu-val> as <var>comparefn</var>, and contains unique canonical calendar types identifying the calendars for which the implementation provides the functionality of Intl.DateTimeFormat objects. The list must include <emu-val>"iso8601"</emu-val>.</p>
+    </emu-clause>
+  </emu-clause>
+  </ins>
+</emu-clause></emu-import>
+<emu-import href="./intl.html"><emu-clause id="intl-object">
+  <h1><span class="secnum">2</span> The Intl Object</h1>
+  <p>
+    The Intl object is the <dfn>%Intl%</dfn> intrinsic object and the initial value of the <emu-val>"Intl"</emu-val> property of the <emu-xref href="#sec-global-object"><a href="https://tc39.es/ecma262/#sec-global-object">global object</a></emu-xref>. The Intl object is a single <emu-xref href="#ordinary-object"><a href="https://tc39.es/ecma262/#ordinary-object">ordinary object</a></emu-xref>.
+  </p>
+
+  <p>
+    The value of the [[Prototype]] internal slot of the Intl object is the intrinsic object %ObjectPrototype%.
+  </p>
+
+  <p>
+    The Intl object is not a <emu-xref href="#function-object"><a href="https://tc39.es/ecma262/#function-object">function object</a></emu-xref>. It does not have a [[Construct]] internal method; it is not possible to use the Intl object as a <emu-xref href="#constructor"><a href="https://tc39.es/ecma262/#constructor">constructor</a></emu-xref> with the <emu-val>new</emu-val> operator. The Intl object does not have a [[Call]] internal method; it is not possible to invoke the Intl object as a function.
+  </p>
+
+  <p>
+    The Intl object has an internal slot, [[FallbackSymbol]], which is a new <emu-xref href="#sec-symbol-constructor"><a href="https://tc39.es/ecma262/#sec-symbol-constructor">%Symbol%</a></emu-xref> in the current <emu-xref href="#realm"><a href="https://tc39.es/ecma262/#realm">realm</a></emu-xref> with the [[Description]] <emu-val>"IntlLegacyConstructedSymbol"</emu-val>.
+  </p>
+
+  <emu-clause id="sec-constructor-properties-of-the-intl-object">
+    <h1><span class="secnum">2.1</span> Constructor Properties of the Intl Object</h1>
+
+    <p>
+      With the exception of Intl.Locale, each of the following <emu-xref href="#constructor"><a href="https://tc39.es/ecma262/#constructor">constructors</a></emu-xref> is a <dfn id="service-constructor">service constructor</dfn> that creates objects providing locale-sensitive services.
+    </p>
+
+    <emu-clause id="sec-intl.collator-intro">
+      <h1><span class="secnum">2.1.1</span> Intl.Collator ( . . . )</h1>
+      <p>
+        See <emu-xref href="#collator-objects"><a href="https://tc39.es/ecma402/#collator-objects">10</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.datetimeformat-intro">
+      <h1><span class="secnum">2.1.2</span> Intl.DateTimeFormat ( . . . )</h1>
+      <p>
+        See <emu-xref href="#datetimeformat-objects"><a href="https://tc39.es/ecma402/#datetimeformat-objects">11</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.displaynames-intro">
+      <h1><span class="secnum">2.1.3</span> Intl.DisplayNames ( . . . )</h1>
+      <p>
+        See <emu-xref href="#intl-displaynames-objects"><a href="https://tc39.es/ecma402/#intl-displaynames-objects">12</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.listformat-intro">
+      <h1><span class="secnum">2.1.4</span> Intl.ListFormat ( . . . )</h1>
+      <p>
+        See <emu-xref href="#listformat-objects"><a href="https://tc39.es/ecma402/#listformat-objects">13</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.locale-intro">
+      <h1><span class="secnum">2.1.5</span> Intl.Locale ( . . . )</h1>
+      <p>
+        See <emu-xref href="#locale-objects"><a href="https://tc39.es/ecma402/#locale-objects">14</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.numberformat-intro">
+      <h1><span class="secnum">2.1.6</span> Intl.NumberFormat ( . . . )</h1>
+      <p>
+        See <emu-xref href="#numberformat-objects"><a href="https://tc39.es/ecma402/#numberformat-objects">15</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.pluralrules-intro">
+      <h1><span class="secnum">2.1.7</span> Intl.PluralRules ( . . . )</h1>
+      <p>
+        See <emu-xref href="#pluralrules-objects"><a href="https://tc39.es/ecma402/#pluralrules-objects">16</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.relativetimeformat-intro">
+      <h1><span class="secnum">2.1.8</span> Intl.RelativeTimeFormat ( . . . )</h1>
+      <p>
+        See <emu-xref href="#relativetimeformat-objects"><a href="https://tc39.es/ecma402/#relativetimeformat-objects">17</a></emu-xref>.
+      </p>
+    </emu-clause>
+
+    <emu-clause id="sec-intl.segmenter-intro">
+      <h1><span class="secnum">2.1.9</span> Intl.Segmenter ( . . . )</h1>
+      <p>
+        See <emu-xref href="#segmenter-objects"><a href="https://tc39.es/ecma402/#segmenter-objects">18</a></emu-xref>.
+      </p>
+    </emu-clause>
+  </emu-clause>
+
+  <emu-clause id="sec-function-properties-of-the-intl-object">
+    <h1><span class="secnum">2.2</span> Function Properties of the Intl Object</h1>
+
+    <emu-clause id="sec-intl.getcanonicallocales">
+      <h1><span class="secnum">2.2.1</span> Intl.getCanonicalLocales ( <var>locales</var> )</h1>
+
+      <p>
+        When the <code>getCanonicalLocales</code> method is called with argument <var>locales</var>, the following steps are taken:
+      </p>
+
+      <emu-alg><ol><li>Let <var>ll</var> be ?&nbsp;<emu-xref aoid="CanonicalizeLocaleList"><a href="https://tc39.es/ecma402/#sec-canonicalizelocalelist">CanonicalizeLocaleList</a></emu-xref>(<var>locales</var>).</li><li>Return <emu-xref aoid="CreateArrayFromList"><a href="https://tc39.es/ecma262/#sec-createarrayfromlist">CreateArrayFromList</a></emu-xref>(<var>ll</var>).</li></ol></emu-alg>
+    </emu-clause>
+
+    <ins class="block">
+    <emu-clause id="sec-intl.supportedvaluesof">
+      <h1><span class="secnum">2.2.2</span> Intl.supportedValuesOf ( <var>key</var> )</h1>
+
+      <p>
+      When the <code>supportedValuesOf</code> method is called with argument <var>key</var> , the following steps are taken:
+      </p>
+
+      <emu-alg><ol><li>Let <var>key</var> be ?&nbsp;<emu-xref aoid="ToString"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<var>key</var>).</li><li>If <var>key</var> is <emu-val>"calendar"</emu-val>, then<ol><li>Let <var>list</var> be <emu-xref aoid="AvailableCanonicalCalendars" id="_ref_15"><a href="#sec-availablecanonicalcalendars">AvailableCanonicalCalendars</a></emu-xref>( ).</li></ol></li><li>Else if <var>key</var> is <emu-val>"collation"</emu-val>, then<ol><li>Let <var>list</var> be <emu-xref aoid="AvailableCanonicalCollations" id="_ref_16"><a href="#sec-availablecanonicalcollations">AvailableCanonicalCollations</a></emu-xref>( ).</li></ol></li><li>Else if <var>key</var> is <emu-val>"currency"</emu-val>, then<ol><li>Let <var>list</var> be <emu-xref aoid="AvailableCanonicalCurrencies" id="_ref_17"><a href="#sec-availablecanonicalcurrencies">AvailableCanonicalCurrencies</a></emu-xref>( ).</li></ol></li><li>Else if <var>key</var> is <emu-val>"numberingSystem"</emu-val>, then<ol><li>Let <var>list</var> be <emu-xref aoid="AvailableCanonicalNumberingSystems" id="_ref_18"><a href="#sec-availablecanonicalnumberingsystems">AvailableCanonicalNumberingSystems</a></emu-xref>( ).</li></ol></li><li>Else if <var>key</var> is <emu-val>"timeZone"</emu-val>, then<ol><li>Let <var>list</var> be <emu-xref aoid="AvailableCanonicalTimeZones" id="_ref_19"><a href="#sec-availablecanonicaltimezones">AvailableCanonicalTimeZones</a></emu-xref>( ).</li></ol></li><li>Else if <var>key</var> is <emu-val>"unit"</emu-val>, then<ol><li>Let <var>list</var> be <emu-xref aoid="AvailableCanonicalUnits" id="_ref_20"><a href="#sec-availablecanonicalunits">AvailableCanonicalUnits</a></emu-xref>( ).</li></ol></li><li>Else,<ol><li>Throw a <emu-val>RangeError</emu-val> exception.</li></ol></li><li>Return <emu-xref aoid="CreateArrayFromList"><a href="https://tc39.es/ecma262/#sec-createarrayfromlist">CreateArrayFromList</a></emu-xref>( <var>list</var> ).</li></ol></emu-alg>
+    </emu-clause>
+    </ins>
+  </emu-clause>
+</emu-clause><emu-annex id="sec-copyright-and-software-license">
+      <h1><span class="secnum">A</span> Copyright &amp; Software License</h1>
+      
+      <h2>Copyright Notice</h2>
+      <p>© 2022 Google, Ecma International</p>
+
+      <h2>Software License</h2>
+      <p>All Software contained in this document ("Software") is protected by copyright and is being made available under the "BSD License", included below. This Software may be subject to third party rights (rights from parties other than Ecma International), including patent rights, and no licenses under such third party rights are granted under this license even if the third party concerned is a member of Ecma International. SEE THE ECMA CODE OF CONDUCT IN PATENT MATTERS AVAILABLE AT https://ecma-international.org/memento/codeofconduct.htm FOR INFORMATION REGARDING THE LICENSING OF PATENT CLAIMS THAT ARE REQUIRED TO IMPLEMENT ECMA INTERNATIONAL STANDARDS.</p>
+
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+
+<ol>
+  <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+  <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+  <li>Neither the name of the authors nor Ecma International may be used to endorse or promote products derived from this software without specific prior written permission.</li>
+</ol>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE ECMA INTERNATIONAL "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ECMA INTERNATIONAL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+
+    </emu-annex></emu-import>
+</div></body>

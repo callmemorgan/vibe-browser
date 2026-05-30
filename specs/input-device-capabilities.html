@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Input Device Capabilities</title>
+    <meta charset='utf-8'>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c'
+            async class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+          specStatus: "CG-DRAFT",
+          wg: "WICG",
+          wgURI: "https://www.w3.org/community/wicg/",
+          shortName: "inputdevicecapabilities",
+          edDraftURI: "https://wicg.github.io/InputDeviceCapabilities/",
+          testSuiteURI: "https://wicg.github.io/InputDeviceCapabilities/tests/",
+          editors: [
+                {   name:       "Rick Byers",
+                    url:        "http://rbyers.net/",
+                    company:    "Google",
+                    companyURL: "https://www.google.com/" }
+          ],
+          otherLinks: [{
+            key: 'Participation',
+            data: [
+                {
+                    value: 'GitHub repository',
+                    href: 'https://github.com/WICG/InputDeviceCapabilities/'
+                },{
+                    value: 'Polyfill',
+                    href: 'https://wicg.github.io/InputDeviceCapabilities/inputdevicecapabilities-polyfill.js'
+                },
+                {
+                    value: 'File a bug / view open issues',
+                    href: 'https://github.com/WICG/InputDeviceCapabilities/issues'
+                }, {
+                    value: 'Feedback / discussion in the WICG',
+                    href: 'https://discourse.wicg.io/t/inputdevice-api-for-identifying-mouse-events-derived-from-touch/972/1'
+                }
+             ]
+          }],
+      };
+    </script>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+        The APIs introduced by this document provide authors with a way to determine
+        the capabilities of different input devices in response to DOM input events.
+      </p>
+    </section>
+
+    <section id='sotd'>
+      <p>
+        This proposal was produced in collaboration with members of the W3C
+        <a href="http://www.w3.org/2008/webapps/">Web Applications Working Group</a>,
+        the <a href="http://www.w3.org/2012/pointerevents/">Pointer Events Working Group</a>
+        and the <a href="https://www.w3.org/community/touchevents/">Touch Events Community Group</a>.
+      </p>
+    </section>
+
+    <section id="intro" class="informative">
+      <h2>Introduction</h2>
+      <p>
+        DOM input events are an abstraction above low-level input events, only loosely
+        tied to physical device input (e.g. <code>click</code> events can be fired by a mouse,
+        touchscreen or keyboard). There is no mechanism to obtain
+        lower-level details about the physical device responsible for an event.
+        Depending on implementation, certain types of input can also generate further
+        "fake" DOM input events for compatibility reasons. For example, touchscreen interactions
+        not only fire touch events, but also compatibility mouse events; when supporting both mouse and
+        touch input, it's difficult to know whether a <code>mousedown</code> event represents
+        new input from a mouse, or a compatibility event for a previously processed touchstart event.
+        This leads to problems, as developers may need to make assumptions or rely on heuristics.
+      </p>
+      <p>
+        The InputDeviceCapabilities API is designed to provide additional details about the underlying
+        sources of input events.  To avoid reliance on faulty assumptions (which may be
+        violated by edge cases or future input devices), this API attempts to describe how
+        a device behaves (e.g. whether it fires touch events), not what it is
+        (e.g. a touchscreen).  Initially this API is very minimal, focused on solving
+        <a href="https://docs.google.com/document/d/1-ZUtS3knhJP4RbWC74fUZbNp6cbytG6Wen7hewdCtdo/edit#heading=h.4my5f1pokrld">
+        a specific problem with identifying mouse events derived from touch events</a>, but it's
+        expected that it will <a href="https://docs.google.com/document/d/1WLadG2dn4vlCewOmUtUEoRsThiptC7Ox28CRmYUn8Uw/edit#">expand</a>
+        over time similar to <a href="#relationship-to-apis-in-other-platforms">other platforms</a>.
+      </p>
+    </section>
+    <section id='conformance'></section>
+    <section data-dfn-for="InputDeviceCapabilities">
+      <h2>The <code>InputDeviceCapabilities</code> interface</h2>
+      <p>
+        An <dfn>InputDeviceCapabilities</dfn> represents an input device (or group of related devices)
+        capable of generating input events.  Events caused by the same physical input device
+        will get the same <code>sourceCapabilities</code> object, but the converse isn't necessarily true.
+        E.g. two mice with the same capabilities in a system may appear as a single
+        <code>InputDeviceCapabilities</code> instance.
+      </p>
+      <p class="note">
+        In some cases an <code>InputDeviceCapabilities</code> will represent the capabilities of a logical
+        device rather than a physical input device.  For example, in some environments keyboard events
+        are generated by tapping on an on-screen keyboard on a touchscreen.  In such a
+        scenario the <code>InputDeviceCapabilities</code> represents the capabilities of the virtual keyboard
+        (since that's really what matters to authors), not the capabilities of the physical
+        touchscreen device (which should be considered an implementation detail of the logical
+        keyboard device).
+      </p>
+      <pre class="idl">
+        [Exposed=Window]
+        interface InputDeviceCapabilities {
+          constructor(optional InputDeviceCapabilitiesInit deviceInitDict = {});
+          readonly attribute boolean firesTouchEvents;
+          readonly attribute boolean pointerMovementScrolls;
+        };
+
+        dictionary InputDeviceCapabilitiesInit {
+          boolean firesTouchEvents = false;
+          boolean pointerMovementScrolls = false;
+        };
+      </pre>
+      <dl>
+        <dt><dfn>firesTouchEvents</dfn></dt>
+        <dd>
+          Indicates whether this device dispatches [[Touch-Events]].
+          <div class="note">
+            This property can be used to detect mouse events [[UIEvents]] which represent
+            an action that may have already been handled by touch event handlers.  See
+            <a href="#example_1">Example 1</a> for details.
+            This doesn't necessarily mean the device is a touch screen.  For example,
+            stylus and mouse devices typically generate touch events on mobile browsers.
+          </div>
+        </dd>
+        <dt><dfn>pointerMovementScrolls</dfn></dt>
+        <dd>
+          Indicates whether this device is a pointing device which typically triggers
+          scrolling when it is dragged across the content.
+          <div class="note">
+            This property is typically <code>true</code> for direct-manipulation pointing
+            devices (those where the physical metaphor is one of the user directly
+            manipulating an object on the screen), such as touch screens and some
+            on-screen stylus devices common on phones.<br>
+            This property can be used, for example, in libraries which attempt to mimic
+            native scrolling by consuming low-level input events.  Such libraries typically
+            respond to touch events but not mouse events.  [[PointerEvents]] provide
+            an abstraction between these devices (including devices like pens which may
+            behave in either way depending on system convention).  So when using the
+            [[PointerEvents]] API it's best to <a href="#example_2">explicitly check</a> this
+            capability rather than make assumptions about which types of events should trigger
+            scrolling behavior.
+          </div>
+        </dd>
+      </dl>
+    </section>
+    <section>
+      <h2>Extensions to the <code>UIEvent</code> interface and <code>UIEventInit</code> dictionary</h2>
+      <p><code>UIEvent</code> and <code>UIEventInit</code> are defined in [[!UIEvents]].</p>
+      <pre class="idl" data-cite="ui-events">
+        partial interface UIEvent {
+          readonly attribute InputDeviceCapabilities? sourceCapabilities;
+        };
+
+        partial dictionary UIEventInit {
+          InputDeviceCapabilities? sourceCapabilities = null;
+        };
+      </pre>
+      <dl data-dfn-for="UIEvent">
+        <dt><dfn>sourceCapabilities</dfn></dt>
+        <dd>
+          Indicates the <a>InputDeviceCapabilities</a> responsible for the generation
+          of this event, or <code>null</code> if no input device was responsible.
+            When a single user interaction with an input device generates a series of
+            different input events, all events in the series should have the same
+            <code>sourceCapabilities</code>.
+            For example, when a user lifts their finger off of a touchscreen, several
+            UIEvents may be generated including <code>touchend</code>, <code>mousedown</code>,
+            <code>click</code>, and <code>focus</code>.  All of these events must
+            have the same <code>sourceCapabilities</code> representing the touchscreen.
+          <div class="note">
+            A device is considered "responsible" for an event only when that interaction
+            is part of the abstraction provided by the web platform.  For example,
+            many user agents allow a window to be resized with a mouse or a keyboard,
+            but this detail is not exposed to the web platform in any way and so the <code>sourceCapabilities</code>
+            of a <code>resize</code> event will typically be <code>null</code>.
+          </div>
+        </dd>
+      </dl>
+    </section>
+    <section class="informative">
+      <h2>Examples</h2>
+      <p>The following are examples that demonstrate how the APIs in this specification might
+      be used</p>
+      <pre id="example_1" resource="#example_1" class="example" title="Changing the style of a button for mouse and touch">
+myButton.addEventListener('touchstart', addHighlight);
+
+myButton.addEventListener('touchend', removeHighlight);
+
+// We don't call preventDefault because we want to rely on the browser's
+// tap detection / 'click' to actually trigger the button.
+
+myButton.addEventListener('mousedown', function(e) {
+  // Touch event case handled above, don't change the style again on tap
+  if (!e.sourceCapabilities.firesTouchEvents) {
+    addHighlight(e);
+  }
+});
+
+document.addEventListener('mouseup', function(e) {
+  if (!e.sourceCapabilities.firesTouchEvents) {
+    removeHighlight(e);
+  }
+});
+
+myButton.addEventListener('click', someFunction);
+      </pre>
+      <pre id="example_2" resource="#example_2" class="example" title="Driving panning from pointer events">
+myCarousel.addEventListener('wheel', function(e) {
+  // Horizontal wheel movement always pans the carousel instead of scrolling.
+  if (e.deltaX > e.deltaY) {
+    panCarousel(e.deltaX);
+    e.preventDefault();
+  }
+});
+
+// Horizontal touch (or other direct-manipulation) input should
+// also pan the carousel instead of scrolling.
+myCarousel.style.touchAction='pan-y';
+var lastX;
+function onPointerEvent(e) {
+  if (e.isPrimary && e.sourceCapabilities.pointerMovementScrolls) {
+    if (e.type == 'pointermove')
+      panCarousel(e.clientX - lastX);
+    lastX = e.clientX;
+  }
+};
+myCarousel.addEventListener('pointedown', onPointerEvent);
+myCarousel.addEventListener('pointermove', onPointerEvent);
+      </pre>
+    </section>
+    <section class="informative">
+      <h2>Relationship to APIs in other platforms</h2>
+      <section><h3>Windows 8</h3>
+        <p>Windows Runtime has a <a href="https://msdn.microsoft.com/en-us/library/windows/apps/xaml/windows.devices.input.pointerdevice.aspx">PointerDevice class</a>,
+        which is correlated to a pointer input event via <a href="https://msdn.microsoft.com/en-us/library/windows/apps/xaml/windows.ui.input.pointerpoint.pointerdevice.aspx">Windows.UI.Input.PointerPoint.PointerDevice</a>.
+        Additional information is available from the <a href="https://msdn.microsoft.com/en-us/library/windows/apps/xaml/windows.devices.input.mousecapabilities.aspx">MouseCapabilities</a>,
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.devices.input.keyboardcapabilities.aspx">KeyboardCapabilities</a> and <a href="https://msdn.microsoft.com/library/windows/apps/br225644">TouchCapabilities</a>
+        classes.  Note that this information is not available per-device.</p>
+
+        <p>At the low level, all WM_POINTER event messages <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh454885(v=vs.85).aspx">provide access to</a>
+        a <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh454907(v=vs.85).aspx">sourceDevice HANDLE</a> for each point.
+        Detailed per-device information can be obtained using the <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms645536(v=vs.85).aspx">Raw Input APIs</a>.</p>
+      </section>
+
+      <section><h3>Mac OS X</h3>
+        <p>MacOS X has various properties directly on NSEvent for determining device details.
+        E.g. <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSEvent_Class/index.html#//apple_ref/c/econst/NSTouchEventSubtype">the mouse event sub-type</a>,
+        <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSEvent_Class/index.html#//apple_ref/occ/instm/NSEvent/hasPreciseScrollingDeltas">hasPreciseScrollingDeltas</a>,
+        and various properties (such as <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSEvent_Class/index.html#//apple_ref/occ/instm/NSEvent/vendorPointingDeviceType">vendorPointingDeviceType</a>)
+        for tablet device information.</p>
+      </section>
+
+      <section><h3>Android</h3>
+        <p>Android has a rich <a href="http://developer.android.com/reference/android/view/InputDevice.html">InputDevice</a>
+        API similar to what’s being proposed here.  Applications can determine the InputDevice for an event
+        via <a href="http://developer.android.com/reference/android/view/InputEvent.html#getDevice()">InputEvent.getDevice</a>,
+        and can watch for changes in input devices using an <a href="http://developer.android.com/reference/android/hardware/input/InputManager.html">InputDeviceManager</a>.</p>
+      </section>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>RDF 1.2 N-Quads</title>
+  <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+  <meta name="color-scheme" content="light dark">
+  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+  <script src="https://w3c.github.io/rdf-common/local-biblio.js" class="remove"></script>
+  <script src="https://w3c.github.io/rdf-common/fixup.js" class="remove"></script>
+  <script class='remove'>
+    // Use fragment identifier of test as name.
+    function data_test_display() {
+        const test_references = document.querySelectorAll('details.respec-tests-details a');
+        for( const a of test_references ) {
+            const href = a.href;
+            const test_reference = href.split('#')[1];
+            a.textContent = test_reference;
+        }
+    }
+
+    var respecConfig = {
+      localBiblio:          localBibliography,
+      specStatus:           "ED",
+      edDraftURI:           "https://w3c.github.io/rdf-n-quads/spec/",
+      testSuiteURI:         "https://w3c.github.io/rdf-tests/rdf/rdf12/rdf-n-quads/", 
+      shortName:            "rdf12-n-quads",
+      subtitle:             "A line-based syntax for RDF datasets",
+      copyrightStart:       "2012",
+
+      previousPublishDate:  "2014-02-25",
+      previousMaturity:     "REC",
+      prevRecShortname:     "n-quads",
+
+      editors:  [
+        {
+          name: "Gregg Kellogg",
+          w3cid: "44770",
+          //retiredDate: "2025-09-06", // Respec would automatically move Gregg to the 'Former Editors' section
+          note: "until 2025-09-06",
+          extras: [
+            {name: "in memoriam", class: "former"},
+          ],
+        },
+        { name: "Dominik Tomaszuk", w3cid: "44239", orcid: "0000-0003-1806-067X"},
+      ],
+
+      formerEditors:  [
+        { name: "Gavin Carothers", note: "RDF 1.1" },
+      ],
+
+      xref: ["RDF12-CONCEPTS"],
+      postProcess: [data_test_display],
+
+      github: "https://github.com/w3c/rdf-n-quads/",
+      group:           "rdf-star",
+      doJsonLd:     true,
+      wgPublicList: "public-rdf-star-wg"
+    };
+  </script>
+
+  <style>
+    /* Style Turtle script blocks to be visible */
+    pre.example script { display:block;  overflow-x: auto; }
+    .separated { border-collapse:collapse; }
+    .separated thead tr th { border:1px solid black; padding: .2em; min-width: 10vw }
+    .separated tbody tr td { border:1px solid black; text-align: center; min-width: 10vw }
+    .separated tbody tr td.r { text-align: right; padding: .5em; }
+    .separated tbody tr td:first-child,
+    .separated tbody tr td:last-child {text-align: left; padding: .5em; }
+    .separated.last-center tbody tr td:last-child {text-align: center; padding: .5em; }
+    .grammar td {
+      font-family: Menlo, Consolas, "DejaVu Sans Mono", Monaco, monospace;
+      font-size: .9em;
+      vertical-align: top;
+    }
+    .grammar-opt,
+    .grammar-alt,
+    .grammar-paren,
+    .grammar-diff,
+    .grammar-plus,
+    .grammar-star,
+    .grammar-brac { color: gray;}
+    .grammar_comment { color: #A52A2A; font-style: italic; }
+    #grammar-declaration-terminals h3 {
+      margin-top: 1em;
+    }
+    .hl-bold { font-weight: bold; color: #0a3; }
+    code { color: #ff4500; }  /* Old W3C Style */
+    var { color: #ff4500; }
+    abbr[title] {text-decoration: none;}
+    @media (max-width: 850px) {
+        table th, table td { font-size: 12px; padding: 3px 4px;}
+        table.ex th, table.ex td {overflow-x: scroll; max-width: 42vw !important;}
+    }
+    @media (max-width: 767px) {
+      table { word-break: break-all; }
+      .separated thead tr th { border:1px solid black; padding: .2em; min-width: 10vw }
+      .separated thead tr th:nth-child(2) { word-break: break-all; }
+      .separated tbody tr td:nth-child(2) {padding: 3px 2px;}
+      .separated tbody tr td:nth-child(3) {padding: 3px 2px;}
+      .separated tbody tr td { border:1px solid black; text-align: center; min-width: 10vw }
+      table { word-break: normal; overflow-wrap: anywhere; }
+      table.ex, .ex th, .ex td { border: none; padding: 0; }
+      table.ex { font-size: 1.4vw; }
+      .separated tbody tr td:first-child, .separated tbody tr th:first-child {max-width: 220px; overflow-wrap: anywhere;}
+    }
+    .ex th { text-align: center; }
+
+    table.cp-definitions { border-collapse:collapse; }
+
+    table.cp-definitions,
+    table.cp-definitions th,
+    table.cp-definitions td { border:0px solid black; padding:0.2em; }
+    table.cp-definitions td:nth-child(2) { text-align: center; }
+  </style>
+</head>
+<body>
+
+<section id='abstract'>
+  <p>N-Quads is a line-based, plain text format for encoding an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.</p>
+
+  <p>RDF 1.2 N-Quads introduces <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a>
+    as a fourth kind of <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF term</a>
+    which can be used as the
+    <a data-cite="RDF12-CONCEPTS#dfn-object">object</a> of another
+    <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">triple</a>,
+    making it possible to make statements about other statements.
+    RDF 1.2 N-Quads also adds support for
+    <a data-cite="RDF12-CONCEPTS#dfn-dir-lang-string">directional language-tagged strings</a>.</p>
+</section>
+
+<section id='sotd' class="updateable-rec">
+  <p>This document is part of the RDF 1.2 document suite.
+  The N-Quads format is a line-based RDF syntax,
+  which is an extension of N-Triples [[RDF12-N-TRIPLES]].
+  The main distinction is that N-Quads allows the encoding of multiple graphs
+  in a single document representing an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF Dataset</a>.</p>
+
+  <section id="related" data-include="https://w3c.github.io/rdf-common/related.html"></section>
+</section>
+
+<section id="sec-intro" class="informative">
+  <h2>Introduction</h2>
+
+  <p>
+    This document defines N-Quads, a concrete syntax for 
+    RDF [[RDF12-CONCEPTS]],
+    and an extension of N-Triples [[RDF12-N-TRIPLES]].
+    N-Quads is an easy to parse, line-based,
+    concrete syntax for
+    <a data-cite="RDF12-CONCEPTS#section-dataset">RDF Datasets</a>
+    [[RDF12-CONCEPTS]].
+  </p>
+
+  <p>As with N-Triples, an <a>N-Quads document</a> can contain a single kind of parsing directive
+    for announcing the RDF version of the content.
+    See <a href="#sec-version" class="sectionRef"></a>.</p>
+
+  <p>N-Quads statements are a sequence of RDF terms representing the
+    <a data-cite="RDF12-CONCEPTS#dfn-subject">subject</a>,
+    <a data-cite="RDF12-CONCEPTS#dfn-predicate">predicate</a>, and
+    <a data-cite="RDF12-CONCEPTS#dfn-object">object</a>
+    of an <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">RDF Triple</a>
+    and an optional <a data-cite="RDF12-CONCEPTS#dfn-graph-name">graph name</a>
+    identifying a <a data-cite="RDF12-CONCEPTS#dfn-named-graph">named graph</a>
+    associated with the triple within an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>,
+    also known as a <a data-cite="RDF12-CONCEPTS#dfn-quad">quad</a>.
+    These may be separated by white space (<a href="#cp-space"><code title="space">spaces</code></a>, and/or <a href="#cp-tab"><code title="horizontal tab">tabs</code></a>).
+    This sequence is terminated by a period (<a href="#cp-full-stop"><code title="full stop">.</code></a>),
+    optionally followed by white space and/or a comment,
+    and a new line (optional at the end of a document).</p>
+
+  <pre id="ex-comments" class="example nquads" data-transform="updateExample"
+       title="Use of comments in N-Quads">
+    <!--
+    <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1> <http://example.org/graph3> . # comments here
+    # or on a line by themselves
+    _:subject1 <http://an.example/predicate1> "object1" <http://example.org/graph1> .
+    _:subject2 <http://an.example/predicate2> "object2" <http://example.org/graph5> .
+    -->
+  </pre>
+
+  <p>The <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a> represented by an <a>N-Quads document</a> contains
+    exactly each <a data-cite="RDF12-CONCEPTS#dfn-quad">quad</a> matching the N-Quads
+    <a href="#grammar-production-statement"><code>statement</code></a> production.
+  </p>
+
+  <p>
+    This specification extends the original N-Quads syntax, as defined in [[[N-QUADS]]] [[N-QUADS]],
+    to support the new features introduced by [[[RDF12-CONCEPTS]]] [[RDF12-CONCEPTS]].
+    This extension is fully backward compatible:
+    any document complying with the old version complies with the new version, and parses to the same graph.
+    Furthermore, any document complying with the new version and containing only RDF 1.1 features is also compliant with the older version
+    (with the exception of the `VERSION` directive; see <a href="#sec-version"></a>).
+    Finally, none of the new syntactic constructs are valid in the old syntax.
+    This means that any N-Quads document using RDF 1.2 features does not
+    comply with the previous version of this specification and cannot be
+    interpreted as a different graph under it.
+  </p>
+
+</section>
+
+<section id="sec-n-quads-language" class="informative">
+  <h2>N-Quads Language</h2>
+
+  <p>An <a>N-Quads document</a> allows writing down an
+    <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>
+    in a textual form.
+    An RDF dataset is made up of <a href="#simple-triples">simple statements</a>
+    consisting of a
+    <a data-cite="RDF12-CONCEPTS#dfn-subject">subject</a>,
+    <a data-cite="RDF12-CONCEPTS#dfn-predicate">predicate</a>,
+    <a data-cite="RDF12-CONCEPTS#dfn-object">object</a>, an optional
+    <a data-cite="RDF12-CONCEPTS#dfn-graph-name">graph name</a>
+    and optional <a>blank lines</a>.
+    Comments may be given after a <a href="#cp-number-sign"><code title="number sign">#</code></a> that is not part of
+    another lexical token and continue to the end of the line.</p>
+
+  <section id="simple-triples">
+    <h3>Simple Statements</h3>
+
+    <p>A simple statement extends the
+      <a data-cite="RDF12-N-TRIPLES#simple-triples">definition of simple triple</a> in [[RDF12-N-TRIPLES]]
+      with an optional <a data-cite="RDF12-CONCEPTS#dfn-named-graph">named graph</a>.</p>
+
+    <p>The simplest statement is a sequence of
+      (<a data-cite="RDF12-CONCEPTS#dfn-subject">subject</a>,
+      <a data-cite="RDF12-CONCEPTS#dfn-predicate">predicate</a>,
+      <a data-cite="RDF12-CONCEPTS#dfn-object">object</a>) terms,
+      forming an <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">RDF triple</a>,
+      and an optional
+      <a data-cite="RDF12-CONCEPTS#dfn-graph-name">graph name</a>
+      (a <a data-cite="RDF12-CONCEPTS#dfn-blank-node-identifier">blank node identifier</a>
+      or <a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a>) denoting the
+      <a data-cite="RDF12-CONCEPTS#dfn-named-graph">named graph</a>
+      in a <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">dataset</a>
+      to which the triple belongs,
+      and terminated by a period (<a href="#cp-full-stop"><code title="full stop">.</code></a>).
+      White space (<a href="#cp-space"><code title="space">spaces</code></a>, and/or <a href="#cp-tab"><code title="horizontal tab">tabs</code></a>) may surround terms,
+      except where significant as noted in the <a href="#n-quads-grammar">grammar</a>.</p>
+
+    <p>Comments are treated as white space, and may be given after a <a href="#cp-number-sign"><code title="number sign">#</code></a> that is not part of
+      another lexical token and continue to the end of the line.</p>
+
+    <p>The <a data-cite="RDF12-CONCEPTS#dfn-graph-name">graph name</a> can be omitted, in which case the triples are considered
+      part of the
+      <a data-cite="RDF12-CONCEPTS#dfn-default-graph">default graph</a> of the <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.<p>
+
+    <pre id="ex-simple-statement" class="example nquads" data-transform="updateExample"
+         title="Simple Statement">
+      <!--
+      <http://example.org/#spiderman> <http://www.perceive.net/schemas/relationship/enemyOf> <http://example.org/#green-goblin> <http://example.org/graphs/spiderman> .
+      -->
+    </pre>
+  </section>
+
+  <section id="sec-version">
+    <h3>Version Announcement</h3>
+
+    <p>The N-Quads language has evolved since its origin, and RDF 1.2
+      adds new syntax.
+      RDF 1.2 N-Quads introduces the
+      <a href="#grammar-production-versionDirective"><code>VERSION</code></a> directive
+      along with an optional `version` <a href="#sec-mediaReg">Media Type parameter</a>.
+      When respectively serializing and parsing N-Quads with new features such as
+      <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text directions</a>
+      or <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a>,
+      authors and parsers can announce and detect the use of the new syntax forms using these directives; similarly,
+      HTTP clients and servers can use the `version` <a href="#sec-mediaReg">Media Type parameter</a>.
+    </p>
+
+    <p>As with N-Triples, the version declaration is case-sensitive.</p>
+
+    <pre id="ex-sparql-version-decl"
+         class="example n-quads" data-transform="updateExample"
+         title="Version announcement">
+      <!--
+      VERSION "1.2"
+      <http://example.org/#spiderman> <http://www.perceive.net/schemas/relationship/enemyOf> <http://example.org/#green-goblin> <http://example.org/#graph> .
+      -->
+    </pre>
+
+    <p>When providing content over HTTP, servers can announce the version
+      using the optional `version` <a href="#sec-mediaReg">Media Type parameter</a>:</p>
+
+    <pre id="ex-http-version-decl"
+         class="example http" data-transform="updateExample"
+         title="HTTP version announcement">
+      <!--
+      GET /document.nq HTTP/1.1
+      Host: example.com
+      Accept: application/n-quads; version=1.2
+      -->
+    </pre>
+
+    <p>See <a data-cite="RDF12-TURTLE#sec-version">Version Announcement</a> in [[RDF12-TURTLE]]
+      for more considerations on using the version declaration.</p>
+
+  </section>
+
+  <section id="triple-terms">
+    <h3>Triple Terms</h3>
+
+    <p>A <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple term</a>
+      may be the <a data-cite="RDF12-CONCEPTS#dfn-object">object</a> of an
+      <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">RDF triple</a>.</p>
+
+    <p>A <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple term</a>
+      is represented as a <a href="#grammar-production-tripleTerm"><code>tripleTerm</code></a> with
+      <a href="#grammar-production-subject"><code>subject</code></a>,
+      <a href="#grammar-production-predicate"><code>predicate</code></a>, and
+      <a href="#grammar-production-object"><code>object</code></a>
+      preceded by <a href="#cp-double-lt-paren"><code>&lt;&lt;(</code></a>, and
+      followed by <a href="#cp-paren-double-gt"><code>)&gt;&gt;</code></a>.
+      Note that <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a>
+      may be nested.
+     </p>
+
+    <pre id="ex-triple-term" class="example nquads" data-transform="updateExample"
+         title="Triple Term">
+      <!--
+      _:e38  <ex:familyName>                                      "Smith" .
+      _:anno <http://www.w3.org/1999/02/22-rdf-syntax-ns#reifies> <<( _:e38 <http://example.com/jobTitle> "Designer" )>> .
+      _:anno <http://example.com/accordingTo>                     _:e22 .
+      -->
+    </pre>
+  </section>
+
+  <section id="sec-iri">
+    <h3>IRIs</h3>
+
+    <p>
+      As in N-Triples, <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a> may be written only as <a data-cite="RFC3986#section-5">resolved</a> IRIs.
+      IRIs are preceded by <a href="#cp-less-than"><code title="less-than sign">&lt;</code></a> and
+      followed by <a href="#cp-greater-than"><code title="greater-than sign">&gt;</code></a>,
+      and may contain <a data-cite="RDF12-TURTLE#dfn-numeric-escape-sequence">numeric escape sequences</a> (described below).
+      For example <code>&lt;http://example.org/#green-goblin&gt;</code>.
+    </p>
+  </section>
+
+  <section id="sec-literals">
+    <h3>RDF Literals</h3>
+
+    <p>As in N-Triples,
+      <a data-cite="RDF12-CONCEPTS#dfn-rdf-literal">literals</a> are used to identify values such as strings, numbers, dates.</p>
+
+    <p>Literals (Grammar production <a href="#grammar-production-literal"><code>Literal</code></a>)
+      have a lexical form followed by either a
+      <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+      (possibly including <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>),
+      a <a data-cite="RDF12-CONCEPTS#dfn-datatype-iri">datatype IRI</a>,
+      or neither.</p>
+
+    <p>The representation of the <a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a> consists of an
+      initial delimiter <a href="#cp-quotation-mark"><code title="quotation mark">&quot;</code></a>,
+      a sequence of permitted characters or
+      <a data-cite="RDF12-TURTLE#dfn-numeric-escape-sequence">numeric escape sequences</a> or
+      <a data-cite="RDF12-TURTLE#dfn-string-escape-sequence">string escape sequences</a>,
+      and a final delimiter.</p>
+
+    <p>Literals may not contain the characters <a href="#cp-quotation-mark"><code title="quotation mark">&quot;</code></a>,
+      <a href="#cp-line-feed"><code title="line feed">LF</code></a>, or
+      <a href="#cp-carriage-return"><code title="carriage return">CR</code></a>
+      except in their escaped forms.
+      In addition <a href="#cp-backslash"><code title="backslash">\</code></a>
+      may not appear in any quoted literal except as part of an escape sequence
+      and a <a href="#cp-quotation-mark"><code title="quotation mark">&quot;</code></a> character
+      can only be included in a quoted literal using an escape sequence.
+      </p>
+
+    <p>The corresponding <a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a>
+      is the characters between the delimiters, after processing any escape sequences.
+      If present, the <a href="#grammar-production-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a>
+      terminal matches the <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+      and optionally the <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>.
+      The <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+      is preceded by an <a href="#cp-at-sign"><code title="at sign">@</code></a>,
+      and, if present, the <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>
+      is separated from the <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+      by <a href="#cp-hyphen-hyphen" style="white-space: nowrap"><code>--</code></a>.
+      If there is no language tag, there may be a <a data-cite="RDF12-CONCEPTS#dfn-datatype-iri">datatype IRI</a>,
+      preceded by <a href="#cp-double-circumflex"><code>^^</code></a>.
+      If there is no datatype IRI and no language tag, then
+      it is a <a data-cite="RDF12-CONCEPTS#dfn-simple-literal">simple literal</a>
+      and the datatype is <code>http://www.w3.org/2001/XMLSchema#string</code>.
+    </p>
+  </section>
+
+  <section id="BNodes">
+    <h3>RDF Blank Nodes</h3>
+    <p>
+      As in N-Triples,
+      <a data-cite="RDF12-CONCEPTS#dfn-blank-node">RDF blank nodes</a> are expressed as
+      <a href="#cp-underscore-colon"><code>_:</code></a>
+      followed by a blank node label matching the
+      <a href="#grammar-production-BLANK_NODE_LABEL"><code>BLANK_NODE_LABEL</code></a>
+      production.
+    </p>
+
+    <p>
+      Informally, the first character after
+      <a href="#cp-underscore-colon"><code>_:</code></a>
+      is either a character matched by
+      <a href="#grammar-production-PN_CHARS_U"><code>PN_CHARS_U</code></a>
+      or a digit. Any following characters, if present, are matched by
+      <a href="#grammar-production-PN_CHARS"><code>PN_CHARS</code></a>
+      or by <a href="#cp-full-stop"><code title="full stop">.</code></a>,
+      except that <a href="#cp-full-stop"><code title="full stop">.</code></a>
+      is not permitted as the last character.
+    </p>
+
+
+    <p>
+      A fresh RDF <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a> is allocated for each unique
+      <a data-cite="RDF12-CONCEPTS#dfn-blank-node-identifier">blank node identifier</a> in a document.
+      Repeated use of the same
+      <a data-cite="RDF12-CONCEPTS#dfn-blank-node-identifier">blank node identifier</a>
+      identifies the same blank node.
+    </p>
+
+    <pre id="ex-bnodes" class="example nquads" data-transform="updateExample"
+         title="Blank nodes in N-Quads">
+    <!--
+    _:alice <http://xmlns.com/foaf/0.1/knows> _:bob .
+    _:bob   <http://xmlns.com/foaf/0.1/knows> _:alice .
+    -->
+    </pre>
+  </section>
+</section>
+
+<section id="canonical-nquads">
+  <span id="canonical-quads"><!--legacy--></span>
+  <h2>A Canonical form of N-Quads</h2>
+
+  <p>This section defines a canonical form of N-Quads which has
+    a completely specified layout.
+    The grammar for the language is unchanged.</p>
+
+  <p>Canonical N-Quads extends
+    <a data-cite="RDF12-N-TRIPLES#canonical-ntriples">Canonical N-Triples</a> in [[RDF12-N-TRIPLES]]
+    to include <a href="#grammar-production-graphLabel"><code>graphLabel</code></a>.</p>
+
+  <p>While the N-Quads syntax allows choices for the representation and layout of RDF data,
+    the canonical form of N-Quads provides a unique syntactic representation of any quad.
+    Each code point
+    can be represented by only one of
+    <a href="#grammar-production-UCHAR"><code>UCHAR</code></a>,
+    <a href="#grammar-production-ECHAR"><code>ECHAR</code></a>,
+    or unencoded character,
+    where the relevant production allows for a choice in representation.
+    Each quad is represented entirely on a single line with specified white space.</p>
+
+  <p>Canonical N-Quads has the following additional constraints on layout:</p>
+  <ul>
+    <li id="c14n-ws-tests" data-tests="
+      c14n/index.html#minimal_whitespace-01,
+      c14n/index.html#minimal_whitespace-02,
+      c14n/index.html#extra_whitespace-01,
+      c14n/index.html#extra_whitespace-02,
+      c14n/index.html#extra_whitespace-03,
+      c14n/index.html#extra_whitespace-04,
+      c14n/index.html#triple-term-01,
+      c14n/index.html#triple-term-02,
+      c14n/index.html#triple-term-03,
+      c14n/index.html#triple-term-04">
+      White space MUST NOT be used except after
+      <code>subject</code>,
+      <code>predicate</code>, 
+      <code>object</code>,
+      and <code>graphLabel</code>,
+      any of which MUST be a single <a href="#cp-space"><code title="space">space</code></a>.</li>
+     <li>A Canonical N-Quads document MUST NOT include a
+      <a href="#grammar-production-versionDirective"><code>VERSION</code></a> directive.</li>
+    <li id="c14n-dt-tests" data-tests="c14n/index.html#literal_with_string_dt">
+      <a data-cite="RDF12-CONCEPTS#dfn-rdf-literal">Literals</a> with the
+      datatype <code>http://www.w3.org/2001/XMLSchema#string</code>
+      MUST NOT use the <a data-cite="RDF12-CONCEPTS#dfn-datatype-iri">datatype IRI</a> part of the <a href="#grammar-production-literal"><code>literal</code></a>,
+      and are represented using only <a href="#grammar-production-STRING_LITERAL_QUOTE"><code>STRING_LITERAL_QUOTE</code></a>.
+    </li>
+    <li id="c14n-hex-tests" data-tests="
+      c14n/index.html#literal_with_numeric_escape4,
+      c14n/index.html#literal_with_numeric_escape8">
+      <a href="#grammar-production-HEX"><code>HEX</code></a> MUST use only digits
+      (<code>[</code><a href="#cp-zero"><code title="digit zero">0</code></a>–<a href="#cp-nine"><code title="digit nine">9</code></a><code>]</code>)
+      and uppercase letters (<code>[</code><a href="#cp-uppercase-a"><code title="latin capital letter A">A</code></a>–<a href="#cp-uppercase-f"><code title="latin capital letter F">F</code></a><code>]</code>).</li>
+    <li id="c14n-langdir-tests" data-tests="
+      c14n/index.html#langtagged_string,
+      c14n/index.html#dirlangtagged_string">
+      Alphabetic characters in <a href="#grammar-production-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a> MUST use only
+      the lowercase letters (<code>[</code><a href="#cp-lowercase-a"><code title="latin small letter A">a</code></a>–<a href="#cp-lowercase-z"><code title="latin small letter Z">z</code></a><code>]</code>)
+      with any uppercase letters <a data-cite="I18N-GLOSSARY#def_case_mapping">case mapped</a> to lowercase.</li>
+    <li>Within <a href="#grammar-production-STRING_LITERAL_QUOTE"><code>STRING_LITERAL_QUOTE</code></a>:
+      <ul>
+        <li id="c14n-echar-tests" data-tests="
+          c14n/index.html#literal_with_BACKSPACE,
+          c14n/index.html#literal_with_CARRIAGE_RETURN,
+          c14n/index.html#literal_with_CHARACTER_TABULATION,
+          c14n/index.html#literal_with_dquote,
+          c14n/index.html#literal_with_FORM_FEED,
+          c14n/index.html#literal_with_LINE_FEED,
+          c14n/index.html#literal_with_REVERSE_SOLIDUS">
+          Characters
+          <a href="#cp-backspace"><code title="backspace">BS</code></a>,
+          <a href="#cp-tab"><code title="horizontal tab">HT</code></a>,
+          <a href="#cp-line-feed"><code title="line feed">LF</code></a>,
+          <a href="#cp-form-feed"><code title="form feed">FF</code></a>,
+          <a href="#cp-carriage-return"><code title="carriage return">CR</code></a>,
+          <a href="#cp-quotation-mark"><code title="quotation mark">&quot;</code></a>, and
+          <a href="#cp-backslash"><code title="backslash">\</code></a>
+          MUST be encoded using <a href="#grammar-production-ECHAR"><code>ECHAR</code></a>.</li>
+        <li id="c14n-uchar-tests" data-tests="
+          c14n/index.html#literal_needing_uchar_escaping-01,
+          c14n/index.html#literal_needing_uchar_escaping-02">
+          Characters in the range from <code class="codepoint">U+0000</code> to <code class="codepoint">U+0007</code>,
+          <a href="#cp-vertical-tab"><code title="vertical tab">VT</code></a>,
+          characters in the range from <code class="codepoint">U+000E</code> to <code class="codepoint">U+001F</code>,
+          <a href="#cp-delete"><code title="delete">DEL</code></a>,
+          and characters not matching the <a data-cite="XML11#charsets">Char</a> production from [[XML11]]
+          MUST be represented by <a href="#grammar-production-UCHAR"><code>UCHAR</code></a>
+          using a lowercase <code>\u</code> with 4 <a href="#grammar-production-HEX"><code>HEX</code></a>es.</li>
+        <li id="c14n-uni-tests" data-tests="
+          c14n/index.html#literal_all_controls,
+          c14n/index.html#literal_all_punctuation,
+          c14n/index.html#literal_ascii_boundaries">
+          All characters not required to be represented by
+          <a href="#grammar-production-ECHAR"><code>ECHAR</code></a> or
+          <a href="#grammar-production-UCHAR"><code>UCHAR</code></a>
+          MUST be represented by their native [[UNICODE]] representation.</li>
+      </ul>
+    </li>
+    <li id="c14n-eol-tests">The token <a href="#grammar-production-EOL"><code>EOL</code></a> MUST be a single <a href="#cp-line-feed"><code title="line feed">LF</code></a>.</li>
+    <li id="c14n-final-eol-tests">The final <a href="#grammar-production-EOL"><code>EOL</code></a> MUST be provided.</li>
+  </ul>
+</section>
+
+<section id="conformance">
+  <p>This specification defines conformance criteria for:</p>
+  <ul>
+    <li><a>N-Quads documents</a></li>
+    <li><a>Canonical N-Quads documents</a></li>
+    <li><a>N-Quads parsers</a></li>
+  </ul>
+  <p>A conforming <dfn>N-Quads document</dfn> is an <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">RDF string</a>
+    that conforms to the grammar and additional constraints defined in <a href="#n-quads-grammar" class="sectionRef"></a>,
+    starting with the <a href="#grammar-production-nquadsDoc"><code>nquadsDoc</code> production</a>.
+    An N-Quads document serializes an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>.</p>
+
+  <p class="note">N-Quads documents do not provide a way of serializing empty graphs that may be part of an RDF dataset.</p>
+
+  <p>A conforming <dfn>Canonical N-Quads document</dfn> is an 
+    <a>N-Quads document</a> that follows the 
+    <a href="#canonical-nquads">additional constraints</a> of Canonical N-Quads.</p>
+
+  <p>A conforming <dfn>N-Quads parser</dfn> is a system capable of
+    reading <a>N-Quads documents</a> on behalf of an application.
+    It makes the serialized <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>,
+    as defined in <a href="#sec-parsing" class="sectionRef"></a>,
+    available to the application, usually through some form of API.</p>
+
+  <p>The IRI that identifies the N-Quads language is: <code>http://www.w3.org/ns/formats/N-Quads</code></p>
+
+  <section id="sec-mediatype">
+    <h2>Media Type and Content Encoding</h2>
+
+    <p>The media type of N-Quads is <code>application/n-quads</code>.
+      The content encoding of N-Quads is always UTF-8.
+      See <a href="#sec-mediaReg">N-Quads Media Type</a> for the media type
+      registration form.
+    </p>
+
+    <section id="sec-other-media-types">
+      <h3>Other Media Types</h3>
+      <p>The original specification,
+        <a href="https://www.researchgate.net/publication/280113557_N-Quads_Extending_N-Triples_with_Context"
+           >N-Quads: Extending N-Triples with Context</a>,
+        proposed the use of media type <code>text/x-nquads</code> with an encoding
+        using 7-bit US-ASCII.</p>
+    </section>
+  </section>
+</section>
+
+<section id="n-quads-grammar"><span id="sec-grammar"></span>
+  <h3>N-Quads Grammar</h3>
+
+  <p>An <a>N-Quads document</a> is an <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">RDF string</a> encoded in UTF-8 [[!RFC3629]].
+    Only <a data-cite="I18N-GLOSSARY#dfn-scalar-value" class="lint-ignore">Unicode scalar values</a>,
+    in the ranges <code class="codepoint">U+0000</code> to <code class="codepoint">U+D7FF</code> 
+    and <code class="codepoint">U+E000</code> to <code class="codepoint">U+10FFFF</code>,
+    are allowed. This excludes 
+    <a data-cite="I18N-GLOSSARY#dfn-surrogate" class="lint-ignore">surrogate code points</a>,
+    range <code class="codepoint">U+D800</code> to <code class="codepoint">U+DFFF</code>.</p>
+
+  <section id="sec-grammar-ws">
+    <h3>White Space</h3>
+
+    <p id="ws-tests1" data-tests="
+      c14n/index.html#extra_whitespace-01,
+      c14n/index.html#extra_whitespace-02,
+      c14n/index.html#extra_whitespace-03,
+      c14n/index.html#extra_whitespace-04">
+      White space (<a href="#cp-space"><code title="space">spaces</code></a>, and/or <a href="#cp-tab"><code title="horizontal tab">tabs</code></a>) is allowed outside of terminals.
+      Rule names in capitals below indicate where white space is significant.</p>
+
+    <p id="ws-tests2" data-tests="c14n/index.html#literal_with_extra_whitespace">
+      White space is significant in the production <a href="#grammar-production-STRING_LITERAL_QUOTE"><code>STRING_LITERAL_QUOTE</code></a>.</p>
+
+    <p id="ws-tests3" data-tests="
+      ../../rdf11/rdf-n-quads/index.html#nt-syntax-file-02,
+      ../../rdf11/rdf-n-quads/index.html#nt-syntax-file-03">
+      A <dfn class="no=export">blank line</dfn>, consisting of only white space and/or a comment,
+      may appear wherever a <a href="#grammar-production-statement"><code>statement</code></a> production is allowed,
+      and is treated as white space.</p>
+
+    <p class="note">As with, N-Triples [[RDF12-N-TRIPLES]],
+      N-Quads allows only horizontal white space (<a href="#cp-space"><code title="space">spaces</code></a> or <a href="#cp-tab"><code title="horizontal tab">tabs</code></a>).</p>
+  </section>
+
+  <section id="sec-grammar-comments">
+    <h3>Comments</h3>
+
+    <p id="comments-tests" data-tests="../../rdf11/rdf-n-quads/index.html#comment_following_triple">
+      Comments in N-Quads start at <a href="#cp-number-sign"><code title="number sign">#</code></a>
+      outside an <a href="#grammar-production-IRIREF"><code>IRIREF</code></a> or <a href="#grammar-production-STRING_LITERAL_QUOTE"><code>STRING_LITERAL_QUOTE</code></a>,
+      and continue to the end of line
+      — marked by character
+      <a href="#cp-carriage-return"><code title="carriage return">CR</code></a> or
+      <a href="#cp-line-feed"><code title="line feed">LF</code></a> —
+      or to the end of file, if there is no end of line after the comment marker.
+      Comments are treated as white space.</p>
+  </section>
+
+  <section id="sec-grammar-grammar">
+    <h3>Grammar</h3>
+
+    <p>The <abbr title="Extended Backus–Naur Form">EBNF</abbr> used
+      here is defined in XML 1.0 [[EBNF-NOTATION]].</p>
+
+    <p>Escape sequence rules are the same as N-Triples [[RDF12-N-TRIPLES]] and Turtle [[RDF12-TURTLE]].
+      However, as only the <a href="#grammar-production-STRING_LITERAL_QUOTE"><code>STRING_LITERAL_QUOTE</code></a>
+      production is allowed new lines in literals MUST be escaped.</p>
+
+    <p>
+      The '<code class="grammar-literal">VERSION</code>' terminal is in single quotes
+      to indicate that it is case-sensitive.
+    </p>
+
+    <div data-include="nquads-bnf.html"></div>
+    <p>A text version of this grammar is available <a href="nquads.bnf">here</a>.</p>
+  </section>
+
+  <section>
+    <h2>Selected Terminal Literal Strings</h2>
+    <p>This document uses some specific terminal literal strings [[EBNF-NOTATION]].
+      To clarify the Unicode code points used for these terminal literal strings, the following
+      table describes specific characters and sequences used throughout this document.</p>
+
+    <!-- Selected unicode character descriptions, taken from https://en.wikipedia.org/wiki/List_of_Unicode_characters -->
+    <table class="cp-definitions">
+      <thead>
+        <tr><th>Code</th><th>Glyph</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr id="cp-backspace">
+          <td><code class="codepoint">U+0008</code></td>
+          <td><code title="backspace">BS</code></td>
+          <td>Backspace</td>
+        </tr>
+        <tr id="cp-tab">
+          <td><code class="codepoint">U+0009</code></td>
+          <td><code title="horizontal tab">HT</code></td>
+          <td>Horizontal tab</td>
+        </tr>
+        <tr id="cp-line-feed">
+          <td><code class="codepoint">U+000A</code></td>
+          <td><code title="line feed">LF</code></td>
+          <td>Line feed</td>
+        </tr>
+        <tr id="cp-vertical-tab">
+          <td><code class="codepoint">U+000B</code></td>
+          <td><code title="vertical tab">VT</code></td>
+          <td>Vertical tab</td>
+        </tr>
+        <tr id="cp-form-feed">
+          <td><code class="codepoint">U+000C</code></td>
+          <td><code title="form feed">FF</code></td>
+          <td>Form feed</td>
+        </tr>
+        <tr id="cp-carriage-return">
+          <td><code class="codepoint">U+000D</code></td>
+          <td><code title="carriage return">CR</code></td>
+          <td>Carriage return</td>
+        </tr>
+        <tr id="cp-quotation-mark">
+          <td><code class="codepoint">U+0022</code></td>
+          <td><code title="quotation mark">&quot;</code></td>
+          <td>Quotation mark</td>
+        </tr>
+        <tr id="cp-number-sign">
+          <td><code class="codepoint">U+0023</code></td>
+          <td><code title="number sign">#</code></td>
+          <td>Number sign</td>
+        </tr>
+        <tr id="cp-hyphen">
+          <td><code class="codepoint">U+002D</code></td>
+          <td><code title="hyphen">-</code></td>
+          <td>Hyphen</td>
+        </tr>
+        <tr id="cp-full-stop">
+          <td><code class="codepoint">U+002E</code></td>
+          <td><code title="full stop">.</code></td>
+          <td>Full stop</td>
+        </tr>
+        <tr id="cp-zero">
+          <td><code class="codepoint">U+0030</code></td>
+          <td><code title="digit zero">0</code></td>
+          <td>Digit zero</td>
+        </tr>
+        <tr id="cp-nine">
+          <td><code class="codepoint">U+0039</code></td>
+          <td><code title="digit nine">9</code></td>
+          <td>Digit nine</td>
+        </tr>
+        <tr id="cp-colon">
+          <td><code class="codepoint">U+003B</code></td>
+          <td><code title="colon">:</code></td>
+          <td>Colon</td>
+        </tr>
+        <tr id="cp-less-than">
+          <td><code class="codepoint">U+003C</code></td>
+          <td><code title="less than sign">&lt;</code></td>
+          <td>Less-than sign</td>
+        </tr>
+        <tr id="cp-greater-than">
+          <td><code class="codepoint">U+003E</code></td>
+          <td><code title="greater-than sign">&gt;</code></td>
+          <td>Greater-than sign</td>
+        </tr>
+        <tr id="cp-at-sign">
+          <td><code class="codepoint">U+0040</code></td>
+          <td><code title="at sign">@</code></td>
+          <td>At sign</td>
+        </tr>
+        <tr id="cp-uppercase-a">
+          <td><code class="codepoint">U+0041</code></td>
+          <td><code title="latin capital letter A">A</code></td>
+          <td>Latin capital letter A</td>
+        </tr>
+        <tr id="cp-uppercase-f">
+          <td><code class="codepoint">U+0046</code></td>
+          <td><code title="latin capital letter F">F</code></td>
+          <td>Latin capital letter F</td>
+        </tr>
+        <tr id="cp-backslash">
+          <td><code class="codepoint">U+005C</code></td>
+          <td><code title="backslash">\</code></td>
+          <td>Backslash</td>
+        </tr>
+        <tr id="cp-underscore">
+          <td><code class="codepoint">U+005F</code></td>
+          <td><code title="underscore">_</code></td>
+          <td>Underscore</td>
+        </tr>
+        <tr id="cp-lowercase-a">
+          <td><code class="codepoint">U+0061</code></td>
+          <td><code title="latin small letter A">a</code></td>
+          <td>Latin small letter A</td>
+        </tr>
+        <tr id="cp-lowercase-z">
+          <td><code class="codepoint">U+007A</code></td>
+          <td><code title="latin small letter Z">z</code></td>
+          <td>Latin small letter Z</td>
+        </tr>
+        <tr id="cp-delete">
+          <td><code class="codepoint">U+007F</code></td>
+          <td><code title="delete">DEL</code></td>
+          <td>Delete</td>
+        </tr>
+        <tr id="cp-middle-dot">
+          <td><code class="codepoint">U+00B7</code></td>
+          <td><code title="middle dot">·</code></td>
+          <td>Middle dot</td>
+        </tr>
+        <tr id="cp-undertie">
+          <td><code class="codepoint">U+203F</code></td>
+          <td><code title="undertie">&#x203F;</code></td>
+          <td>Undertie</td>
+        </tr>
+        <tr id="cp-character-tie">
+          <td><code class="codepoint">U+2040</code></td>
+          <td><code title="character tie">&#x2040;</code></td>
+          <td>Character tie</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Other short terminal literal strings are composed of specific sequences of Unicode characters:</p>
+  
+    <dl>
+      <dt id="cp-space"><code title="space">space</code></dt>
+      <dd><code class="codepoint">U+0020</code></dd>
+      <dt id="cp-double-lt-paren"><code>&lt;&lt;(</code></dt>
+      <dd>two concatenated less-than sign characters, each having the code point <code class="codepoint">U+003C</code>,
+        followed by a left parenthesis character, having the code point <code class="codepoint">U+0028</code></dd>
+      <dt id="cp-paren-double-gt"><code>)&gt;&gt;</code></dt>
+      <dd>a left parenthesis character, having the code point <code class="codepoint">U+0029</code>
+        followed by two concatenated greater-than sign characters, each having the code point <code class="codepoint">U+003E</code></dd>
+      <dd>two concatenated greater-than sign characters, each having the code point <code class="codepoint">U+003E</code></dd>
+      <dt id="cp-double-circumflex"><code>^^</code></dt>
+      <dd>two concatenated circumflex accent characters, each having the code point <code class="codepoint">U+005E</code></dd>
+      <dt id="cp-underscore-colon"><code>_:</code></dt>
+      <dd><a href="#cp-underscore"><code title="underscore">_</code></a> followed by <a href="#cp-colon"><code title="colon">:</code></a></dd>
+      <dt id="cp-hyphen-hyphen" style="white-space: nowrap"><code>--</code></dt>
+      <dd>two concatenated <a href="#cp-hyphen"><code title="hyphen">-</code></a> characters</dd>
+    </dl>
+  </section>
+</section>
+
+<section id="sec-parsing">
+  <h3>Parsing</h3>
+    <p>Parsing N-Quads requires a state of two items:</p>
+  <ul>
+    <li id="bnodeLabels">Map[string -&gt; <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>] <code class="dfn">bnodeLabels</code>
+      — A mapping from string to blank node.</li>
+    <li id="curVersion">`xsd:string` |curVersion| –
+      The RDF version used for parsing the document into <a data-cite="RDF12-CONCEPTS#dfn-quad">Quads</a>.
+      If specified as part of a <a href="#sec-mediaReg">Media Type</a>, the default value for |curVersion| is taken from the `version` parameter.
+      Acceptable values for `version` are defined in <a data-cite="RDF12-CONCEPTS#defined-version-labels">2.1 Version Labels</a> in [[RDF12-CONCEPTS]].
+      The version announcement is only a hint;
+      this specification does not mandate any parser behavior based on |curVersion|,
+      but a parser MAY signal an error or a warning
+      when it encounters a feature that does not match the value of |curVersion|.
+    </li>
+  </ul>
+
+  <section id="sec-parsing-terms">
+    <h3>RDF Term Constructors</h3>
+    <p>This table maps productions and lexical tokens to <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF terms</a>
+      or components of <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF terms</a>
+      listed in <a href="#sec-parsing" class="sectionRef"></a>:</p>
+    <table id="tab-term-constructors" class="separated">
+      <thead>
+        <tr><th>production</th><th>type</th><th>procedure</th></tr>
+      </thead>
+      <tbody>
+        <tr id="handle-versionSpecifier">
+          <td>
+            <a class="type literal" href="#grammar-production-versionSpecifier">versionSpecifier</a>
+          </td>
+          <td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal">literal</a></td>
+          <td>The |curVersion| is taken from a literal
+            using the matched <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">RDF string</a>
+            lexical form and `xsd:string` datatype.
+          </td>
+        </tr>
+        <tr id="handle-BLANK_NODE_LABEL">
+          <td>
+            <a href="#grammar-production-BLANK_NODE_LABEL" class="type bNode">BLANK_NODE_LABEL</a>
+          </td>
+          <td>
+            <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a>
+          </td>
+          <td>
+            The string after <a href="#cp-underscore-colon"><code>_:</code></a>,
+            is a key in <a href="#bnodeLabels">bnodeLabels</a>.
+            If there is no corresponding <a data-cite="RDF12-CONCEPTS#dfn-blank-node">blank node</a> in the map,
+            one is allocated.
+          </td>
+        </tr>
+        <tr id="handle-IRIREF">
+          <td>
+            <a href="#grammar-production-IRIREF" class="type IRI">IRIREF</a>
+          </td>
+          <td>
+            <a data-cite="RDF12-CONCEPTS#dfn-iri">IRI</a>
+          </td>
+          <td>
+            The characters between <a href="#cp-less-than"><code title="less-than sign">&lt;</code></a>
+            and <a href="#cp-greater-than"><code title="greater-than sign">&gt;</code></a> are taken,
+            with escape sequences unescaped,
+            to form the IRI.
+            <span id="tc-iriref-tests" data-tests="
+              syntax/index.html#ntriples12-bad-iri-1">The resulting IRI MUST comply with the
+              <a data-cite="RFC3987#section-2.2">syntactic restrictions</a> of generic IRI syntax,
+              and SHOULD conform to <a data-cite="RFC3986#section-3.3">section 3.3</a> of [[RFC3986]]
+              and comply with any narrower restrictions imposed by the corresponding IRI scheme specification.</span>
+          </td>
+        </tr>
+        <tr id="handle-LANG_DIR">
+          <td>
+            <a href="#grammar-production-LANG_DIR" class="type langDir">LANG_DIR</a>
+          </td>
+          <td>
+            <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+          </td>
+          <td>
+            The characters following the <a href="#cp-at-sign"><code title="at sign">@</code></a>
+            form the <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+            and optionally the <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>,
+            if the matched characters include
+            <a href="#cp-hyphen-hyphen" style="white-space: nowrap"><code>--</code></a>.<br/>
+            <span id="tc-langdir-tests" data-tests="
+              syntax/index.html#nquads-langdir-bad-1,
+              syntax/index.html#nquads-langdir-bad-2,
+              syntax/index.html#nquads-langdir-bad-3,
+              syntax/index.html#nquads-langdir-bad-4,
+              syntax/index.html#nquads-langdir-bad-5">
+              The <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+              MUST be well-formed according to
+              <a data-cite="bcp47#section-2.2.9">section 2.2.9</a>
+              of [[!BCP47]].
+              If present, the <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>
+              MUST be either `ltr` or `rtl`.</span>
+          </td>
+        </tr>
+        <tr id="handle-STRING_LITERAL_QUOTE">
+          <td>
+            <a href="#grammar-production-STRING_LITERAL_QUOTE" class="type lexicalForm">STRING_LITERAL_QUOTE</a>
+          </td>
+          <td>
+            <a data-cite="RDF12-CONCEPTS#dfn-lexical-form">RDF lexical form</a>
+          </td>
+          <td>
+            The characters between the outermost quotation marks (<a href="#cp-quotation-mark"><code title="quotation mark">&quot;</code></a>) are taken,
+            with escape sequences unescaped,
+            to form the <a data-cite="RDF12-CONCEPTS#dfn-rdf-string">string</a> of the <a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a>.
+          </td>
+        </tr>
+        <tr id="handle-literal">
+          <td>
+            <a href="#grammar-production-literal" class="type literal">literal</a>
+          </td>
+          <td><a data-cite="RDF12-CONCEPTS#dfn-rdf-literal">literal</a>
+          </td>
+          <td>
+            The literal has a <a data-cite="RDF12-CONCEPTS#dfn-lexical-form">lexical form</a> of the first rule argument,
+            <a href="#grammar-production-STRING_LITERAL_QUOTE" class="type lexicalForm"><code>STRING_LITERAL_QUOTE</code></a>,
+            and either a <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+            with optional <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>
+            from <a href="#handle-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a>
+            or a <a data-cite="RDF12-CONCEPTS#dfn-datatype-iri">datatype IRI</a> of <code>iri</code>,
+            depending on which rule matched the input.
+            If the <a href="#grammar-production-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a> rule matched,
+            the <a data-cite="RDF12-CONCEPTS#dfn-language-tag">language tag</a>
+            and <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>
+            are taken from <a href=#handle-LANG_DIR class="type langDir">LANG_DIR</a>.
+            If there is no <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>,
+            the datatype is <code>rdf:langString</code>.
+            If there is a <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>,
+            the datatype is <code>rdf:dirLangString</code>.
+            If neither <a href="#handle-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a>
+            nor <a data-cite="RDF12-CONCEPTS#dfn-datatype-iri">datatype IRI</a> match,
+            the literal has a datatype of <code>xsd:string</code>.
+          </td>
+        </tr>
+        <tr id="handle-tripleTerm">
+          <td>
+            <a href="#grammar-production-tripleTerm" class="type tripleTerm">tripleTerm</a>
+          </td>
+          <td>
+            <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple term</a>
+          </td>
+          <td>
+            The <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple term</a>
+            is composed of the terms constructed from
+            the <a href="#grammar-production-subject"><code>subject</code></a>,
+            <a href="#grammar-production-predicate"><code>predicate</code></a>, and
+            <a href="#grammar-production-object"><code>object</code></a> productions.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="note">As processors which detect errors on input can result in
+      datasets which contain fewer triples than are described in the input
+      (including no triples whatsoever),
+      consumers should consider information of any errors signaled
+      when using the resulting dataset,
+      which may be incomplete and/or include
+      <a data-cite="RDF12-CONCEPTS#dfn-ill-typed">ill-typed</a>
+      or ill-formed terms.</p>
+  </section>
+
+  <section id="rdf-dataset-construction">
+    <h3>RDF Dataset Construction</h3>
+    <p>An <a>N-Quads document</a> defines an <a data-cite="RDF12-CONCEPTS#dfn-rdf-dataset">RDF dataset</a>
+      composed of <a data-cite="RDF12-CONCEPTS#dfn-rdf-graph">RDF graphs</a> composed of a set of
+      <a data-cite="RDF12-CONCEPTS#dfn-rdf-triple">RDF triples</a>.
+      The  <a href="#grammar-production-statement"><code>statement</code></a> production produces a
+      triple defined by the terms constructed for
+      <a href="#grammar-production-subject"><code>subject</code></a>,
+      <a href="#grammar-production-predicate"><code>predicate</code></a>, and
+      <a href="#grammar-production-object"><code>object</code></a>.
+      This RDF triple is added to the <a data-cite="RDF12-CONCEPTS#dfn-named-graph">graph</a> labeled by
+      the production <a href="#grammar-production-graphLabel"><code>graphLabel</code></a>,
+      if no <code>graphLabel</code> is present the triple is added to the RDF dataset's default graph.</p>
+  </section>
+</section>
+
+<section id="privacy-considerations" class="appendix informative">
+  <h2>Privacy Considerations</h2>
+  <p>The N-Quads format is used to express arbitrary application data,
+    which may include the expression of personally identifiable information (PII)
+    or other information which could be considered sensitive.
+    Authors publishing such information are advised to carefully
+    consider the needs and use of publishing such information,
+    as well as the applicable regulations for the regions where the data is
+    expected to be consumed and potentially revealed (e.g., 
+    <a href="https://gdpr.eu/">GDPR</a>, 
+    <a href="https://oag.ca.gov/privacy/ccpa">CCPA</a>,
+    <a href="https://termly.io/resources/infographics/privacy-laws-around-the-world/">others</a>),
+    particularly whether authorization measures are needed for access to the data.</p>
+</section>
+
+<section id="security" class="appendix informative">
+  <h2>Security Considerations</h2>
+
+  <p>The <a href="#grammar-production-STRING_LITERAL_QUOTE"><code>STRING_LITERAL_QUOTE</code></a>
+    production allows the use of unescaped control characters.
+    Although this specification does not directly expose this content to an end user,
+    it might be presented through a user agent, which may cause the presented text to 
+    be obfuscated due to presentation of such characters.</p>
+
+  <p>N-Quads is a general-purpose assertion language;
+    applications may evaluate given data to infer more assertions or to dereference <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a>,
+    invoking the security considerations of the scheme for that IRI.
+    Note in particular, the privacy issues in [[RFC3023]] section 10 for HTTP IRIs.
+    Data obtained from an inaccurate or malicious data source may lead to inaccurate or misleading conclusions,
+    as well as the dereferencing of unintended IRIs.
+    Care must be taken to align the trust in consulted resources with the sensitivity of
+    the intended use of the data;
+    inferences of potential medical treatments would likely require different trust than inferences
+    for trip planning.</p>
+
+  <p>The N-Quads language is used to express arbitrary application data;
+    security considerations will vary by domain of use.
+    Security tools and protocols applicable to text
+    (for example, PGP encryption, checksum validation, password-protected compression)
+    may also be used on <a>N-Quads documents</a>.
+    Security/privacy protocols must be imposed which reflect the sensitivity of the embedded information.</p>
+
+  <p>N-Quads can express data which is presented to the user, such as RDF Schema labels.
+    Applications rendering strings retrieved from untrusted <a>N-Quads documents</a>,
+    or using unescaped characters,
+    SHOULD use warnings and other appropriate means to limit the possibility
+    that malignant strings might be used to mislead the reader.
+    The security considerations in the media type registration for XML ([[RFC3023]] section 10)
+    provide additional guidance around the expression of arbitrary data and markup.</p>
+
+  <p>N-Quads uses <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a> as term identifiers.
+    Applications interpreting data expressed in N-Quads SHOULD address the security issues of
+    [[[RFC3987]]] [[RFC3987]] Section 8, as well as
+    [[[RFC3986]]] [[RFC3986]] Section 7.</p>
+
+  <p>Multiple <a data-cite="RDF12-CONCEPTS#dfn-iri">IRIs</a> may have the same appearance.
+    Characters in different scripts may look similar (for instance,
+    a Cyrillic &quot;&#1086;&quot; may appear similar to a Latin &quot;o&quot;).
+    A character followed by combining characters may have the same visual representation
+    as another character (for example, LATIN SMALL LETTER "E" followed by COMBINING ACUTE
+    ACCENT has the same visual representation as LATIN SMALL LETTER "E" WITH ACUTE).
+    <!-- (<code>foo:resum&#40751;code> and <code>f&#1086;&#1086;:resume&#769;</code>)-->
+    Any person or application that is writing or interpreting data in N-Quads
+    must take care to use the IRI that matches the intended semantics,
+    and avoid IRIs that may look similar.
+    Further information about matching visually similar characters can be found
+    in [[[UNICODE-SECURITY]]] [[UNICODE-SECURITY]] and
+    [[[RFC3987]]] [[RFC3987]] Section 8.</p>
+</section>
+
+<section id="sec-mediaReg" class="appendix">
+  <h2>Internet Media Type, File Extension and Macintosh File Type</h2>
+  <p>The Internet Media Type (formerly known as MIME Type) for N-Quads is &quot;application/n-quads&quot;.</p>
+  <p>The information that follows has been submitted to the Internet Engineering Steering Group (IESG) for review, approval, and registration with IANA.</p>
+  <dl>
+    <dt>Type name:</dt>
+    <dd>application</dd>
+
+    <dt>Subtype name:</dt>
+    <dd>n-quads</dd>
+    <dt>Required parameters:</dt>
+    <dd>None</dd>
+    <dt>Optional parameters:</dt>
+    <dd>
+      <dl>
+        <dt><code>version</code></dt>
+        <dd>This parameter is optional.
+          If present, acceptable values of <code>version</code> are
+          defined in <a data-cite="RDF12-CONCEPTS#defined-version-labels">2.1 Version Labels</a> in [[RDF12-CONCEPTS]].
+        </dd>
+        <dt><code>profile</code></dt>
+        <dd>
+          This parameter is optional and is used to include additional information.
+          It does not change the semantics of the resource representation when processed
+          without knowledge of the profile.
+          The value of a profile parameter is a non-empty list of space-separated URIs.
+          For more information and background, please refer to [[RFC6906]].
+        </dd>
+      </dl>
+    </dd>
+
+    <dt>Encoding considerations:</dt>
+    <dd>The syntax of N-Quads is expressed over code points in Unicode [[!UNICODE]].
+      The encoding is always UTF-8 [[!UTF-8]].</dd>
+    <dd>Unicode code points may also be expressed using an <code>\uXXXX</code> (<code class="codepoint">U+0000</code> to <code class="codepoint">U+FFFF</code>)
+      or <code>\UXXXXXXXX</code> syntax (for code points up to <code class="codepoint">U+10FFFF</code>)
+      where `X` is a hexadecimal digit `[0-9A-F]`</dd>
+    <dt>Security considerations:</dt>
+    <dd>See <a href="#security" class="sectionRef"></a>.</dd>
+    <dt>Interoperability considerations:</dt>
+    <dd>There are no known interoperability issues.</dd>
+    <dt>Published specification:</dt>
+    <dd>This specification.</dd>
+    <dt>Applications which use this media type:</dt>
+    <dd>N-Quads is used widely for representing RDF data.
+      There are implementations available in most common programming languages.</dd>
+    <dt>Additional information:</dt>
+    <dd>
+    <dl>
+    <dt>Magic number(s):</dt>
+    <dd>None.</dd>
+    <dt>File extension(s):</dt>
+    <dd>.nq</dd>
+    <dt>Macintosh file type code(s):</dt>
+    <dd>TEXT</dd>
+    </dl>
+    </dd>
+
+    <dt>Person &amp; email address to contact for further information:</dt>
+
+    <dd>RDF &amp; SPARQL Working Group &lt;public-rdf-star-wg@w3.org&gt;</dd>
+    <dt>Intended usage:</dt>
+    <dd>Common</dd>
+    <dt>Restrictions on usage:</dt>
+    <dd>None</dd>
+    <dt>Author(s):</dt>
+    <dd>The N-Quads specification is the product of the RDF &amp; SPARQL WG. The W3C reserves change control over this specifications.</dd>
+  </dl>
+
+  <div id="about-profile">
+    <div class="note">
+      <p>
+        The `profile` parameter may be used by clients to express their preferences
+        in the content negotiation process and by a server to indicate
+        additional information about the response.
+      </p>
+      <p>
+        If the `profile` parameter is given by a client, a server should
+        return a document that honors all the profiles in the list 
+        that are recognized by the server.
+        A server should not respond with an error solely based upon the profile value.
+      </p> 
+      <p>
+        If the `profile` parameter is given by a server, a client may choose to ignore it.
+      </p>
+    </div>
+    <div class="note">
+      <p>It is recommended that profile URIs be dereferenceable
+        and provide useful documentation at that URI.
+      </p>
+    </div>
+
+    <div class="note">
+      <p>
+        When used as a 
+        <a href="https://tools.ietf.org/html/rfc4288#section-4.3">media type parameter</a>
+        [[RFC4288]] in an
+        <a href="https://httpwg.org/specs/rfc7231.html#header.content-type">HTTP Content-Type header</a>
+        or an
+        <a href="https://httpwg.org/specs/rfc7231.html#header.accept">HTTP Accept header</a> 
+        [[RFC7231]] the value of the `profile` parameter will need to be enclosed in quotes (ASCII `"`)
+        if it contains special characters such as white space, including any space
+        used to separate multiple profile URIs.
+      </p>
+      <p>
+        It is important to note that the value of the `profile` parameter
+        contains one or more URIs and not IRIs. It might therefore be necessary
+        to convert between IRIs and URIs, as specified in
+        <a href="https://tools.ietf.org/html/rfc3986#section-5.1">section 3 Relationship between IRIs and URIs</a>
+        of [[RFC3987]].
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="section-ack" class="informative">
+  <h2>Acknowledgments</h2>
+
+  <section class="informative">
+    <h3>Acknowledgments for RDF 1.1</h3>
+    <p>The editor of the RDF 1.1 edition acknowledges valuable
+      contributions from Gregg Kellogg, Andy Seaborne, Eric
+      Prud'hommeaux, Dave Beckett, David Robillard, Gregory Williams,
+      Antoine Zimmermann, Sandro Hawke, Richard Cyganiak, Pat Hayes,
+      Henry S. Thompson, Bob Ferris, Henry Story, Andreas Harth, Lee
+      Feigenbaum, Peter Ansell, Evan Patton and David Booth.</p>
+    <p>This specification is a product of extensive deliberations by the
+      members of the RDF Working Group chaired by Guus Schreiber and David Wood.
+      It draws upon the earlier specification in <em><a href="https://web.archive.org/web/20150322024714/http://sw.deri.org/2008/07/n-quads/">N-Quads: Extending N-Triples with Context</a></em>,
+      edited by Richard Cyganiak, Andreas Harth, and Aidan Hogan.</p>
+  </section>
+
+  <section class="informative">
+    <h3>Acknowledgments for RDF 1.2</h3>
+
+    <p>The editors of the RDF 1.2 edition acknowledge valuable contributions from Andy Seaborne.</p>
+
+    <p>In addition to the editors, the following people have contributed to this specification:
+      <span id="gh-contributors"></span>
+    </p>
+
+    <p data-include="https://w3c.github.io/rdf-common/participants.html"></p>
+
+    <p class="ednote">Recognize members of the Task Force? Not an easy to find list of contributors.</p>
+  </section>
+</section>
+
+<section class="appendix informative" id="changes-12">
+  <h2>Changes between RDF 1.1 and RDF 1.2</h2>
+
+  <ul>
+    <li>N-Quads is now described as an extension of N-Triples [[RDF12-N-TRIPLES]].</li>
+    <li>Add <a href="#canonical-nquads" class="sectionRef"></a> to define the canonical form of N-Quads.</li>
+    <li>Better align the use of white space and comments with [[RDF12-TURTLE]].</li>
+    <li>Removed language about white space use between terminals that would otherwise
+      be (mis-)recognized, is this can't happen in N-Triples.</li>
+    <li>Clarify the use of <a>blank lines</a>, including those composed of white space
+      and/or comments.
+      Comments can appear at the end of a triple before the newline as
+      was already evident from <a href="#ex-comments"></a>.</li>
+    <li>Create separate subsections of <a href="#n-quads-grammar"></a>
+      for <a href="#sec-grammar-ws">White space</a> and
+      <a href="#sec-grammar-comments">Comments</a>,
+      better mirroring [[RDF12-TURTLE]].</li>
+    <li>Updated the <a href="#grammar-production-PN_CHARS_U"><code>PN_CHARS_U</code></a>
+      grammar production to be consistent with Turtle.
+      Formerly, <a href="#grammar-production-PN_CHARS_U"><code>PN_CHARS_U</code></a>
+      included "`:`" in N-Triples and N-Quads, but not in Turtle nor TriG.
+      <a href="#grammar-production-PN_CHARS_U"><code>PN_CHARS_U</code></a> is a component
+      of <a href="#grammar-production-PN_CHARS_U"><code>BLANK_NODE_LABEL</code></a>.</li>
+    <li>Adds support for <a data-cite="RDF12-CONCEPTS#dfn-triple-term">triple terms</a>
+      as described in <a href="#triple-terms" class="sectionRef"></a>
+      with updates to <a href="#sec-parsing-terms" class="sectionRef"></a>.</li>
+    <li>Separated <a href="#security"></a> from <a href="#sec-mediatype"></a>
+      and updated language.</li>
+    <li>Changes the `LANGTAG` terminal production to
+      <a href="#grammar-production-LANG_DIR" class="type langDir"><code>LANG_DIR</code></a> to include
+      an optional <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>.</li>
+    <li>Added <a href="#sec-version"></a> and parser
+     state to announce the RDF version
+     associated with the input document.</li>
+    <li>Clarify that 
+      <a data-cite="I18N-GLOSSARY#dfn-surrogate" class="lint-ignore">Unicode surrogates</a> 
+      are not legal in N-Quads documents, nor as the value of a Unicode escape sequence.</li>
+    <li>Added the optional <code>profile</code> media type parameter
+      to allow clients and servers to convey additional profile information
+      for N-Quads representations without changing their semantics.</li>
+  </ul>
+</section>
+
+<section id="index" class="appendix informative"></section>
+<section id="issue-summary" class="appendix informative"></section>
+</body>
+</html>

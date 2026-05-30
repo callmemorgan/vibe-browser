@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <title>Semantic Sensor Network Ontology</title>
+  <script class="remove" src="https://www.w3.org/Tools/respec/respec-w3c"></script>
+  <script class="remove" src="config.js"></script>
+  <script type="text/javascript" src="https://www.w3.org/2007/OWL/toggles.js"></script>
+  <script type="text/javascript">
+
+    function hide_ssn(hide, element) {
+      var scrollY = window.scrollY;
+      var scrollX = window.scrollX;
+      var posY = element.getBoundingClientRect().top;
+      if (hide) {
+        set_display_by_class('*', 'ssn', 'none');
+        set_display_by_class('span', 'ssn', 'none');
+        set_display_by_class('div', 'specterm.ssn', 'none');
+        set_display_by_class('button', 'hide-ssn', 'none');
+        set_display_by_class('button', 'show-ssn', '');
+
+        set_display_by_class('*', 'sosa', '');
+        set_display_by_class('span', 'sosa', '');
+      } else {
+        set_display_by_class('*', 'ssn', '');
+        set_display_by_class('span', 'ssn', '');
+        set_display_by_class('div', 'specterm.ssn', '');
+        set_display_by_class('button', 'hide-ssn', '');
+        set_display_by_class('button', 'show-ssn', 'none');
+
+        set_display_by_class('*', 'sosa', 'none');
+        set_display_by_class('span', 'sosa', 'none');
+      }
+      var newPosY = element.getBoundingClientRect().top;
+      var newScrollY = window.scrollY;
+      window.scrollTo(scrollX, newPosY + newScrollY - posY);
+    }
+  </script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="small.css" media="only all and (max-width: 649px)">
+</head>
+
+<body>
+
+  <section id="abstract">
+    <p>The Semantic Sensor Network (SSN) ontology is an ontology for describing
+      observations, in terms of the procedures executed and sensors used, the properties observed, which relate to the
+      features (entities) of interest.
+      Sensor stimuli, and aggregations of observations are included, relationships to other elements of the process.
+      Samplings using samplers, and actuations using actuators are described using essentially the same terminology and
+      relationships, which is described with common superclasses Execution and System.
+
+      The core classes and properties are defined using minimal axiomatization in a module called SOSA (Sensor,
+      Observation, Sample, and Actuator).
+      Additional axiomatization and terms are provided in further modules.
+      These allow SSN to support a wide range of applications and use cases, including satellite imagery, large-scale
+      scientific monitoring, industrial and household infrastructures, social sensing, citizen science,
+      observation-driven ontology engineering, and the Web of Things.
+      Alignments to some related ontologies are also provided, including to PROV-O and DUL.
+
+      The preparation of this edition of the SSN Ontology was prompted by the publication of a new edition of ISO 19156
+      [[OMS]] which had been a key source for the conceptual model underlying SSN.
+      This document contains the canonical RDF- and OWL-implementations of OMS. </p>
+  </section>
+  <section>
+    <h1>New Edition</h1>
+    <p>
+      A new edition of the SSN Ontology is in preparation.
+    </p>
+    <ul>
+      <li><a href="https://w3c.github.io/sdw-sosa-ssn/ssn/">Editor's Draft</a></li>
+      <li><a href="https://github.com/w3c/sdw-sosa-ssn/issues">Issue Tracker</a></li>
+    </ul>
+  </section>
+</body>
+
+</html>

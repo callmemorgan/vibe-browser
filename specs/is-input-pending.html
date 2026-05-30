@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Early detection of input events</title>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c' async class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+        specStatus: "CG-DRAFT",
+        editors: [{
+          name: "Nathan Schloss",
+          company: "Facebook",
+        },
+        {
+          name: "Andrew Comminos",
+          company: "Facebook",
+        }],
+        shortName: "is-input-pending",
+        wg: "Web Platform Incubator Community Group",
+        wgURI: "https://www.w3.org/community/wicg/",
+        github: "https://github.com/WICG/is-input-pending",
+        xref: "web-platform",
+      };
+    </script>
+  </head>
+  <body>
+    <h1>isInputPending</h1>
+    <section id='abstract'>
+      <p>
+        This document describes an API for detecting if there are pending input events that script might be delaying from firing by continuing to run.
+      </p>
+    </section>
+    <section id='sotd'>
+      <p>
+        This document is in the draft stage and has yet to be submitted to a working group for approval.
+      </p>
+    </section>
+    <section id="conformance"></section>
+    <section class="informative">
+      <h2>Introduction</h2>
+      <p>
+        When running script that's required to display something there is a trade off that developers need to make today. If a script might take a long time to run and a user provides some sort of input while this is happening, then the user agent would need to wait until the script has finished before dispatching the input event. Having a lot of lag before responding to an input event is not a great user experience, so developers will often break up long scripts into smaller chunks in order to allow the user agent to dispatch events between the chunks. Each time the script yields it will need to somehow post a message, call a combination of requestAnimation frame and requestIdleCallback, or do something else in order to make sure it both truly yields to allow for events to be dispatched and then that it can get called again after yielding. Even in the best case scenario, each time the script yields it can take many milliseconds before it gets a chance to run again. So unfortunately, this is also not a great user experience since in part now the initial script gets delayed by quite a bit since it needs to yield so much.
+      </p>
+      <figure>
+        <image src="isInputPending-1.jpeg" width="900" alt="Without isInputPending there can be a tradeoff between loading pages quickly and responding to input quickly." />
+        <figcaption>
+          Without isInputPending there can be a tradeoff between loading pages quickly and responding to input quickly.
+        </figcaption>
+      </figure>
+      <p>
+        The goal of the isInputPending api is that it will now allow developers to eliminate this trade off. Instead of totally yielding to the user agent and having to incur the cost of one or multiple event loops after yielding, long running script can now run to its completion while still remaining responsive.
+      </p>
+      <figure>
+        <image src="isInputPending-2.jpeg" width="900" alt="isInputPending can be used to remove any tradeoff between loading pages quickly and responding to input quickly." />
+        <figcaption>
+          isInputPending can be used to remove any tradeoff between loading pages quickly and responding to input quickly.
+        </figcaption>
+      </figure>
+    </section>
+    <section class="informative">
+      <h2>Examples of Usage</h2>
+      <p>
+        If a developer has a list of tasks that need executing, then adoption is quite simple.
+      </p>
+      <pre class='example highlight'>
+        let taskQueue = [task1, task2, ...];
+        const options = {includeContinuous: true};
+
+        function doWork() {
+          while (let task = taskQueue.pop()) {
+            task.execute();
+            if (navigator.scheduling.isInputPending(options)) {
+              setTimeout(doWork, 0);
+              break;
+            }
+          }
+        }
+
+        doWork();
+      </pre>
+    </section>
+    <section>
+      <h2>IsInputPendingOptions</h2>
+      <section>
+        <h3><dfn>IsInputPendingOptions</dfn></h3>
+        <p>The <code>IsInputPendingOptions</code> type represents an options dictionary that is used by <a data-link-for="Scheduling">isInputPending</a>.</p>
+        <pre class='idl'>
+          <dfn data-cite="webidl#idl-dictionary">dictionary</dfn> IsInputPendingOptions {
+            <dfn data-cite="webidl#idl-boolean">boolean</dfn> includeContinuous = false;
+          };
+        </pre>
+      </section>
+    </section>
+    <section data-dfn-for="Scheduling">
+      <h2>The <dfn>Scheduling</dfn> interface</h2>
+      <pre class='idl'>
+        [<dfn data-cite="webidl#idl-Exposed">Exposed</dfn>=Window] interface Scheduling {
+           boolean isInputPending(optional IsInputPendingOptions isInputPendingOptions = {});
+        };
+      </pre>
+      <section>
+        <h3>The <dfn>isInputPending</dfn> Method</h3>
+        <p>The <code>isInputPending</code> method returns a value based on the options set listed in <code>isInputPendingOptions</code>. If the <code>isInputPending</code> method is called then the user agent MUST run the following steps:</p>
+        <ol>
+          <li>Let |pendingResult : boolean| be false.</li>
+          <li>If |isInputPendingOptions : IsInputPendingOptions| is undefined, assign it to a newly-instantiated <a>IsInputPendingOptions</a> with default parameters.</li>
+          <li>Let |queue : task queue| be the <dfn data-cite="html#task-queue">task queue</dfn> to which the [= user interaction task source =] is associated on the <dfn data-cite="ecmascript#surrounding-agent">surrounding agent</dfn>'s <dfn data-cite="html#event-loop">event loop</dfn>.</li>
+          <li>
+            For each |task : task| on |queue|:
+            <ol>
+              <li>If the user agent considers |task| to be a [= continuous event task =] and {{IsInputPendingOptions/includeContinuous}} is false in |isInputPendingOptions|, continue.</li>
+              <li>If the user agent predicts that |task| will [= dispatch =] an [= event =] to an <dfn data-cite="html#eventtarget">EventTarget</dfn> in a cross-origin window, continue.</li>
+              <li>The user agent MAY set |pendingResult| to true.</li>
+            </ol>
+          </li>
+          <li>Return |pendingResult|.</li>
+        </ol>
+        <p class="note">The overall goal for this api is to allow user agents to return true if they think an event may end up getting dispatched to a unit of same origin <dfn data-cite="html#browsing-context">browsing context</dfn> soon, and not only if an event is already placed into the queue. This may mean that a user agent may look into the current configuration of iframes, other events in the queue, or other information when making decisions in step 2.1. For example, there may be cases where if a mousedown event is dispatched then a click event may be fired for this frame after the mousedown event. However if the mousedown event is canceled then the user agent knows that the click event will not be fired. In this case the user agent should return 'true' for a 'click' input before the canceling mousedown event, but after it knows that a click will not be fired it should return false.</p>
+
+        <p class="note">The specification for the isInputPending method is intentionally written in such a way that a user agent may return false for any reason. This is so user agents may include their own security and performance measures while implementing this api and remain compliant with this specification. For example, some user agents may not know which unit of same origin browsing context they would dispatch an event to without a prohibitively expensive computation, in that case it would be okay for the user agent to return false. It's never okay for a user agent to return true when it's unsure that the unit of same origin browsing context querying isInputPending is not the same one where the event will be dispatched. Returning true for an event that may get dispatched to a different origin browsing context could allow for parent iframes to observe events in different origin child iframes, which would be a violation of security.</p>
+      </section>
+    </section>
+    <section>
+      <h2>Extensions to the <dfn data-cite="HTML5#the-navigator-object">Navigator</dfn> interface</h2>
+      <pre class="idl">
+        partial interface Navigator {
+          readonly attribute Scheduling scheduling;
+        };
+      </pre>
+    </section>
+    <section>
+      <h2>Continuous events</h2>
+      <p class="note">The distinction between <a>continuous events</a> and other event types exists in order to prevent script from yielding too often. Under normal circumstances, a user moving their pointer around on a document wouldn’t expect that to have any effect on performance so by default these events are excluded from <a data-link-for="Scheduling">isInputPending</a>. However, there may be times when a document wants to yield for these events.</p>
+      <section>
+        <h3>Continuous event</h3>
+        <p>An event MUST be considered a <dfn>continuous event</dfn> if it is a <dfn data-cite="dom#dom-event-istrusted">trusted event</dfn> of type <dfn data-cite="uievents#event-type-mousemove">mousemove</dfn>, <dfn data-cite="uievents#event-type-wheel">wheel</dfn>, <dfn data-cite="touch-events#the-touchmove-event">touchmove</dfn>, <dfn data-cite="html#dragevent">drag</dfn>, <dfn data-cite="pointerevents3#the-pointermove-event">pointermove</dfn>, or <dfn data-cite="pointerevents3#the-pointerrawupdate-event">pointerrawupdate</dfn> or a child of any of those. A user agent MAY consider other trusted events that are of a specific type and are children of <dfn data-cite="uievents#idl-uievent">UIEvent</dfn> or <dfn data-cite="touch-events#touchevent-interface">TouchEvent</dfn> to be a <a>continuous event</a> as long as those specific types are consistent for that user agent and that all events of those types or children of those types are considered <a>continuous events</a>.</p>
+        <p class="note">All of event types that are considered to be <a>continuous events</a> are specified in such a way where they are fired successively, and the user agent is encouraged to fire the events at a rate specific for the user agent and platform. The language about a user agent being able to include other event types is there so user agents that have nonstandard events that are defined in a similar manner may also be considered to be <a>continuous events</a>.</p>
+      </section>
+      <section>
+        <h3>Continuous event task</h3>
+        <p>A <a>task</a> MUST be considered a <dfn>continuous event task</dfn> if it will <a>dispatch</a> an event that is a <a>continuous event</a>.</p>
+      </section>
+    </section>
+    <section class="informative">
+      <h2>Privacy and Security</h2>
+      <p>User agents must ensure that input dispatched to cross-origin frames is not detectable- allowing an origin to monitor events on another origin could allow for a range of attacks. The specification is written in such a way that user agents may return false for any reason from isInputPending, in order to mitigate such attacks.</p>
+      <p>Implementors may want to consider a combination of off-main-thread based hit testing (e.g. done on the compositor thread, if present) and keyboard focus to determine the appropriate document to mark as having input pending. By performing hit testing asynchronously, calls to isInputPending can be made faster, safer from timing attacks, and thus more effective for scheduling purposes.</p>
+      <p>The case of a child cross-origin subframe is even trickier to deal with, as the frame that gets an event may change based on what script is currently doing. In some cases a malicious cross origin frame could attempt to bring focus to itself in order to look for input events that a user could have intended to be sent to the parent frame. For example, a malicious origin could attempt to get a user to click on a child iframe by moving it around the screen. Some user agents mitigate this by discarding input events on recently moved frames. User agents should pay special attention to this case, and add appropriate countermeasures to their implementations of this api based on their architecture.</p>
+    </section>
+  </body>
+</html>

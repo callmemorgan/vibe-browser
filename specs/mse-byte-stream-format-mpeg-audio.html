@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>MPEG Audio Byte Stream Format</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+
+    <script class="remove">
+      var respecConfig = {
+      // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+      specStatus: "ED",
+
+      // the specification's short name, as in https://www.w3.org/TR/short-name/
+      shortName: "mse-byte-stream-format-mpeg-audio",
+
+      // if there a publicly available Editor's Draft, this is the link
+      edDraftURI: "https://w3c.github.io/mse-byte-stream-format-mpeg-audio/",
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors: [
+        {
+          name: "Dale Curtis",
+          company: "Google Inc.",
+          companyURL: "https://www.google.com/",
+          w3cid: "135068"
+        }
+      ],
+
+      formerEditors: [
+        {
+          name: "Matthew Wolenetz",
+          note: "Until February 2024",
+          mailto: "matt.wolenetz@gmail.com",
+          company: "W3C Invited Expert",
+          w3cid: "148095"
+        },
+        {
+          name: "Aaron Colwell",
+          note: "Until April 2015",
+          company: "Google Inc.",
+          companyURL: "https://www.google.com/"
+        }
+      ],
+
+      // name of the WG
+      group: "media",
+
+      github: "w3c/mse-byte-stream-format-mpeg-audio",
+      wgPublicList: "public-media-wg",
+
+      localBiblio: {
+        ID3v1: {
+          title: "ID3 tag version 1",
+          href: "https://id3.org/ID3v1",
+          publisher: "id3.org"
+        },
+        ID3v2: {
+          title: "ID3 tag version 2.3.0",
+          href: "https://id3.org/id3v2.3.0",
+          publisher: "id3.org"
+        }
+      },
+
+      xref: ["html", "media-source"]
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      This specification defines a [[[MEDIA-SOURCE]]] [[MEDIA-SOURCE]] byte stream format specification based on MPEG audio streams.
+    </section>
+
+    <section id="sotd">
+      <p>The working group maintains <a href="https://github.com/w3c/mse-byte-stream-format-mpeg-audio/issues">a list of all bug reports that the editors have not yet tried to address</a>;
+      there may also be related open bugs in the <a href="https://github.com/w3c/media-source">GitHub repository</a> of the [[[MEDIA-SOURCE]]] specification.</p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>This specification defines segment formats for implementations of [[[MEDIA-SOURCE]]] [[MEDIA-SOURCE]] that choose to support MPEG audio streams specified in [[ISO11172-3]], [[ISO13818-3]], and [[ISO14496-3]].</p>
+      <p>It defines the MIME-types (see [[[#mime-types]]]) used to signal codecs, and provides the necessary format specific definitions for [=initialization segments=], [=media segments=], and [=random access points=] required by the <a data-cite="media-source#byte-stream-formats">Byte Stream Formats section</a> of the [[[MEDIA-SOURCE]]] specification. This document also defines extra behaviors and state that only apply to this byte stream format.</p>
+    </section>
+
+    <section id="mime-types">
+      <h2>MIME-types</h2>
+      <p>This section specifies the MIME-types that may be passed to {{MediaSource/isTypeSupported()}} or {{MediaSource/addSourceBuffer()}} for byte streams that conform to this specification.</p>
+      <ul>
+        <li>"audio/aac" for sequences of ADTS frames, as specified in [[ISO14496-3]].</li>
+        <li>"audio/mpeg" for MPEG-1/2/2.5 Layer I/II/III streams, as specified in [[RFC3003]].</li>
+      </ul>
+      <p>The "codecs" MIME-type parameter MUST NOT be used with these MIME-types.</p>
+    </section>
+
+    <section>
+      <h2>MPEG Audio Frames</h2>
+      <p>The format of an <dfn>MPEG Audio Frame</dfn> depends on the MIME type used (see [[[#mime-types]]]).</p>
+      <ul>
+        <li>If the "audio/aac" MIME-type is used, an MPEG Audio Frame is a sequence of bytes that conform to the adts_frame() syntax specified in Table 1.A.5 of [[ISO14496-3]].</li>
+        <li>If the "audio/mpeg" MIME-type is used, an MPEG Audio Frame is a sequence of bytes that conform to the frame() syntax element specified in Section 2.4.1.2 of [[ISO11172-3]] or the corresponding definition in [[ISO13818-3]].</li>
+      </ul>
+    </section>
+
+    <section id="mpeg-metadata">
+      <h4><dfn>Metadata Frames</dfn></h4>
+      <p>Since [[ID3v1]], [[ID3v2]] metadata frames, and <a>Icecast headers</a> are common in existing MPEG audio streams, implementations SHOULD gracefully handle such frames. Zero or more of these metadata frames are allowed to occur before, after, or between <a>MPEG Audio Frame</a>. Minimal implementations MUST accept, consume, and ignore these frames. More advanced implementations MAY choose to expose the metadata information via an inband {{TextTrack}} or some other mechanism.</p>
+
+      <section id="icecast">
+        <h3>Icecast headers</h3>
+        <p>There is no normative spec for <a href="https://en.wikipedia.org/wiki/Icecast">Icecast</a>/<a href="https://en.wikipedia.org/wiki/SHOUTcast">SHOUTcast</a> headers, just <a href="https://forums.radiotoolbox.com/viewtopic.php?t=74">examples</a>. For the purpose of this specification, an <dfn>Icecast header</dfn> is defined as beginning with the 4 character sequence "ICY&nbsp;"(U+0049 I, U+0043 C, U+0059 Y, U+0020 SPACE) and ending with a pair of carriage-return line-feed sequences (U+000D CARRIAGE RETURN, U+000A LINE FEED, U+000D CARRIAGE RETURN, U+000A LINE FEED).</p>
+        <p class="note">Icecast headers are allowed in the byte streams because some Icecast and SHOUTcast
+          servers return a status line that looks like "ICY OK 200" instead of a standard HTTP status line.
+          User-agent network stacks typically interpret this as an HTTP 0.9 response and include the
+          header in the response body. Allowing these headers to appear provides a simple way to
+          interoperate with these servers.</p>
+      </section>
+    </section>
+
+    <section id="mpeg-segments">
+      <h4>Segment Definitions</h4>
+      <p>The MPEG audio byte stream is a combination of one or more <a>MPEG Audio Frame</a> and zero or more [=metadata frames=].</p>
+      <ul>
+        <li>Every <a>MPEG Audio Frame</a> is a [=random access point=].</li>
+        <li>Every <a>MPEG Audio Frame</a> header is an [=initialization segment=].</li>
+        <li>The coded audio in each <a>MPEG Audio Frame</a> is a [=media segment=].</li>
+      </ul>
+    </section>
+
+    <section id="conformance"></section>
+  </body>
+</html>

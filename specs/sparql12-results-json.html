@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>SPARQL 1.2 Query Results JSON Format</title>
+
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script src="https://w3c.github.io/rdf-common/local-biblio.js" class="remove"></script>
+    <script src="https://w3c.github.io/rdf-common/fixup.js" class="remove"></script>
+
+    <script class="remove">
+      // All config options at https://respec.org/docs/
+      var respecConfig = {
+        group:                "rdf-star" ,
+        localBiblio:          localBibliography,
+        specStatus:           "ED",
+        edDraftURI:           "https://w3c.github.io/sparql-results-json/spec/",
+        testSuiteURI:         "https://w3c.github.io/rdf-tests/",
+        shortName:            "sparql12-results-json",
+        copyrightStart:       "2012",
+         
+        github:               "https://github.com/w3c/sparql-results-json",
+        wgPublicList:         "public-rdf-star-wg",
+
+//        implementationReportURI: "https://w3c.github.io/sparql12-results-json/reports/",
+//        errata:               "https://w3c.github.io/sparql12-results-json/errata/",
+
+        previousPublishDate:  "2013-03-21",
+        prevRecURI:           "https://www.w3.org/TR/2013/REC-sparql11-results-json-20130321",
+        prevRecShortname:     "sparql11-results-json",
+        previousMaturity:     "REC",
+        
+        editors: [
+          { name: "Andy Seaborne", w3cid: "29909"},
+          { name: "Ruben Taelman", w3cid: "84199"},
+          { name: "Gregory Williams", w3cid: "38870"},
+          { name: "Thomas Pellissier Tanon", w3cid: "73758"},
+        ],
+        formerEditors: [
+          { name: "Andy Seaborne" },
+          { name: "Kendall Grant Clark" },
+          { name: "Lee Feigenbaum" },
+          { name: "Elias Torres" },
+        ],
+
+        //doJsonLd:     true,
+        
+        lint: { "no-unused-dfns": false }
+      };
+    </script>
+
+    <style>
+      /* @import url("local.css"); */
+      /* Inlined to make preview work */
+
+/* CSS For SPARQL Query */
+
+/* In-progress working draft artifacts - to be removed eventually */
+  .issue	{ background-color: #fdd;
+                  font-size: 88% ; }
+  .add		{ background-color: #7fff7f }
+  .remove	{ background-color: #ff7f7f }
+ul.issue	{}
+  .issueBlock	{ margin: 1em 4em 1em 2.5em ; /* Top Right Bottom Left */
+                  padding: 1ex;
+	          /*overflow: auto;*/
+                  page-break-inside: avoid ; }
+  .issueTopic	{ font-weight: bold ; }
+
+ .todo		{ font-size: 80% ; color: #444 ; }
+p.todo		{}
+
+.wgNote	{ border: 0.2em solid red;
+      padding: 0.5em ;
+      margin: 1em 4em 1em 2em ; }
+
+.box     { border: thin solid #888888;
+           page-break-inside: avoid ;
+           background-color: #F8F8F8 ; padding:1em ;
+           margin-left:0 ; margin-right: 2ex; 
+           margin-top: 0.1ex ; margin-bottom: 0.1ex ;
+         }
+
+/* Misc WD stuff */
+span.cvs-id     {color: gray; font-size:80%; display: block; }
+
+/* == General Tag Treatment == */
+pre		 { margin: 1em 4em 1em 2.5em ; /* Top Right Bottom Left */
+                   padding: 1ex;
+	           /*overflow: auto;*/
+                   page-break-inside: avoid ; }
+
+/* Tables */
+table, td	{ text-align: left; }
+td, th   { border-style: solid;
+                  border-width: 1px;
+                  border-color: black;
+                  border-bottom-color: gray;
+                  border-right-color: gray; }
+td.annotation, th.annotation { border-style: none; border-bottom-style: dotted; }
+table.plain	{ border-spacing: 0px; padding: 0px ; border-collapse: collapse ; }
+                  /* cellpadding="0" cellspacing="1" style="border-collapse: collapse */
+
+
+th.major	{ background-color: #005a9c;
+                  color: white; }
+.subHeading	{ text-align: left;
+                  background-color: #CCCCCC; }
+th, td		{ padding: 3px; }
+td		{ font-size: 85%; }
+th a:link	{ text-decoration: none; }
+th a:hover	{ background-color:#FFFF99;
+                  text-decoration: underline; }
+
+/* == Prototypes == */
+pre.prototype	{ background-color:#f7f8ff;
+                  border:thin solid #8888aa;
+                  margin: 1em 4em 1em 0em ; }
+.return, .type	{ color: #177 }
+
+/* Definitions */
+.defn		{ margin-left:0 ; margin-right: 2ex; 
+                  margin-top: 0.1ex ; margin-bottom: 0.1ex ;
+                  /*border: double 1px #888888; *//* Buggy */
+                  border: thin solid #888888;
+                  padding: 1ex 2ex 0.5ex 2ex ; /* top, right, bottom, left */
+                  page-break-inside: avoid ;
+                  background-color: #F0F8F8 ; }
+div.defn p	{ margin-top: 1ex ; margin-bottom: 1.5ex ;}
+div.defn ul	{ margin-top: 1ex ; margin-bottom: 1.5ex ; }
+@media print	{ .defn { margin: 1em 1em 1em 1em ; } }
+span.definedTerm	{font-weight: bold;}
+
+div.grammarExtract
+                { border: thin solid #888888;
+                  padding: 1ex 2ex 1ex 2ex ; /* top, right, bottom, left */
+                  margin: 1em 6em 1em 2em ; 
+                  page-break-inside: avoid ;
+                  background-color: #F8F8F8 ; }
+
+pre.codeBlock  { font-family:monospace ; page-break-inside: avoid ; 
+                 margin: 0 ;
+	         margin-right: 2ex ;
+                 border: thin solid #888888; }
+
+
+
+
+/* Examples */
+pre.data	{ border: thin solid #88AA88;
+                  background-color: #E8F0E8;
+                  margin: 1em 4em 1em 0em ; }
+
+pre.dataExcerpt	{ border: thin solid #88AA88;
+                  background-color: #E8F0E8;
+                  margin: 1em 4em 1em 0em ; }
+/* Example Queries */
+.query          { background-color:#f7f8ff; }
+.queryExcerpt   { background-color:#f7f8ff; }
+pre.query	{ border:thin solid #8888aa;
+                  margin: 1em 4em 1em 0em ; }
+/* Example Results */
+.result		{ border: thin solid  #888888 ;
+                  background-color: #F0F0F0 ; }
+pre.resultGraph	{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+pre.resultSet	{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+pre.resultAsk	{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+pre.resultTurtle{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+
+pre.result	{ margin: 1em 4em 1em 0em ; }
+
+div.result	{ font-family: monospace;
+                  margin:  1em 4em 1em 0em ;
+                  padding: 1ex ; }
+
+.result table	{ border-collapse: collapse; }
+.result table td{ border-width: 1px ;
+                  border-color : black ; 
+                  font-family: monospace ;
+                  empty-cells: show;
+                  padding-left: 1ex ; padding-right: 1ex ;
+                  vertical-align:top;
+                  text-align: left ; } 
+/*  spacing: 0 ;*/
+.result table th{ border-width: 1px ;
+                  font-family: monospace ;
+                  border-color: black ;
+                  empty-cells: show;
+                  padding-left: 1ex ; padding-right: 1ex ;
+                  vertical-align:top;
+                  text-align:center; } 
+
+/* Examples : Algebra */
+div.algExample {  border: thin solid #888888;
+                  page-break-inside: avoid ;
+                  padding:0.5em ; margin:0.5em ;
+                  margin-left: 2em ; margin-right: 2em ;
+                  font-family:monospace ; }
+
+div.algExample1 { padding:0.5em ; background-color: #F0F0FF ; }
+div.algExample2 { padding:0.5em ; margin-top: 0.5em ; background-color: #F0FFF0 ; }
+
+/* Grammar Mark-up */
+.operator	{ color: #3f3f5f;
+                  text-transform: uppercase; }
+.function	{ color: #3f3f5f;
+                }
+
+/* Tuned to cope with different browsers behaviours */
+div.grammarTable table	{ border-style: solid ;
+			  border-width: 1px ;
+			  border-color: #AAA ;
+			  border-spacing: 0px ; 
+			  border-collapse: collapse ; }
+
+div.grammarTable table * { border-left-width: 0px ;
+			   border-right-width: 0px ;
+			   border-color: #AAA ; } 
+
+div.grammarTable table * tr   { border-top-style: solid ;
+			  border-top-width: 1px ;
+			  border-top-color: #AAA ; } 
+
+.grammar	{ text-align: left ;
+                  vertical-align: top ; }
+.token		{ color: #3f3f5f; }
+table.FAndOTable .token		{ color: #00c; }
+table.FAndOTable .token:visited		{ color: #a0c; }
+.gRuleHead	{ font-style: italic ;
+                  font-family: monospace ; }
+.gRuleBody	{ font-family: monospace ; }
+.gRuleLabel	{ font-family: monospace ; }
+
+.code		{ font-family: monospace; font-size: 100%; }
+pre.code	{ font-family: monospace; font-size: 100%; margin: 0 ; }
+
+/* Table of Contents */
+.toc		{ text-indent: 0; }
+DIV.toc UL UL, DIV.toc OL OL {margin-left: 0}
+DIV.toc UL UL UL, DIV.toc OL OL OL {margin-left: 1em}
+DIV.toc UL UL UL UL, DIV.toc OL OL OL OL {margin-left: 0}
+LI.tocline1	{ font-weight: bold}
+LI.tocline2	{ font-weight: normal}
+LI.tocline4	{ font-style: italic}
+/* The border in the following rule crashes NN4 on fonts.html :-(
+DIV.subtoc	{ padding: 1em; border: solid black thin; margin: 1em 0;
+                  background: #ddd} */
+DIV.toc, UL.index, DT { text-align: left; }
+
+
+/* References to the Rdf Data Model */
+span.rdfDM	{ color: #11d; }
+
+
+/* Truth Table */
+  .truth	{ font-family: monospace; }
+  .error	{ color: #ff1f1f; }
+  table.truthTable td	{ text-align: center; font-family: monospace; }
+  table.truthTable th	{ background-color: #dfdfdf; }
+  table.truthTable tbody th	{ font-weight: normal; font-family: monospace; }
+
+/* Casting table */
+table.casting	{ font-size: x-small; }
+
+.castY	{ background-color: #7FFF7F;
+                  color: black; }
+
+.castN	{ background-color: #FF7F7F;
+                  color: black; }
+
+.castM	{ background-color: white;
+                  color: black; }
+
+span.cancast:hover { background-color: #ffa;
+                     color: black; }
+
+.SPARQLoperator	{ background-color: #FFFFbf; /* yellow */
+          }
+
+.owlnonterminal {
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 95%;
+}
+.owlgrammar {
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    padding-top: 1ex;
+    padding-bottom: 0.6ex;
+    border: 1px dashed #2f6fab;
+    font-family: monospace;
+}
+
+      /* ReSpec */
+      dfn { font-style: normal ; }
+      /* ReSpec */
+
+  code           { font-family: monospace; }
+
+  div.constraint,
+  div.issue,
+  div.note,
+  div.notice     { margin-left: 2em; }
+
+  ol.enumar      { list-style-type: decimal; }
+  ol.enumla      { list-style-type: lower-alpha; }
+  ol.enumlr      { list-style-type: lower-roman; }
+  ol.enumua      { list-style-type: upper-alpha; }
+  ol.enumur      { list-style-type: upper-roman; }
+
+
+  div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+  div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+  div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+  div.exampleWrapper { margin: 4px }
+  div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+    </style>
+  </head>
+  <body>
+    <section id="abstract">
+      <h2>Abstract</h2>
+<p><a data-cite="SPARQL12-CONCEPTS#">SPARQL</a> is a set of standards for the query and update of RDF data, along with ways to access such data over the web. This document describes
+    the representation of SELECT and ASK query results using <a data-cite="rfc4627#">JSON</a>.</p>
+    </section>
+
+    <section id="sotd" class="introductory updateable-rec">
+      <p>
+        This specification is published by the
+        <a href="https://www.w3.org/groups/wg/rdf-star">RDF Star Working Group</a> as part of the
+        update of specifications for format and errata.
+      </p>
+
+      <section id="related" data-include="https://w3c.github.io/rdf-common/sparql-related.html"></section>
+    </section>
+
+<!-- BODY -->
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>This document describes how to serialize SPARQL results (SELECT and ASK query forms) in a <a data-cite="rfc4627#">JSON</a> format. The format is designed to be a
+      complete representation of the information in the query results. The results of a SELECT query are serilialized as an array, where each array element is one "row" of the query results; the
+      results of an ASK query give the boolean value of the query result.</p>
+      <p>An Internet Media Type is provided for <code>application/sparql-results+json</code>.</p>
+      <p>There is also a [[[SPARQL12-RESULTS-XML]]] which follows a similar design pattern but uses XML as the
+      serialization.</p>
+      <p>Unless otherwise noted in the section heading, all sections and appendices in this document are normative.</p>
+
+	  <section id="version-announcement">
+	    <h3>Version Announcement</h3>
+	    <p>
+	    An optional version can be given to SPARQL results.
+	    </p>
+	    <p>
+	    The `version` <a href="#media-type">Media Type parameter</a> MAY be set to `1.2`
+	    to indicate possible use of RDF 1.2 features in the SPARQL results.
+        Alternatively, the <a href="#select-version">`"version"` member</a> MAY be used to specify this version.</p>
+	    <p>Possible values for the version string are discussed in <a data-cite="RDF12-CONCEPTS#section-version-announcement"></a>.</p>
+        <p>When providing content over HTTP, servers can announce the version
+        using the optional `version` <a href="#media-type">Media Type parameter</a>:</p>
+
+        <pre id="ex-http-version-decl"
+             class="box http"
+             title="HTTP version announcement">GET /sparql/?query=PREFIX%20dc%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Felements%2F1.1%2F%3E%20%0ASELECT%20%3Fbook%20%3Fwho%20%0AWHERE%20%7B%20%3Fbook%20dc%3Acreator%20%3Fwho%20%7D%0A HTTP/1.1
+Host: www.example
+Accept: application/sparql-results+json; version=1.2
+        </pre>
+
+        <p class="note">When using RDF 1.2-specific features, such as
+        <a data-cite="RDF12-CONCEPTS#dfn-base-direction">initial text direction</a>,
+        the specific RDF version can be announced using
+        either the `version` <a href="#media-type">Media Type parameter</a>
+        or the <a href="#select-version">`"version"` member</a> early in the document.
+        This allows parsers that do not support these features to detect
+        the presense of such features early, and potentially
+        inform the user, giving them an opportunity to stop the job
+        or otherwise act on the fact that some amount of the input data
+        will not be processed as desired.
+        </p>
+	  </section>
+    </section>
+    <section id="json-result-object">
+      <h2>JSON Results Object</h2>
+      <p>The results of a SPARQL Query are serialized in JSON as a single top-level JSON object. This object has a <code>"head"</code> member and either a <code>"results"</code> member or a
+      <code>"boolean"</code> member, depending on the query form.</p>
+      <p>This example shows the results of a <code>SELECT</code> query. The query solutions are represented in an array which is the value of the <code>"bindings"</code> key, in turn part of an
+      object that is the value of the <code>"results"</code> key:</p>
+      <pre class="box json">{
+  "head": { "vars": [ "book" , "title" ]
+  } ,
+  "results": { 
+    "bindings": [
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book6" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Half-Blood Prince" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book7" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Deathly Hallows" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book5" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Order of the Phoenix" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book4" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Goblet of Fire" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book2" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Chamber of Secrets" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book3" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Prisoner Of Azkaban" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book1" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Philosopher's Stone" }
+      }
+    ]
+  }
+}</pre>
+      <p>This example shows the result from an <code>ASK</code> query:</p>
+      <pre class="box json">{ 
+  "head" : { } ,
+  "boolean" : true
+}</pre>
+      <p>Other keys, with different names, may be present in the JSON Results Object but are not defined by this specification.</p>
+    </section>
+    <section id="select-results-form">
+      <h2>Variable Binding Results</h2>
+      <p>The results of a SPARQL <code>SELECT</code> query are serialized as an array of bindings of variables. The value of the <code>"head"</code> key is an array of all variables projected in the
+      query's <code>SELECT</code> clause.</p>
+      <section id="select-head">
+        <h3>"head"</h3>
+        <p>The <code>"head"</code> member gives the variables mentioned in the results, may contain a <code>"link"</code> member, and may contain a <code>"version"</code> member.</p>
+        <pre class="box json">{
+"head" { 
+   "vars" : [ ... ] ,
+   "link" : [ ... ] ,
+   "version" : "..." }</pre>
+        <section id="select-vars">
+          <h4>"vars"</h4>
+          <p>The <code>"vars"</code> member is an array giving the names of the variables used in the results. These are the projected variables from the query. A variable is not necessarily given a
+          value in every query solution of the results.</p>
+          <pre class="box json">"vars" : [ "book" , "title" ] </pre>
+          <p>The order of variable names should correspond to the variables in the SELECT clause of the query, unless the query is of the form <code>SELECT *</code> in which case order is not
+          significant.</p>
+        </section>
+        <section id="select-link">
+          <h4>"link"</h4>
+          <p>The optional <code>"link"</code> member gives an array of URIs, as strings, to refer for further information. The format and content of these link references is not defined by this
+          document.</p>
+          <pre class="box json">"link" : [ "http://example/dataset/metadata.ttl" ] </pre>
+        </section>
+        <section id="select-version">
+          <h4>"version"</h4>
+          <p>The optional <code>"version"</code> string member, along with an optional `version` <a href="#media-type">Media Type parameter</a>,
+          MAY be used to announce that RDF 1.2 functionalities are used in the results.</p>
+          <pre class="box json">"version" : "1.2" </pre>
+        </section>
+      </section>
+      <section id="select-results">
+        <h3>"results"</h3>
+        <p>The value of the <code>"results"</code> member is an object with a single key, <code>"bindings"</code>.</p>
+        <section id="select-bindings">
+          <h4>"bindings"</h4>
+          <p>The value of the <code>"bindings"</code> member is an array with zero or more elements, one element per query solution. Each query solution is a JSON object. Each key of this object is a
+          variable name from the query solution. The value for a given variable name is a JSON object that <a href="#select-encode-terms">encodes the variable's bound value, an RDF term.</a> There
+          are zero elements in the array if the query returned an empty solution sequence. Variables names do not include the initial "?" or "$" character. Each variable name that appears as a key
+          within the <code>"bindings"</code> array will have appeared in the <a href="#select-vars"><code>"vars"</code></a> array in the results header.</p>
+          <p>A variable does not appear in an array element if it is not bound in that particular query solution.</p>
+          <p>The order of elements in the bindings array reflects the order, if any, of the query solution sequence.</p>
+          <pre class="box json">"bindings" : [
+  {
+    "a" : { ... } ,
+    "b" : { ... } 
+  } ,
+  {
+    "a" : { ... } ,
+    "b" : { ... } 
+  }
+]</pre>
+          <p>If the query returns no solutions, an empty array is used.</p>
+          <pre class="box json">"bindings" : []</pre>
+        </section>
+        <section id="select-encode-terms">
+          <h4>Encoding RDF terms</h4>
+          <p>An RDF term (IRI, literal, blank node, or triple term) is encoded as a JSON object. All aspects of the RDF term are represented. The JSON object has a <code>"type"</code> member and other members
+          depending on the specific kind of RDF term.</p>
+          <table style="border-collapse: collapse; border-color: #000000; border-spacing: 5px; border-width: 1px">
+            <tbody>
+              <tr>
+                <th>RDF Term</th>
+                <th>JSON form</th>
+              </tr>
+              <tr>
+                <td>IRI <em><b>I</b></em></td>
+                <td><code>{"type": "uri", "value": "<em><b>I</b></em>"}</code></td>
+              </tr>
+              <tr>
+                <td>Literal <em><b>S</b></em></td>
+                <td><code>{"type": "literal","value": "<em><b>S</b></em>"}</code></td>
+              </tr>
+              <tr>
+                <td>Literal <em><b>S</b></em> with language tag <em><b>L</b></em> without base direction</td>
+                <td><code>{ "type": "literal", "value": "<em><b>S</b></em>", "xml:lang": "<em><b>L</b></em>"}</code></td>
+              </tr>
+              <tr>
+                <td>Literal <em><b>S</b></em> with language tag <em><b>L</b></em> with base direction <em><b>L</b></em></td>
+                <td><code>{ "type": "literal", "value": "<em><b>S</b></em>", "xml:lang": "<em><b>L</b></em>", "its:dir": "<em><b>B</b></em>"}</code></td>
+              </tr>
+              <tr>
+                <td>Literal <em><b>S</b></em> with datatype IRI <em><b>D</b></em></td>
+                <td><code>{ "type": "literal", "value": "<em><b>S</b></em>", "datatype": "<em><b>D</b></em>"}</code></td>
+              </tr>
+              <tr>
+                <td>Blank node, label <em><b>B</b></em></td>
+                <td><code>{"type": "bnode", "value": "<em><b>B</b></em>"}</code></td>
+              </tr>
+              <tr>
+                <td>Triple term, with subject <em><b>S</b></em>, predicate <em><b>P</b></em>, and object <em><b>O</b></em></td>
+                <td><code>{"type": "triple", "value": {"subject": "<em><b>S</b></em>", "predicate": "<em><b>P</b></em>", "object": "<em><b>O</b></em>"}}</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>The blank node label is scoped to the results object. That is, two blank nodes with the same label in a single SPARQL Results JSON object are the same blank node. This is not an
+          indication of any internal system identifier the SPARQL processor may use. Use of the same label in another SPARQL Results JSON object does not imply it is the same blank node.</p>
+          <p>The subject, predicate, and object of a triple term are encoded using the same format, recursively.</p>
+          <p class="note">The <code>xml:lang</code> and <code>its:dir</code> keys resemble terms in XML namespaces due to alignment with the [[[SPARQL12-RESULTS-XML]]] specification, but such namespaces do not exist in JSON, which means that these keys are to be used "as is".</p>
+        </section>
+      </section>
+    </section>
+    <section id="ask-result-form">
+      <h2>Boolean Results</h2>
+      <p>The results of a SPARQL <code>ASK</code> query are serialized as a boolean value, giving the result of the query evaluation.</p>
+      <section id="ask-head">
+        <h3>"head"</h3>
+        <section id="ask-link">
+          <h4>"link"</h4>
+          <p>The <code>"link"</code> member has the same format as the <a href="#select-link">SELECT <code>"link"</code></a> member.</p>
+        </section>
+      </section>
+      <section id="ask-boolean">
+        <h3>"boolean"</h3>
+        <p>The result of an <code>ASK</code> query form are encoded by the <code>"boolean"</code> member, which takes either the JSON value <code>true</code> or the JSON value <code>false</code>.</p>
+        <pre class="box json">"boolean" : true </pre>
+      </section>
+    </section>
+    <section id="example">
+      <h2>Examples</h2>
+      <p>This section is not normative.</p>
+      <section id="example-bindings">
+        <h2>Variable Binding Results Examples</h2>
+        <p>The following JSON is a serialization of the XML document <a class="reference" href="https://www.w3.org/2009/sparql/xml-results/output.srx">output.srx</a>:</p>
+        <pre class="box json">
+
+{
+  "head": {
+    "link": [ "http://www.w3.org/TR/rdf-sparql-XMLres/example.rq" ],
+    "vars": [
+      "x",
+      "hpage",
+      "name",
+      "mbox",
+      "age",
+      "blurb",
+      "friend"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x":     { "type": "bnode",   "value": "r1" },
+        "hpage": { "type": "uri",     "value": "http://work.example.org/alice/" },
+        "name":  { "type": "literal", "value": "Alice" },
+        "mbox":  { "type": "literal", "value": "" },
+        "blurb": {
+          "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral",
+          "type": "literal",
+          "value": "&lt;p xmlns=\"http://www.w3.org/1999/xhtml\"&gt;My name is &lt;b&gt;alice&lt;/b&gt;&lt;/p&gt;"
+        },
+        "friend": { "type": "bnode", "value": "r2" }
+      },
+      {
+        "x":      { "type": "bnode",   "value": "r2" },
+        "hpage":  { "type": "uri",     "value": "http://work.example.org/bob/" },
+        "name":   { "type": "literal", "value": "Bob", "xml:lang": "en" },
+        "mbox":   { "type": "uri",     "value": "mailto:bob@work.example.org" },
+        "friend": { "type": "bnode",   "value": "r1" }
+      }
+    ]
+  }
+}
+</pre>
+      </section>
+      <section id="example-bindings-triple-term">
+        <h2>Variable Binding Results Examples with Triple Terms</h2>
+        <p>The following JSON is a serialization of the XML document <a class="reference" href="https://www.w3.org/TR/sparql12-results-xml/output-triple-terms.srx">output-triple-terms.srx</a> that contains triple terms:</p>
+        <pre class="box json">{
+  "head": {
+    "link": [ "http://www.w3.org/TR/rdf-sparql-XMLres/example-triple-terms.rq" ],
+    "vars": [
+      "x",
+      "name",
+      "triple"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x":    { "type": "bnode",   "value": "r1" },
+        "name": { "type": "literal", "value": "Alice" },
+        "triple": {
+          "type": "triple",
+          "value": {
+            "subject":   { "type": "uri",     "value": "http://example.org/alice" },
+            "predicate": { "type": "uri",     "value": "http://example.org/name" },
+            "object":    { "type": "literal", "value": "Alice", "datatype": "http://www.w3.org/2001/XMLSchema#string" }
+          }
+        }
+      },
+      {
+        "x":    { "type": "bnode",   "value": "r2" },
+        "name": { "type": "literal", "value": "Bob", "xml:lang": "en" },
+        "triple": {
+          "type": "triple",
+          "value": {
+            "subject":   { "type": "uri",     "value": "http://example.org/bob" },
+            "predicate": { "type": "uri",     "value": "http://example.org/name" },
+            "object":    { "type": "literal", "value": "Bob", "datatype": "http://www.w3.org/2001/XMLSchema#string" }
+          }
+        }
+      }
+    ]
+  }
+}</pre>
+      </section>
+    </section>
+    <section id="media-type"><div id="mime"></div>
+      <h2>Internet Media Type, File Extension and Macintosh File Type</h2>
+      <p>The Internet Media Type (formerly known as MIME Type) for the SPARQL Query Results JSON Format is "application/sparql-results+json".</p>
+      <p>It is recommended that SPARQL Query Results JSON Format files have the extension ".srj" (all lowercase) on all platforms.</p>
+      <p>It is recommended that SPARQL Query Results JSON Format files stored on Macintosh HFS file systems be given a file type of "TEXT".</p>
+      <p>This information that follows is intended to be submitted to the IESG for review, approval, and registration with IANA.</p>
+      <dl>
+        <dt>Type name:</dt>
+        <dd>application</dd>
+        <dt>Subtype name:</dt>
+        <dd>sparql-results+json</dd>
+        <dt>Required parameters:</dt>
+        <dd>None</dd>
+        <dt>Optional parameters:</dt>
+        <dd>None</dd>
+        <dt>Encoding considerations:</dt>
+        <dd>The encoding considerations of the SPARQL Query Results JSON Format is identical to those of the "application/json" as specified in [[RFC4627]].</dd>
+        <dt>Security considerations:</dt>
+        <dd>SPARQL query results uses URIs. See Section 7 of [[RFC3986]].<br>
+        SPARQL query results uses IRIs. See Section 8 of [[RFC3987]].<br>
+        The security considerations of the SPARQL Query Results JSON Format is identical to those of the "application/json" as specified in [[RFC4627]].</dd>
+        <dt>Interoperability considerations:</dt>
+        <dd>There are no known interoperability issues.</dd>
+        <dt>Published specification:</dt>
+        <dd>http://www.w3.org/TR/sparql11-results-json/</dd>
+        <dt>Applications which use this media type:</dt>
+        <dd>No known applications currently use this media type.</dd>
+        <dt>Additional information:</dt>
+        <dt>Magic number(s):</dt>
+        <dd>n/a</dd>
+        <dt>File extension(s):</dt>
+        <dd>".srj"</dd>
+        <dt>Macintosh file type code(s):</dt>
+        <dd>"TEXT"</dd>
+        <dt>Person &amp; email address to contact for further information:</dt>
+        <dd>Andy Seaborne &lt;public-rdf-dawg-comments@w3.org&gt;</dd>
+        <dt>Intended usage:</dt>
+        <dd>COMMON</dd>
+        <dt>Restrictions on usage:</dt>
+        <dd>None</dd>
+        <dt>Author/Change controller:</dt>
+        <dd>The SPARQL specification is a work product of the World Wide Web Consortium's SPARQL Working Group. The W3C has change control over these specifications.</dd>
+      </dl>
+    </section>
+    
+    <section id="changes-1-1" class="appendix informative">
+      <h2>Changes between SPARQL 1.1 Query Results JSON Format and SPARQL 1.2 Query Results JSON Format</h2>
+      <ul>
+        <li>Fix link to incorrect srx file in <a href="#example" class="sectionRef"></a></li>
+        <li>Add JSON Schema file for SPARQL Query Results JSON</li>
+        <li>Use Media Type instead of MIME Type in <a href="#media-type" class="sectionRef"></a></li>
+        <li>Allow triple terms to be expressed in <a href="#select-encode-terms" class="sectionRef"></a></li>
+        <li>Support directional language-tagged strings in <a href="#select-encode-terms" class="sectionRef"></a></li>
+		<li>Add version announcement in <a href="#version-announcement" class="sectionRef"></a> and <a href="#select-version" class="sectionRef"></a></li>
+      </ul>
+    </section>
+    
+<!-- BODY -->
+    <section id="privacy">
+      <h2>Privacy Considerations</h2>
+      <p>TODO</p>
+    </section>
+
+    <section id="security">
+      <h2>Security Considerations</h2>
+      <p>TODO</p>
+    </section>
+
+    <section id="internationalization">
+      <h2>Internationalization Considerations</h2>
+      <p>TODO</p>                
+    </section>
+
+    <section id="index"></section>
+
+  </body>
+</html>

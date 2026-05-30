@@ -1,0 +1,4205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Controlled Identifiers v1.1</title>
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+    <!--
+      === NOTA BENE ===
+      For the three scripts below, if your spec resides on dev.w3 you can check them
+      out in the same tree and use relative links so that they'll work offline,
+     -->
+    <script src='//www.w3.org/Tools/respec/respec-w3c' class='remove'></script>
+    <script class='remove' src="./common.js"></script>
+    <script class="remove"
+      src="https://cdn.jsdelivr.net/gh/digitalbazaar/respec-vc@3.4.3/dist/main.js"></script>
+
+    <script type="text/javascript" class="remove">
+      var respecConfig = {
+          // specification status (for example WD, LCWD, NOTE, etc.). If in doubt use ED.
+          specStatus:           "ED",
+
+          // the specification's short name, as in http://www.w3.org/TR/short-name/
+          shortName:            "cid-1.1",
+
+          // subtitle
+          //subtitle: "Controlled Identifier Documents",
+
+          // if you wish the publication date to be other than today, set this
+          //publishDate: "2025-5-15",
+          //crEnd: "2025-02-28",
+          //prEnd: "2025-4-17",
+
+          // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+          // and its maturity status
+          previousPublishDate:  "2025-05-15",
+          previousMaturity:  "REC",
+
+          // if there a publicly available Editor's Draft, this is the link
+          edDraftURI:           "https://w3c.github.io/cid/",
+
+          // if this is a LCWD, uncomment and set the end of its review period
+          //implementationReportURI: "https://w3c.github.io/cid/implementations/1.0/",
+
+          // if you want to have extra CSS, append them to this list
+          // it is recommended that the respec.css stylesheet be kept
+          //extraCSS:             ["spec.css", "prettify.css"],
+
+          // editors, add as many as you like
+          // only "name" is required
+          editors: [{
+            name: "Manu Sporny", url: "https://www.linkedin.com/in/manusporny/",
+            company: "Digital Bazaar", companyURL: "http://digitalbazaar.com/",
+            w3cid: 41758
+          }, { name: "Michael B. Jones", url: "https://self-issued.info/",
+            company: "Invited Expert",
+            w3cid: 38745}],
+
+          // authors, add as many as you like.
+          // This is optional, uncomment if you have authors as well as editors.
+          // only "name" is required. Same format as editors.
+
+          authors: [
+            {
+              name: "Dave Longley",
+              url: "http://digitalbazaar.com/",
+              company: "Digital Bazaar",
+              companyURL: "http://digitalbazaar.com/"
+            },
+            {
+              name: "Manu Sporny",
+              url: "http://digitalbazaar.com/",
+              company: "Digital Bazaar",
+              companyURL: "http://digitalbazaar.com/"
+            },
+            {
+              name: "Markus Sabadello",
+              url: "https://www.linkedin.com/in/markus-sabadello-353a0821",
+              company: "Danube Tech",
+              companyURL: "https://danubetech.com/",
+              w3cid: 46729
+            },
+            {
+              name: "Drummond Reed",
+              url: "https://www.linkedin.com/in/drummondreed/",
+              company: "Evernym/Avast",
+              companyURL: "https://www.evernym.com/",
+              w3cid: 3096
+            },
+            {
+              name: "Orie Steele",
+              url: "https://www.linkedin.com/in/or13b/",
+              company: "Transmute",
+              companyURL: "https://transmute.industries/"
+            },
+            {
+              name: "Christopher Allen",
+              url: "https://www.linkedin.com/in/christophera",
+              company: "Blockchain Commons",
+              companyURL: "https://www.BlockchainCommons.com",
+              w3cid: 85560
+            }
+          ],
+
+          // extend the bibliography entries
+          //localBiblio: webpayments.localBiblio,
+
+          // name of the WG
+          group:           "vc",
+
+          // name (with the @w3c.org) of the public mailing to which comments are due
+          wgPublicList: "public-vc-wg",
+
+          github: "w3c/cid",
+
+          // URI of the patent status for this WG, for Rec-track documents
+          // !!!! IMPORTANT !!!!
+          // This is important for Rec-track documents, do not copy a patent URI from a random
+          // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+          // Team Contact.
+          //wgPatentURI:  "",
+          xref: ["URL", "I18N-GLOSSARY", "INFRA", "VC-DATA-MODEL-2.0"],
+          maxTocLevel: 3,
+          errata: "https://w3c.github.io/cid/errata.html",
+          /*preProcess: [ ],
+          alternateFormats: [ {uri: "diff-20111214.html", label: "diff to previous version"} ],
+          */
+          localBiblio:  {
+            "JOSE-REGISTRIES": {
+              title:    "The JSON Object Signing and Encryption (JOSE) Registries",
+              href:     "https://www.iana.org/assignments/jose",
+              authors:  ["The Internet Assigned Numbers Authority"],
+              status:   "REC",
+              publisher:  "The Internet Assigned Numbers Authority"
+            },
+            "MULTIBASE": {
+              title: "The Multibase Data Format",
+              date: "February 2023",
+              href: "https://datatracker.ietf.org/doc/draft-multiformats-multibase",
+              authors: [
+                "Juan Benet",
+                "Manu Sporny"
+              ],
+              status: "Internet-Draft",
+              publisher: "IETF"
+            },
+            "SHA3": {
+              title: "SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions",
+              href: "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf",
+              authors: [
+                "National Institute of Standards and Technology",
+              ],
+              status: "National Standard",
+              publisher: "U.S. Department of Commerce"
+            },
+            "PRIVACY-BY-DESIGN": {
+              title: "Privacy by Design",
+              href: "https://iapp.org/media/pdf/resource_center/pbd_implement_7found_principles.pdf",
+              authors: [
+                "Ann Cavoukian"
+              ],
+              date: "2011",
+              publisher: "Information and Privacy Commissioner"
+            }
+          },
+          postProcess: [window.respecVc.createVcExamples],
+          otherLinks: [{
+            key: "Related Specifications",
+            data: [{
+              value: "Decentralized Identifiers v1.1",
+              href: "https://www.w3.org/TR/did-1.1/"
+            }, {
+              value: "The Verifiable Credentials Data Model v2.1",
+              href: "https://www.w3.org/TR/vc-data-model-2.1/"
+            }, {
+              value: "Data Integrity v1.1",
+              href: "https://www.w3.org/TR/vc-data-integrity-1.1/"
+            }, {
+              value: "Securing Verifiable Credentials using JOSE and COSE",
+              href: "https://www.w3.org/TR/vc-jose-cose-1.1/"
+            }]
+          }]
+      };
+    </script>
+    <style>
+code {
+  color: rgb(199, 73, 0);
+  font-weight: bold;
+}
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+pre .highlight {
+  font-weight: bold;
+  color: green;
+}
+pre .nohighlight {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+pre .comment {
+  font-weight: bold;
+  color: SteelBlue;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+table.simple {
+    border-collapse: collapse;
+    margin: 25px 0;
+    min-width: 400px;
+    border: 1px solid #dddddd;
+}
+table.simple thead tr {
+    background-color: #005a9c;
+    color: #ffffff;
+    text-align: left;
+}
+table.simple th,
+table.simple td {
+    padding: 12px 15px;
+    vertical-align: top;
+    text-align: left;
+}
+table.simple tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+table.simple tbody tr:nth-of-type(even) {
+    background-color: #00000008;
+}
+table.simple tbody tr:last-of-type {
+    border-bottom: 2px solid #005a9c;
+}
+    </style>
+</head>
+<body>
+    <section id='abstract'>
+      <p>
+A controlled identifier document contains cryptographic material and lists service
+endpoints for the purposes of verifying cryptographic proofs from, and
+interacting with, the controller of an identifier.
+      </p>
+    </section>
+
+    <section id='sotd'>
+      <p>
+Comments regarding this specification are welcome at any time.
+Please file issues directly on
+<a href="https://github.com/w3c/cid/issues/">GitHub</a>,
+or send them to
+<a href="mailto:public-vc-comments@w3.org">public-vc-comments@w3.org</a>
+if that is not possible.
+(<a href="mailto:public-vc-comments-request@w3.org?subject=subscribe">subscribe</a>,
+<a href="https://lists.w3.org/Archives/Public/public-vc-comments/">archives</a>).
+      </p>
+    </section>
+
+    <section class="informative">
+      <h2>Introduction</h2>
+
+      <p>
+[=Controlled identifier documents=] identify a [=subject=] and provide [=verification
+methods=] that express public cryptographic material, such as [=public keys=],
+for verifying [=proofs=] created on behalf of the [=subject=] for specific
+purposes, such as authentication, attestation, key agreement (for encryption),
+and capability invocation and delegation. [=Controlled identifier documents=] also list
+[=service=] endpoints related to an [=identifier=]; for example, from which to
+request additional information for verification.
+      </p>
+
+      <p>
+In other words, the controlled identifier document contains the information necessary to
+communicate with, and/or prove that specific actions were taken by, the
+controller of an [=identifier=], including material for [=proofs=] and
+[=service=] endpoints for additional communications.
+      </p>
+      <p>
+A [=controlled identifier document=] specifies
+[=verification relationships=] and [=service=] endpoints for a single
+identifier, for which the current controlled identifier document is taken as authoritative.
+      </p>
+      <p>
+Other specifications, such as the [[[?DID]]] specification, profile the
+features that are defined in this specification, requiring and/or recommending
+the use of some and prohibiting and/or deprecating the use of others.
+      </p>
+
+      <section>
+        <h3>Use Cases</h3>
+        <p>
+The use cases below illustrate the need for this specification.
+While many other related use cases exist, such as those in [[[DID-USE-CASES]]]
+and [[[VC-USE-CASES]]], those described below are the main scenarios that this
+specification is designed to address.
+        </p>
+
+        <section class="notoc">
+          <h4>Globally Unique Identifiers</h4>
+
+          <p>
+Lemmy runs multiple enterprise portals that manage large amounts of sensitive
+data submitted by people working for a variety of organizations. He would like
+to use identifiers for entities in the databases that are provided by
+his customers and do not depend on easily phishable information such as
+email addresses and passwords.
+          </p>
+        </section>
+
+        <section class="notoc">
+          <h4>Cryptographic Verification</h4>
+
+          <p>
+Lemmy would like to ensure that his customers prove control over their
+identifiers &mdash; for example, by using public/private key cryptography
+&mdash; in order to increase security related to who is allowed to access and
+update each organization's data.
+          </p>
+        </section>
+
+        <section class="notoc">
+          <h4>Cryptographic Purpose</h4>
+
+          <p>
+Stef, who operates a high security service, would like to ensure that certain
+cryptographic keys used by his customers can only be used for specific purposes
+(such as encryption, authorization, and/or authentication) to enable different
+levels of access and protection for each type of cryptographic key.
+          </p>
+        </section>
+
+        <section class="notoc">
+          <h4>Service Engagement</h4>
+
+          <p>
+Marge, a software developer, would like to publicly advertise ways in which
+other people on the Web can reach her through various communication services she
+uses based on her globally unique identifier(s).
+          </p>
+        </section>
+
+        <section class="notoc">
+          <h4>Extensibility</h4>
+
+          <p>
+Cory, a systems architect, would like to extend the use cases described in this
+section in a way that provides new functionality without creating conflicts
+with extensions being added by others.
+          </p>
+        </section>
+
+        <section class="notoc">
+          <h4>Issue and Present Claims</h4>
+
+          <p>
+Neru would like to issue digital credentials on behalf of her company that
+contain claims about their employees. The claims that are made need to use
+identifiers that are cryptographically attributable back to Neru's company and
+need to allow for the holders of those credentials to be able to
+cryptographically authenticate themselves when they present the credential.
+          </p>
+        </section>
+
+      </section>
+
+      <section>
+        <h3>Requirements</h3>
+
+        <p>
+The following requirements are derived from the use cases described earlier in
+this specification. Additional requirements which could lead to a more
+decentralized solution can be found in [[[DID-USE-CASES]]].
+        </p>
+
+        <dl>
+          <dt>1. Guaranteed Unique Identifier</dt>
+          <dd>
+Identifiers are globally unique with no possibility of duplication.
+          </dd>
+          <dt>2. Proof of Control</dt>
+          <dd>
+It is possible to prove that the entity claiming control over the identifier is
+indeed its controller.
+          </dd>
+          <dt>3. Associated cryptographic material</dt>
+          <dd>
+The identifier is tightly coupled with cryptographic material that an entity
+can use to prove control over that identifier.
+          </dd>
+          <dt>4. Streamlined key rotation</dt>
+          <dd>
+Entities denoted by designated identifiers can update authentication materials
+without direct intervention by requesting parties and with minimal individual
+interaction.
+          </dd>
+          <dt>5. Service endpoint discovery</dt>
+          <dd>
+These identifiers allow requesting parties to look up available service
+endpoints for interacting with the subject of the identifier.
+          </dd>
+          <dt>6. Delegation of control</dt>
+          <dd>
+The controller of the identifier is able to delegate that control, in full
+and/or in part, to a third party.
+          </dd>
+          <dt>7. Cryptographically future-proof</dt>
+          <dd>
+These identifiers and associated information are capable of being updated
+as technology evolves. Current cryptographic techniques are known to be
+susceptible to quantum computational attacks. Future-proofed identifiers
+provide a means by which to continue using the same identifier with updated,
+advanced authentication and/or authorization technologies.
+          </dd>
+          <dt>8. Cryptographic authentication and communication</dt>
+          <dd>
+These identifiers enable the use of cryptographic techniques that can be employed
+to authenticate individuals and/or to secure communications with the subject of
+the identifier, typically using public-private key pairs.
+          </dd>
+          <dt>9. Legally recognizable identification</dt>
+          <dd>
+These identifiers can be used as a basis for credentials and transactions that
+can be recognized as legally valid under one or more jurisdictions.
+          </dd>
+          <dt>10. Human-centered interoperability</dt>
+          <dd>
+Decentralized identifiers need to be easy to use by people with no technical
+expertise or specialist knowledge.
+          </dd>
+        </dl>
+
+      </section>
+
+      <section id="conformance">
+        <p>
+A <dfn>conforming controlled identifier document</dfn> is any concrete expression of the
+data model that follows the relevant normative requirements in Sections
+[[[#data-model]]] and [[[#contexts-and-vocabularies]]].
+        </p>
+
+        <p>
+A <dfn>conforming verification method</dfn> is any concrete expression of the
+data model that follows the relevant normative requirements in Sections
+[[[#verification-methods]]] and
+[[[#contexts-and-vocabularies]]].
+        </p>
+
+        <p>
+A <dfn class="lint-ignore">conforming document</dfn> is either a
+[=conforming controlled identifier document=], or a
+[=conforming verification method=].
+        </p>
+
+        <p>
+A <dfn class="lint-ignore">conforming processor</dfn> is any algorithm realized
+as software and/or hardware that generates and/or consumes a
+[=conforming document=] according to the relevant normative statements in
+Section [[[#algorithms]]]. Conforming processors MUST produce errors
+when non-conforming documents are consumed.
+        </p>
+
+      </section>
+
+      <section>
+        <h3>Terminology</h3>
+
+        <p>
+This section defines the terms used in this specification. A link to the relevant
+definition is included whenever one of these terms appears in this specification.
+        </p>
+
+        <dl class="termlist definitions" data-sort="ascending">
+
+          <dt><dfn>public key</dfn></dt>
+          <dd>
+Cryptographic material that can be used to verify [=proofs=] created with a
+corresponding [=private key=].
+          </dd>
+
+          <dt><dfn>private key</dfn></dt>
+          <dd>
+Cryptographic material that can be used to generate [=proofs=].
+          </dd>
+
+          <dt><dfn class="export">authentication</dfn></dt>
+          <dd>
+A process by which an entity can prove to a verifier that it has a specific
+attribute or controls a specific secret.
+          </dd>
+
+          <dt><dfn>proof</dfn></dt>
+          <dd>
+A mathematical demonstration that confirms the validity of an assertion. The
+demonstration consists of a set of properties and values that enable a verifier
+to cryptographically validate the assertion. A
+<a href="https://en.wikipedia.org/wiki/Digital_signature">digital signature</a>
+is a type of proof.
+          </dd>
+
+          <dt><dfn class="export">authorization</dfn></dt>
+          <dd>
+A process by which an entity can prove to a verifier that it is allowed to
+perform a specific activity.
+          </dd>
+
+          <dt><dfn class="export" data-lt="cryptosuite">cryptographic suite</dfn></dt>
+          <dd>
+A means of using specific cryptographic primitives
+to achieve a particular security goal. These suites can
+specify [=verification methods=], digital signature types,
+their identifiers, and other related properties.<!--  See Section -->
+<!-- [[[#cryptographic-suites]]] for further detail. -->
+          </dd>
+
+          <dt><dfn class="export">controller</dfn></dt>
+          <dd>
+            <p>
+An entity that is capable of performing an action with a specific resource, such
+as updating a [=controlled identifier document=] or generating a [=proof=] using a
+[=verification method=].
+            </p>
+          </dd>
+
+          <dt><dfn class="export">controlled identifier</dfn></dt>
+          <dd>
+            <p>
+A type of identifier that can be proven to be under the control of an entity.
+            </p>
+          </dd>
+
+          <dt><dfn class="export">controlled identifier document</dfn></dt>
+          <dd>
+            <p>
+A document that contains cryptographic material and lists service endpoints that
+can be used for verifying [=proofs=] from, and interacting with, the
+[=controller=] of an identifier.
+            </p>
+          </dd>
+
+          <dt><dfn data-lt="subjects">subject</dfn></dt>
+          <dd>
+            <p>
+An entity, such as a person, group, organization, physical thing, digital thing,
+or logical thing that is referred to by the value of an `id` property in a
+[=controlled identifier document=]. Subjects identified in a [=controlled identifier document=]
+are also used as a subjects in other contexts, such as during
+[=authentication=] or in [=verifiable credentials=].
+            </p>
+          </dd>
+
+          <dt><dfn class="export">verification method</dfn></dt>
+          <dd>
+            <p>
+A method and its parameters, used to independently verify a [=proof=]. For
+example, a cryptographic public key can be used as a verification method with
+respect to a digital signature; in such use, it verifies that the signer
+used the associated cryptographic private key.
+            </p>
+          </dd>
+
+          <dt><dfn class="export">verification relationship</dfn></dt>
+          <dd>
+            <p>
+An expression that one or more [=verification methods=] are authorized to verify
+proofs made on behalf of the [=subject=]. One example of a verification
+relationship is [[[#authentication]]].
+            </p>
+          </dd>
+        </dl>
+
+      </section>
+    </section>
+
+      <section>
+        <h3>Data Model</h3>
+
+        <p>
+A [=controlled identifier document=] specifies one or more relationships between
+an [=identifier=] and a set of [=verification methods=] and/or service
+endpoints. The [=controlled identifier document=] SHOULD
+contain [=verification relationships=] that explicitly permit the use of
+certain [=verification methods=] for specific purposes.
+        </p>
+
+        <pre class="example nohighlight" title="Controlled Identifier Document in JSON-LD format using Multikey">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example",
+  "authentication": [<span class="highlight">{
+      "id": "https://controller.example#authn-key-123",
+      "type": "Multikey",
+      "controller": "https://controller.example",
+      "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }</span>]
+}
+        </pre>
+
+        <p>
+The example above shows a valid JSON-LD [=controlled identifier document=]
+that expresses a [=public key=] that can be used for the purposes of
+[=authentication=] using the <a href="#Multikey">Multikey</a> format.
+        </p>
+
+        <pre class="example nohighlight" title="Controlled Identifier Document in JSON format using JsonWebKey">
+{
+  "id": "https://controller.example/101",
+  "verificationMethod": [<span class="highlight">{
+    "id": "https://controller.example/101#key-20240828",
+    "type": "JsonWebKey",
+    "controller": "https://controller.example/101",
+    "publicKeyJwk": {
+      "kid": "key-20240828",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+    }
+  }</span>],
+  "authentication": ["#key-20240828"]
+}
+        </pre>
+
+        <p>
+The example above shows a valid JSON [=controlled identifier document=]
+that expresses a [=public key=] that can be used for the purposes of
+[=authentication=] using the <a href="#JsonWebKey">JsonWebKey</a> format.
+        </p>
+
+        <p class="note"
+           title="Property names used in map of different types">
+The property names `id`, `type`, and `controller` can be present in map of
+different types with possible differences in constraints.
+        </p>
+
+        <section>
+          <h2>Controlled Identifier Documents</h2>
+
+          <p>
+The following sections define the properties in a [=controlled identifier document=],
+including whether these properties are required or optional. These properties
+describe relationships between the [=subject=] and the value of the
+property.
+          </p>
+
+          <p>
+The following tables contain informative references for the core properties
+defined by this specification, with expected values, and whether or not they are
+required. The property names in the tables are linked to the normative
+definitions and more detailed descriptions of each property.
+          </p>
+
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Required?</th>
+                <th>Value constraints</th>
+                <th style="white-space: nowrap;">Definition</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>`id`</td>
+                <td>yes</td>
+                <td>
+A <a data-cite="INFRA#string">string</a> that conforms to the URL syntax.
+                </td>
+                <td style="white-space: nowrap;">[[[#subjects]]]</td>
+              </tr>
+              <tr>
+                <td>`controller`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#string">string</a> or a
+<a data-cite="INFRA#ordered-set">set</a> of
+<a data-cite="INFRA#string">strings</a>, each of which conforms to the URL
+syntax.
+                </td>
+                <td style="white-space: nowrap;">[[[#controllers]]]</td>
+              </tr>
+              <tr>
+                <td>`alsoKnownAs`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of
+<a data-cite="INFRA#string">strings</a>, each of which conforms to the URL
+syntax.
+                </td>
+                <td style="white-space: nowrap;">[[[#also-known-as]]]</td>
+              </tr>
+              <tr>
+                <td>`service`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of [=service=]
+<a data-cite="INFRA#ordered-map">maps</a>.
+                </td>
+                <td style="white-space: nowrap;">[[[#services]]]</td>
+              </tr>
+              <tr>
+                <td>`verificationMethod`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of
+[=verification method=] <a data-cite="INFRA#ordered-map">maps</a>.
+                </td>
+                <td style="white-space: nowrap;">[[[#verification-methods]]]</td>
+              </tr>
+              <tr>
+                <td>`authentication`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of <a
+data-cite="INFRA#string">strings</a>, each of which conforms to
+the URL syntax, or a <a data-cite="INFRA#ordered-set">set</a> of
+[=verification method=] <a data-cite="INFRA#ordered-map">maps</a>.
+                </td>
+                <td style="white-space: nowrap;">[[[#authentication]]]</td>
+              </tr>
+              <tr>
+                <td>`assertionMethod`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of <a
+data-cite="INFRA#string">strings</a>, each of which conforms to
+the URL syntax, or a <a data-cite="INFRA#ordered-set">set</a> of
+[=verification method=] <a data-cite="INFRA#ordered-map">maps</a>.
+                </td>
+                <td style="white-space: nowrap;">[[[#assertion]]]</td>
+              </tr>
+              <tr>
+                <td>`keyAgreement`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of <a
+data-cite="INFRA#string">strings</a>, each of which conforms to
+the URL syntax, or a <a data-cite="INFRA#ordered-set">set</a> of
+[=verification method=] <a data-cite="INFRA#ordered-map">maps</a>.
+                </td>
+                <td style="white-space: nowrap;">[[[#key-agreement]]]</td>
+              </tr>
+              <tr>
+                <td>`capabilityInvocation`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of <a
+data-cite="INFRA#string">strings</a>, each of which conforms to
+the URL syntax, or a <a data-cite="INFRA#ordered-set">set</a> of
+[=verification method=] <a data-cite="INFRA#ordered-map">maps</a>.
+                </td>
+                <td style="white-space: nowrap;">[[[#capability-invocation]]]</td>
+              </tr>
+              <tr>
+                <td>`capabilityDelegation`</td>
+                <td>no</td>
+                <td>
+A <a data-cite="INFRA#ordered-set">set</a> of <a
+data-cite="INFRA#string">strings</a>, each of which conforms to
+the URL syntax, or a <a data-cite="INFRA#ordered-set">set</a> of
+[=verification method=] <a data-cite="INFRA#ordered-map">maps</a>.
+                </td>
+                <td style="white-space: nowrap;">[[[#capability-delegation]]]</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <section>
+            <h3>Subjects</h3>
+            <p>
+A [=subject=] is expressed using the `id` property in a [=controlled identifier document=].
+The value of an `id` property is referred to as an <dfn>identifier</dfn>.
+            </p>
+
+            <dl>
+              <dt>id</dt>
+              <dd>
+The value of `id` property MUST be a <a data-cite="INFRA#string">string</a> that
+conforms to the rules in the [[[URL]]].
+              </dd>
+            </dl>
+
+            <p>
+A [=controlled identifier document=] MUST contain an `id` value in the <em>topmost</em>
+<a data-cite="INFRA#ordered-map">map</a>.
+            </p>
+
+            <pre class="example nohighlight" title="Usage of the `id` property">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  <span class="highlight">"id": "https://controller.example"</span>,
+  "authentication": [{
+      "id": "https://controller.example#authn-key-123",
+      "type": "Multikey",
+      "controller": "https://controller.example",
+      "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }]
+}
+            </pre>
+
+            <p>
+The value of the `id` property in the <em>topmost</em>
+<a data-cite="INFRA#ordered-map">map</a> of the [=controlled identifier document=] is
+called the <dfn>base identifier</dfn> for the [=controlled identifier document=]. The URL
+for retrieving the current, authoritative [=controlled identifier document=] for a given
+[=identifier=] is called the <dfn>canonical URL</dfn> for the [=controlled identifier
+document=]. Dereferencing the [=canonical URL=] MUST return the current
+authoritative [=controlled identifier document=]. The returned document's [=base
+identifier=] MUST be the same as the [=canonical URL=]; if it is anything else,
+then the returned document is not an authoritative [=controlled identifier document=] and
+the [=identifier=] SHOULD be treated as invalid. Every controlled identifier document is
+stored and retrieved according to the [=canonical URL=] of the document, which
+MUST also be the [=base identifier=] of the document.
+            </p>
+
+            <div class="note" title="Identifiers are context-dependent">
+              <p>
+It is expected that the [=subject=] referred to by an `id` in a [=controlled identifier
+document=] will be consistent over time, such that any [=verifiable
+credentials=] that use them can be interpreted as referring to the same entity.
+For example, it is preferred that an [=issuer=] of a [=verifiable credential=]
+require that a [=subject=] demonstrate [=proof=] of control over their
+[=identifier=] before issuing a credential with that [=identifier=] as
+[=subject=], creating assurance that the same entity was involved in the
+issuance of each credential with that [=identifier=] as [=subject=].
+              </p>
+              <p>
+However, there are valid cases where that practice is either impossible or
+unreasonable; for example, when a parent requests a [=verifiable credential=]
+for their child. There are also cases where an [=issuer=] simply makes a mistake
+or intentionally issues a false statement. All of these possibilities are
+considered when evaluating the security impacts of reliance on a given
+[=identifier=] for any given purpose. See Section [[[#identifier-ambiguity]]].
+              </p>
+            </div>
+
+          </section>
+
+          <section>
+            <h3>Controllers</h3>
+
+            <p>
+A [=controller=] of a [=controlled identifier document=] is any entity capable of making changes to that
+[=controlled identifier document=]. Whoever can update
+the content of the resource returned from dereferencing the controller
+document's canonical URL is, by definition, a controller of the
+document and its canonical identifier. Proofs that satisfy a
+[=controlled identifier document=]'s [=verification methods=] are taken as cryptographic
+assurance that the [=controller=] of the [=identifier=] created those [=proofs=].
+            </p>
+            <p class="note" title="Identifier Controller versus Document Controller">
+The [=controller=] of the [=controlled identifier document=] is taken to be the
+[=controller=] of the document's canonical [=identifier=], also known as its
+URL. That is, whoever can update the [=controlled identifier document=] is both
+the document [=controller=] and the [=identifier=] [=controller=]. Updating the
+document is how you control the [=identifier=]. These terms can be used
+interchangeably. Controlling the canonical [=controlled identifier document=] for
+an [=identifier=] is the same as controlling the [=identifier=].
+            </p>
+            <dl>
+              <dt>controller</dt>
+              <dd>
+The `controller` property is OPTIONAL. If it is possible to represent
+the legitimate controllers of the document as URLs, the document SHOULD
+list URLs identifying those controllers.
+
+  <p class="note" title="Presumed Control">
+It is possible to list a verification method which is
+functionally under the control of someone other than the [=controller=]
+of the [=controlled identifier document=]. For example, a document [=controller=] could
+set a public key under another party's control as an authentication
+verification method. This would enable the other party to authenticate
+on behalf of this [=identifier=] (because their public key is listed in
+an authentication verification method) <em>without</em> enabling that party
+to update the [=controlled identifier document=]. However, since the document
+[=controller=] explicitly listed that key for authentication, the
+proof in question is taken as created by the document [=controller=], as
+it was created by their explicit assignee. This is especially useful
+when the "other party" is a device under the control of the document
+controller, but with a distinct cryptographic authority, i.e., it
+has its own keystore and can generate [=proofs=]. That pattern enables
+different devices, each using their own cryptographic material, to
+generate verifiable [=proofs=] that are taken as [=proofs=] created by
+controller of the identifier.
+  </p>
+If present, its value MUST be a
+<a data-cite="INFRA#string">string</a> or a
+<a data-cite="INFRA#ordered-set">set</a> of
+<a data-cite="INFRA#string">strings</a>,
+each of which conforms to the rules in the [[[URL]]].
+            </p>
+            <p>
+Each entry in the `controller` property MUST identify
+an entity capable of updating the canonical version
+of the [=controlled identifier document=].
+Subsequent requests for this [=controlled identifier document=] through its
+canonical location will always receive the latest version.
+            </p>
+            <p>
+If the `controller` property is not present, then control of the document
+is determined entirely by its storage location.
+              </dd>
+            </dl>
+
+            <pre class="example nohighlight"
+              title="Controlled identifier document with a controller property">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controllerA.example",
+  <span class="highlight">"controller": "https://controllerB.example/abc"</span>,
+  "authentication": [{
+      "id": "https://controllerA.example#authn-key-123",
+      "type": "Multikey",
+      "controller": "https://controllerA.example",
+      "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }]
+}
+            </pre>
+
+            <p>
+While the [=identifier=] used for a [=controller=] is unambiguous, this does not
+imply that a single entity is always the [=controller=], nor that a [=controller=]
+only has a single identifier. A [=controller=] might be a single entity, or a
+collection of entities, such as a partnership. A [=controller=] might also use
+multiple identifiers to refer to itself, for purposes such as privacy or
+delineating operational boundaries within an organization. Similarly, a
+[=controller=] might control many [=verification methods=]. For these reasons,
+no assumptions are to be made about a [=controller=] being a single entity nor
+controlling only a single [=verification method=].
+            </p>
+
+            <p class="note" title="Authentication versus Authorization">
+Note that the definition of [=authentication=] is different from the definition
+of [=authorization=]. Generally speaking, [=authentication=] answers the
+question of "Do we know who this is?" while [=authorization=] answers the question of "Are
+they allowed to perform this action?". The `authentication` property in this
+specification is used to, unsurprisingly, perform [=authentication=] while the
+other [=verification relationships=] such as `capabilityDelegation` and
+`capabilityInvocation` are used to perform [=authorization=]. Since successfully
+performing [=authorization=] might have more serious effects on a system,
+[=controllers=] are urged to use different [=verification methods=] when
+performing [=authentication=] versus [=authorization=] and provide stronger
+access protection for [=verification methods=] used for [=authorization=] versus
+[=authentication=]. See [[[#security-considerations]]] for information related
+to threat models and attack vectors.
+            </p>
+          </section>
+
+          <section>
+            <h3>Also Known As</h3>
+
+            <p>
+A [=subject=] can have multiple identifiers that are used for different purposes
+or at different times. The assertion that two or more identifiers (or other types
+of URI) refer to the same [=subject=] can be made using the
+`alsoKnownAs` property.
+            </p>
+
+            <dl>
+              <dt>alsoKnownAs</dt>
+              <dd>
+The `alsoKnownAs` property is OPTIONAL. If present, its value MUST
+be a <a data-cite="INFRA#ordered-set">set</a> where each item in the
+set is a URI conforming to [[RFC3986]].
+              </dd>
+            </dl>
+
+            <p>
+This relationship is a statement that the subject of this identifier is
+also identified by one or more other identifiers.
+            </p>
+
+            <pre class="example nohighlight"
+              title="Controlled identifier document using an alsoKnownAs property">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example",
+  <span class="highlight">"alsoKnownAs": [
+    "https://someOtherIdentifier.example/xyz",
+    "https://yetAnotherIdentifier.example/987"
+  ]</span>,
+  "authentication": [{
+      "id": "https://controller.example#authn-key-123",
+      "type": "Multikey",
+      "controller": "https://controller.example",
+      "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }]
+}
+            </pre>
+
+
+            <div class="note" title="Equivalence and alsoKnownAs">
+              <p>
+Applications might choose to consider two identifiers related by `alsoKnownAs`
+to be equivalent <em>if</em> the `alsoKnownAs` relationship expressed in the
+controlled identifier document of one [=subject=] is also expressed in the reverse direction
+(i.e., reciprocated) in the controlled identifier document of the other [=subject=]. It is
+best practice <em>not</em> to consider them
+equivalent in the absence of this reciprocating relationship. In other words,
+the presence of an `alsoKnownAs` assertion does not prove that this assertion
+is true. Therefore, it is strongly advised that a requesting party obtain
+independent verification of an `alsoKnownAs` assertion.
+              </p>
+              <p>
+Given that the [=subject=] might use different identifiers for different
+purposes, such as enhanced privacy protection, an expectation of strong
+equivalence between the two identifiers, or taking action to
+merge the information from the two corresponding [=controlled identifier documents=], is
+not necessarily appropriate, <em>even with</em> a reciprocal relationship.
+              </p>
+            </div>
+
+          </section>
+
+          <section>
+            <h2>Services</h2>
+
+            <p>
+[=Services=] are used in [=controlled identifier documents=] to express ways of
+communicating with the [=controller=], or associated entities, in relation to
+the controlled [=identifier=]. A [=service=] can be
+any type of service the [=controller=] wants to advertise for further discovery,
+authentication, authorization, or interaction.
+            </p>
+
+            <p>
+Due to privacy concerns, revealing public information through [=services=], such
+as social media accounts, personal websites, and email addresses, is
+discouraged. Further exploration of privacy concerns can be found in sections
+[[[#keep-personal-data-private]]] and [[[#service-privacy]]]. The information
+associated with [=services=] is often service specific. For example, the
+information associated with an encrypted messaging service can express how to
+initiate the encrypted link before messaging begins.
+            </p>
+
+            <p>
+[=Services=] are expressed using the `service` property, which is described
+below:
+            </p>
+
+            <dl>
+              <dt><dfn>service</dfn></dt>
+              <dd>
+                <p>
+The `service` property is OPTIONAL. If present, the associated value MUST be a
+<a data-cite="INFRA#ordered-set">set</a> of [=services=], where each service is
+described by a <a data-cite="INFRA#ordered-map">map</a>. Each [=service=] <a
+data-cite="INFRA#ordered-map">map</a> MUST contain `id`, `type`, and
+`serviceEndpoint` properties. Each service extension MAY include additional
+properties and MAY further restrict the properties associated with the
+extension.
+                </p>
+                <dl>
+                  <dt id="prop-service-id">id</dt>
+                  <dd>
+The `id` property is OPTIONAL. If present, its value MUST be a URL
+conforming to [[[URL]]]. A [=conforming document=] MUST NOT include multiple
+`service` entries with the same `id`.
+                  </dd>
+                <dt id="prop-service-type">type</dt>
+                <dd>
+The `type` property is REQUIRED. Its value MUST be a
+<a data-cite="INFRA#string">string</a> or a
+<a data-cite="INFRA#ordered-set">set</a> of
+<a data-cite="INFRA#string">strings</a>. To maximize interoperability,
+the [=service=] type and its associated properties SHOULD be registered in the
+[[[?VC-EXTENSIONS]]].
+                </dd>
+                <dt id="prop-service-endpoint">serviceEndpoint</dt>
+                <dd>
+The `serviceEndpoint` property is REQUIRED. The value of the `serviceEndpoint`
+property MUST be a single <a data-cite="INFRA#string">string</a>, a single
+<a data-cite="INFRA#maps">map</a>, or a <a data-cite="INFRA#ordered-set">set</a>
+composed of one or more
+<a data-cite="INFRA#string">strings</a> and/or
+<a data-cite="INFRA#maps">maps</a>. Each <a data-cite="INFRA#string">string</a>
+value MUST be a valid URL conforming to [[[URL]]].
+                </dd>
+              </dl>
+            </dl>
+
+            <p>
+For more information regarding privacy and security considerations related to
+[=services=] see [[[#service-privacy]]], [[[#keep-personal-data-private]]],
+[[[#controlled-identifier-document-correlation-risks]]], and
+[[[#service-endpoints-for-authentication-and-authorization]]].
+      </p>
+
+      <pre class="example nohighlight" title="Usage of the service property">
+{
+  "id": "https://controller.example",
+  "authentication": [{
+      "id": "https://controller.example#authn-key-123",
+      "type": "Multikey",
+      "controller": "https://controller.example",
+      "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }],
+  <span class="highlight">"service": [{
+    "type": "https://social.example/ExampleSocialMediaService",
+    "serviceEndpoint": "https://warbler.example/sal674"
+  }]</span>
+}
+            </pre>
+
+          </section>
+
+        </section>
+
+        <section>
+          <h2>Verification Methods</h2>
+          <p>
+A [=controlled identifier document=] can express [=verification methods=], such
+as cryptographic [=public keys=], which can be used to verify [=proofs=], such
+as those used to [=authentication|authenticate=] or authorize interactions with
+the [=controller=] or associated parties. For example, a cryptographic [=public
+key=] can be used as a <a>verification method</a> with respect to a digital
+signature; in such use, it verifies that the signer could use the associated
+cryptographic private key. <a>Verification methods</a> might take many
+parameters. An example of this is a set of five cryptographic keys from which
+any three are required to contribute to a cryptographic threshold signature.
+          </p>
+
+          <p>
+"Verification" and "proof" are intended to apply broadly. For example, a
+cryptographic public key might be used during Diffie-Hellman key exchange to
+negotiate a shared symmetric key for encryption. This guarantees the integrity
+of the key agreement process. It is thus another type of verification method,
+even though descriptions of the process might not use the words "verification"
+or "proof."
+          </p>
+
+          <p>
+A [=verification method=] is defined in a [=controlled identifier document=] using the
+[=map=] below and is referred to as the
+<dfn>verification method definition</dfn>:
+          </p>
+
+          <dl>
+            <dt><dfn class="lint-ignore">verificationMethod</dfn></dt>
+            <dd>
+              <p>
+The `verificationMethod` property is OPTIONAL. If present, the value
+MUST be a <a data-cite="INFRA#ordered-set">set</a> of <a>verification
+methods</a>, where each [=verification method=] is expressed using a <a
+data-cite="INFRA#ordered-map">map</a>. The [=verification method=] <a
+data-cite="INFRA#ordered-map">map</a> MUST include the `id`,
+`type`, `controller`, and specific verification material
+properties that are determined by the value of `type` and are defined
+in [[[#verification-material]]]. A [=verification method=] MAY
+include additional properties.
+<!-- VC-DATA-INTEGRITY-SPECIFIC:
+[=Verification methods=] SHOULD be registered
+in the Data Integrity Specification Registries [TBD - DIS-REGISTRIES].
+-->
+              </p>
+
+              <dl>
+                <dt>id</dt>
+                <dd>
+                  <p>
+The value of the `id` property for a [=verification method=] MUST be a <a
+data-cite="INFRA#string">string</a> that conforms to the [[URL]] syntax. This
+value is called the <dfn>verification method identifier</dfn> and can also be
+used in a [=proof=] to refer to a specific instance of a [=verification
+method=], which is called the [=verification method definition=].
+                  </p>
+                </dd>
+                <dt>type</dt>
+                <dd>
+The value of the `type` property MUST be a <a
+data-cite="INFRA#string">string</a> that references exactly one <a>verification
+method</a> type. This specification defines the types `JsonWebKey` (see Section
+[[[#JsonWebKey]]]) and `Multikey` (see Section [[[#Multikey]]]).
+                </dd>
+                <dt><span id="defn-controller">controller</span></dt>
+                <dd>
+The value of the `controller` property MUST be a <a
+data-cite="INFRA#string">string</a> that conforms to the [[URL]] syntax.
+                </dd>
+
+                <dt id="defn-vm-expires">expires</dt>
+                <dd>
+The `expires` property is OPTIONAL.
+<!-- VC-DATA-INTEGRITY-SPECIFIC:
+ It is set, in advance, by the
+[=controller=] of a  [=verification method=] to signal when that method
+can no longer be used for verification purposes.
+-->
+If provided, it MUST be an
+[[XMLSCHEMA11-2]] `dateTimeStamp` string specifying when the
+[=verification method=] SHOULD cease to be used. Once the value is set, it is
+not expected to be updated, and systems depending on the value are expected to
+not verify any [=proofs=] associated with the [=verification method=] at or after
+the time of expiration.
+                </dd>
+                <dt><dfn class="lint-ignore">revoked</dfn></dt>
+                <dd>
+The `revoked` property is OPTIONAL.
+<!-- VC-DATA-INTEGRITY-SPECIFIC:
+It is set by the [=controller=] of a
+[=verification method=] to signal when that method is to no longer to be used
+for verification purposes, such as after a security compromise of the
+[=verification method=].
+-->
+If present, it MUST be an [[XMLSCHEMA11-2]]
+`dateTimeStamp` string specifying when the [=verification method=]
+MUST NOT be used. Once the value is set, it is not expected to be
+updated, and systems depending on the value are expected to not verify any
+proofs associated with the [=verification method=] at or after the time of
+revocation.
+                </dd>
+              </dl>
+            </dd>
+          </dl>
+
+          <pre class="example nohighlight"
+            title="Example verification method structure">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example",
+  <span class="highlight">"verificationMethod": [{
+    "id": "https://controller.example#authn-key-123",
+    "type": "Multikey",
+    "controller": "https://controller.example",
+    "expires": "2025-12-01T00:00:00Z",
+    "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }, {
+    "id": "https://controller.example/101#key-20240828",
+    "type": "JsonWebKey",
+    "controller": "https://controller.example/101",
+    "revoked": "2024-12-10T15:28:32Z",
+    "publicKeyJwk": {
+      "kid": "key-20240828",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+    }
+  }]</span>
+}
+          </pre>
+
+          <p class="note"
+            title="The `controller` property is used by multiple objects">
+The `controller` property is used by [=controlled identifier documents=], as described in
+Section [[[#controlled-identifier-documents]]], and by [=verification methods=], as
+described in Section [[[#verification-methods]]]. When it is used in either
+place, its purpose is essentially the same; that is, it expresses one or more
+entities that are authorized to perform certain actions associated with the
+resource with which it is associated.
+Note, however, that for [=verification methods=], it is only
+an assertion made by the `controller` of the [=controlled identifier document=],
+and this assertion is not necessarily true, i.e., it may be false.
+To ensure that a [=verification method=]
+is bound to a particular [=controller=],
+one must go from the expression of the [=verification method=]
+to its [=controlled identifier document=],
+and then verify that the latter contains references to both
+the [=verification method=] and its [=controller=]. See Section [[[#retrieve-verification-method]]] for an algorithm that ensures that a proper binding is verified.
+            </p>
+            <p>
+The [=controller=] of a [=controlled identifier document=]
+can update the content of the document. Only the actual
+[=controller=] of a [=verification method=] (regardless of who
+is asserted to be the controller) can generate
+proofs that satisfy the method.
+            </p>
+            <p>
+To ensure explicit security guarantees, the
+[=controller=] of a [=verification method=] cannot be inferred from the
+[=controlled identifier document=]. It is necessary to explicitly express the identifier of
+the controller of the key because the value of `controller` for a [=verification
+method=] is <em>not</em> necessarily the value of the `controller` for a
+[=controlled identifier document=].
+          </p>
+
+          <section>
+            <h3>Verification Material</h3>
+
+            <p>
+Verification material is any information that is used by a process that applies
+a [=verification method=]. The `type` of a [=verification method=] is
+expected to be used to determine its compatibility with such processes. Examples
+of verification methods include `JsonWebKey` and `Multikey`.
+A [=cryptographic suite=] specification is responsible for specifying the
+[=verification method=] `type` and its associated verification material
+format. For examples using verification material, see
+<a href="https://www.w3.org/TR/vc-jose-cose/">Securing Verifiable Credentials using JOSE and COSE</a>,
+<a href="https://www.w3.org/TR/vc-di-ecdsa/">the Data Integrity ECDSA
+Cryptosuites</a> and <a href="https://w3c-ccg.github.io/lds-ed25519-2020/">
+the Data Integrity EdDSA Cryptosuites</a>.
+            </p>
+
+            <p>
+To increase the likelihood of interoperable implementations, this specification
+limits the number of formats for expressing verification material in a
+[=controlled identifier document=]. The fewer formats that implementers have to
+choose from, the more likely that interoperability will be achieved. This
+approach attempts to strike a delicate balance between easing implementation
+and providing support for formats that have historically had broad deployment.
+            </p>
+
+            <p>
+A [=verification method=] MUST NOT contain multiple verification material
+properties for the same material. For example, expressing key material in a
+[=verification method=] using both `publicKeyJwk` and
+`publicKeyMultibase` at the same time is prohibited.
+            </p>
+
+            <p>
+Implementations MAY convert keys between formats as desired for operational purposes or
+to interface with cryptographic libraries. As an internal implementation detail, such
+conversion MUST NOT affect the external representation of key material.
+            </p>
+
+            <p>
+An example of a [=controlled identifier document=] containing <a>verification
+methods</a> using both properties above is shown below.
+            </p>
+
+            <pre id="example-various-verification-method-types"
+              class="example nohighlight"
+              title="Verification methods using publicKeyJwk and publicKeyMultibase">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example",
+  "verificationMethod": [{
+    "id": "https://controller.example#authn-key-123",
+    "type": "Multikey",
+    "controller": "https://controller.example",
+    "expires": "2025-12-01T00:00:00Z",
+    <span class="highlight">"publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"</span>
+  }, {
+    "id": "https://controller.example/101#key-20240828",
+    "type": "JsonWebKey",
+    "controller": "https://controller.example/101",
+    "revoked": "2024-12-10T15:28:32Z",
+    <span class="highlight">"publicKeyJwk": {
+      "kid": "key-20240828",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+    }</span>
+  }]
+}
+            </pre>
+          </section>
+
+          <section id="Multikey">
+            <h3>Multikey</h3>
+            <p>
+The Multikey data model is a specific type of [=verification method=] that
+encodes key types into a single binary stream that is then encoded as a
+Multibase value as described in Section [[[#multibase-0]]].
+            </p>
+
+            <p>
+When specifying a `Multikey`, the object takes the following form:
+            </p>
+
+            <dl>
+              <dt>type</dt>
+              <dd>
+The value of the `type` property MUST be a [=string=] that is set to
+`Multikey`.
+              </dd>
+              <dt><dfn class="lint-ignore">publicKeyMultibase</dfn></dt>
+              <dd>
+The `publicKeyMultibase` property is OPTIONAL. If present, its value MUST be a
+Multibase encoded value as described in Section [[[#multibase-0]]].
+              </dd>
+              <dt><dfn class="lint-ignore">secretKeyMultibase</dfn></dt>
+              <dd>
+The `secretKeyMultibase` property is OPTIONAL. If present, its value MUST be a
+Multibase encoded value as described in Section [[[#multibase-0]]].
+              </dd>
+            </dl>
+
+            <p>
+The example below expresses an Ed25519 public key using the format defined
+above:
+            </p>
+
+            <pre class="example nohighlight"
+              title="Multikey encoding of a Ed25519 public key">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example/123456789abcdefghi#keys-1",
+  <span class="highlight">"type": "Multikey"</span>,
+  "controller": "https://controller.example/123456789abcdefghi",
+  "publicKeyMultibase": "<span class="highlight">z6Mk</span>mM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+}
+            </pre>
+
+            <p>
+The public key values are expressed using the rules in the table below:
+            </p>
+
+            <table class="simple">
+              <thead>
+                <th>Key type</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ECDSA 256-bit public key</td>
+                  <td>
+The Multikey encoding of a P-256 public key MUST start with the two-byte prefix
+`0x8024` (the varint expression of `0x1200`) followed by the 33-byte compressed
+public key data. The resulting 35-byte value MUST then be encoded using the
+base-58-btc alphabet, according to Section [[[#multibase-0]]], and then
+prepended with the base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>ECDSA 384-bit public key</td>
+                  <td>
+The encoding of a P-384 public key MUST start with the two-byte prefix `0x8124`
+(the varint expression of `0x1201`) followed by the 49-byte compressed public
+key data. The resulting 51-byte value is then encoded using the base-58-btc
+alphabet, according to Section [[[#multibase-0]]], and then prepended with the
+base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>Ed25519 256-bit public key</td>
+                  <td>
+The encoding of an Ed25519 public key MUST start with the two-byte prefix
+`0xed01` (the varint expression of `0xed`), followed by the 32-byte public key
+data. The resulting 34-byte value MUST then be encoded using the base-58-btc
+alphabet, according to Section [[[#multibase-0]]], and then prepended with the
+base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>BLS12-381 381-bit public key</td>
+                  <td>
+The encoding of an BLS12-381 public key in the G2 group MUST start with
+the two-byte prefix `0xeb01` (the varint expression of `0xeb`), followed
+by the 96-byte compressed public key data. The resulting 98-byte value MUST
+then be encoded using the base-58-btc alphabet, according to Section
+[[[#multibase-0]]], and then prepended with the base-58-btc Multibase header
+(`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>SM2 256-bit public key</td>
+                  <td>
+The encoding of an SM2 public key MUST start with the two-byte prefix
+`0x8624` (the varint expression of `0x1206`) followed by the 33-byte compressed
+public key data. The resulting 35-byte value MUST then be encoded using the
+base-58-btc alphabet, according to Section [[[#multibase-0]]], and then
+prepended with the base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p>
+The secret key values are expressed using the rules in the table below:
+            </p>
+
+            <table class="simple">
+              <thead>
+                <th>Key type</th>
+                <th>Description</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ECDSA 256-bit secret key</td>
+                  <td>
+The Multikey encoding of a P-256 secret key MUST start with the two-byte prefix
+`0x8626` (the varint expression of `0x1306`) followed by the 32-byte
+secret key data. The resulting 34-byte value MUST then be encoded using the
+base-58-btc alphabet, according to Section [[[#multibase-0]]], and then
+prepended with the base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>ECDSA 384-bit secret key</td>
+                  <td>
+The encoding of a P-384 secret key MUST start with the two-byte prefix `0x8726`
+(the varint expression of `0x1307`) followed by the 48-byte secret
+key data. The resulting 50-byte value is then encoded using the base-58-btc
+alphabet, according to Section [[[#multibase-0]]], and then prepended with the
+base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>Ed25519 256-bit secret key</td>
+                  <td>
+The encoding of an Ed25519 secret key MUST start with the two-byte prefix
+`0x8026` (the varint expression of `0x1300`), followed by the 32-byte secret key
+data. The resulting 34-byte value MUST then be encoded using the base-58-btc
+alphabet, according to Section [[[#multibase-0]]], and then prepended with the
+base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>BLS12-381 381-bit secret key</td>
+                  <td>
+The encoding of an BLS12-381 secret key in the G2 group MUST start with
+the two-byte prefix `0x8030` (the varint expression of `0x130a`), followed
+by the 96-byte compressed public key data. The resulting 98-byte value MUST
+then be encoded using the base-58-btc alphabet, according to Section
+[[[#multibase-0]]], and then prepended with the base-58-btc Multibase header
+(`z`).
+                  </td>
+                </tr>
+                <tr>
+                  <td>SM2 256-bit secret key</td>
+                  <td>
+The encoding of an SM2 secret key MUST start with the two-byte prefix
+`0x9026` (the varint expression of `0x1310`) followed by the 32-byte
+secret key data. The resulting 34-byte value MUST then be encoded using the
+base-58-btc alphabet, according to Section [[[#multibase-0]]], and then
+prepended with the base-58-btc Multibase header (`z`).
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+            <p class="advisement">
+Developers are advised to not accidentally publish a representation of a secret
+key. Implementations that adhere to this specification will raise errors in the
+event of a Multikey header value that is not in the public key header table
+above, or when reading a Multikey value that is expected to be a public key,
+such as one published in a controlled identifier document, that does not start with a known
+public key header.
+            </p>
+
+            <p>
+When defining values for use with `publicKeyMultibase` and `secretKeyMultibase`,
+specification authors MAY define additional header values for other key types in
+other specifications and MUST NOT define alternate encodings for key types
+already defined by this specification.
+            </p>
+
+          </section>
+
+          <section id="JsonWebKey">
+            <h3>JsonWebKey</h3>
+            <p>
+The JSON Web Key (JWK) data model is a specific type of [=verification method=]
+that uses the JWK specification [[RFC7517]] to encode key types into a
+set of parameters.
+            </p>
+
+            <p>
+When specifing a `JsonWebKey`, the object takes the following form:
+            </p>
+
+            <dl>
+              <dt>type</dt>
+              <dd>
+The value of the `type` property MUST be a [=string=] that is set to
+`JsonWebKey`.
+              </dd>
+              <dt><dfn class="lint-ignore">publicKeyJwk</dfn></dt>
+              <dd>
+                <p>
+The `publicKeyJwk` property is OPTIONAL. If present, its value MUST
+be a <a data-cite="INFRA#ordered-map">map</a> representing a JSON Web Key that
+conforms to [[RFC7517]]. The <a data-cite="INFRA#ordered-map">map</a> MUST NOT
+include any members of the private information class, such as `d`, as described
+in the <a href="https://datatracker.ietf.org/doc/html/rfc7517#section-8.1.1">JWK
+Registration Template</a>. It is RECOMMENDED that verification methods that use
+JWKs [[RFC7517]] to represent their [=public keys=] use the value of `kid` as
+their fragment identifier. It is RECOMMENDED that JWK `kid` values are set to
+the JWK Thumbprint [[RFC7638]] using the SHA-256 (SHA2-256) hash function of the [=public key=].
+See the first key in
+[[[#example-various-verification-method-types]]] for an example of a
+public key with a compound key identifier.
+                </p>
+                <p>
+As specified in <a data-cite="RFC7517#section-4.4">Section 4.4 of the JWK specification</a>,
+the OPTIONAL `alg` property identifies the algorithm intended for use with the public key,
+and SHOULD be included to prevent security issues that can arise when using the same
+key with multiple algorithms. As specified in <a data-cite="RFC7518#section-6.2.1.1">
+Section 6.2.1.1 of the JWA specification</a>, describing a key using an elliptic curve,
+the REQUIRED `crv` property is used to identify the particular curve type of the public key.
+As specified in <a data-cite="RFC7515#section-4.1.4">Section 4.1.4 of the JWS specification</a>,
+the OPTIONAL `kid` property is a hint used to help discover the key; if present, the `kid` value SHOULD
+match, or be included in, the `id` property of the encapsulating `JsonWebKey` object,
+as part of the path, query, or fragment of the URL.
+                </p>
+
+              </dd>
+              <dt><dfn class="lint-ignore">secretKeyJwk</dfn></dt>
+              <dd>
+The `secretKeyJwk` property is OPTIONAL. If present, its value MUST be a <a
+data-cite="INFRA#ordered-map">map</a> representing a JSON Web Key that conforms
+to [[RFC7517]].
+It MUST NOT be used if the data structure containing it is public or may be revealed to parties other than the legitimate holders of the secret key.
+              </dd>
+            </dl>
+
+            <p>
+An example of an object that conforms to `JsonWebKey` is provided below:
+            </p>
+
+            <pre class="example nohighlight" title="JSON Web Key encoding of a secp384r1 (P-384) public key">
+{
+  "id": "https://controller.example/123456789abcdefghi#key-1",
+  <span class="highlight">"type": "JsonWebKey"</span>,
+  "controller": "https://controller.example/123456789abcdefghi",
+  "publicKeyJwk": {
+      "kid": "key-1",
+      <span class="highlight">"kty": "EC",
+      "crv": "P-384",
+      "alg": "ES384",
+      "x": "1F14JSzKbwxO-Heqew5HzEt-0NZXAjCu8w-RiuV8_9tMiXrSZdjsWqi4y86OFb5d",
+      "y": "dnd8yoq-NOJcBuEYgdVVMmSxonXg-DU90d7C4uPWb_Lkd4WIQQEH0DyeC2KUDMIU"</span>
+    }
+}
+            </pre>
+
+            <p>
+In the example above, the `publicKeyJwk` value contains the JSON Web Key.
+The `kty` property encodes the key type of "EC", which means
+"Elliptic Curve". The `alg` property identifies the algorithm intended
+for use with the public key, which in this case is `ES384`. The `crv` property identifies
+the particular curve type of the public key, `P-384`. The `x` and `y` properties specify
+the point on the `P-384` curve that is associated with the public key.
+            </p>
+
+            <p>
+The `publicKeyJwk` property MUST NOT contain any property marked as
+"Private" or "Secret" in any registry contained in the JOSE Registries [[JOSE-REGISTRIES]], including "d".
+            </p>
+
+            <p>
+The JSON Web Key data model is also capable of encoding <em>secret keys</em>, sometimes
+referred to as <em>private keys</em>.
+            </p>
+
+            <pre class="example nohighlight"
+              title="JSON Web Key encoding of a secp384r1 (P-384) secret key">
+{
+  "id": "https://controller.example/123456789abcdefghi#key-1",
+  "type": "JsonWebKey",
+  "controller": "https://controller.example/123456789abcdefghi",
+  <span class="highlight">"secretKeyJwk"</span>: {
+      "id": "secret-1",
+      <span class="highlight">"kty": "EC",
+      "crv": "P-384",
+      "alg": "ES384",
+      "d": "fGwges0SX1mj4eZamUCL4qtZijy9uT15fI4gKTuRvre4Kkoju2SHM4rlFOeKVraH"</span>,
+      "x": "1F14JSzKbwxO-Heqew5HzEt-0NZXAjCu8w-RiuV8_9tMiXrSZdjsWqi4y86OFb5d",
+      "y": "dnd8yoq-NOJcBuEYgdVVMmSxonXg-DU90d7C4uPWb_Lkd4WIQQEH0DyeC2KUDMIU"
+    }
+}
+            </pre>
+
+            <p>
+The private key example above is almost identical to the previous example of the
+public key, except that the information is stored in the `secretKeyJwk` property
+(rather than the `publicKeyJwk`), and the private key value is encoded in the `d`
+property thereof (alongside the `x` and `y` properties, which still specify
+the point on the `P-384` curve that is associated with the public key).
+            </p>
+
+          </section>
+
+          <section>
+            <h3>Referring to Verification Methods</h3>
+            <p>
+[=Verification methods=] can be embedded in or referenced from properties
+associated with various [=verification relationships=] as described in
+[[[#verification-relationships]]]. Referencing [=verification methods=]
+allows them to be used by more than one [=verification relationship=].
+            </p>
+
+            <p>
+If the value of a [=verification method=] property is a <a
+data-cite="INFRA#ordered-map">map</a>, the [=verification method=] has been
+embedded and its properties can be accessed directly. However, if the value is a
+URL <a data-cite="INFRA#string">string</a>, the [=verification method=] has
+been included by reference and its properties will need to be retrieved from
+elsewhere in the [=controlled identifier document=] or from another [=controlled identifier document=]. This
+is done by dereferencing the URL and searching the resulting resource for a
+[=verification method=] <a data-cite="INFRA#ordered-map">map</a> with an
+`id` property whose value matches the URL.
+            </p>
+
+            <pre class="example nohighlight"
+            title="Embedding and referencing verification methods">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example",
+  "authentication": [
+    <span class="comment">// this key is referenced and might be used by</span>
+    <span class="comment">// more than one verification relationship</span>
+    <span class="highlight">"https://controllerB.example/123456789abcdefghi#keys-1"</span>,
+    <span class="comment">// this key is embedded and may *only* be used for authentication</span>
+    <span class="highlight">{
+      "id": "https://controllerA.example/123456789abcdefghi#keys-2",
+      "type": "Multikey",
+      "controller": "https://controller.example/123456789abcdefghi",
+      "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+    }</span>
+  ]
+}
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>Verification Relationships</h2>
+
+          <p>
+A [=verification relationship=] is an expression that one or more
+[=verification methods=] are authorized to verify [=proofs=] made on behalf of
+the subject.
+          </p>
+
+          <p>
+Different [=verification relationships=] enable the associated [=verification
+methods=] to be used for different purposes. It is up to a [=verifier=]
+to ascertain the validity of a verification attempt by checking that the
+[=verification method=] used is referred to by the appropriate [=verification
+relationship=] property in the [=controlled identifier document=].
+          </p>
+
+          <p>
+The [=verification relationship=] between the [=subject=] and the [=verification
+method=] is explicit in the [=controlled identifier document=]. [=Verification methods=]
+that are not associated with a particular [=verification relationship=] cannot
+be used for that [=verification relationship=]. For example, a [=verification
+method=] associated with the [=authentication=] property cannot be used to
+engage in key agreement protocols &mdash; the value of the
+<a href="#defn-keyAgreement">keyAgreement</a> property needs to be used for
+that.
+          </p>
+
+          <p>
+If a referenced [=verification method definition=] is not in the latest
+[=controlled identifier document=] used to dereference it, then that [=verification
+method=] is considered invalid or revoked.
+          </p>
+
+          <p>
+The following sections define several useful [=verification relationships=]. A
+[=controlled identifier document=] MAY include any of these, or other properties, to
+express a specific [=verification relationship=]. To maximize interoperability,
+any such properties used SHOULD be registered in the list of
+[[[DID-EXTENSIONS-PROPERTIES]]].
+          </p>
+
+          <section>
+            <h2>Authentication</h2>
+
+            <p>
+The `authentication` [=verification relationship=] is used to specify how the
+[=subject=] is expected to be [=authentication|authenticated=], for purposes
+such as logging into a website or engaging in any sort of challenge-response
+protocol. The processing performed following authentication is
+application-specific.
+            </p>
+
+            <dl>
+              <dt id="defn-authentication">authentication</dt>
+              <dd>
+The `authentication` property is OPTIONAL. If present, its
+value MUST be a <a data-cite="INFRA#ordered-set">set</a> of one or more
+[=verification methods=]. Each [=verification method=] MAY be embedded or
+referenced.
+              </dd>
+            </dl>
+
+            <pre class="example nohighlight" title="Authentication property
+                          containing three verification methods">
+    {
+      "@context": "https://www.w3.org/ns/cid/v1",
+      "id": "https://controller.example/123456789abcdefghi",
+      <span class="comment">...</span>
+      "authentication": [
+        <span class="comment">// this method can be used to authenticate</span>
+        "https://controller.example/123456789abcdefghi#keys-1",
+        <span class="comment">// this method is *only* approved for authentication, so its</span>
+        <span class="comment">// full description is embedded here rather than using only a reference</span>
+        {
+          "id": "https://controller.example/123456789abcdefghi#keys-2",
+          "type": "JsonWebKey",
+          "controller": "https://controller.example/123456789abcdefghi",
+          "publicKeyJwk": {
+            "crv": "Ed25519",
+            "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ",
+            "kty": "OKP",
+            "kid": "_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
+          }
+        },
+        {
+          "id": "https://controller.example/123456789abcdefghi#keys-3",
+          "type": "Multikey",
+          "controller": "https://controller.example/123456789abcdefghi",
+          "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+        }
+      ]
+      <span class="comment">...</span>
+    }
+            </pre>
+
+            <p>
+This is useful to any entity verifying authentication that needs to check
+whether an entity that is attempting to [=authentication|authenticate=] is
+presenting a valid proof of authentication. When such an
+authentication-verifying entity receives some data (in some protocol-specific
+format) that contains a [=proof=] that was made for the purpose of
+"authentication", and that says that an entity is identified by the `id`, then
+that <em>verifier</em> checks to ensure that the [=proof=] can be verified using
+a [=verification method=] (for example, [=public key=]) listed under
+`authentication` in the [=controlled identifier document=].
+            </p>
+            <p>
+Note that the [=verification method=] indicated by the `authentication` property
+of a [=controlled identifier document=] can only be used to
+[=authentication|authenticate=] on behalf of the [=controlled identifier
+document=]'s [=base identifier=].
+            </p>
+          </section>
+
+          <section>
+            <h2>Assertion</h2>
+
+            <p>
+The `assertionMethod` [=verification relationship=] is used to
+specify [=verification methods=] that a [=controller=] authorizes for use
+when expressing assertions or claims, such as in verifiable credentials.
+            </p>
+
+            <dl>
+              <dt id="defn-assertionMethod">assertionMethod</dt>
+              <dd>
+The `assertionMethod` property is OPTIONAL. If present, its associated
+value MUST be a <a data-cite="INFRA#ordered-set">set</a> of one or
+more [=verification methods=]. Each [=verification method=] MAY
+be embedded or referenced.
+              </dd>
+            </dl>
+
+            <p>
+This property is useful, for example, during the processing of a
+verifiable credential by a verifier.
+<!-- VC-DATA-INTEGRITY-SPECIFIC:
+During verification, a verifier checks to see if a
+[=verifiable credential=] contains a [=proof=] created by the [=controller=]
+by checking that the [=verification method=] used to assert the [=proof=] is
+associated with the `assertionMethod` property in the
+corresponding [=controlled identifier document=].
+-->
+            </p>
+
+            <pre class="example nohighlight" title="Assertion method property
+                        containing two verification methods">
+    {
+      "@context": "https://www.w3.org/ns/cid/v1",
+      "id": "https://controller.example/123456789abcdefghi",
+      <span class="comment">...</span>
+      "assertionMethod": [
+        <span class="comment">// this method can be used to assert statements</span>
+        "https://controller.example/123456789abcdefghi#keys-1",
+        <span class="comment">// this method is *only* approved for assertion of statements, it is not</span>
+        <span class="comment">// used for any other verification relationship, so its full description is</span>
+        <span class="comment">// embedded here rather than using a reference</span>
+        {
+          "id": "https://controller.example/123456789abcdefghi#keys-2",
+          "type": "Multikey", <span class="comment">// external (property value)</span>
+          "controller": "https://controller.example/123456789abcdefghi",
+          "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+        }
+      ]
+      <span class="comment">...</span>
+    }
+            </pre>
+          </section>
+
+          <section>
+            <h2>Key Agreement</h2>
+
+            <p>
+The `keyAgreement` [=verification relationship=] is used to
+specify how an entity can perform encryption in order to transmit
+confidential information intended for the [=controller=], such as for
+the purposes of establishing a secure communication channel with the recipient.
+            </p>
+
+            <dl>
+              <dt><dfn id="defn-keyAgreement">keyAgreement</dfn></dt>
+              <dd>
+The `keyAgreement` property is OPTIONAL. If present, the associated
+value MUST be a <a data-cite="INFRA#ordered-set">set</a> of one or more
+[=verification methods=]. Each [=verification method=] MAY be embedded or
+referenced.
+              </dd>
+            </dl>
+
+            <p>
+An example of when this property is useful is when encrypting a message intended
+for the [=controller=]. In this case, the counterparty uses the
+cryptographic [=public key=] information in the [=verification method=] to
+wrap a decryption key for the recipient.
+            </p>
+
+            <pre class="example nohighlight" title="Key agreement property
+                          containing two verification methods">
+    {
+      "@context": "https://www.w3.org/ns/cid/v1",
+      "id": "https://controller.example/123456789abcdefghi",
+      <span class="comment">...</span>
+      "keyAgreement": [
+        "https://controller.example/123456789abcdefghi#keys-1",
+        <span class="comment">// the rest of the methods below are *only* approved for key agreement usage</span>
+        <span class="comment">// they will not be used for any other verification relationship</span>
+        <span class="comment">// the full value is embedded here rather than using only a reference</span>
+        {
+          "id": "https://controller.example/123#keys-2",
+          "type": "Multikey",
+          "controller": "https://controller.example/123",
+          "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv"
+        },
+        {
+          "id": "https://controller.example/123#keys-3",
+          "type": "JsonWebKey",
+          "controller": "https://controller.example/123",
+          "publicKeyJwk": {
+            "kty": "OKP",
+            "crv": "X25519",
+            "x": "W_Vcc7guviK-gPNDBmevVw-uJVamQV5rMNQGUwCqlH0"
+          }
+        }
+      ]
+      <span class="comment">...</span>
+    }
+            </pre>
+          </section>
+
+          <section>
+            <h2>Capability Invocation</h2>
+
+            <p>
+The `capabilityInvocation` [=verification relationship=] is used
+to specify a [=verification method=] that might be used by the
+[=controller=] to invoke a cryptographic capability, such as the
+authorization to update the [=controlled identifier document=].
+            </p>
+
+            <dl>
+              <dt id="defn-capabilityInvocation">capabilityInvocation</dt>
+              <dd>
+The `capabilityInvocation` property is OPTIONAL. If present, the
+associated value MUST be a <a data-cite="INFRA#ordered-set">set</a> of
+one or more [=verification methods=]. Each [=verification method=] MAY be
+embedded or referenced.
+              </dd>
+            </dl>
+
+            <p>
+An example of when this property is useful is when a [=controller=] needs to
+access a protected HTTP API that requires authorization in order to use it. In
+order to authorize when using the HTTP API, the [=controller=]
+uses a capability that is associated with a particular URL that is
+exposed via the HTTP API. The invocation of the capability could be
+expressed in a number of ways, for example, as a digitally signed
+message that is placed into the HTTP Headers.
+            </p>
+            <p>
+The server providing the HTTP API is the <em>verifier</em> of the capability and
+it would need to verify that the [=verification method=] referred to by the
+invoked capability exists in the `capabilityInvocation`
+property of the [=controlled identifier document=]. The verifier would also check to make sure
+that the action being performed is valid and the capability is appropriate for
+the resource being accessed. If the verification is successful, the server has
+cryptographically determined that the invoker is authorized to access the
+protected resource.
+            </p>
+
+            <pre class="example nohighlight" title="Capability invocation property
+                          containing two verification methods">
+    {
+      "@context": "https://www.w3.org/ns/cid/v1",
+      "id": "https://controller.example/123456789abcdefghi",
+      <span class="comment">...</span>
+      "capabilityInvocation": [
+        <span class="comment">// this method can be used to invoke capabilities as https:...fghi</span>
+        "https://controller.example/123456789abcdefghi#keys-1",
+        <span class="comment">// this method is *only* approved for use in capability invocation; it will not</span>
+        <span class="comment">// be used for any other verification relationship, so its full description is</span>
+        <span class="comment">// embedded here rather than using only a reference</span>
+        {
+        "id": "https://controller.example/123456789abcdefghi#keys-2",
+        "type": "Multikey", <span class="comment">// external (property value)</span>
+        "controller": "https://controller.example/123456789abcdefghi",
+        "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+        }
+      ]
+      <span class="comment">...</span>
+    }
+            </pre>
+          </section>
+
+          <section>
+            <h2>Capability Delegation</h2>
+
+            <p>
+The `capabilityDelegation` [=verification relationship=] is used to specify a
+mechanism that might be used to delegate a cryptographic
+capability to another party. The mechanism, such as an
+<a href="https://w3c-ccg.github.io/zcap-spec/">Authorization Capability</a>
+or a <a href="https://github.com/ucan-wg/spec/blob/main/README.md">UCAN</a>, and
+the processing performed following delegation, such as accessing a specific HTTP
+API, is application-specific.
+            </p>
+
+            <dl>
+              <dt id="defn-capabilityDelegation">capabilityDelegation</dt>
+              <dd>
+The `capabilityDelegation` property is OPTIONAL. If present, the
+associated value MUST be a <a data-cite="INFRA#ordered-set">set</a> of
+one or more [=verification methods=]. Each [=verification method=] MAY be
+embedded or referenced.
+              </dd>
+            </dl>
+
+            <p>
+An example of when this property is useful is when a [=controller=] chooses
+to delegate their capability to access a protected HTTP API to a party other
+than themselves. In order to delegate the capability, the [=controller=]
+would use a [=verification method=] associated with the
+`capabilityDelegation` [=verification relationship=] to
+cryptographically sign the capability over to another [=controller=]. The
+delegate would then use the capability in a manner that is similar to the
+example described in [[[#capability-invocation]]].
+            </p>
+
+            <pre class="example nohighlight" title="Capability Delegation property
+                          containing two verification methods">
+    {
+      "@context": "https://www.w3.org/ns/cid/v1",
+      "id": "https://controller.example/123456789abcdefghi",
+      <span class="comment">...</span>
+      "capabilityDelegation": [
+        <span class="comment">// this method can be used to perform capability delegation</span>
+        "https://controller.example/123456789abcdefghi#keys-1",
+        <span class="comment">// this method is *only* approved for granting capabilities; it will not</span>
+        <span class="comment">// be used for any other verification relationship, so its full description is</span>
+        <span class="comment">// embedded here rather than using only a reference</span>
+        {
+          "id": "https://controller.example/123456789abcdefghi#keys-2",
+          "type": "JsonWebKey", <span class="comment">// external (property value)</span>
+          "controller": "https://controller.example/123456789abcdefghi",
+          "publicKeyJwk": {
+            "kty": "OKP",
+            "crv": "Ed25519",
+            "x": "O2onvM62pC1io6jQKm8Nc2UyFXcd4kOmOsBIoYtZ2ik"
+          }
+        },
+        {
+          "id": "https://controller.example/123456789abcdefghi#keys-3",
+          "type": "Multikey", <span class="comment">// external (property value)</span>
+          "controller": "https://controller.example/123456789abcdefghi",
+          "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+        }
+      ]
+      <span class="comment">...</span>
+    }
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>Multibase</h2>
+
+          <p>
+A Multibase value encodes a binary value as a
+<a href="https://en.wikipedia.org/wiki/Binary-to-text_encoding">base-encoded
+string</a>. The value starts with a single character header, which identifies
+the base and encoding alphabet used to encode a binary value, followed by the
+encoded binary value (using that base and alphabet). The common
+<dfn class="export">Multibase header</dfn> values and their associated base
+encoding alphabets, as provided below, are normative:
+          </p>
+
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>Multibase&nbsp;Header</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>`u`</td>
+                <td>
+The base-64-url-no-pad alphabet is used to encode the bytes. The base-alphabet
+consists of the following characters, in order:
+`ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_`
+                </td>
+              </tr>
+              <tr>
+                <td>`z`</td>
+                <td>
+The base-58-btc alphabet is used to encode the bytes. The base-alphabet consists
+of the following characters, in order:
+`123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz`
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+Other Multibase encoding values MAY be used, but interoperability is not
+guaranteed between implementations using such values.
+          </p>
+
+          <p>
+To base-encode a binary value into a Multibase string, an implementation MUST
+apply the algorithm in Section [[[#base-encode]]] to the binary value,
+with the desired base encoding and alphabet from the table above, ensuring to
+prepend the associated Multibase header from the table above to the result.
+Any algorithm with equivalent output MAY be used.
+          </p>
+
+          <p>
+To base-decode a Multibase string, an implementation MUST apply the algorithm
+in Section [[[#base-decode]]] to the string following the first
+character (Multibase header), with the alphabet associated with the
+Multibase header. Any algorithm with equivalent output MAY be used.
+          </p>
+
+        </section>
+
+        <section>
+          <h2>Multihash</h2>
+
+          <p>
+A Multihash value starts with a binary header, which includes 1) an identifier
+for the specific cryptographic hashing algorithm, 2) a cryptographic digest
+length in bytes, and 3) the value of the cryptographic digest. The normative
+Multihash header values defined by this specification, and their associated
+output sizes and associated specifications, are provided below:
+          </p>
+
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>Multihash&nbsp;Identifier</th>
+                <th>Multihash&nbsp;Header</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>`sha2-256`</td>
+                <td>`0x12`</td>
+                <td>
+SHA-2 with 256 bits (32 bytes) of output, as defined by [[RFC6234]].
+                </td>
+              </tr>
+              <tr>
+                <td>`sha2-384`</td>
+                <td>`0x20`</td>
+                <td>
+SHA-2 with 384 bits (48 bytes) of output, as defined by [[RFC6234]].
+                </td>
+              </tr>
+              <tr>
+                <td>`sha3-256`</td>
+                <td>`0x16`</td>
+                <td>
+SHA-3 with 256 bits (32 bytes) of output, as defined by [[SHA3]].
+                </td>
+              </tr>
+              <tr>
+                <td>`sha3-384`</td>
+                <td>`0x15`</td>
+                <td>
+SHA-3 with 384 bits (48 bytes) of output, as defined by [[SHA3]].
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+Other Multihash encoding values MAY be used, but interoperability is not
+guaranteed between implementations.
+          </p>
+
+          <p>
+To encode to a Multihash value, an implementation MUST concatenate the
+associated Multihash header (encoded as a varint), the cryptographic digest
+length in bytes (encoded as a varint), and the cryptographic digest value, in
+that order.
+          </p>
+
+          <p>
+To decode a Multihash value, an implementation MUST 1) remove the prepended
+Multihash header value, which identifies the type of cryptographic hashing
+algorithm, 2) remove the cryptographic digest length in bytes, and 3) extract
+the raw cryptographic digest value which MUST match the expected output length
+associated with the Multihash header as well as the output length provided in
+the Multihash value itself.
+          </p>
+
+        </section>
+
+      </section>
+
+    <section>
+      <h2>Algorithms</h2>
+
+      <p>
+This section defines algorithms used by this specification including
+instructions on the following: how to base-encode and base-decode values;
+how to safely retrieve verification methods; how to retrieve document
+fragments; and how to produce descriptions of processing errors over HTTP
+channels. Alternatives to the algorithms provided in this section MAY be
+used as long as the outputs of the alternative algorithm remain the same.
+      </p>
+
+      <section class="normative">
+        <h2>Base Encode</h2>
+
+        <p>
+The following algorithm specifies how to encode an array of bytes, where each
+byte represents a base-256 value, to a different base representation that uses a
+particular base alphabet, such as base-64-url-no-pad or base-58-btc. The
+required inputs are the <var>bytes</var>, <var>targetBase</var>, and
+<var>baseAlphabet</var>. The output is a string that contains the base-encoded
+value. All mathematical operations MUST be performed using integer arithmetic.
+        </p>
+
+        <ol class="algorithm">
+          <li>
+Initialize the following variables; <var>zeroes</var> to `0`, <var>length</var> to
+`0`, <var>begin</var> to `0`, and <var>end</var> to the length of
+<var>bytes</var>.
+          </li>
+          <li>
+Set <var>begin</var> and <var>zeroes</var> to the number of leading `0` byte
+values in <var>bytes</var>.
+          </li>
+          <li>
+Set <var>baseValue</var> to an empty byte array that is the size of the final
+base-expanded value. Calculate the final <var>size</var> of <var>baseValue</var>
+by dividing log(256) by log(<var>targetBase</var>) and then multiplying the
+length of <var>bytes</var> minus the leading <var>zeroes</var>. Add `1` to the
+value of <var>size</var>.
+          </li>
+          <li>
+Process each byte in <var>bytes</var> as <var>byte</var> starting at offset
+<var>begin</var>:
+            <ol class="algorithm">
+              <li>
+Set the <var>carry</var> value to <var>byte</var>.
+              </li>
+              <li>
+Perform base-expansion by starting at the end of the <var>baseValue</var> array.
+Initialize an iterator <var>i</var> to `0`. Set <var>basePosition</var> to
+<var>size</var> minus `1`. Perform the following loop as long as <var>carry</var>
+does not equal `0` or <var>i</var> is less than <var>length</var>, and
+<var>basePosition</var> does not equal `-1`.
+                <ol class="algorithm">
+                  <li>
+Multiply the value in <var>baseValue[basePosition]</var> by `256` and add
+it to <var>carry</var>.
+                  </li>
+                  <li>
+Set the value at <var>baseValue[basePosition]</var> to the remainder after
+dividing <var>carry</var> by <var>targetBase</var>.
+                  </li>
+                  <li>
+Set the value of <var>carry</var> to <var>carry</var> divided by
+<var>targetBase</var> ensuring that integer division is used to perform the
+division.
+                  </li>
+                  <li>
+Decrement <var>basePosition</var> by `1` and increment <var>i</var> by `1`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+Set <var>length</var> to <var>i</var> and increment <var>begin</var> by `1`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Set the <var>baseEncodingPosition</var> to <var>size</var> minus <var>length</var>.
+While the <var>baseEncodingPosition</var> does not equal <var>size</var> and the
+<var>baseValue[baseEncodingPosition]</var> does not equal `0`, increment
+<var>baseEncodingPosition</var>. This step skips the leading zeros in the
+base-encoded result.
+          </li>
+          <li>
+Initialize the <var>baseEncoding</var> by repeating the first entry in the
+<var>baseAlphabet</var> by the value of <var>zeroes</var> (the number of leading
+zeroes in <var>bytes</var>).
+          </li>
+          <li>
+Convert the rest of the <var>baseValue</var> to the base-encoding. While the
+<var>baseEncodingPosition</var> is less than <var>size</var>, increment the
+<var>baseEncodingPosition</var>: Set <var>baseEncodedValue</var> to
+<var>baseValue</var>[<var>baseEncodingPosition</var>]. Append
+<var>baseAlphabet</var>[<var>baseEncodedValue</var>] to <var>baseEncoding</var>.
+          </li>
+          <li>
+Return <var>baseEncoding</var> as the base-encoded value.
+          </li>
+        </ol>
+
+        <pre class="example" title="An implementation of the general base-encoding algorithm above in Javascript">
+function baseEncode(bytes, targetBase, baseAlphabet) {
+  let zeroes = 0;
+  let length = 0;
+  let begin = 0;
+  let end = bytes.length;
+
+  // count the number of leading bytes that are zero
+  while(begin !== end && bytes[begin] === 0) {
+    begin++;
+    zeroes++;
+  }
+
+  // allocate enough space to store the target base value
+  const baseExpansionFactor = Math.log(256) / Math.log(targetBase);
+  let size = Math.floor((end - begin) * baseExpansionFactor + 1);
+  let baseValue = new Uint8Array(size);
+
+  // process the entire input byte array
+  while(begin !== end) {
+    let carry = bytes[begin];
+
+    // for each byte in the array, perform base-expansion
+    let i = 0;
+    for(let basePosition = size - 1;
+        (carry !== 0 || i < length) && (basePosition !== -1);
+        basePosition--, i++) {
+      carry += Math.floor(256 * baseValue[basePosition]);
+      baseValue[basePosition] = Math.floor(carry % targetBase);
+      carry = Math.floor(carry / targetBase);
+    }
+
+    length = i;
+    begin++;
+  }
+
+  // skip leading zeroes in base-encoded result
+  let baseEncodingPosition = size - length;
+  while(baseEncodingPosition !== size &&
+        baseValue[baseEncodingPosition] === 0) {
+    baseEncodingPosition++;
+  }
+
+  // convert the base value to the base encoding
+  let baseEncoding = baseAlphabet.charAt(0).repeat(zeroes)
+  for(; baseEncodingPosition < size; ++baseEncodingPosition) {
+    baseEncoding += baseAlphabet.charAt(baseValue[baseEncodingPosition])
+  }
+
+  return baseEncoding;
+}
+        </pre>
+      </section>
+
+      <section class="normative">
+        <h2>Base Decode</h2>
+
+        <p>
+The following algorithm specifies how to decode an array of bytes, where each
+byte represents a base-encoded value, to a different base representation that
+uses a particular base alphabet, such as base-64-url-no-pad or base-58-btc. The
+required inputs are the <var>sourceEncoding</var>, <var>sourceBase</var>, and
+<var>baseAlphabet</var>. The output is an array of bytes that contains the
+base-decoded value. All mathematical operations MUST be performed using integer
+arithmetic.
+        </p>
+
+        <ol class="algorithm">
+          <li>
+Initialize a <var>baseMap</var> mapping by associating each character
+in <var>baseAlphabet</var> to its integer position in the
+<var>baseAlphabet</var> string.
+          </li>
+          <li>
+Initialize the following variables; <var>sourceOffset</var> to `0`,
+<var>zeroes</var> to `0`, and <var>decodedLength</var> to `0`.
+          </li>
+          <li>
+Set <var>zeroes</var> and <var>sourceOffset</var> to the number of leading
+<var>baseAlphabet[0]</var> values in <var>sourceEncoding</var>.
+          </li>
+          <li>
+Set <var>decodedBytes</var> to an empty byte array that is the size of the final
+base-converted value. Calculate the size of <var>decodedBytes</var>
+by dividing log(<var>sourceBase</var>) by log(`256`) and then multiplying by the
+length of <var>sourceEncoding</var> minus the leading zeroes. Add 1 to the value
+of size.
+          </li>
+          <li>
+Process each character in <var>sourceEncoding</var> as <var>character</var>
+starting at offset <var>sourceOffset</var>:
+            <ol class="algorithm">
+              <li>
+Set the <var>carry</var> value to the integer value in the <var>baseMap</var>
+that is associated with <var>character</var>.
+              </li>
+              <li>
+Perform base-decoding by starting at the end of the <var>decodedBytes</var>
+array. Initialize an iterator <var>i</var> to `0`. Set <var>byteOffset</var>
+to <var>decodedSize</var> minus `1`. Perform the following loop as long as,
+<var>carry</var> does not equal `0` or <var>i</var> is less than
+<var>decodedLength</var>, and <var>byteOffset</var> does not equal `-1`:
+                <ol class="algorithm">
+                  <li>
+Add the result of multiplying <var>sourceBase</var> by
+<var>decodedBytes</var>[<var>byteOffset</var>] to <var>carry</var>.
+                  </li>
+                  <li>
+Set <var>decodedBytes</var>[<var>byteOffset</var>] to the remainder of
+dividing <var>carry</var> by `256`.
+                  </li>
+                  <li>
+Set <var>carry</var> to <var>carry</var> divided by `256`, ensuring that integer
+division is used to perform the division.
+                  </li>
+                  <li>
+Decrement <var>byteOffset</var> by `1` and increment <var>i</var> by `1`.
+                  </li>
+                </ol>
+                </li>
+                <li>
+Set <var>decodedLength</var> to <var>i</var> and increment
+<var>sourceOffset</var> by `1`.
+                </li>
+            </ol>
+          </li>
+          <li>
+Set the <var>decodedOffset</var> to <var>decodedSize</var> minus
+<var>decodedLength</var>. While the <var>decodedOffset</var> does not equal
+the <var>decodedSize</var> and
+<var>decodedBytes</var>[<var>decodedOffset</var>] equals `0`, increment
+<var>decodedOffset</var> by `1`. This step skips the leading zeros in the
+final base-decoded byte array.
+          </li>
+          <li>
+Set the size of the <var>finalBytes</var> array to <var>zeroes</var> plus,
+<var>decodedSize</var> minus <var>decodedOffset</var>. Initialize the first
+<var>zeroes</var> bytes in <var>finalBytes</var> to `0`.
+          </li>
+          <li>
+Starting at an offset equal to the number of <var>zeroes</var> in
+<var>finalBytes</var> plus `1`, copy all bytes in <var>decodedBytes</var>, up
+to <var>decodedSize</var>, starting at offset <var>decodedOffset</var> to
+<var>finalBytes</var>.
+          </li>
+        </ol>
+
+        <pre class="example" title="An implementation of the general base-decoding algorithm above in Javascript">
+function baseDecode(sourceEncoding, sourceBase, baseAlphabet) {
+  // build the base-alphabet to integer value map
+  baseMap = {};
+  for(let i = 0; i < baseAlphabet.length; i++) {
+    baseMap[baseAlphabet[i]] = i;
+  }
+
+  // skip and count zero-byte values in the sourceEncoding
+  let sourceOffset = 0;
+  let zeroes = 0;
+  let decodedLength = 0;
+  while(sourceEncoding[sourceOffset] === baseAlphabet[0]) {
+    zeroes++;
+    sourceOffset++;
+  }
+
+  // allocate the decoded byte array
+  const baseContractionFactor = Math.log(sourceBase) / Math.log(256);
+  let decodedSize = Math.floor((
+    (sourceEncoding.length - sourceOffset) * baseContractionFactor) + 1);
+  let decodedBytes = new Uint8Array(decodedSize);
+
+  // perform base-conversion on the source encoding
+  while(sourceEncoding[sourceOffset]) {
+    // process each base-encoded number
+    let carry = baseMap[sourceEncoding[sourceOffset]];
+
+    // convert the base-encoded number by performing base-expansion
+    let i = 0
+    for(let byteOffset = decodedSize - 1;
+      (carry !== 0 || i < decodedLength) && (byteOffset !== -1);
+      byteOffset--, i++) {
+      carry += Math.floor(sourceBase * decodedBytes[byteOffset]);
+      decodedBytes[byteOffset] = Math.floor(carry % 256);
+      carry = Math.floor(carry / 256);
+    }
+
+    decodedLength = i;
+    sourceOffset++;
+  }
+
+  // skip leading zeros in the decoded byte array
+  let decodedOffset = decodedSize - decodedLength;
+  while(decodedOffset !== decodedSize && decodedBytes[decodedOffset] === 0) {
+    decodedOffset++;
+  }
+
+  // create the final byte array that has been base-decoded
+  let finalBytes = new Uint8Array(zeroes + (decodedSize - decodedOffset));
+  let j = zeroes;
+  while(decodedOffset !== decodedSize) {
+    finalBytes[j++] = decodedBytes[decodedOffset++];
+  }
+
+  return finalBytes;
+}
+        </pre>
+
+      </section>
+
+      <section class="normative">
+        <h3>Retrieve Verification Method</h3>
+
+        <p>
+The following algorithm specifies how to safely retrieve a verification method,
+such as a cryptographic [=public key=], by using a [=verification method
+identifier=]. Required inputs are a <strong>[=verification method
+identifier=]</strong> (<var>vmIdentifier</var>), a
+<strong>[=verification relationship=]</strong>
+(<var>verificationRelationship</var>), and a set of <strong>dereferencing
+options</strong> (<var>options</var>). A
+<strong>[=verification method=]</strong> is produced as output.
+        </p>
+
+        <ol class="algorithm">
+          <li>
+If <var>vmIdentifier</var> is not a valid URL, an error MUST be raised and
+SHOULD convey an error type of
+<a href="#INVALID_VERIFICATION_METHOD_URL">INVALID_VERIFICATION_METHOD_URL</a>.
+          </li>
+          <li>
+Let <var>controllerDocumentUrl</var> be the result of parsing
+<var>vmIdentifier</var> according to the rules of the URL scheme and extracting
+the primary resource identifier (without the fragment identifier).
+          </li>
+          <li>
+Let <var>vmFragment</var> be the result of parsing <var>vmIdentifier</var>
+according to the rules of the URL scheme and extracting the secondary
+resource identifier (the fragment identifier).
+          </li>
+          <li>
+Let <var>controllerDocument</var> be the result of dereferencing
+<var>controllerDocumentUrl</var>, according to the rules
+of the URL scheme and using the supplied <var>options</var>.
+          </li>
+          <li>
+If <var>controllerDocument</var> is not a [=conforming controlled identifier document=],
+an error MUST be raised and SHOULD
+convey an error type of
+<a href="#INVALID_CONTROLLED_IDENTIFIER_DOCUMENT">INVALID_CONTROLLED_IDENTIFIER_DOCUMENT</a>.
+          </li>
+          <li>
+If <var>controllerDocument</var>.<var>id</var> does not match the
+<var>controllerDocumentUrl</var>, an error MUST be raised and SHOULD
+convey an error type of
+<a href="#INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID">INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID</a>.
+          </li>
+          <li>
+Let <var>verificationMethod</var> be the result of dereferencing the
+<var>vmFragment</var> from the <var>controllerDocument</var> according to the
+rules of the media type of the <var>controllerDocument</var>.
+          </li>
+          <li>
+If <var>verificationMethod</var> is not a [=conforming verification method=],
+an error MUST be raised and SHOULD convey an error type of
+<a href="#INVALID_VERIFICATION_METHOD">INVALID_VERIFICATION_METHOD</a>.
+          </li>
+          <li>
+If the absolute URL value of <var>verificationMethod</var>.<var>id</var>
+does not equal <var>vmIdentifier</var>, an error MUST be raised and SHOULD
+convey an error type of
+<a href="#INVALID_VERIFICATION_METHOD">INVALID_VERIFICATION_METHOD</a>.
+          </li>
+          <li>
+If the absolute URL value of <var>verificationMethod</var>.<var>controller</var>
+does not equal <var>controllerDocumentUrl</var>, an error MUST be raised and
+SHOULD convey an error type of
+<a href="#INVALID_VERIFICATION_METHOD">INVALID_VERIFICATION_METHOD</a>.
+          </li>
+          <li>
+If <var>verificationMethod</var> is not associated, either by reference
+(URL) or by value (object), with the [=verification relationship=] array in the
+<var>controllerDocument</var> identified by <var>verificationRelationship</var>,
+an error MUST be raised and SHOULD convey an error type of
+<a href="#INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD">
+INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD</a>.
+          </li>
+          <li>
+Return <var>verificationMethod</var> as the
+<strong>[=verification method=]</strong>.
+          </li>
+        </ol>
+
+        <p>
+The following example provides a minimum conformant
+[=controlled identifier document=] containing a minimum conformant
+[=verification method=] as required by the algorithm in this section:
+        </p>
+
+        <pre class="example nohighlight" title="Minimum conformant controlled identifier document">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example/123",
+  "verificationMethod": [{
+    "id": "https://controller.example/123#key-456",
+    "type": "Multikey",
+    "controller": "https://controller.example/123",
+    "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+  }],
+  "authentication": ["https://controller.example/123#key-456"]
+}
+        </pre>
+
+        <p class="note" title="Controlled identifier documents can contain references to external verification methods">
+[=Verification method identifiers=] are expressed as strings that are URLs, or
+via the `id` property, whose value is a URL. It is possible for a [=controlled identifier
+document=] to express a [=verification method=], through a [=verification
+relationship=], that exists in a place that is external to the [=controlled identifier
+document=]. As described in Section [[[#integrity-protection-of-controllers]]],
+specifying a [=verification method=] that is external to a [=controlled identifier
+document=] is a valid use of this specification. It is vital that this
+[=verification method=] is retrieved from the external [=controlled identifier document=].
+        </p>
+
+        <p>
+When retrieving any [=verification method=] the algorithm above is used to
+ensure that the [=verification method=] is retrieved from the correct
+[=controlled identifier document=]. The algorithm also ensures that this [=controlled identifier
+document=] refers to the [=verification method=] (via a [=verification
+relationship=]) and that the [=verification method=] refers to the [=controlled identifier
+document=] (via the [=verification method=]'s `controller` property). Failure to
+use this algorithm, or an equivalent one that performs these checks, can lead to
+security compromises where an attacker poisons a cache by claiming control of a
+victim's [=verification method=].
+        </p>
+
+        <pre class="example nohighlight" title="Referencing an external verification method for `capabilityInvocation`">
+{
+  "id": "https://controller.example/123",
+  "capabilityInvocation": [<span class="highlight">"https://external.example/xyz#key-789"</span>]
+}
+        </pre>
+
+        <p>
+In the example above, the algorithm described in this section will use the
+`https://external.example/xyz#key-789` URL value as the [=verification method
+identifier=]. The algorithm will then confirm that the [=verification method=]
+exists in the external [=controlled identifier document=] and that the appropriate
+relationships exist as described earlier in this section.
+        </p>
+
+        <p class="note" title="Fragment identifier processing">
+The fragment identifier processing rules when retrieving [=verification methods=]
+depend on the media type of a [=controlled identifier document=]. While the
+algorithm in this section attempts to defer to the media type of the
+corresponding [=controlled identifier document=] (such as `application/did`), and
+while Section [[[#fragment-resolution]]] defines how to resolve fragment
+identifiers according to the `application/cid` media type, implementers are
+advised that a [=controlled identifier document=] of another media type might
+require different fragment processing rules that might produce different results.
+        </p>
+
+      </section>
+
+
+      <section class="normative">
+        <h2>Fragment Resolution</h2>
+
+        <p>
+The following algorithm specifies how to retrieve the portion of a document that
+contains a given fragment identifier. The required inputs are a [=controlled
+identifier document=] ([=map=] <var>document</var>) and a fragment identifier
+([=string=] <var>fragmentIdentifier</var>). The output is a [=map=] containing
+the document fragment.
+        </p>
+
+        <ol class="algorithm">
+          <li>
+Let <var>documentFragment</var> be `null`.
+          </li>
+          <li>
+Let <var>canonicalDocumentUrl</var> be the value of
+<var>document</var>.<var>id</var>.
+          </li>
+          <li>
+Let <var>fullyQualifiedFragment</var> be the value of
+<var>canonicalDocumentUrl</var> with <var>fragmentIdentifier</var> appended to
+it.
+          </li>
+          <li>
+Recursively process every [=map=] in <var>document</var> checking to see if
+it has an `id` value that is equal to <var>fullyQualifiedFragment</var> or
+<var>fragmentIdentifier</var>. If a match is found, set
+<var>documentFragment</var> to the matched [=map=] and stop recursively
+processing.
+          </li>
+          <li>
+Return <var>documentFragment</var>.
+          </li>
+        </ol>
+
+        <p class="note" title="Multiple fragments with the same value">
+While it is possible to express a document that contains multiple fragments that
+use the same identifier, due to interoperability concerns, doing so is to be
+avoided and the behaviour is not defined.
+        </p>
+
+      </section>
+
+      <section class="normative">
+        <h3>Processing Errors</h3>
+
+        <p>
+The algorithms described in this specification throw specific types of errors.
+Implementers might find it useful to convey these errors to other libraries or
+software systems. This section provides specific URLs and descriptions for the errors,
+such that an ecosystem implementing technologies described
+by this specification might interoperate more effectively when errors occur.
+        </p>
+
+        <p>
+When exposing these errors through an HTTP interface, implementers SHOULD use
+[[RFC9457]] to encode the error data structure. If [[RFC9457]] is used:
+        </p>
+
+        <ul>
+          <li>
+The `type` value of the error object MUST be a URL that starts with the value
+`https://w3id.org/security#` and ends with the value in the section listed
+below.
+          </li>
+          <li>
+The `title` value SHOULD provide a short but specific human-readable string for
+the error.
+          </li>
+          <li>
+The `detail` value SHOULD provide a longer human-readable string for the error.
+          </li>
+        </ul>
+
+        <dl>
+          <dt id="INVALID_VERIFICATION_METHOD_URL">INVALID_VERIFICATION_METHOD_URL</dt>
+          <dd>
+The `verificationMethod` value in a [=proof=] was malformed. See Section
+[[[#retrieve-verification-method]]].
+          </dd>
+          <dt id="INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID">INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID</dt>
+          <dd>
+The `id` value in a [=controlled identifier document=] was malformed. See Section
+[[[#retrieve-verification-method]]].
+          </dd>
+          <dt id="INVALID_CONTROLLED_IDENTIFIER_DOCUMENT">INVALID_CONTROLLED_IDENTIFIER_DOCUMENT</dt>
+          <dd>
+The [=controlled identifier document=] was malformed. See Section
+[[[#retrieve-verification-method]]].
+          </dd>
+          <dt id="INVALID_VERIFICATION_METHOD">INVALID_VERIFICATION_METHOD</dt>
+          <dd>
+The [=verification method=] in a [=controlled identifier document=] was malformed. See Section
+[[[#retrieve-verification-method]]].
+          </dd>
+          <dt id="INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD">INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD</dt>
+          <dd>
+The [=verification method=] in a [=controlled identifier document=] was not
+associated using the expected [=verification relationship=] as expressed in
+the `proofPurpose` property in the [=proof=]. See Section
+[[[#retrieve-verification-method]]].
+          </dd>
+        </dl>
+      </section>
+    </section>
+
+    <section>
+      <h2>Contexts and Vocabularies</h2>
+
+      <section>
+        <h2>Vocabulary</h2>
+        <p>
+          The terms defined in this specification are also part of the
+          RDF <a data-cite="RDF-CONCEPTS#vocabularies">vocabulary namespace</a> [[RDF-CONCEPTS]]
+          <a href="https://w3id.org/security">https://w3id.org/security#</a>.
+          For any `TERM`, the relevant URL is of the form
+          `https://w3id.org/security#TERM` or `https://w3id.org/security#TERMmethod`.
+          Implementations that use RDF processing and rely on this specification MUST use these URLs.
+        </p>
+
+        <p>
+          When dereferencing the
+          <a href="https://w3id.org/security">https://w3id.org/security#</a> URL,
+          the media type of the data that is returned depends on HTTP content negotiation. These are as follows:
+        </p>
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>Media Type</th>
+              <th>Description and Hash</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                application/ld+json
+              </td>
+              <td>
+                The vocabulary in JSON-LD format [[?JSON-LD11]].<br>
+
+                <strong>SHA2-256 Digest:</strong> <code><span class="vc-hash"
+        data-hash-url="https://w3c.github.io/vc-data-integrity/vocab/security/vocabulary.jsonld"
+        data-hash-format="openssl dgst -sha256" /></code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                text/turtle
+              </td>
+              <td>
+                The vocabulary in Turtle format [[?TURTLE]].<br>
+
+                <strong>SHA2-256 Digest:</strong> <code><span class="vc-hash"
+        data-hash-url="https://w3c.github.io/vc-data-integrity/vocab/security/vocabulary.ttl"
+        data-hash-format="openssl dgst -sha256" /></code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                text/html
+              </td>
+              <td>
+                The vocabulary in HTML+RDFa Format [[?HTML-RDFA]].<br>
+
+
+                <strong>SHA2-256 Digest:</strong> <code><span class="vc-hash"
+        data-hash-url="https://w3c.github.io/vc-data-integrity/vocab/security/vocabulary.html"
+        data-hash-format="openssl dgst -sha256" /></code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          It is possible to confirm the cryptographic digests above by running
+          a command like the following (replacing `&lt;MEDIA_TYPE>` and `&lt;DOCUMENT_URL>`
+          with the appropriate values) through a modern UNIX-like OS command line interface:
+          `curl -sL -H "Accept: &lt;MEDIA_TYPE>" &lt;DOCUMENT_URL> | openssl dgst -sha256`
+        </p>
+      </section>
+
+      <section>
+        <h3>JSON-LD context</h3>
+        <p>
+          Implementations that perform JSON-LD processing MUST treat the following
+          JSON-LD context URL as already resolved, where the resolved document matches
+          the corresponding hash value below:
+        </p>
+
+        <table class="simple">
+          <thead>
+            <th>Context URL and Hash</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="white-space: nowrap;">
+                <strong>URL:</strong> https://www.w3.org/ns/cid/v1<br>
+                <strong>SHA2-256 Digest:</strong><br> <code><span class="vc-hash"
+        data-hash-url="https://w3c.github.io/cid/context/v1.jsonld"
+        data-hash-format="openssl dgst -sha256" /></code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          It is possible to confirm the cryptographic digests listed above by running a
+          command like the following through a modern UNIX-like OS command line interface: `curl -sL -H
+          "Accept: application/ld+json" https://www.w3.org/ns/cid/v1 | openssl dgst -sha256`
+        </p>
+
+        <p>
+          The security vocabulary terms that the JSON-LD contexts listed above resolve
+          to are in the <a href="https://w3id.org/security">https://w3id.org/security#</a>
+          namespace. See also [[[#vocabulary]]] for further details.
+        </p>
+
+        <p class="note">
+          Applications or specifications may define mappings to the
+          vocabulary URLs using their own JSON-LD contexts. For example, these mappings are part
+          of the `https://w3id.org/security/data-integrity/v2` context,
+          defined by the [[[?VC-DATA-INTEGRITY]]] specification, or the `https://www.w3.org/ns/did/v1` context,
+          defined by the [[[?DID-CORE]]] specification.
+        </p>
+
+        <section>
+          <h4>Context Injection</h4>
+          <p>
+The `@context` property is used to ensure that implementations are using the
+same semantics when terms in this specification are processed. For example, this
+can be important when properties like `authentication` are processed and its
+value, such as `Multikey` or `JsonWebKey`, are used.
+          </p>
+
+          <p>
+When an application is processing a [=controlled identifier document=], if an `@context`
+property is not provided in the document or the terms used in the document are
+not mapped by existing values in the `@context` property, implementations MUST
+inject or append an `@context` property with a value of
+`https://www.w3.org/ns/cid/v1` or one or more contexts with at least the
+same declarations, such as the Decentralized Identifier v1.1 context
+(`https://www.w3.org/ns/did/v1`).
+          </p>
+
+          <pre class="example nohighlight" title="A controlled identifier document without an @context property">
+{
+  <span class="comment">// The @context declaration is missing in this controlled identifier document</span>
+  "id": "https://controller.example/101",
+  "verificationMethod": [{
+    "id": "https://controller.example/101#key-203947",
+    "type": "JsonWebKey",
+    "controller": "https://controller.example/101",
+    "publicKeyJwk": {
+      "kid": "key-203947",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+    }
+  }],
+  "authentication": ["#key-203947"]
+}
+          </pre>
+
+          <p>
+Implementations that do not intend to use JSON-LD MAY choose to not include an
+`@context` declaration at the top-level of the document. Whether or not the
+`@context` value or JSON-LD processors are used, the semantics for all properties
+and values expressed in [=conforming documents=] interpreted by [=conforming
+processors=] are the same. Any differences in semantics between documents
+processed in either mode are either implementation or specification bugs.
+          </p>
+
+        </section>
+      </section>
+
+      <section>
+        <h3>Datatypes</h3>
+
+        <p>
+This section defines datatypes that are used by this specification.
+        </p>
+
+      <section>
+        <h4 id="multibase">The `multibase` Datatype</h4>
+
+        <p>
+<a href="#multibase-0">Multibase</a>-encoded strings are used to encode binary
+data into printable formats, such as ASCII, which are useful in environments
+that cannot directly represent binary values. This specification makes use of
+this encoding. In environments that support data types for string values, such
+as RDF [[?RDF-CONCEPTS]], <a href="#multibase-0">Multibase</a>-encoded content
+is indicated using a literal value whose datatype is set to
+`https://w3id.org/security#multibase`.
+        </p>
+
+        <p>
+The `multibase` datatype is defined as follows:
+        </p>
+
+        <dl>
+          <dt>The URL denoting this datatype</dt>
+          <dd>
+`https://w3id.org/security#multibase`
+          </dd>
+          <dt>The lexical space</dt>
+          <dd>
+Any string that starts with a [=Multibase header=] and the rest of the
+characters consist of allowable characters in the respective base-encoding
+alphabet.
+          </dd>
+          <dt>The value space</dt>
+          <dd>
+The standard mathematical concept of all integer numbers.
+          </dd>
+          <dt>The lexical-to-value mapping</dt>
+          <dd>
+Any element of the lexical space is mapped to the value space by base-decoding
+the value based on the base-decoding alphabet associated with the first
+[=Multibase header=] in the lexical string.
+          </dd>
+          <dt>The canonical mapping</dt>
+          <dd>
+The canonical mapping consists of using the lexical-to-value mapping.
+          </dd>
+        </dl>
+      </section>
+
+    </section>
+
+  </section>
+
+  <section class="informative">
+    <h1>Security Considerations</h1>
+
+    <p>
+This section contains a variety of security considerations that people using
+this specification are advised to consider before deploying this
+technology in a production setting. This technologies described in this
+document are designed to operate under the threat model used by many IETF
+standards and documented in [[?RFC3552]]. This section elaborates upon a number
+of the considerations in [[?RFC3552]], as well as other considerations that are
+unique to this specification.
+    </p>
+
+    <section>
+      <h2>Proving Control and Binding</h2>
+
+      <p>
+Binding an entity in the digital world or the physical world to an identifier, to
+a [=controlled identifier document=], or to cryptographic material requires the use of
+security protocols contemplated by this specification. The following sections
+describe some possible scenarios and how an entity therein might prove control
+over an identifier or a [=controlled identifier document=] for the purposes of authentication or
+authorization.
+      </p>
+
+      <section>
+        <h3>Proving Control of an Identifier and/or Controlled Identifier Document</h3>
+
+        <p>
+Proving control over an identifier and/or a [=controlled identifier document=] is useful
+when accessing remote systems. Cryptographic digital signatures enable certain
+security protocols related to [=controlled identifier documents=]
+to be cryptographically verifiable. For these purposes, this specification
+defines useful [=verification relationships=] in <a
+href="#authentication"></a> and [[[#capability-invocation]]]. The
+secret cryptographic material associated with the [=verification methods=]
+can be used to generate a cryptographic digital signature as a part of an
+authentication or authorization security protocol.
+        </p>
+      </section>
+
+      <section>
+        <h3>Binding to Physical Identity</h3>
+
+        <p>
+An identifier or [=controlled identifier document=] do not inherently carry any
+<a href="https://en.wikipedia.org/wiki/Personal_data">personal data</a> and
+it is strongly advised that non-public entities do not publish personal data in
+[=controlled identifier documents=].
+        </p>
+
+        <p>
+It can be useful to express a binding of an identifier to a person's or
+organization's physical identity in a way that is provably asserted by a
+trusted authority, such as a government. This specification provides
+the [[[#assertion]]] [=verification relationship=] for these
+purposes. This feature can enable interactions that are private and can be
+considered legally enforceable under one or more jurisdictions; establishing
+such bindings has to be carefully balanced against privacy considerations (see
+[[[#privacy-considerations]]]).
+        </p>
+
+        <p>
+The process of binding an identifier to something in the physical world, such as
+a person or an organization &mdash; for example, by using <a>verifiable
+credentials</a> with the same subject as that identifier &mdash; is contemplated
+by this specification and further defined in [[[?VC-DATA-MODEL-2.0]]].
+        </p>
+      </section>
+    </section>
+    <section>
+      <h2>Identifier Ambiguity</h2>
+        <p>
+Even in cases where the [=subject=] referred to by an [=identifier=] proves
+control, the interpretation of the [=subject=] remains contextual and
+potentially ambiguous.
+        </p>
+
+        <p>
+For example, a school might issue a [=verifiable credential=] about the teacher
+of <strong>Intro to Computer Science</strong>, using
+`https://controller.example/abc` as a [=subject=] [=identifier=], saying
+"`https://controller.example/abc` is the teacher of
+<strong>Intro to Computer Science</strong>" and
+"`https://controller.example/abc` controls access to the school's computer lab.
+See them to request access".
+        </p>
+
+        <p>
+In this usage, it is ambiguous whether `https://controller.example/abc` refers
+to a specific teacher or to whomever is the current teacher. Only with further
+statements might we be able to discern the difference. But it's still tricky.
+For example the subject in the following statement remains ambiguous:
+        </p>
+
+        <pre class="example nohighlight"
+             title="Statement about the name of https://controller.example/abc as RDF Triples">
+&lt;https://controller.example/abc&gt;
+  &lt;https://schema.org/name&gt;
+    "Bob Smith" .
+        </pre>
+
+        <p>
+If `https://controller.example/abc` refers to a specific human being, then the
+statement is taken as an attestation about the particular human identified by
+that name. However, if `https://controller.example/abc` is used to refer to the
+_current_ teacher, it is also valid <em>if the current teacher does have that
+name</em>. In this case, the ambiguity is immaterial.
+        </p>
+
+        <p>
+However, in a statement like the following, the difference becomes vital.
+        </p>
+
+        <pre class="example nohighlight"
+             title="Legal statements the convicted status of https://controller.example/abc as RDF Triples">
+&lt;https://controller.example/abc&gt;
+  &lt;http://law.example/convicted&gt;
+    &lt;http://calaw.example/PenalCode647b&gt; .
+        </pre>
+
+        <p>
+The statement in English could be "The person referred to by
+`https://controller.example/abc` has been convicted of California Penal Code
+647b." But which person(s) did we mean? Did we mean to say one, some, or all of
+the teachers of computer science at the school have been convicted of violating
+`PenalCode647b`? Or is it meant to say that a particular individual teacher,
+perhaps the one named "Bob Smith", has been convicted of said crime?
+        </p>
+
+        <p>
+The challenge is particularly difficult in situations where the [=subject=] is
+fundamentally uninvolved in the issuance of the [=verifiable credential=].
+For example, an [=identifier=] might be used by a school to refer to a teacher,
+and students and or parents might use that [=identifier=] to make statements
+about the teacher, with neither the teacher nor the school involved. In these
+cases, it is easy to imagine that the subtle nuance of the school's intended
+meaning, for example, "any current teacher of the computer science class", gets
+lost and the [=identifier=] gets misused by parents and students to refer to a
+specific teacher, quite likely in contexts where neither the school nor the
+teacher is aware of the conversation.
+        </p>
+        <p>
+In natural language, these ambiguities are often easily ignored or corrected. In
+digital media, it is vital that context be evaluated to establish the intended
+referent, especially when [=identifiers=] are used in different contexts by
+different [=issuers=], for example, on an official school website by the school,
+but in an unofficial social networking app by parents and students.
+        </p>
+        <p>
+In short, the context in which [=identifiers=] are created and used has to be
+considered when relying on any particular interpretation of the [=subject=] of
+any particular [=identifier=].
+        </p>
+    </section>
+
+    <section>
+      <h2>Key and Signature Expiration</h2>
+
+      <p>
+In a decentralized architecture, there might not be centralized authorities to
+enforce cryptographic material or cryptographic digital signature expiration
+policies. Therefore, it is with supporting software such as verification
+libraries that requesting parties validate that cryptographic materials were not
+expired at the time they were used. Requesting parties might employ their own
+expiration policies in addition to inputs into their verification processes. For
+example, some requesting parties might accept authentications from five minutes
+in the past, while others with access to high precision time sources might
+require authentications to be time stamped within the last 500 milliseconds.
+      </p>
+      <p>
+There are some requesting parties that have legitimate needs to extend the use
+of already-expired cryptographic material, such as verifying legacy
+cryptographic digital signatures. In these scenarios, a requesting party might
+instruct their verification software to ignore cryptographic key material
+expiration or determine if the cryptographic key material was expired at the
+time it was used.
+      </p>
+    </section>
+
+    <section>
+      <h2>Verification Method Rotation</h2>
+
+      <p>
+Rotation is a management process that enables the secret cryptographic material
+associated with an existing [=verification method=] to be deactivated or
+destroyed once a new [=verification method=] has been added to the
+[=controlled identifier document=]. Going forward, any new [=proofs=] that a
+[=controller=] would have generated using the old secret cryptographic
+material can now instead be generated using the new  cryptographic material and
+can be verified using the new [=verification method=].
+      </p>
+
+      <p>
+Rotation is a useful mechanism for protecting against verification method
+compromise, since frequent rotation of a verification method by the controller
+reduces the value of a single compromised verification method to an attacker.
+Performing revocation immediately after rotation is useful for verification
+methods that a controller designates for short-lived verifications, such as
+those involved in encrypting messages and authentication.
+      </p>
+
+      <p>
+The following considerations might be of use when contemplating the use of
+[=verification method=] rotation:
+      </p>
+
+      <ul>
+        <li>
+[=Verification method=] rotation is a proactive security measure.
+        </li>
+        <li>
+It is generally considered a best practice to perform [=verification method=]
+rotation on a regular basis.
+        </li>
+        <li>
+Higher security environments tend to employ more frequent verification method
+rotation.
+        </li>
+        <li>
+[=Verification method=] rotation manifests only as changes to the current or
+latest version of a [=controlled identifier document=].
+        </li>
+        <li>
+When a [=verification method=] has been active for a long time, or used for
+many operations, a controller might wish to perform a rotation.
+        </li>
+        <li>
+Frequent rotation of a [=verification method=] might be frustrating for
+parties that are forced to continuously renew or refresh associated credentials.
+        </li>
+        <li>
+Proofs or signatures that rely on [=verification methods=] that are not
+present in the latest version of a [=controlled identifier document=] are not impacted by
+rotation. In these cases, verification software might require additional
+information, such as when a particular [=verification method=] was
+expected to be valid as well as access to a verifiable data registry
+containing a historical record, to determine the validity of the [=proof=] or
+signature. This option might not be available in all systems.
+        </li>
+        <li>
+A [=controller=] performs a rotation when it adds a new <a>verification
+method</a> that is meant to replace an existing [=verification method=] after
+some time.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Verification Method Revocation</h2>
+
+      <p>
+Revocation is a management process that enables the secret cryptographic
+material associated with an existing [=verification method=] to be
+deactivated such that it ceases to be a valid form of creating new
+proofs.
+      </p>
+      <p>
+Revocation is a useful mechanism for reacting to a verification method
+compromise. Performing revocation immediately after rotation is useful for
+verification methods that a controller designates for short-lived verifications,
+such as those involved in encrypting messages and authentication.
+      </p>
+
+      <p>
+Compromise of the secrets associated with a [=verification method=] allows
+the attacker to use them according to the [=verification relationship=]
+expressed by [=controller=] in the [=controlled identifier document=], for example, for
+authentication. The attacker's use of the secrets might be indistinguishable
+from the legitimate [=controller=]'s use starting from
+the time the [=verification method=] was registered, to the time it was
+revoked.
+      </p>
+
+
+      <p>
+The following considerations might be of use when contemplating the use of
+[=verification method=] revocation:
+      </p>
+
+      <ul>
+        <li>
+[=Verification method=] revocation is a reactive security measure.
+        </li>
+
+        <li>
+It is considered a best practice to support key revocation.
+        </li>
+
+        <li>
+A [=controller=] is expected to immediately revoke any <a>verification
+method</a> that is known to be compromised.
+        </li>
+
+        <li>
+[=Verification method=] revocation can only be embodied in changes to
+the latest version of a [=controlled identifier document=]; it cannot retroactively adjust
+previous versions.
+        </li>
+
+        <li>
+If a [=verification method=] is no longer exclusively accessible to the
+[=controller=] or parties trusted to act on behalf of the [=controller=],
+it is expected to be revoked immediately to reduce the risk of
+compromises such as masquerading, theft, and fraud.
+        </li>
+
+        <li>
+Revocation is expected to be understood as a [=controller=] expressing that
+proofs or signatures associated with a revoked [=verification method=]
+created after its revocation should be treated as invalid. It could also imply a
+concern that existing [=proofs=] or signatures might have been created by an
+attacker, but this is not necessarily the case. Verifiers, however, might still
+choose to accept or reject any such [=proofs=] or signatures at their own
+discretion.
+        </li>
+
+        <li>
+Even if a [=verification method=] is present in a [=controlled identifier document=],
+additional information, such as a public key revocation certificate, or an
+external allow or deny list, could be used to determine whether a
+[=verification method=] has been revoked.
+        </li>
+
+        <li>
+The day-to-day operation of any software relying on a compromised
+[=verification method=], such as an individual's operating system, antivirus,
+or endpoint protection software, could be impacted when the <a>verification
+method</a> is publicly revoked.
+        </li>
+      </ul>
+
+      <section>
+        <h3>Revocation Semantics</h3>
+
+        <p>
+Although verifiers might choose not to accept [=proofs=] or signatures from a
+revoked verification method, knowing whether a verification was made with a
+revoked [=verification method=] is trickier than it might seem. Some auditing
+systems provide the ability to look back at the state of an identifier at a
+point in time, or at a particular version of the [=controlled identifier document=].
+When such a feature is combined with a reliable way to determine the time or
+identifier version that existed when a cryptographically verifiable statement
+was made, then revocation does not undo that statement. This can be the basis
+for using digital signatures to make binding commitments; for example, to sign
+a mortgage.
+        </p>
+        <p>
+If these conditions are met, revocation is not retroactive; it only nullifies
+future use of the method.
+        </p>
+        <p>
+However, in order for such semantics to be safe, the second condition &mdash; an
+ability to know what the state of the [=controlled identifier document=] was at the time
+the assertion was made &mdash; is expected to apply. Without that guarantee,
+someone could discover a revoked key and use it to make cryptographically
+verifiable statements with a simulated date in the past.
+        </p>
+        <p>
+Some auditing systems only allow the retrieval of the current state of a
+identifier. When this is true, or when the state of an identifier at the time of
+a cryptographically verifiable statement cannot be reliably determined, then the
+only safe course is to disallow any consideration of state with respect to time,
+except the present moment. Identifier ecosystems that take this approach
+essentially provide cryptographically verifiable statements as ephemeral tokens
+that can be invalidated at any time by the [=controller=].
+        </p>
+      </section>
+    </section>
+
+    <section>
+      <h2>Choosing a Multiformat</h2>
+
+      <p>
+<dfn class="external lint-ignore">Multiformats</dfn> enable self-describing
+data; if data is known to be a Multiformat, its exact type can be determined by
+reading a few compact header bytes that are expressed at the beginning of the
+data. <a href="#multibase-0">Multibase</a>, <a href="#multihash">Multihash</a>,
+and <a href="#Multikey">Multikey</a> are types of Multiformats that are defined
+by this specification.
+      </p>
+
+      <p>
+The Multiformats specifications exist because application developers
+appropriately choose different base-encoding functions, cryptographic
+hashing functions, and cryptographic key formats, among other things,
+based on different use cases and their requirements. No single
+base-encoding function, cryptographic hashing function, or cryptographic
+key format in the world has ever satisfied all requirement sets.
+Multiformats provides an alternative means by which to encode and/or
+detect any base-encoding, cryptographic hash, or cryptographic key
+format in self-documenting data and documents.
+      </p>
+
+      <p>
+To increase interoperability, specification authors are urged to minimize
+the number of Multiformats &mdash; optimally, choosing only one &mdash; to
+be used for any particular application or ecosystem.
+      </p>
+
+    </section>
+
+    <section>
+      <h2>Encrypted Data in Controlled Identifier Documents</h2>
+      <p>
+Encryption algorithms have been known to fail due to advances in cryptography
+and computing power. Implementers are advised to assume that any encrypted data
+placed in a [=controlled identifier document=] might eventually be made available in clear text
+to the same audience to which the encrypted data is available. This is
+particularly pertinent if the [=controlled identifier document=] is public.
+      </p>
+      <p>
+Encrypting all or parts of a [=controlled identifier document=] is <em>not</em> an appropriate
+means to protect data in the long term. Similarly, placing encrypted data in
+a [=controlled identifier document=] is not an appropriate means to protect personal data.
+      </p>
+      <p>
+Given the caveats above, if encrypted data is included in a [=controlled identifier document=],
+implementers are advised to not associate any correlatable information
+that could be used to infer a relationship between the encrypted data
+and an associated party. Examples of correlatable information include
+public keys of a receiving party, identifiers to digital assets known to be
+under the control of a receiving party, or human readable descriptions of a
+receiving party.
+      </p>
+
+    </section>
+
+    <section>
+      <h2>Content Integrity Protection</h2>
+      <p>
+[=Controlled identifier documents=] that include links to external machine-readable
+content such as images, web pages, or schemas are vulnerable to tampering. It is
+strongly advised that external links are integrity protected using mechanisms to
+secure related resources such as those described in the [[[?VC-DATA-MODEL-2.0]]]
+specification. External links are to be avoided if they cannot be integrity
+protected and the [=controlled identifier document=]'s integrity is dependent on the
+external link.
+      </p>
+      <p>
+One example of an external link where the integrity of the [=controlled identifier
+document=] itself could be affected is the JSON-LD Context [[JSON-LD11]],
+when present. To protect against compromise,
+[=controlled identifier document=] consumers using JSON-LD are advised to cache
+local static copies of JSON-LD contexts and/or verify the integrity of external
+contexts against a cryptographic hash that is known to be associated with a safe
+version of the external JSON-LD Context.
+      </p>
+    </section>
+
+    <section>
+      <h2>Integrity Protection of Controllers</h2>
+
+      <p>
+As described in Section [[[#controllers]]], this specification includes a
+mechanism by which to delegate change control of a [=controlled identifier document=] to
+an entity that is described in an external [=controlled identifier document=] through the
+use of the `controller` property.
+      </p>
+
+      <p>
+Delegating change control addresses a number of use cases including those
+where the care of an entity is the responsibility of some other entity or
+entities, as well as those where some entity desires that another entity
+provide account recovery services, among other use cases. In such scenarios,
+it can be beneficial to allow the guardian to manage the rotation of their
+own key material. It can also be beneficial for the delegator to associate
+a cryptographic hash of the remote [=controlled identifier document=] to "pin" the
+remote document to a known good value.
+      </p>
+
+      <p>
+While this document does not specify a particular mechanism for
+cryptographically protected URLs, the `relatedResource` property in
+[[[VC-DATA-MODEL-2.0]]] and the `digestMultibase` property in
+[[[VC-DATA-INTEGRITY]]] could be employed by a mechanism that can provide
+such protection.
+      </p>
+
+    </section>
+
+    <section>
+      <h2>Level of Assurance</h2>
+
+      <p>
+Additional information about the security context of authentication events is
+often required for compliance reasons, especially in regulated areas such as the
+financial and public sectors. This information is often referred to as a Level
+of Assurance (LOA). Examples include the protection of secret cryptographic
+material, the identity [=proof=]ing process, and the form-factor of the
+authenticator.
+      </p>
+
+      <p>
+<a target="_blank"
+href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32015L2366">
+Payment services (PSD 2)</a> and <a target="_blank"
+href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2014.257.01.0073.01.ENG">
+eIDAS</a> introduce such requirements to the security context. Level of
+assurance frameworks are classified and defined by regulations and
+standards such as <a
+target="_blank"
+href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2014.257.01.0073.01.ENG">
+eIDAS</a>, <a target="_blank"
+href="https://pages.nist.gov/800-63-3/sp800-63-3.html"> NIST 800-63-3</a> and <a
+target="_blank" href="https://www.iso.org/standard/45138.html"> ISO/IEC
+29115:2013</a>, including their requirements for the security context, and
+making recommendations on how to achieve them. This might include strong user
+authentication where <a target="_blank"
+href="https://fidoalliance.org/fido2/">FIDO2</a>/<a target="_blank"
+href="https://www.w3.org/TR/webauthn-2/">WebAuthn</a> can fulfill the
+requirement.
+      </p>
+
+      <p>
+Some regulated scenarios require the implementation of a specific level of
+assurance. Since [=verification relationships=] used to perform
+<a href="#assertion">assertion</a> and [=authentication=] might be
+used in some of these situations, information about the applied security context
+might need to be expressed and provided to a <em>verifier</em>. Whether and how
+to encode this information in the [=controlled identifier document=] data model is out
+of scope for this specification. Interested readers might note that 1) the
+information could be transmitted using Verifiable Credentials
+[[?VC-DATA-MODEL-2.0]], and 2) the [=controlled identifier document=] data model can be
+extended to incorporate this information.
+      </p>
+    </section>
+
+    <section>
+      <h2>Service Endpoints for Authentication and Authorization</h2>
+
+      <p>
+If a [=controlled identifier document=] publishes a [=service=] intended for authentication
+or authorization of the [=subject=] (see Section [[[#services]]]), it is the
+responsibility of the [=service=] provider, [=subject=], and/or requesting party
+to comply with the requirements of the authentication and/or authorization
+protocols supported by that [=service=] endpoint.
+      </p>
+    </section>
+
+  </section>
+
+  <section class="informative">
+    <h1>Privacy Considerations</h1>
+
+    <p>
+Since [=controlled identifier documents=] are designed to be administered directly by
+the [=controller=], it is critically important to apply the principles of
+Privacy by Design [[PRIVACY-BY-DESIGN]] to all aspects of the
+[=controlled identifier document=]. All seven of these principles have been applied
+throughout the development of this specification. The design used in this
+specification does not assume that there is a registrar, hosting company, nor
+other intermediate service provider to recommend or apply additional privacy
+safeguards. Privacy in this specification is preventive, not remedial, and is an
+embedded default. The following sections cover privacy considerations that
+implementers might find useful when building systems that utilize [=controlled identifier
+documents=].
+    </p>
+
+    <section>
+      <h2>Keep Personal Data Private</h2>
+
+      <p>
+If a [=controlled identifier document=] is about a specific individual and is
+public-facing, it is <em>critical</em> that [=controlled identifier documents=] contain
+no personal biometric or biographical data. While it is true that personal data
+might include pseudonymous information, such as a public cryptographic key or an IP address,
+publishing that sort of information does not create the same immediate privacy
+dangers as publishing an individual's full name, profile photo, or social media
+account in a [=controlled identifier document=]. A better alternative is to transmit
+such personal data through other means such as verifiable credentials
+[[?VC-DATA-MODEL-2.0]] or other data formats sent over private and secure
+communication channels.
+      </p>
+    </section>
+
+    <section>
+      <h3>Relationship to the Same-Origin Policy</h3>
+
+      <p>
+The <a href="https://en.wikipedia.org/wiki/Same-origin_policy">
+Same-origin policy</a> is a security and privacy concept that constrains
+information to the same Web domain by default. There are mechanisms, such as
+[[[?WEBAUTHN]]], that extend this policy to cryptographic keys. When a
+cryptographic key is bound to a specific domain, it is sometimes referred to
+as a <dfn>pairwise identifier</dfn>.
+      </p>
+      <p>
+The same-origin policy can be overridden for a variety of use cases, such as
+for
+<a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">
+Cross-origin resource sharing</a> (CORS). This specification allows for the
+cross-origin resource sharing of verification methods and service endpoints,
+which means that correlatable identifiers might be shared between origins. While
+resource sharing can lead to positive security outcomes (reduced cryptographic
+key registration burden), it can also lead to negative privacy outcomes
+(tracking). Those that use this specification are warned that there are
+trade-offs with each approach and to use the mechanism that maximizes security
+and privacy according to the needs of the individual or organization. Using a
+[=controlled identifier document=] for all use cases is not always advantageous when a
+same-origin bound cryptographic key would suffice.
+      </p>
+    </section>
+
+    <section>
+      <h2>Identifier Correlation Risks</h2>
+
+      <p>
+Identifiers can be used for unwanted correlation. [=Controllers=] can
+mitigate this privacy risk by using [=pairwise identifiers=] that are unique to
+each relationship or interaction domain; in effect, each identifier acts as a pseudonym. A [=pairwise
+identifier=] need only be shared with more than one party when correlation
+across contexts is explicitly desired. If [=pairwise identifiers=] are the default,
+then the only
+need to publish an identifier openly, or to share it with multiple parties, is
+when the [=controllers=] and/or [=subjects=] explicitly desire public
+identification and correlation across interaction domains.
+      </p>
+    </section>
+
+    <section>
+      <h2>Controlled Identifier Document Correlation Risks</h2>
+
+      <p>
+The anti-correlation protections of [=pairwise identifiers=] are easily defeated
+if the data in the corresponding [=controlled identifier documents=] can be correlated. For
+example, using identical [=verification methods=] in multiple [=controlled identifier
+documents=] can provide as much correlation information as using the same
+identifier. Therefore, the [=controlled identifier document=] for a [=pairwise identifier=]
+also needs to use pairwise unique information, such as ensuring that
+[=verification methods=] are unique to the pairwise relationship.
+      </p>
+
+    </section>
+
+    <section>
+      <h2>Subject Classification</h2>
+      <p>
+It is dangerous to add properties to the [=controlled identifier document=] that can be
+used to indicate, explicitly or through inference, what <em>type</em> or nature
+of thing the [=subject=] is, particularly if the [=subject=] is a person.
+      </p>
+      <p>
+Not only do such properties potentially result in personal data (see
+[[[#keep-personal-data-private]]]) or correlatable data (see <a
+href="#identifier-correlation-risks"> </a> and
+[[[#controlled-identifier-document-correlation-risks]]]) being present in
+the [=controlled identifier document=], but they can be used for grouping particular
+identifiers in such a way that they are included in or excluded from certain
+operations or functionalities.
+      </p>
+      <p>
+Including <em>type</em> information in a [=controlled identifier document=] can result
+in personal privacy harms even for [=subjects=] that are non-person entities,
+such as IoT devices. The aggregation of such information around a
+[=controller=] could serve as a form of digital fingerprint and this is best
+avoided.
+      </p>
+      <p>
+To minimize these risks, all properties in a [=controlled identifier document=] ought to
+be for expressing [=verification methods=] and <a>verification
+relationships</a> related to using the identifier.
+      </p>
+
+    </section>
+
+    <section>
+      <h2>Service Privacy</h2>
+      <p>
+The ability for a [=controller=] to optionally express at least one [=service=] in the [=controlled identifier document=] increases their control and agency.
+Each additional endpoint in the [=controlled identifier document=] adds privacy risk either
+due to correlation, such as across endpoint descriptions, or because the
+[=services=] are not protected by an authorization mechanism, or both.
+      </p>
+      <p>
+[=Controlled identifier documents=] are often public and, since they are standardized, will
+be stored and indexed efficiently. This
+risk is increased if [=controlled identifier documents=] are published to immutable
+[=verifiable data registries=]. Access to a history of the [=controlled identifier
+documents=] referenced by a URL enables a form of traffic analysis made more
+efficient through the use of standards.
+      </p>
+      <p>
+The degree of additional privacy risk caused by including multiple [=services=] in
+one [=controlled identifier document=] can be difficult to estimate. Privacy harms are
+typically unintended consequences. URLs can refer to documents, [=services=],
+schemas, and other things that might be associated with individual people,
+households, clubs, and employers &mdash; and correlation of their [=services=]
+could become a powerful surveillance and inference tool. An example of
+this potential harm can be seen when multiple common country-level top level
+domains such as `https://example.co.uk` might be used to infer the approximate
+location of the [=subject=] with a greater degree of probability.
+      </p>
+    </section>
+
+    </section>
+
+    <section>
+      <h2>Accessibility Considerations</h2>
+      <p>
+The following section describes accessibility considerations that developers
+implementing this specification are urged to consider in order to ensure that
+their software is usable by people with different cognitive, motor, and visual
+needs. As a general rule, this specification is used by system software and does
+not directly expose individuals to information subject to accessibility
+considerations. However, there are instances where individuals might be
+indirectly exposed to information expressed by this specification and thus the
+guidance below is provided for those situations.
+      </p>
+
+      <section>
+        <h2>Presenting Time Values</h2>
+        <p>
+This specification enables the expression of dates and times related to the
+validity period of [=proofs=]. This information might be indirectly
+exposed to an individual if a [=proof=] is processed and is detected to be outside
+an allowable time range. When exposing these dates and times to an individual,
+implementers are urged to take into account
+<a data-cite="?VC-DATA-MODEL-2.0#representing-time">cultural normas and locales
+when representing dates and times</a> in display software. In addition to these
+considerations, presenting time values in a way that eases the cognitive burden
+on the individual receiving the information is a suggested best practice.
+        </p>
+        <p>
+For example, when conveying the expiration date for a particular set of
+digitally signed information, implementers are urged to present the time of
+expiration using language that is easier to understand rather than language that
+optimizes for accuracy. Presenting the expiration time as "This ticket expired
+three days ago." is preferred over a phrase such as "This ticket expired on July
+25th 2023 at 3:43 PM." The former provides a relative time that is easier to
+comprehend than the latter time, which requires the individual to do the
+calculation in their head and presumes that they are capable of doing such a
+calculation.
+        </p>
+      </section>
+
+    </section>
+
+    </section>
+
+    <section class="appendix informative">
+      <h2>IANA Considerations</h2>
+
+      <p>
+This section will be submitted to the Internet Engineering Steering Group
+(IESG) for review, approval, and registration with IANA.
+      </p>
+
+      <section id="controller-media-type">
+        <h2>application/cid</h2>
+        <p>
+This specification registers the `application/cid` media type specifically for
+identifying documents conforming to the [=controlled identifier document=]
+format.
+        </p>
+        <table>
+          <tr>
+            <td>Type name: </td>
+            <td>application</td>
+          </tr>
+          <tr>
+            <td>Subtype name: </td>
+            <td>cid</td>
+          </tr>
+          <tr>
+            <td>Required parameters: </td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td>Fragment identifier considerations:</td>
+            <td>
+As defined in Section [[[#fragment-resolution]]] in the [[[CID]]] specification.
+            </td>
+          </tr>
+          <tr>
+            <td>Encoding considerations: </td>
+            <td>
+Resources that use the `application/cid` media type are required to conform to
+all of the requirements for the `application/json` media type and are therefore
+subject to the same encoding considerations specified in Section 11 of
+[[[RFC7159]]].
+            </td>
+          </tr>
+          <tr>
+            <td>Security considerations: </td>
+            <td>
+As defined in Section [[[#security-considerations]]] in the [[[CID]]]
+specification.
+            </td>
+          </tr>
+          <tr>
+            <td>Contact: </td>
+            <td>
+W3C Verifiable Credentials Working Group
+<a href="mailto:public-vc-wg@w3.org">public-vc-wg@w3.org</a>
+            </td>
+          </tr>
+        </table>
+
+      </section>
+    </section>
+
+    <section class="appendix informative">
+      <h2>Examples</h2>
+
+      <p>
+This section contains more detailed examples of the concepts introduced in
+the specification.
+      </p>
+      <section class="informative">
+        <h2>Multikey Examples</h2>
+
+        <p>
+This section contains various Multikey examples that might be useful for
+developers seeking test values.
+        </p>
+
+          <pre class="example nohighlight"
+            title="A P-256 public key encoded as a Multikey">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://multikey.example/issuer/123#key-0",
+  "type": "Multikey",
+  "controller": "https://multikey.example/issuer/123",
+  "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv"
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="A P-384 public key encoded as a Multikey">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://multikey.example/issuer/123#key-0",
+  "type": "Multikey",
+  "controller": "https://multikey.example/issuer/123",
+  "publicKeyMultibase": "z82LkvCwHNreneWpsgPEbV3gu1C6NFJEBg4srfJ5gdxEsMGRJUz2sG9FE42shbn2xkZJh54"
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="An Ed25519 public key encoded as a Multikey">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://multikey.example/issuer/123#key-0",
+  "type": "Multikey",
+  "controller": "https://multikey.example/issuer/123",
+  "publicKeyMultibase": "z6Mkf5rGMoatrSj1f4CyvuHBeXJELe9RPdzo2PKGNCKVtZxP"
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="A BLS12-381 G2 group public key, encoded as a Multikey">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://multikey.example/issuer/123#key-0",
+  "type": "Multikey",
+  "controller": "https://multikey.example/issuer/123",
+  "publicKeyMultibase": "zUC7EK3ZakmukHhuncwkbySmomv3FmrkmS36E4Ks5rsb6VQSRpoCrx6Hb8e2Nk6UvJFSdyw9NK1scFXJp21gNNYFjVWNgaqyGnkyhtagagCpQb5B7tagJu3HDbjQ8h5ypoHjwBb"
+}
+          </pre>
+
+          <pre class="example nohighlight"
+               title="Multiple public keys encoded as Multikeys in a controlled identifier document">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example/123",
+  "verificationMethod": [{
+    "id": "https://multikey.example/issuer/123#key-1",
+    "type": "Multikey",
+    "controller": "https://multikey.example/issuer/123",
+    "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv"
+  }, {
+    "id": "https://multikey.example/issuer/123#key-2",
+    "type": "Multikey",
+    "controller": "https://multikey.example/issuer/123",
+    "publicKeyMultibase": "z6Mkf5rGMoatrSj1f4CyvuHBeXJELe9RPdzo2PKGNCKVtZxP"
+  }, {
+    "id": "https://multikey.example/issuer/123#key-3",
+    "type": "Multikey",
+    "controller": "https://multikey.example/issuer/123",
+    "publicKeyMultibase": "zUC7EK3ZakmukHhuncwkbySmomv3FmrkmS36E4Ks5rsb6VQSRpoCrx6Hb8e2Nk6UvJFSdyw9NK1scFXJp21gNNYFjVWNgaqyGnkyhtagagCpQb5B7tagJu3HDbjQ8h5ypoHjwBb"
+  }],
+  "authentication": [
+    "https://controller.example/123#key-1"
+  ],
+  "assertionMethod": [
+    "https://controller.example/123#key-2"
+    "https://controller.example/123#key-3"
+  ],
+  "capabilityDelegation": [
+    "https://controller.example/123#key-2"
+  ],
+  "capabilityInvocation": [
+    "https://controller.example/123#key-2"
+  ]
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="An SM2 public key encoded as a Multikey">
+{
+  "id": "https://multikey.example/issuer/123#key-0",
+  "type": "Multikey",
+  "controller": "https://multikey.example/issuer/123",
+  "publicKeyMultibase": "zEPJc1vCfbG2aoZn8f3U8ggYRL4ZFfF63ZA3qFSk81WJxnCQr"
+}
+          </pre>
+        </section>
+        <section class="informative">
+        <h2>JsonWebKey Examples</h2>
+
+        <p>
+This section contains various JsonWebKey examples that might be useful for
+developers seeking test values.
+        </p>
+
+          <pre class="example nohighlight"
+            title="A P-256 public key encoded as a JsonWebKey">
+{
+  "id": "https://jsonwebkey.example/issuer/123#key-0",
+  "type": "JsonWebKey",
+  "controller": "https://jsonwebkey.example/issuer/123",
+  "publicKeyJwk": {
+    "kty": "EC",
+    "crv": "P-256",
+    "x": "Ums5WVgwRkRTVVFnU3k5c2xvZllMbEcwM3NPRW91ZzN",
+    "y": "nDQW6XZ7b_u2Sy9slofYLlG03sOEoug3I0aAPQ0exs4"
+  }
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="A P-384 public key encoded as a JsonWebKey">
+{
+  "id": "https://jsonwebkey.example/issuer/123#key-0",
+  "type": "JsonWebKey",
+  "controller": "https://jsonwebkey.example/issuer/123",
+  "publicKeyJwk": {
+    "kty": "EC",
+    "crv": "P-384",
+    "x": "VUZKSlUwMGdpSXplekRwODhzX2N4U1BYdHVYWUZsaXVDR25kZ1U0UXA4bDkxeHpE",
+    "y": "jq4QoAHKiIzezDp88s_cxSPXtuXYFliuCGndgU4Qp8l91xzD1spCmFIzQgVjqvcP"
+  }
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="An Ed25519 public key encoded as a JsonWebKey">
+{
+  "id": "https://jsonwebkey.example/issuer/123#key-0",
+  "type": "JsonWebKey",
+  "controller": "https://jsonwebkey.example/issuer/123",
+  "publicKeyJwk": {
+    "kty": "OKP",
+    "crv": "Ed25519",
+    "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ"
+  }
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="A BLS12-381 G2 group public key, encoded as a JsonWebKey">
+{
+  "id": "https://jsonwebkey.example/issuer/123#key-0",
+  "type": "JsonWebKey",
+  "controller": "https://jsonwebkey.example/issuer/123",
+  "publicKeyJwk": {
+    "kty": "EC",
+    "crv": "BLS12381G2",
+    "x": "Ajs8lstTgoTgXMF6QXdyh3m8k2ixxURGYLMaYylVK_x0F8HhE8zk0YWiGV3CHwpQEa2sH4PBZLaYCn8se-1clmCORDsKxbbw3Js_Alu4OmkV9gmbJsy1YF2rt7Vxzs6S",
+    "y": "BVkkrVEib-P_FMPHNtqxJymP3pV-H8fCdvPkoWInpFfM9tViyqD8JAmwDf64zU2hBV_vvCQ632ScAooEExXuz1IeQH9D2o-uY_dAjZ37YHuRMEyzh8Tq-90JHQvicOqx"
+  }
+}
+          </pre>
+
+          <pre class="example nohighlight"
+               title="Multiple public keys encoded as JsonWebKey in a controlled identifier document">
+{
+  "@context": "https://www.w3.org/ns/cid/v1",
+  "id": "https://controller.example/123",
+  "verificationMethod": [{
+    "id": "https://jsonwebkey.example/issuer/123#key-1",
+    "type": "JsonWebKey",
+    "controller": "https://jsonwebkey.example/issuer/123",
+    "publicKeyJwk": {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "fyNYMN0976ci7xqiSdag3buk-ZCwgXU4kz9XNkBlNUI",
+      "y": "hW2ojTNfH7Jbi8--CJUo3OCbH3y5n91g-IMA9MLMbTU"
+    }
+  }, {
+    "id": "https://jsonwebkey.example/issuer/123#key-2",
+    "type": "JsonWebKey",
+    "controller": "https://jsonwebkey.example/issuer/123",
+    "publicKeyJwk": {
+      "kty": "EC",
+      "crv": "P-521",
+      "x": "ASUHPMyichQ0QbHZ9ofNx_l4y7luncn5feKLo3OpJ2nSbZoC7mffolj5uy7s6KSKXFmnNWxGJ42IOrjZ47qqwqyS",
+      "y": "AW9ziIC4ZQQVSNmLlp59yYKrjRY0_VqO-GOIYQ9tYpPraBKUloEId6cI_vynCzlZWZtWpgOM3HPhYEgawQ703RjC"
+    }
+  }, {
+    "id": "https://jsonwebkey.example/issuer/123#key-3",
+    "type": "JsonWebKey",
+    "controller": "https://jsonwebkey.example/issuer/123",
+    "publicKeyJwk": {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "x": "_eT7oDCtAC98L31MMx9J0T-w7HR-zuvsY08f9MvKne8"
+    }
+  }],
+  "authentication": [
+    "https://controller.example/123#key-1"
+  ],
+  "assertionMethod": [
+    "https://controller.example/123#key-2"
+    "https://controller.example/123#key-3"
+  ],
+  "capabilityDelegation": [
+    "https://controller.example/123#key-2"
+  ],
+  "capabilityInvocation": [
+    "https://controller.example/123#key-2"
+  ]
+}
+          </pre>
+        </section>
+      </section>
+
+    </section>
+
+    <section class="appendix informative">
+      <h2>Revision History</h2>
+
+      <p>
+This section contains the substantive changes that have been made to this
+specification over time.
+      </p>
+
+      <p>
+This specification was created to generalize the [[[?DID-CORE]]]
+specification to use non-decentralized identifiers and systems, such as HTTPS
+URLs. As such, much of the content from the [[[?DID-CORE]]]
+specification was copied into this document and generalized through largely
+editorial changes. The changes since the [[[?DID-CORE]]] specification are
+below:
+      </p>
+
+      <ul>
+        <li>
+Migrate the Identifiers, Verification Methods, Verification Relationships,
+Services, Privacy Considerations, and Security Considerations sections to this
+specification. Generalize the language to allow non-DID identifiers.
+        </li>
+        <li>
+Migrate the definitions of the Multibase and Multihash datatypes, Algorithms,
+and Contexts and Vocabularies sections from the [[[?VC-DATA-INTEGRITY]]]
+specification, which inherited those sections from the [[[?DID-CORE]]]
+specification.
+        </li>
+        <li>
+Editorial changes to align narrative and flow between migrated sections.
+        </li>
+      </ul>
+
+    </section>
+
+    <section class="appendix informative">
+      <h2>Acknowledgements</h2>
+
+      <p>
+The specification authors would like to thank the contributors to the
+<a href="https://www.w3.org/TR/2022/REC-did-core-20220719/">
+W3C Decentralized Identifiers (DIDs) v1.0</a> specification upon which this work
+is based.
+      </p>
+
+      <p>
+The Working Group gratefully acknowledges the work that led to the creation of
+this specification, and extends sincere appreciation to those individuals that
+worked on technologies and specifications that deeply influenced our work. In
+particular, this includes the work of Phil Zimmerman, Jon Callas, Lutz
+Donnerhacke, Hal Finney, David Shaw, and Rodney Thayer on <a
+href="https://en.wikipedia.org/wiki/Pretty_Good_Privacy"> Pretty Good Privacy
+(PGP)</a> in the 1990s and 2000s.
+      </p>
+
+      <p>
+In the mid-2010s, preliminary implementations of what would become Decentralized
+Identifiers were <a href="https://github.com/web-payments/minutes/blob/master/2014-05-07/irc.log#L5">
+built</a> in collaboration with Jeremie Miller's Telehash project and the W3C
+Web Payments Community Group's work led by Dave Longley and Manu Sporny. Around
+a year later, the XDI.org Registry Working Group
+<a href="https://docs.google.com/document/d/1EP-KhH60y-nl4xkEzoeSf3DjmjLomfboF4p2umF51FA/">
+began exploring</a> decentralized technologies for replacing its existing
+identifier registry. Some of the first
+<a href="https://github.com/WebOfTrustInfo/rwot1-sf/blob/master/final-documents/dpki.pdf">written</a>
+<a href="https://github.com/WebOfTrustInfo/rwot2-id2020/blob/master/final-documents/requirements-for-dids.pdf">papers</a>
+exploring the concept of Decentralized Identifiers can be traced back to the
+first several Rebooting the Web of Trust workshops convened by Christopher
+Allen. That work led to a key collaboration between Christopher Allen, Drummond
+Reed, Les Chasen, Manu Sporny, and Anil John. Anil saw promise in the technology
+and allocated the initial set of government funding to explore the space.
+Without the support of Anil John and his guidance through the years, it is
+unlikely that Decentralized Identifiers would be where they are today. Further
+refinement at the Rebooting the Web of Trust workshops led to the <a
+href="https://github.com/WebOfTrustInfo/rwot3-sf/blob/master/final-documents/did-implementer-draft-10.pdf">first
+implementers documentation</a>, edited by Drummond Reed, Les Chasen, Christopher
+Allen, and Ryan Grant. Contributors included Manu Sporny, Dave Longley, Jason
+Law, Daniel Hardman, Markus Sabadello, Christian Lundkvist, and Jonathan
+Endersby. This initial work was then merged into the W3C Credentials Community
+Group, incubated further, and then transitioned to the W3C Decentralized
+Identifiers Working Group for global standardization. That work was then used
+as the basis for this, more generalized and less decentralized, specification.
+      </p>
+
+      <p>
+Portions of the work on this specification have been funded by the United States
+Department of Homeland Security's (US DHS) Science and Technology Directorate
+under contracts HSHQDC-16-R00012-H-SB2016-1-002, and HSHQDC-17-C-00019, as well
+as the US DHS Silicon Valley Innovation Program under contracts
+70RSAT20T00000003, 70RSAT20T00000010/P00001, 70RSAT20T00000029,
+70RSAT20T00000030, 70RSAT20T00000033, 70RSAT20T00000045,
+70RSAT21T00000016/P00001, 70RSAT23T00000005, 70RSAT23C00000030, and
+70RSAT23R00000006. The content of this specification does not necessarily
+reflect the position or the policy of the U.S. Government and no official
+endorsement should be inferred.
+      </p>
+
+      <p>
+Portions of the work on this specification have also been funded by the European
+Union's StandICT.eu program under sub-grantee contract number CALL05/19. The
+content of this specification does not necessarily reflect the position or the
+policy of the European Union and no official endorsement should be inferred.
+      </p>
+
+      <p>
+We would also like to thank the base-x software library contributors and the
+Bitcoin Core developers who wrote the original code, shared under an MIT
+License, found in Section [[[#base-encode]]] and Section [[[#base-decode]]].
+      </p>
+
+      <p>
+Work on this specification has also been supported by the
+<a href="https://www.weboftrust.info/">Rebooting the Web of Trust</a> community
+facilitated by Christopher Allen, Shannon Appelcline, Kiara Robles, Brian
+Weller, Betty Dhamers, Kaliya Young, Kim Hamilton Duffy, Manu Sporny, Drummond
+Reed, Joe Andrieu, Heather Vescent, Samantha Chase, Andrew Hughes, Erica
+Connell, Shigeya Suzuki, and Zaïda Rivai. Development of this specification has
+also been supported by the
+<a href="https://w3c-ccg.github.io/">W3C Credentials Community Group</a>, which
+has been Chaired by Kim Hamilton Duffy, Joe Andrieu, Christopher Allen, Heather
+Vescent, and Wayne Chang. The participants in the Internet Identity Workshop,
+facilitated by Phil Windley, Kaliya Young, Doc Searls, and Heidi Nobantu Saul,
+also supported this work through numerous working sessions designed to debate,
+improve, and educate participants about this specification.
+      </p>
+
+      <p>
+The Working Group thanks the following individuals for their contributions to
+this specification (in alphabetical order, Github handles start with `@` and
+are sorted as last names): Denis Ah-Kang, Nacho Alamillo, Christopher Allen, Joe
+Andrieu, Antonio, Phil Archer, George Aristy, Baha, Juan Benet, BigBlueHat, Dan
+Bolser, Chris Boscolo, Pelle Braendgaard, Daniel Buchner, Daniel Burnett, Juan
+Caballero, @cabo, Tim Cappalli, Melvin Carvalho, David Chadwick, Wayne Chang,
+Sam Curren, Hai Dang, Tim Daubenschütz, Oskar van Deventer, Kim Hamilton Duffy,
+Arnaud Durand, Ken Ebert, Veikko Eeva, @ewagner70, Carson Farmer, Nikos Fotiou,
+Gabe, Gayan, @gimly-jack, @gjgd, Ryan Grant, Peter Grassberger, Adrian Gropper,
+Amy Guy, Daniel Hardman, Kyle Den Hartog, Philippe Le Hegaret, Ivan Herman,
+Michael Herman, Alen Horvat, Dave Huseby, Marcel Jackisch, Mike Jones, Andrew
+Jones, Tom Jones, jonnycrunch, Gregg Kellogg, Michael Klein, @kdenhartog-sybil1,
+Paul Knowles, @ktobich, David I. Lehn, Charles E. Lehner, Michael Lodder,
+@mooreT1881, Dave Longley, Tobias Looker, Wolf McNally, Robert Mitwicki, Mircea
+Nistor, Grant Noble, Mark Nottingham, @oare, Darrell O'Donnell, Vinod Panicker,
+Dirk Porsche, Praveen, Mike Prorock, @pukkamustard, Drummond Reed, Julian
+Reschke, Yancy Ribbens, Justin Richer, Rieks, @rknobloch, Mikeal Rogers,
+Evstifeev Roman, Troy Ronda, Leonard Rosenthol, Michael Ruminer, Markus
+Sabadello, Cihan Saglam, Samu, Rob Sanderson, Wendy Seltzer, Mehran Shakeri,
+Jaehoon (Ace) Shim, Samuel Smith, James M Snell, SondreB, Manu Sporny, @ssstolk,
+Orie Steele, Shigeya Suzuki, Sammotic Switchyarn, @tahpot, Oliver Terbu,  Ted
+Thibodeau Jr., Joel Thorstensson, Tralcan, Henry Tsai, Rod Vagg, Mike Varley,
+Kaliya "Identity Woman" Young, Eric Welton, Fuqiao Xue, @Yue, Dmitri Zagidulin,
+@zhanb, and Brent Zundel.
+      </p>
+
+
+    </section>
+
+  </body>
+</html>

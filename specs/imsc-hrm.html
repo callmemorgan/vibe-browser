@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset='utf-8'>
+
+  <title>IMSC Hypothetical Render Model</title>
+  <style>
+figure img {
+      height: auto;
+    }
+  </style>
+<script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove" defer></script>
+  <script class='remove'>
+var respecConfig = {
+                    specStatus:   "REC"
+                //,   processVersion: "2018"
+                , previousMaturity: "PR"
+                , publishDate: "2024-04-25"
+                , prEnd: "2024-03-28"
+                //,   modificationDate: "2020-04-27"
+                ,   errata: "https://www.w3.org/2024/04/imsc-hrm-errata.html"
+                ,   crEnd: "2023-07-20"
+                ,   implementationReportURI: "https://www.w3.org/wiki/TimedText/IMSC-HRM-1ED-Implementation-Report"
+                ,   sotdAfterWGinfo: "true"
+                //,   previousPublishDate: "2018-10-04"
+                ,   shortName:    "imsc-hrm"
+                  ,   editors: [{
+                          name: "Pierre Lemieux",
+                          w3cid:  "57073",
+                          mailto: "pal@sandflow.com"
+                        }]
+                  ,   group: "wg/timed-text"
+                  ,   subjectPrefix: "[imsc-hrm]"
+                  ,   edDraftURI: "https://w3c.github.io/imsc-hrm/spec/imsc-hrm.html"
+                  ,   github: {
+                          repoURL : "https://github.com/w3c/imsc-hrm/",
+                          branch : "main"
+                          
+                        }
+                  ,   license: "w3c-software-doc"
+                  ,   localBiblio:  {
+                          "SUBM": {
+                          publisher: "World Wide Web Consortium (W3C)",
+                          href:"https://www.w3.org/Submission/2013/SUBM-ttml-ww-profiles-20130607/",
+                          title: "TTML Text and Image Profiles for Internet Media Subtitles and Captions (Member Submission, 07 June 2013)"
+                          },
+                          "CEA-608": {
+                          publisher: "Consumer Technology Association",
+                          href : "https://www.techstreet.com/standards/cta-608-e-r2014?product_id=1815447",
+                          title:"CTA 608-E, Line-21 Data Services"
+                          },
+                          "CEA-708": {
+                          publisher: "Consumer Technology Association",
+                          href : "https://www.techstreet.com/standards/cta-708-d?product_id=1815448",
+                          title: "CTA 708-D, Digital Television (DTV) Closed Captioning"
+                          },
+                          "CFF": {
+                          publisher: "Digital Entertainment Content Ecosystem (DECE)",
+                          href: "https://www.uvcentral.com/specs",
+                          title:"Common File Format & Media Formats Specification (CFF) Version 2.2"
+                          },
+                          "EBU-TT-D": {
+                          publisher: "European Broadcasting Union (EBU)",
+                          href: "https://tech.ebu.ch/files/live/sites/tech/files/shared/tech/tech2380v1_0_1.pdf",
+                          title: "Tech 3380, EBU-TT-D Subtitling Distribution Format Version 1.0.1"
+                          },
+                          "EBU-TT-M": {
+                            publisher: "European Broadcasting Union (EBU)",
+                            href :"https://tech.ebu.ch/files/live/sites/tech/files/shared/tech/tech2390.pdf",
+                            title: "Tech 3390, EBU-TT-M Metadata Definitions 1.0"
+                          },
+                          "ttml2": {
+                            "authors":["Glenn Adams","Cyril Concolato"],
+                            "href":"https://www.w3.org/TR/2018/REC-ttml2-20181108/",
+                            "title":"Timed Text Markup Language 2 (TTML2)",
+                            "status":"REC",
+                            "publisher":"W3C",
+                            "id":"ttml2-20181108",
+                            "date":"8 November 2018"
+                          },
+                          "xml": {
+                          aliasOf: "xml-20081126"
+                          },
+                          "xml-names": {
+                          aliasOf: "xml-names-20091208"
+                          },
+                          "WCAG20": {
+                          aliasOf: "WCAG20-20081211"
+                          },
+                          "namespaceState": {
+                          aliasOf: "namespaceState-20060329"
+                          },
+                          "ttml-imsc1": {
+                          aliasOf: "ttml-imsc1-20180626"
+                          },
+                          "ttml-imsc1.0.1": {
+                          aliasOf: "ttml-imsc1.0.1-20180424"
+                          },
+                          "xmlschema-1": {
+                          aliasOf: "xmlschema-1-20041028"
+                          },
+                          "XSL11": {
+                          aliasOf: "XSL11-20061205"
+                          },
+                          "ttml10-sdp-us": {
+                          aliasOf: "ttml10-sdp-us-20130205"
+                          },
+                          "media-accessibility-reqs": {
+                          aliasOf: "media-accessibility-reqs-20151203"
+                          },
+                          "TTML1": {
+                            "authors":["Glenn Adams","Pierre-Anthony Lemieux"],
+                            "href":"https://www.w3.org/TR/2018/REC-ttml1-20181108/",
+                            "title":"Timed Text Markup Language 1 (TTML1) (Third Edition)",
+                            "status":"REC",
+                            "publisher":"W3C",
+                            "id":"ttml1-20181108",
+                            "date":"8 November 2018"
+                          },
+                          "IMSC": {
+                            publisher: "World Wide Web Consortium (W3C)",
+                            href :"https://www.w3.org/TR/ttml-imsc/",
+                            title: "TTML Profiles for Internet Media Subtitles and Captions"
+                          }
+                      }
+        };
+  </script>
+  <style>
+table.coldividers td + td { border-left:1px solid gray; text-align: center;}
+  table.syntax { border: 0px solid black; width: 85%; border-collapse: collapse }
+  table.syntax caption { font-weight: bold; text-align: left; padding-bottom: 0.5em }
+  table.syntax th { border: 0px solid black; text-align: left }
+  table.syntax td { border: 0px solid black }
+  table.syntax div { background-color: #ffffc8 }
+  div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+  ul.short-list { margin: 0; padding-left: 0; list-style-position: inside;}
+  .note {font-size:small}
+  .equation {text-indent: 10%;}
+  .example {font-size: small}
+  .inline-note {font-size: small}
+  .deprecation {background-color: #EBEBFE; border: 3px double; margin: 2px;}
+  .deprecation::before {content: "\26A0"; margin:0.2em; font-size:2em; float:left;}
+  body {
+    font-family: sans-serif;
+    line-height: 24px;
+  }
+  span.label {
+    display: inline-block;
+    border-radius: 3px;
+  }
+  span.permitted::before {
+    content: "\00A0\2713\00A0"
+  }
+  span.prohibited::before {
+    content: "\00A0\2718\00A0"
+  }
+  span.permitted-deprecated::before {
+    font-weight: bold;
+    content: "\00A0!\00A0"
+  }
+  span.label::after {
+    content: "\00A0";
+  }
+  span.permitted {
+    color: black;
+    background-color: #50FF50;
+  }
+  span.prohibited {
+    color: black;
+    background-color: #FF5F5F;
+  }
+  span.permitted-deprecated {
+    color: black;
+    background-color: #FFC000;
+  }
+  </style>
+</head>
+
+<body>
+  <section id='abstract'>
+    <p>This specification specifies a Hypothetical Render Model (HRM) that constrains the presentation complexity of
+    documents that conform to the Text Profiles specified in any edition of Internet Media Subtitles and Captions ([[IMSC]]).</p>
+
+    <p>The objective of the HRM is to allow subtitle and caption authors and providers to verify that the content they
+    provide does not exceed defined complexity levels, so that playback systems can render the content synchronized with
+    the author-specified display times.</p>
+
+    <p>The model is not intended as a specification of the processing requirements for implementations. For instance, while the
+    model defines glyph cache for the purpose of modelling how the number of glyph drawing operations can be reduced, it neither
+    requires the implementation of such a cache, nor models the sub-pixel glyph positioning and anti-aliased glyph rendering
+    that can be used to produce text output.</p>
+
+    <p>Furthermore, the model is not intended to constrain readability complexity.</p>
+  </section>
+  <section id='sotd' class='updateable-rec'>
+      <p>The history of substantive changes made to this document is summarized at <a href="#substantive-changes-summary"></a>.
+  </section>
+
+  <section id='scope'>
+    <h2>Scope</h2>
+    <p>This specification specifies a Hypothetical Render Model (HRM) that constrains the presentation complexity of a
+    <a>IMSC Document Instance</a>.</p>
+  </section>
+
+  <section id='conventions'>
+    <h2>Documentation Conventions</h2>
+
+    <p>This specification uses the same conventions as [[!IMSC]].</p>
+
+  </section>
+
+  <section id='terms'>
+    <h2>Terms and Definitions</h2>
+
+      <p><dfn>character</dfn>. The character code property of a [[TTML2]]
+        <a data-cite="ttml2#terms-character-information-item">Character Information Item</a>.</p>
+
+      <p class="note">The term <a>character</a> is for practical purposes
+        the same as a <dfn>code point</dfn>, as defined by [[?i18n-glossary]].</p>
+
+      <p><dfn>empty ISD</dfn>. An
+        <a>Intermediate Synchronic Document</a> with
+        no
+        <a>presented region</a>.</p>
+
+      <p><dfn>non-empty ISD</dfn>. An
+        <a>Intermediate Synchronic Document</a> with
+        at least one
+        <a>presented region</a>.</p>
+
+      <p><dfn>error</dfn>. A failure to conform to the constraints defined by this specification.</p>
+
+      <p><dfn>grapheme</dfn>. As defined by [[?i18n-glossary]] at <a data-cite="i18n-glossary#dfn-grapheme">grapheme</a>.</p>
+
+      <p><dfn>Intermediate Synchronic Document</dfn>. As defined by [[TTML2]] at
+        <a data-cite="ttml2#terms-intermediate-synchronic-document">Intermediate Synchronic Document</a>.</p>
+
+      <p><dfn>IMSC Document Instance</dfn>. A [[TTML2]] <dfn data-lt="Document Instance|Document Instances"
+      data-cite="ttml2#terms-document-instance">Document Instance</dfn> that conforms to the Text Profile defined in any edition of
+      [[!IMSC]].</p>
+
+      <p><dfn>presentation processor</dfn>. As defined by [[TTML2]] at <a data-cite="ttml2#terms-presentation-processor">presentation processor</a>.</p>
+
+      <p><dfn>presented region</dfn>. As defined by [[IMSC]] at 
+        <a data-cite="IMSC#dfn-presented-region">presented region</a>.</p>
+
+      <p><dfn>Related Video Object</dfn>. As defined by [[IMSC]] at <a data-cite="IMSC#dfn-related-video-object">Related Video Object</a>.</p>
+
+      <p><dfn>Root Container Region</dfn>. As defined by [[TTML2]] at <a data-cite="ttml2#terms-root-container-region">Root
+        Container Region</a>.</p>
+  </section>
+
+  <section id="conformance">
+    <p>
+      Unless noted otherwise, this specification applies to an <a>IMSC Document Instance</a>.
+    </p>
+    <p>
+      A <a>IMSC Document Instance</a> <i>conforms to the Hypothetical Render Model</i> if the sequence of
+      <a>Intermediate Synchronic Documents</a> generated from it using the <i>Intermediate Synchronic Document
+      Construction</i> procedure specified in [[!TTML2]] is processed without <a>error</a> by the HRM algorithm
+      specified at <a href="#hypothetical-render-model-general"></a>.
+    </p>
+    <p class="note">Applying the Hypothetical Render Model to a <a>Document Instance</a> that is not an <a>IMSC Document
+    Instance</a> yields results that might not reflect the complexity of the <a>Document Instance</a>.</p>
+    <p class="note">In applications where sequences of <a>Document Instances</a>
+    can be resolved into a single sequence of <a>Intermediate Synchronic Documents</a>
+    that do not overlap each other temporally,
+    conformance can be determined based on a synthesised <a>Document Instance</a>
+    that generates an equivalent sequence of <a>Intermediate Synchronic Documents</a>,
+    where minimal equivalence is limited to the content and metrics that are used
+    to identify <a>errors</a>.</p>
+  </section>
+
+  <section class="informative">
+    <h2>Introduction</h2>
+  
+    <section>
+      <h3>Objective</h3>
+  
+      <p>The objective of the HRM is to allow subtitle and caption authors
+        and providers to verify that the content they provide does not exceed
+        defined complexity levels, so that playback systems can render the content
+        synchronized with the author-specified display times.</p>
+  
+      <p>Playback systems include desktop computers, mobile devices and
+        home theatre devices.</p>
+
+      <p class="note">The HRM is not a new concept: a version of it has been included in all versions and editions of
+      [[IMSC]]. This specification extracts the HRM into a standalone document to simplify maintenance. The First Public
+      Working Draft of this specification essentially included the HRM as it was specified in [[ttml-imsc1.2]].
+      Substantive changes made since then are summarized in <a href="#substantive-changes-summary"></a>.</p>
+    </section>
+  
+    <section>
+      <h3>Why limit the complexity of <a>IMSC Document Instances</a>?</h3>
+  
+      <p><a>IMSC Document Instances</a> are typically authored by a first party
+      and rendered by a second party. Unless both parties agree on the maximum
+      complexity of a <a>IMSC Document Instance</a>, it is likely that:</p>
+  
+      <ul>
+        <li>an <a>IMSC Document Instance</a> authored by a first party will
+        exceed the capabilities of the <a>presentation processor</a> of a second
+        party, resulting in an incomplete presentation where some subtitles or
+        captions might be missing or might be presented too late;</li>
+
+        <li>a first party authors only extremely simple <a>IMSC Document
+       Instances</a> in an attempt to ensure a complete presentation across all
+        renderers, resulting in a lower quality presentation;</li>
+  
+        <li>a second party over-provisions their <a>presentation processor</a>
+        in order to ensure a complete presentation of all <a>IMSC Document
+        Instances</a>, resulting in increased run-time resource usage, code
+        complexity, etc.; or</li>
+  
+        <li>one <a>presentation processor</a> becomes the de-facto reference to
+        determine whether the presentation of a <a>IMSC Document Instance</a>
+        will succeed, at the expense of other renderers and consistency of
+        presentation.</li>
+      </ul>
+
+      <figure id='fig-intro'>
+        <img src="figures/intro-fig-1.svg" alt="The HRM prevents incomplete presentations of IMSC Instance Documents.">
+
+        <figcaption>
+          The HRM allows authors and implementers of <a>presentation
+          processors</a> to agree on the maximum complexity of <a>IMSC Document
+          Instances</a>.
+        </figcaption>
+      </figure>
+
+      <p>As illustrated in <a href="#fig-intro"></a>, by defining a method (the
+      HRM) to compute a proxy for the complexity of an <a>IMSC Document
+      Instance</a> and specifying a complexity limit based on such proxy:</p>
+
+      <ul>
+        <li>authors can ensure that their <a>IMSC Document Instances</a> do not
+        exceed this limit;</li>
+  
+        <li>implementers can design their <a>presentation processors</a> to maximize the
+        likelihood that they will be able to render correctly all <a>IMSC Document
+        Instances</a> that do not exceed this limit; and</li>
+          
+        <li>audiences can expect subtitle and caption presentation to match
+        the authorial intention.</li>
+      </ul>
+
+    </section>
+  
+    <section>
+      <h3>Why is the HRM needed to limit complexity?</h3>
+
+      <p>The HRM supplements the syntactic and structural constraints imposed in
+      [[IMSC]] by imposing constraints on the contents of the presentation.</p>
+  
+      <p>Because of the temporal and spatial variability of subtitles and
+        captions across types of content, territories and languages, it is not
+        possible to limit the complexity of an <a>IMSC Document Instance</a> using
+        only average values.</p>
+  
+      <div class="example">
+        <p>An average-based constraint of 840 <a>characters</a> per
+          minute could be met in multiple ways, with different rendering
+          complexities. Contrast two potential approaches:</p>
+        <p> In the first, 5
+          <a>characters</a> are presented for a fraction of a second, followed by 835
+          <a>characters</a> that are then presented for over 59 seconds. This generates a
+          high rendering complexity for the 835 <a>characters</a>, since there is only a
+          brief time available to paint them.</p>
+        <p>In the second, 210 <a>characters</a> are
+          painted every 15 seconds, giving 15 seconds to prepare for the next
+          presentation. This has a much lower rendering complexity.</p>
+      </div>
+  
+      <p>The HRM achieves a more accurate representation of the complexity of an
+        <a>IMSC Document Instance</a> at any given time by taking into account
+        its past complexity in addition to its instantaneous complexity. The
+        same approach is commonly used in video to limit bitstream complexity,
+        e.g., the Hypothetical Reference Decoder (HRD) specified in
+        [[iso14496-10]].
+      </p>
+    </section>
+  
+    <section>
+      <h3>How does the HRM measure and limit complexity?</h3>
+  
+      <p>The HRM defines a simple model for the rendering of subtitles and captions, and uses the time it takes to
+      render subtitles and captions according to that model as a proxy for the complexity of the subtitles and captions.
+      Rendering includes drawing region backgrounds, rendering text and copying text.
+      Complexity is then limited by requiring that the time to render one subtitle or caption is shorter than the time
+      elapsed since the previous subtitle or caption.
+      </p>
+  
+      <p>This simple model requires only a static analysis of the <a>IMSC Document Instance</a>, requires no fetching of
+      external resources and does not require the <a>IMSC Document Instance</a> to be actually rendered. Several
+      simplifying assumptions are made to achieve this. For example, the model assumes that each <a>character</a> is
+      drawn independently, and accounts for that assumption being, in many cases, false, by assigning different render
+      speeds for different scripts. In general the model is not intended to capture the actual time that an
+      implementation takes to render subtitles and captions, but rather scale with it: a document that is twice as
+      complex according to the model would require roughly twice as many resources to actually render. </p>
+    </section>
+  
+    <section>
+      <h3>Where is the HRM used?</h3>
+  
+      <p>The HRM is typically used prior to distribution of the <a>IMSC Document Instance</a> to the end-user, as an
+      integral part of authoring and as a quality check before distribution.</p>
+    
+      <p>When the HRM is used, the consequences of an <a>IMSC Document Instance</a> exceeding the HRM limits depends
+      on the context:</p>
+  
+      <ul>
+        <li>an authoring system might, for example, flag the specific point in
+        time where the HRM limits were exceeded;</li>
+        <li>the ingest component of a streaming platform might outright reject
+        the <a>IMSC Document Instance</a>.</li>
+      </ul>
+  
+      <p>The HRM is not intended to be used when the <a>IMSC Document
+      Instance</a> is presented to end-users since:</p>
+
+      <ul>
+        <li>end-users are not concerned with a technical complexity measure,
+        just as they are not concerned with video bit-rate, but instead with
+        whether the presentation is successful;</li>
+        <li>a <a>presentation processor</a> cannot generally reduce the
+        complexity of a <a>IMSC Document Instance</a> without impacting the
+        presentation.</li>
+      </ul>
+
+    </section>
+  </section>
+
+    <section class="informative" id="sec-architecture">
+      <h2>Architecture</h2>
+
+      <figure id='fig-hypothetical-render-model'>
+        <img src="figures/hypothetical-render-figure-1.svg" alt="Hypothetical Render Model">
+
+        <figcaption>
+          Hypothetical Render Model
+        </figcaption>
+      </figure>
+
+      <p>The HRM, illustrated in <a href="#fig-hypothetical-render-model"></a>, operates on a sequence of
+      <a>Intermediate Synchronic Documents</a> E<sub>i</sub>:</p>
+      <ul>
+        <li><a>non-empty ISDs</a> are processed using a simple double buffering model: while a <a>non-empty ISD</a>
+        E<sub>n</sub> is being painted into a Back Buffer by the <dfn>Presentation Compositor</dfn>, the previous <a>non-empty
+        ISD</a> E<sub>m</sub> is available for display in a Front Buffer; and</li>
+        <li><a>empty ISDs</a> merely disconnect the Front Buffer from the display when presented,
+        i.e., presenting an <a>empty ISD</a> is equivalent to presenting nothing.</li>
+      </ul>
+
+      <p>The model specifies a (hypothetical) time required for completely painting a <a>non-empty ISD</a>
+      as a proxy for complexity. Painting includes clearing the Back Buffer, drawing region backgrounds,
+      rendering glyphs, and copying glyphs. Complexity is then limited by requiring that
+      painting of <a>non-empty ISD</a> E<sub>n</sub> begins no earlier than the presentation time of the previous non-empty
+      <a>non-empty ISD</a> E<sub>m</sub> and completes by the presentation time of E<sub>n</sub>.</p>
+
+      <p>In contrast, there is no complexity involved connecting and disconnecting the Front Buffer from the display, and
+      thus no complexity associated with <a>empty ISDs</a>.</p>
+
+      <p>Whenever applicable, constraints are specified relative to <a>Root Container Region</a> dimensions,
+        allowing subtitle sequences to be authored independently of the
+        <a>Related Video Object</a> resolution.</p>
+
+      <p>To enable scenarios where the same glyphs are used in multiple successive <a>Intermediate Synchronic Documents</a>, e.g. to convey a CEA-608/708-style roll-up (see
+      [[CEA-608]] and [[CEA-708]]), a Glyph Cache stores rendered glyphs across <a>Intermediate Synchronic Documents</a>, allowing glyphs to be copied into the Presentation
+      Buffer instead of rendered, a more costly operation.</p>
+
+      <p class="note">The HRM permits a maximum rate of 12 <a>Intermediate Synchronic Documents</a> per second. This is
+      ultimately limited by the <a>BDraw</a> parameter and is intended to capture processing and presentation overhead. When
+      converting a [[CEA-608]] signal to IMSC, it is therefore impossible to create <a>IMSC Document Instances</a> that
+      generate an <a>Intermediate Synchronic Document</a> for every [[CEA-608]] packet, which are sampled at
+      the video field rate. It is instead preferable to coalesce sequences of [[CEA-608]] packets into longer
+      groupings, such as words, phrases, complete lines or paragraphs before creating an <a>IMSC Document Instance</a>,
+      and let the <a>presentation processor</a> perform any desired animation, e.g., typewriter effect.</p>
+
+      <p>Each of the terms <a>Presentation Compositor</a>, Glyph Renderer and Glyph Copier
+      is defined by the algorithmic requirements defined for it in this specification.</p>
+    </section>
+
+    <section id='hypothetical-render-model-general'>
+      <h2>Algorithm</h2>
+
+      <p>The HRM algorithm processes a sequence of <a>Intermediate Synchronic Documents</a> E<sub>i</sub>.</p>
+
+      <p>Each successive <a>non-empty ISD</a> E<sub>n</sub> is rendered by the <a>Presentation Compositor</a> using the
+      following steps in order:</p>
+
+      <ol>
+        <li>clear the pixels of the entire <a>Root Container Region</a>;</li>
+
+        <li>paint, according to stacking order, all background pixels for each region;</li>
+
+        <li>paint all pixels for background colors associated with the text subtitle content; and</li>
+
+        <li>paint the text subtitle content.</li>
+      </ol>
+
+      <p>The <a>Presentation Compositor</a> begins rendering E<sub>n</sub>:</p>
+
+      <ul>
+        <li>at the presentation time of E<sub>m</sub>, where m is the largest non-zero value that is both less than
+        n and is such that E<sub>m</sub> is not an <a>empty ISD</a>, if the presentation time of E<sub>n</sub> minus
+        that of E<sub>m</sub> is less than <a>IPD</a>; or</li>
+        <li>at the presentation time of E<sub>n</sub> minus <a>IPD</a>, otherwise.</li>
+      </ul>
+
+      <p class="note">The <a>Presentation Compositor</a> never begins rendering an ISD more than <a>IPD</a> ahead of its
+      presentation time.</p>
+
+      <figure id='fig-rendering-presentation-time'>
+        <img src="figures/isd-rendering-time-fig.svg" alt="ISD rendering and presentation times.">
+
+        <figcaption>
+          illustrates the rendering and presentation of <a>Intermediate Synchronic Documents</a>, where the hatched
+          areas indicate time spent drawing the associated <a>Intermediate Synchronic Document</a>. For example, the
+          <a>Presentation Compositor</a> begins rendering E<sub>1</sub> at the presentation time of E<sub>0</sub> since
+          E<sub>1</sub> is not an <a>empty ISD</a>. In contrast, the <a>Presentation Compositor</a> begins rendering
+          E<sub>5</sub> at the presentation time of E<sub>5</sub> minus IPD since (i) both E<sub>3</sub> and
+          E<sub>4</sub> are <a>empty ISDs</a> and the presentation time of E<sub>5</sub> minus that of E<sub>2</sub> is
+          greater than IPD. Furthermore, E<sub>2</sub> remains in the Front Buffer until the presentation time of
+          E<sub>5</sub> but is not presented while E<sub>3</sub> and E<sub>4</sub> are presented, during which time the
+          Front Buffer is not available for display. Finally, the <a>Presentation Compositor</a> begins rendering E<sub>0</sub>
+          at the presentation time of E<sub>0</sub> minus IPD since E<sub>0</sub> is the first <a>Intermediate
+          Synchronic Document</a>.
+        </figcaption>
+      </figure>
+
+      <p>The duration DUR(E<sub>n</sub>) for painting an <a>Intermediate Synchronic Document</a> E<sub>n</sub> in the
+      Back Buffer is given by:</p>
+
+      <p class="equation">DUR(E<sub>n</sub>) = <a>S</a>(E<sub>n</sub>) / <a>BDraw</a> + <a>DUR<sub>T</sub></a>(E<sub>n</sub>)</p>
+
+      <p>where</p>
+
+      <ul>
+        <li><a>S</a>(E<sub>n</sub>) is the total normalized drawing area for <a>Intermediate Synchronic Document</a> E<sub>n</sub>, as
+        specified in <a href="#paint-regions"></a>;
+        </li>
+
+        <li><a>BDraw</a> is the normalized background drawing performance factor; and</li>
+
+        <li><a>DUR<sub>T</sub></a>(E<sub>n</sub>) is the duration, in seconds, for painting the text subtitle content for <a>Intermediate
+        Synchronic Document</a> E<sub>n</sub>, as specified in Section <a href="#paint-text"></a>.
+        </li>
+
+      </ul>
+
+      <p>The contents of the Back Buffer are transferred instantaneously to the Front Buffer at the presentation
+      time of a <a>non-empty ISD</a> E<sub>n</sub>, making the latter available for display.</p>
+
+      <p>The Front Buffer is:</p>
+      <ul>
+        <li>disconnected from the display while an <a>empty ISD</a> is being presented; and</li>
+        <li>connected to the display, otherwise.</li>
+      </ul>
+
+      <p class='note'>It is possible for the contents of the Front Buffer to never be displayed. This can happen, for
+      example, if the Back Buffer is copied twice to Front Buffer between two consecutive video frame boundaries of the
+      <a>Related Video Object</a>.</p>
+
+      <p>It SHALL be an <a>error</a> for the <a>Presentation Compositor</a> to fail to complete painting pixels for
+      <a>non-empty ISD</a> E<sub>n</sub> before its presentation time.</p>
+
+      <p>The following table specifies the values of <a>IPD</a> and <a>BDraw</a>.</p>
+
+      <table class='simple'>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+
+            <th>Initial value</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><dfn data-lt="IPD">Initial Painting Delay</dfn> (IPD)</td>
+
+            <td>1 s</td>
+          </tr>
+
+          <tr>
+            <td><dfn data-lt="BDraw">Normalized background drawing performance factor</dfn> (BDraw)</td>
+
+            <td>12 s<sup>-1</sup></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class='note'><a>BDraw</a> effectively sets a limit on fillings regions - for example, assuming that the <a>Root Container
+      Region</a> is ultimately rendered at 1920×1080 resolution, a <a>BDraw</a> of 12 s<sup>-1</sup> would correspond to a fill rate of
+      1920×1080×12/s=23.7×2<sup>20</sup>pixels s<sup>-1</sup>.</p>
+
+      <p class='note'><a>IPD</a> effectively sets a limit on the complexity of any given <a>Intermediate Synchronic Document</a>.</p>
+    </section>
+
+    <section id='paint-regions'>
+      <h2>Paint Regions</h2>
+
+      <p>The total normalized drawing area <dfn>S</dfn>(E<sub>n</sub>) for <a>Intermediate Synchronic Document</a> E<sub>n</sub> is given by:</p>
+
+      <p class="equation">S(E<sub>n</sub>) = <a>CLEAR</a>(E<sub>n</sub>) + <a>PAINT</a>(E<sub>n</sub> )</p>
+
+      <p>where <dfn>CLEAR</dfn>(E<sub>n</sub>) = 1.</p>
+
+      <p class='note'>To ensure consistency of the Back Buffer, a new <a>Intermediate Synchronic Document</a> requires
+      clearing of the <a>Root Container Region</a>.</p>
+
+      <p><dfn>PAINT</dfn>(E<sub>n</sub>) is the normalized area to be painted for all regions that are used in <a>Intermediate
+      Synchronic Document</a> E<sub>n</sub> according to:</p>
+
+      <p class="equation">PAINT(E<sub>n</sub>) = ∑<sub>R<sub>i</sub>∈R<sub>p</sub></sub> <a>NSIZE</a>(R<sub>i</sub>) ∙
+      <a>NBG</a>(R<sub>i</sub>)</p>
+
+      <p>where R<sub>p</sub> is the set of <a>presented regions</a> in the <a>Intermediate Synchronic
+      Document</a> E<sub>n</sub>.</p>
+
+      <p><dfn>NSIZE</dfn>(R<sub>i</sub>) is given by:</p>
+
+      <p class="equation">NSIZE(R<sub>i</sub>) = (width of R<sub>i</sub> ∙ height of R<sub>i</sub> ) ÷ (<a>Root Container
+      Region</a> height ∙ <a>Root Container Region</a> width)</p>
+
+      <aside class='example'>
+        For a region R<sub>i</sub> in with <code>tts:extent="250px 50px"</code> within a <a>Root Container Region</a> with
+        <code>tts:extent="1920px 1080px"</code>, <a>NSIZE</a>(R<sub>i</sub>) ≈ 0.00603.
+      </aside>
+
+      <p><dfn>NBG</dfn>(R<sub>i</sub>) is the total number of elements within the tree rooted at region R<sub>i</sub> that satisfy the following criteria:</p>
+
+      <ul>
+        <li>the element is either a <code>region</code>, <code>body</code>, <code>div</code>, <code>p</code> or 
+           <code>span</code>; and</li>
+
+        <li>the opacity of the computed value of <code>tts:backgroundColor</code> is not <code>0</code>.</li>
+      </ul>
+
+      <p class="note">An element and its parent that satisfy the criteria above and share identical computed values of
+      <code>tts:backgroundColor</code> are counted as two distinct elements for the purpose of computing <a>NBG</a>(R<sub>i</sub>).</p>
+
+      <p class="note">The <code>set</code> element is not included in the computation of <a>NBG</a>(R<sub>i</sub>). While it can affect the
+      computed values of <code>tts:backgroundColor</code>, it is removed during <a>Intermediate Synchronic Document</a>
+      construction.</p>
+  
+      </section>
+
+    <section id='paint-text'>
+      <h2>Paint Text</h2>
+
+      <p>In the context of this section, a <dfn>glyph</dfn> is a tuple consisting of (i) one <a>character</a> and (ii) the computed values
+      of the following style properties:</p>
+
+      <ul>
+        <li><code>tts:color</code></li>
+
+        <li><code>tts:fontFamily</code></li>
+
+        <li><code>tts:fontSize</code></li>
+
+        <li><code>tts:fontStyle</code></li>
+
+        <li><code>tts:fontWeight</code></li>
+
+        <li><code>tts:textDecoration</code></li>
+
+        <li><code>tts:textOutline</code></li>
+
+        <li><code>tts:textShadow</code></li>
+      </ul>
+
+      <p class='note'>In the case where a property is <em>prohibited</em> in a profile of [[IMSC]], the computed value of the property
+      specified in [[ttml2]] can be used.</p>
+
+      <p class='note'>The Hypothetical Render Model defines a one-to-one mapping between <a>characters</a> and <a>glyphs</a>
+      (using the definition of glyph from this document).
+      While a one-to-one mapping between <a>code points</a> and glyphs (using the definition of glyph from [[?i18n-glossary]])
+      is common in some scripts (such as the Latin script),
+      the actual relationship is more complex.
+      Some scripts, such as Arabic, use different glyphs for a given character,
+      depending on its position in a word.
+      Some scripts require combining marks or use a sequence of code points to form a glyph.
+      Cases exist where a given sequence of code points can have different glyph representations depending on context.
+      This complexity is accounted for by reducing the performance of the Glyph Cache
+      for scripts where a one-to-one mapping is not the general rule (see <a>GCpy</a> below).
+      </p>
+
+      <p>Iterating through each <a>character</a> in the character content of each <a>presented region</a> of <a>Intermediate Synchronic Document</a>
+      E<sub>n</sub>, for the <a>glyph</a> associated with that <a>character</a>, the <a>Presentation Compositor</a>:</p>
+
+      <ul>
+        <li>if an identical <a>glyph</a> is present in the Glyph Cache, copies the <a>glyph</a> from Glyph Cache
+        to the Back Buffer using the Glyph Copier and flag the <a>glyph</a> as <i>retain</i>; or</li>
+
+        <li>otherwise renders (using the Glyph Renderer) the <a>glyph</a> into the Back Buffer and Glyph Cache, and flags
+        the <a>glyph</a> as <i>retain</i>.
+        </li>
+      </ul>
+
+      <figure>
+        <img src="figures/text-render-example-figure-2.png" alt="Example of <a>Presentation Compositor</a> Behavior for Text Rendering">
+
+        <figcaption>
+          Example of <a>Presentation Compositor</a> Behavior for Text Rendering
+        </figcaption>
+      </figure>
+
+      <p>The duration <dfn>DUR<sub>T</sub></dfn>(E<sub>n</sub>) for rendering the text of an <a>Intermediate Synchronic Document</a>
+      E<sub>n</sub> in the Back Buffer is as follows:</p>
+
+      <p class="equation">DUR<sub>T</sub>(E<sub>n</sub>) = ∑<sub>g<sub>i</sub> ∈ &#x393;<sub>r</sub></sub> <a>NRGA(g<sub>i</sub>)</a>
+      / <a>Ren</a>(g<sub>i</sub>) + ∑<sub>g<sub>j</sub> ∈ &#x393;<sub>c</sub></sub> <a>NRGA(g<sub>j</sub>)</a> / <a>GCpy</a></p>
+
+      <p>where</p>
+
+      <ul>
+        <li>&#x393;<sub>r</sub> is the set of <a>glyphs</a> rendered into the Back Buffer
+        using the Glyph Renderer in <a>Intermediate Synchronic Document</a> E<sub>n</sub>;
+        </li>
+
+        <li>&#x393;<sub>c</sub> is the set of <a>glyphs</a> copied to the Back Buffer using
+        the Glyph Copier in <a>Intermediate Synchronic Document</a> E<sub>n</sub>;
+        </li>
+
+        <li><a>Ren</a>(g<sub>i</sub>) is the text rendering performance factor for <a>glyph</a> g<sub>i</sub>; and
+        </li>
+
+        <li><a>GCpy</a> is the normalized glyph copy performance factor.</li>
+      </ul>
+
+      <p>The Rendered Glyph Area <dfn data-lt="NRGA(gj)">NRGA(g<sub>i</sub>)</dfn> of a <a>glyph</a> g<sub>i</sub> is given by:</p>
+
+      <p class="equation">NRGA(g<sub>i</sub>) = (fontSize of g<sub>i</sub> as a decimal fraction of <a>Root Container Region</a>
+      height)<sup>2</sup></p>
+
+      <p class='note'><a>NRGA(g<sub>i</sub>)</a> does not take into account decorations (e.g. underline), effects (e.g. outline) or actual
+      typographical glyph aspect ratio. An implementation can determine an actual cache size needs based on worst-case glyph size
+      complexity.</p>
+
+      <p>At the presentation time of <a>Intermediate Synchronic Document</a> E<sub>n</sub>, perform the following steps in
+      order:</p>
+      <ol>
+        <li>purge from the Glyph Cache all <a>glyphs</a> not flagged <i>retain</i>; and</li>
+        <li>remove the <i>retain</i> flag from all remaining <a>glyphs</a> in the Glyph Cache.</li>
+      </ol>
+
+      <p>It SHALL be an <a>error</a> if the sum of <a>NRGA(g<sub>i</sub>)</a> over all <a>glyphs</a> flagged
+      <i>retain</i> in the Glyph Cache is at any time larger than the Normalized Glyph Cache Size (<a>NGBS</a>).</p>
+
+      <p class="note">The abbreviation NGBS reflects the name of the Glyph Cache from earlier editions of the
+      specification.</p>
+
+      <p>Unless specified otherwise, the following table specifies values of <a>GCpy</a>, <a>Ren</a> and <a>NGBS</a>.</p>
+
+      <table class='simple'>
+        <tbody>
+          <tr>
+            <th colspan="2"><dfn data-lt="GCpy">Normalized glyph copy performance factor (GCpy)</dfn></th>
+          </tr>
+
+          <tr>
+            <td style="text-align: center;"><em>Script property, as defined at [[!UAX24]], for the <a>character</a> of
+            g<sub>i</sub></em></td>
+
+            <td style="text-align: center;"><em>GCpy</em></td>
+          </tr>
+
+          <tr>
+            <td><code>Latin</code>, <code>Greek</code>, <code>Cyrillic</code>, <code>Hebrew</code> or <code>Common</code></td>
+
+            <td style="text-align: center;">12</td>
+          </tr>
+
+          <tr>
+            <td><i>any other value</i></td>
+
+            <td style="text-align: center;">3</td>
+          </tr>
+
+          <tr>
+            <th colspan="2"><dfn data-lt="Ren">Text rendering performance factor Ren(G<sub>i</sub>)</dfn></th>
+          </tr>
+
+          <tr>
+            <td style="text-align: center;"><em>Script property, as defined at [[!UAX24]], for the <a>character</a> of
+            g<sub>i</sub></em></td>
+
+            <td style="text-align: center;"><em>Ren(G<sub>i</sub>)</em></td>
+          </tr>
+
+          <tr>
+            <td><code>Han</code>, <code>Katakana</code>, <code>Hiragana</code>, <code>Bopomofo</code> or <code>Hangul</code></td>
+
+            <td style="text-align: center;">0.6</td>
+          </tr>
+
+          <tr>
+            <td><i>any other value</i></td>
+
+            <td style="text-align: center;">1.2</td>
+          </tr>
+
+          <tr>
+            <th colspan="2"><dfn data-lt="NGBS">Normalized Glyph Cache Size (NGBS)</dfn></th>
+          </tr>
+
+          <tr>
+            <td colspan="2" style="text-align: center;">1</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class='note'>While <a>DUR<sub>T</sub></a>(E<sub>n</sub>) is not affected, the choice of font by the
+        <a>presentation processor</a> can increase actual rendering
+        complexity at time of presentation. For instance, a cursive font might select different glyphs for a given
+        <a>grapheme</a> (in order to maintain joining or for the start/end of the
+        word) even in the <code>Latin</code> script. Conversely the rendering of scripts that fall in the <em>any other
+        value</em> category can in practice achieve performance comparable to, say, the <code>Latin</code> script.
+      </p>
+
+      <aside class='example'>
+        Setting a Normalized Glyph Buffer Size effectively sets a limit on the total number of distinct
+        <a>glyphs</a>  present in any given <a>Intermediate Synchronic Document</a> E<sub>n</sub>. For example, assuming a
+        maximum Normalized Glyph Buffer Size of 1 and the default <code>tts:fontSize</code> of <code>1c</code> are used,
+        the font size relative to the
+        <a>Root Container Region</a> height is 1/15 , and the maximum number of distinct glyphs that can be cached is
+        1÷(1÷15)<sup>2</sup>=225 glyphs.
+      </aside>
+
+      <aside class='example'>
+        <a>GCpy</a> effectively sets a limit on animating text. For example, assuming that the <a>Root Container Region</a> is ultimately
+        rendered at 1920×1080 resolution and no regions need to have background color painted (so only a <a>CLEAR</a>(E<sub>n</sub>)
+        operation is required for the normalized drawing area for the <a>Intermediate Synchronic Document</a>), a <a>GCpy</a> and <a>BDraw</a> of
+        12 s<sup>-1</sup> would mean that a group of 160 <a>glyphs</a> with a <code>tts:fontSize</code> equal to 5% of the
+        <a>Root Container Region</a> height could be moved at most approximately 12 s<sup>-1</sup> ÷ (1 + ( 160 ×
+        0.05<sup>2</sup> )) = 8.6 times per second.
+      </aside>
+
+      <aside class='example'>
+        <a>Ren</a>(G<sub>i</sub>) effectively sets a limit on the text rendering rate. For example, assuming that the <a>Root Container
+        Region</a> is ultimately rendered at a 1920×1080 resolution, a <a>Ren</a>(G<sub>i</sub>) of 1.2 s<sup>-1</sup> would mean that at
+        most 120 <a>glyphs</a> with a fontSize of 108 px (10% of 1080 px and <a>NRGA(g<sub>i</sub>)</a> = 0.01) could be
+        rendered every second.
+      </aside>
+    </section>
+  
+    <section id="index" class="appendix">
+      <!-- All the terms will magically appear here -->
+    </section>
+  
+      <section class="appendix informative">
+      <h2>Accessibility Considerations</h2>
+      <section>
+        <h3>Impact of non-conformance</h3>
+        <p>In a system where <a>IMSC Document Instances</a> are expected to conform to the Hypothetical Render Model, an <a>IMSC
+          Document Instance</a> that does not conform to the Hypothetical Render Model might negatively impact accessibility
+          during presentation of the <a>IMSC Document Instance</a> and its associated content.</p>
+      </section>
+      <section>
+        <h3>User customisation of presentation</h3>
+        <p>This specification does not attempt to model any additional complexity for <a>presentation processors</a>
+          that might arise due to the user customisation of presentation,
+          for example as described by [[media-accessibility-reqs]];
+          such user customisation is not defined by [[IMSC]].</p>
+        <p>Implementers of <a>presentation processors</a>
+          that support user customisation of presentation should ensure that those processors are able
+          to present <a>IMSC Document Instances</a> that conform to the Hypothetical Render Model,
+          even if the customisation effectively increases the complexity of presentation.</p>
+      </section>
+    </section>
+
+  <section class="appendix informative">
+    <h2>Privacy and Security Considerations</h2>
+    <section>
+    <h3>General</h3>
+    <p>This specification has no inherent security or privacy implications.</p>
+    <p>The algorithm defined within this specification is used for static analysis of a resource.
+      This specification does not define any protocol or interface for obtaining such a resource,
+      and it does not define any interface for exposing the results of the analysis.
+      No personal or sensitive information is processed as part of the algorithm,
+      other than any such information that might happen to be part of the <a>IMSC Document Instance</a> being analysed.
+      No information is exposed by the algorithm to any origin.
+      No scripts are loaded or processed as part of the algorithm
+      and no links to external resources are dereferenced.
+    </p>
+     </section>
+    <section>
+      <h3>Implementation considerations</h3>
+      <p>Implementers of this specification should capture and meet privacy and security requirements for their intended application.
+        For example, an implementation could, when reporting on an <a>error</a> encountered during processing of an <a>IMSC Document Instance</a>,
+        include a section of the content of an <a>IMSC Document Instance</a> to elaborate the error.
+        If that content could include sensitive or personal information,
+        the implementation should ensure that any such output is provided using appropriately secure protocols.
+        No such reporting is defined or required by this specification.
+      </p>
+    </section>
+  </section>
+
+  <section class="appendix informative">
+    <h2>Error Reporting and Exception Handling</h2>
+    <section>
+      <h3>Error Reporting</h3>
+      <p>This specification does not define how, or even if, <a>errors</a> should be reported.</p>
+      <p>For example, an implementation could stop on the first error encountered,
+        or continue to process the <a>IMSC Document Instance</a>
+        and report every error.
+        Or an implementation could exit with an appropriate status code
+        without reporting any details at all.
+      </p>
+    </section>
+    <section>
+      <h3>Exception Handling</h3>
+      <p>This specification does not define any runtime exceptions,
+        or how such exceptions should be handled.</p>
+    </section>
+  </section>
+  <section class="appendix informative">
+    <h2>Acknowledgements</h2>
+
+    <p>The editor acknowledges the current and former members of the Timed Text Working Group, the members of other W3C
+    Working Groups, and industry experts in other forums who have contributed directly or indirectly to the process or
+    content of this document.</p>
+
+    <p>The editor wishes to especially acknowledge the following contributions by members: Nigel Megitt (British
+    Broadcasting Corporation) and Atsushi Shimono (W3C).</p>
+
+    <p>The editor also wishes to acknowledge Cyril Concolato (Netflix), Michael Dolan (Invited Expert) and Paul Londino
+    (Warner Bros. Discovery) for contributing content producing implementations to the implementation report.</p>
+  </section>
+
+  <section id="substantive-changes-summary" class="appendix informative">
+    <h2>Summary of substantive changes</h2>
+
+    <section>
+      <h3>Changes since the <a href="https://www.w3.org/TR/2021/WD-imsc-hrm-20211109/">First Public Working
+      Draft</a></h3>
+      <dl>
+        <dt>Reduced complexity of empty ISD to zero</dt>
+        <dd>
+          <p>In order to allow short (less than 100 ms) gaps between subtitles, which is common practice, the complexity
+          of presenting <a>empty ISDs</a> has been reduced to zero: instead of being drawn into the Back Buffer, an
+          <a>empty ISD</a> merely disconnects the Front Buffer from the display while it is presented.</p>
+          <p>Details at: <a href="https://github.com/w3c/imsc-hrm/issues/49">https://github.com/w3c/imsc-hrm/issues/49</a>
+          </p>
+        </dd>
+        <dt>Applied complexity of clearing the Back Buffer to all non-empty ISDs</dt>
+        <dd>
+          <p>The first <a>Intermediate Synchronic Document</a> is no longer treated differently and incurs a cost for
+          clearing the Back Buffer.</p>
+          <p>Details at: <a
+          href="https://github.com/w3c/imsc-hrm/issues/49">https://github.com/w3c/imsc-hrm/issues/49</a></p>
+        </dd>
+        <dt>Clarified the mapping between <i>Text rendering performance factor</i> values and script values</dt>
+        <dd>
+          <p>Details at: <a
+          href="https://github.com/w3c/imsc-hrm/issues/38">https://github.com/w3c/imsc-hrm/issues/38</a></p>
+        </dd>
+        <dt>Fixed an incorrect script value in the specification of <i><a>GCpy</a></i></dt>
+        <dd>
+          <p>Details at: <a href="https://github.com/w3c/imsc-hrm/issues/39">https://github.com/w3c/imsc-hrm/issues/39</a></p>
+        </dd>
+      </dl>
+    </section>
+
+    <section>
+      <h3>Changes since the <a href="https://www.w3.org/TR/2023/CRD-imsc-hrm-20231220/">first Candidate Recommendation</a></h3>
+      <dl>
+        <dt>Removed support for Image Profile</dt>
+        <dd>
+          <p>Support for IMSC Image Profile, which was an at-risk feature, was removed due to insufficient demonstrable
+          implementation experience.</p>
+          <p>Details at: <a href="https://github.com/w3c/imsc-hrm/issues/63">https://github.com/w3c/imsc-hrm/issues/63</a>
+          </p>
+        </dd>
+      </dl>
+    </section>
+  </section>
+</body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>SPARQL 1.2 Federated Query</title>
+
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script src="https://w3c.github.io/rdf-common/local-biblio.js" class="remove"></script>
+    <script src="https://w3c.github.io/rdf-common/fixup.js" class="remove"></script>
+
+    <script class="remove">
+      // All config options at https://respec.org/docs/
+      var respecConfig = {
+        group:                "rdf-star" ,
+        localBiblio:          localBibliography,
+        specStatus:           "ED",
+        edDraftURI:           "https://w3c.github.io/sparql-federated-query/spec/",
+        testSuiteURI:         "https://w3c.github.io/rdf-tests/",
+        shortName:            "sparql12-federated-query",
+        copyrightStart:       "2012",
+         
+        github:               "https://github.com/w3c/sparql-federated-query",
+        wgPublicList:         "public-rdf-star-wg",
+
+//        implementationReportURI: "https://w3c.github.io/sparql12-federated-query/reports/",
+//        errata:               "https://w3c.github.io/sparql12-federated-query/errata/",
+
+        previousPublishDate:  "2013-03-21",
+        prevRecURI:           "https://www.w3.org/TR/2013/REC-sparql11-federated-query-20130321",
+        prevRecShortname:     "sparql11-federated-query",
+        previousMaturity:     "REC",
+        
+         editors: [
+           { name: "Ruben Taelman", w3cid: "84199"},
+           { name: "Gregory Williams", w3cid: "38870"},
+         ],
+        formerEditors: [
+          { name: "Eric Prud'hommeaux" },
+          { name: "Carlos Buil-Aranda" },
+        ],
+
+        //doJsonLd:     true,
+        
+        lint: { "no-unused-dfns": false }
+      };
+    </script>
+
+    <style>
+      /* @import url("local.css"); */
+      /* Inlined to make preview work */
+
+/* CSS For SPARQL Query */
+
+/* In-progress working draft artifacts - to be removed eventually */
+  .issue	{ background-color: #fdd;
+                  font-size: 88% ; }
+  .add		{ background-color: #7fff7f }
+  .remove	{ background-color: #ff7f7f }
+ul.issue	{}
+  .issueBlock	{ margin: 1em 4em 1em 2.5em ; /* Top Right Bottom Left */
+                  padding: 1ex;
+	          /*overflow: auto;*/
+                  page-break-inside: avoid ; }
+  .issueTopic	{ font-weight: bold ; }
+
+ .todo		{ font-size: 80% ; color: #444 ; }
+p.todo		{}
+
+.wgNote	{ border: 0.2em solid red;
+      padding: 0.5em ;
+      margin: 1em 4em 1em 2em ; }
+
+.box     { border: thin solid #888888;
+           page-break-inside: avoid ;
+           background-color: #F8F8F8 ; padding:1em ;
+           margin-left:0 ; margin-right: 2ex; 
+           margin-top: 0.1ex ; margin-bottom: 0.1ex ;
+         }
+
+/* Misc WD stuff */
+span.cvs-id     {color: gray; font-size:80%; display: block; }
+
+/* == General Tag Treatment == */
+pre		 { margin: 1em 4em 1em 2.5em ; /* Top Right Bottom Left */
+                   padding: 1ex;
+	           /*overflow: auto;*/
+                   page-break-inside: avoid ; }
+
+/* Tables */
+table, td	{ text-align: left; }
+td, th   { border-style: solid;
+                  border-width: 1px;
+                  border-color: black;
+                  border-bottom-color: gray;
+                  border-right-color: gray; }
+td.annotation, th.annotation { border-style: none; border-bottom-style: dotted; }
+table.plain	{ border-spacing: 0px; padding: 0px ; border-collapse: collapse ; }
+                  /* cellpadding="0" cellspacing="1" style="border-collapse: collapse */
+
+
+th.major	{ background-color: #005a9c;
+                  color: white; }
+.subHeading	{ text-align: left;
+                  background-color: #CCCCCC; }
+th, td		{ padding: 3px; }
+td		{ font-size: 85%; }
+th a:link	{ text-decoration: none; }
+th a:hover	{ background-color:#FFFF99;
+                  text-decoration: underline; }
+
+/* == Prototypes == */
+pre.prototype	{ background-color:#f7f8ff;
+                  border:thin solid #8888aa;
+                  margin: 1em 4em 1em 0em ; }
+.return, .type	{ color: #177 }
+
+/* Definitions */
+.defn		{ margin-left:0 ; margin-right: 2ex; 
+                  margin-top: 0.1ex ; margin-bottom: 0.1ex ;
+                  /*border: double 1px #888888; *//* Buggy */
+                  border: thin solid #888888;
+                  padding: 1ex 2ex 0.5ex 2ex ; /* top, right, bottom, left */
+                  page-break-inside: avoid ;
+                  background-color: #F0F8F8 ; }
+div.defn p	{ margin-top: 1ex ; margin-bottom: 1.5ex ;}
+div.defn ul	{ margin-top: 1ex ; margin-bottom: 1.5ex ; }
+@media print	{ .defn { margin: 1em 1em 1em 1em ; } }
+span.definedTerm	{font-weight: bold;}
+
+div.grammarExtract
+                { border: thin solid #888888;
+                  padding: 1ex 2ex 1ex 2ex ; /* top, right, bottom, left */
+                  margin: 1em 6em 1em 2em ; 
+                  page-break-inside: avoid ;
+                  background-color: #F8F8F8 ; }
+
+pre.codeBlock  { font-family:monospace ; page-break-inside: avoid ; 
+                 margin: 0 ;
+	         margin-right: 2ex ;
+                 border: thin solid #888888; }
+
+
+
+
+/* Examples */
+pre.data	{ border: thin solid #88AA88;
+                  background-color: #E8F0E8;
+                  margin: 1em 4em 1em 0em ; }
+
+pre.dataExcerpt	{ border: thin solid #88AA88;
+                  background-color: #E8F0E8;
+                  margin: 1em 4em 1em 0em ; }
+/* Example Queries */
+.query          { background-color:#f7f8ff; }
+.queryExcerpt   { background-color:#f7f8ff; }
+pre.query	{ border:thin solid #8888aa;
+                  margin: 1em 4em 1em 0em ; }
+/* Example Results */
+.result		{ border: thin solid  #888888 ;
+                  background-color: #F0F0F0 ; }
+pre.resultGraph	{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+pre.resultSet	{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+pre.resultAsk	{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+pre.resultTurtle{  margin: 0em 0em 0em 0em ; /* Top Right Bottom Left */
+                   padding: 0ex;
+                   font-size: 100% ;
+                   page-break-inside: avoid ; }
+
+pre.result	{ margin: 1em 4em 1em 0em ; }
+
+div.result	{ font-family: monospace;
+                  margin:  1em 4em 1em 0em ;
+                  padding: 1ex ; }
+
+.result table	{ border-collapse: collapse; }
+.result table td{ border-width: 1px ;
+                  border-color : black ; 
+                  font-family: monospace ;
+                  empty-cells: show;
+                  padding-left: 1ex ; padding-right: 1ex ;
+                  vertical-align:top;
+                  text-align: left ; } 
+/*  spacing: 0 ;*/
+.result table th{ border-width: 1px ;
+                  font-family: monospace ;
+                  border-color: black ;
+                  empty-cells: show;
+                  padding-left: 1ex ; padding-right: 1ex ;
+                  vertical-align:top;
+                  text-align:center; } 
+
+/* Examples : Algebra */
+div.algExample {  border: thin solid #888888;
+                  page-break-inside: avoid ;
+                  padding:0.5em ; margin:0.5em ;
+                  margin-left: 2em ; margin-right: 2em ;
+                  font-family:monospace ; }
+
+div.algExample1 { padding:0.5em ; background-color: #F0F0FF ; }
+div.algExample2 { padding:0.5em ; margin-top: 0.5em ; background-color: #F0FFF0 ; }
+
+/* Grammar Mark-up */
+.operator	{ color: #3f3f5f;
+                  text-transform: uppercase; }
+.function	{ color: #3f3f5f;
+                }
+
+/* Tuned to cope with different browsers behaviours */
+div.grammarTable table	{ border-style: solid ;
+			  border-width: 1px ;
+			  border-color: #AAA ;
+			  border-spacing: 0px ; 
+			  border-collapse: collapse ; }
+
+div.grammarTable table * { border-left-width: 0px ;
+			   border-right-width: 0px ;
+			   border-color: #AAA ; } 
+
+div.grammarTable table * tr   { border-top-style: solid ;
+			  border-top-width: 1px ;
+			  border-top-color: #AAA ; } 
+
+.grammar	{ text-align: left ;
+                  vertical-align: top ; }
+.token		{ color: #3f3f5f; }
+table.FAndOTable .token		{ color: #00c; }
+table.FAndOTable .token:visited		{ color: #a0c; }
+.gRuleHead	{ font-style: italic ;
+                  font-family: monospace ; }
+.gRuleBody	{ font-family: monospace ; }
+.gRuleLabel	{ font-family: monospace ; }
+
+.code		{ font-family: monospace; font-size: 100%; }
+pre.code	{ font-family: monospace; font-size: 100%; margin: 0 ; }
+
+/* Table of Contents */
+.toc		{ text-indent: 0; }
+DIV.toc UL UL, DIV.toc OL OL {margin-left: 0}
+DIV.toc UL UL UL, DIV.toc OL OL OL {margin-left: 1em}
+DIV.toc UL UL UL UL, DIV.toc OL OL OL OL {margin-left: 0}
+LI.tocline1	{ font-weight: bold}
+LI.tocline2	{ font-weight: normal}
+LI.tocline4	{ font-style: italic}
+/* The border in the following rule crashes NN4 on fonts.html :-(
+DIV.subtoc	{ padding: 1em; border: solid black thin; margin: 1em 0;
+                  background: #ddd} */
+DIV.toc, UL.index, DT { text-align: left; }
+
+
+/* References to the Rdf Data Model */
+span.rdfDM	{ color: #11d; }
+
+
+/* Truth Table */
+  .truth	{ font-family: monospace; }
+  .error	{ color: #ff1f1f; }
+  table.truthTable td	{ text-align: center; font-family: monospace; }
+  table.truthTable th	{ background-color: #dfdfdf; }
+  table.truthTable tbody th	{ font-weight: normal; font-family: monospace; }
+
+/* Casting table */
+table.casting	{ font-size: x-small; }
+
+.castY	{ background-color: #7FFF7F;
+                  color: black; }
+
+.castN	{ background-color: #FF7F7F;
+                  color: black; }
+
+.castM	{ background-color: white;
+                  color: black; }
+
+span.cancast:hover { background-color: #ffa;
+                     color: black; }
+
+.SPARQLoperator	{ background-color: #FFFFbf; /* yellow */
+          }
+
+.owlnonterminal {
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 95%;
+}
+.owlgrammar {
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+    padding-left: 1ex;
+    padding-right: 1ex;
+    padding-top: 1ex;
+    padding-bottom: 0.6ex;
+    border: 1px dashed #2f6fab;
+    font-family: monospace;
+}
+
+      /* ReSpec */
+      dfn { font-style: normal ; }
+      /* ReSpec */
+
+  code           { font-family: monospace; }
+
+  div.constraint,
+  div.issue,
+  div.note,
+  div.notice     { margin-left: 2em; }
+
+  ol.enumar      { list-style-type: decimal; }
+  ol.enumla      { list-style-type: lower-alpha; }
+  ol.enumlr      { list-style-type: lower-roman; }
+  ol.enumua      { list-style-type: upper-alpha; }
+  ol.enumur      { list-style-type: upper-roman; }
+
+
+  div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+  div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+  div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+  div.exampleWrapper { margin: 4px }
+  div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+    </style>
+  </head>
+  <body>
+    <section id="abstract">
+      <h2>Abstract</h2>
+<p>RDF is a directed, labeled graph data model for representing information in the Web. SPARQL can be used to express queries across diverse data sources, whether the data is stored natively as
+    RDF or viewed as RDF via middleware. This specification defines the syntax and semantics of SPARQL Federated Query extension for executing queries distributed over different SPARQL endpoints.
+    The <code>SERVICE</code> keyword extends SPARQL to support queries that merge data distributed across the Web.</p>
+    </section>
+
+    <section id="sotd" class="introductory updateable-rec">
+      <p>
+        This specification is published by the
+        <a href="https://www.w3.org/groups/wg/rdf-star">RDF Star Working Group</a> as part of the
+        update of specifications for format and errata.
+      </p>
+      <section id="related" data-include="https://w3c.github.io/rdf-common/sparql-related.html"></section>
+
+    </section>
+
+<!-- BODY -->
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>The growing number of SPARQL query services offer data consumers an opportunity to merge data distributed across the Web. This specification defines the syntax and semantics of the
+      <code>SERVICE</code> extension to the SPARQL Query Language. This extension allows a query author to direct a portion of a query to a particular SPARQL endpoint. Results are returned to the
+      federated query processor and are combined with results from the rest of the query.</p>
+      <section id="docConventions">
+        <h3>Document Conventions</h3>
+        <section id="docNamespaces">
+          <h4>Namespaces</h4>
+          <p>This document uses the same namespaces as from [[[SPARQL12-QUERY]]].</p>
+        </section>
+        <section id="docResultDesc">
+          <h4>Result Descriptions</h4>
+          <p>Result sets are illustrated in tabular form as in [[[SPARQL12-QUERY]]].</p>
+          <div class="result">
+            <span class="doc-ref" id="table39"></span>
+            <table class="resultTable">
+              <tbody>
+                <tr>
+                  <th>x</th>
+                  <th>y</th>
+                  <th>z</th>
+                </tr>
+                <tr>
+                  <td>"Alice"</td>
+                  <td><code>&lt;http://example/a&gt;</code></td>
+                  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A 'binding' is a pair (<a data-cite="SPARQL12-QUERY#defn_QueryVariable">variable</a>, <a data-cite="RDF12-CONCEPTS#dfn-rdf-term">RDF term</a>). There
+          are three variables: <code>x</code>, <code>y</code>, and <code>z</code> (shown as column headers). Each solution is shown as one row in the body of the table. Here, there is a single
+          solution, in which variable <code>x</code> is bound to <code>"Alice"</code>, variable <code>y</code> is bound to <code>http://example/a</code>, and variable <code>z</code> is not bound to
+          an RDF term. Variables are not required to be bound in a solution.</p>
+        </section>
+        <section id="docTerminology">
+          <h4>Terminology</h4>
+          <p>The following terms are defined in [[[SPARQL12-QUERY]]] and reused in this document:</p>
+          <ul>
+            <li><a class="type IRI" data-cite="RDF12-CONCEPTS#dfn-iri-reference">IRI</a> (corresponds to the Concepts and Abstract Syntax term <code>RDF URI
+            reference</code>)</li>
+            <li><a class="type SolutionMapping" data-cite="SPARQL12-QUERY#defn_sparqlSolutionMapping">Solution Mapping</a></li>
+            <li><a class="type SolutionSequence" data-cite="SPARQL12-QUERY#defn_sparqlSolutionSequence">Solution Sequence</a></li>
+          </ul>
+        </section>
+      </section>
+    </section>
+    <section id="service">
+      <h2>SPARQL Federated Query Extension</h2>
+      <p>The <code>SERVICE</code> keyword instructs a federated query processor to invoke a portion of a SPARQL query against a remote SPARQL endpoint. This section presents examples of how to use
+      the <code>SERVICE</code> keyword. The following sections define the syntax and semantics of this extension.</p>
+      <section id="simpleService">
+        <h3>Simple query to a remote SPARQL endpoint</h3>
+        <div class="exampleGroup" id="fooService1">
+          <p>This example shows how to query a remote SPARQL endpoint and join the returned data with the data from the local RDF Dataset. Consider a query to find the names of the people we know.
+          Data about the names of various people is available at the <code>http://people.example.org/sparql</code> endpoint:</p>
+          <pre class="data">  @prefix foaf:  &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix : &lt;http://example.org/&gt; .
+  
+  :people15  foaf:name     "Alice" .
+  :people16  foaf:name     "Bob" .
+  :people17  foaf:name     "Charles" .
+  :people18  foaf:name     "Daisy" .</pre>and one wants to combine with a local FOAF file <code>http://example.org/myfoaf.rdf</code> that contains the single triple:
+          <pre class="data">&lt;http://example.org/myfoaf/I&gt; &lt;http://xmlns.com/foaf/0.1/knows&gt;  &lt;http://example.org/people15&gt; . </pre>
+          <div class="queryGroup">
+            <p>Query:</p>
+            <pre class="query">PREFIX foaf:   &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?name
+FROM &lt;http://example.org/myfoaf.rdf&gt;
+WHERE
+{
+  &lt;http://example.org/myfoaf/I&gt; foaf:knows ?person .
+  SERVICE &lt;http://people.example.org/sparql&gt; { 
+    ?person foaf:name ?name . } 
+}</pre>
+            <p>This query, on the data above, has one solution:</p>
+            <p>Query Result:</p>
+            <div class="result">
+              <span class="doc-ref" id="table1"></span>
+              <table class="resultTable">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                  </tr>
+                  <tr>
+                    <td>"Alice"</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="optionalTwoServices">
+        <h3>SPARQL query with OPTIONAL to two remote SPARQL endpoints</h3>
+        <p>Imagine we want to query people and optionally obtain their interests and the names of people they know. Imagine for instance, two endpoints containing data about people:</p>
+        <div class="exampleGroup" id="optionalService1">
+          <p>Data in the default graph at remote SPARQL endpoint: <code>http://people.example.org/sparql</code></p>
+          <pre class="data"> 
+  @prefix foaf:  &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix : &lt;http://example.org/&gt; .
+  
+  :people15  foaf:name     "Alice" .
+  :people16  foaf:name     "Bob" .
+  :people17  foaf:name     "Charles" .
+  :people17  foaf:interest     &lt;http://www.w3.org/2001/sw/rdb2rdf/&gt; .
+  </pre>
+          <p>and data in the default graph the remote SPARQL endpoint: <code>http://people2.example.org/sparql</code></p>
+          <pre class="data"> 
+  @prefix foaf:  &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix : &lt;http://example.org/&gt; .
+  
+  :people15  foaf:knows    :people18 . 
+  :people18  foaf:name     "Mike" .
+  :people17  foaf:knows    :people19 . 
+  :people19  foaf:name     "Daisy" .
+  </pre>
+          <div class="queryGroup">
+            <p>Query:</p>
+            <pre class="query">PREFIX foaf:   &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?person ?interest ?known
+WHERE
+{
+  SERVICE &lt;http://people.example.org/sparql&gt; { 
+    ?person foaf:name ?name .  
+    OPTIONAL { 
+      ?person foaf:interest ?interest .
+      SERVICE &lt;http://people2.example.org/sparql&gt; { 
+        ?person foaf:knows ?known . } }
+  }    
+}</pre>
+            <p>This query, on the data above, has three solutions:</p>
+            <p>Query Result:</p>
+            <div class="result">
+              <span class="doc-ref" id="table03"></span>
+              <table class="resultTable">
+                <tbody>
+                  <tr>
+                    <th>person</th>
+                    <th>interest</th>
+                    <th>known</th>
+                  </tr>
+                  <tr>
+                    <td>"Alice"</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>"Bob"</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>"Charles"</td>
+                    <td>&lt;http://www.w3.org/2001/sw/rdb2rdf/&gt;</td>
+                    <td>&lt;http://example.org/people19&gt;</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p>Notice that in the query above there is a nested <code>SERVICE</code> in the <code>OPTIONAL</code> clause. This query requires the SPARQL query service at
+        <code>http://people.example.org/sparql</code> to support basic federated query.</p>
+      </section>
+      <section id="serviceFailure">
+        <h3>Service Execution Failure</h3>
+        <p>The execution of a <code>SERVICE</code> pattern may fail due to several reasons: the remote service may be down, the service IRI may not be dereferenceable, or the endpoint may return an
+        error to the query. Normally, under such circumstances the invoked query containing a <code>SERVICE</code> pattern fails as a whole. Queries may explicitly allow failed <code>SERVICE</code>
+        requests with the use of the <code>SILENT</code> keyword. The <code>SILENT</code> keyword indicates that errors encountered while accessing a remote SPARQL endpoint should be ignored while
+        processing the query. The failed <code>SERVICE</code> clause is treated as if it had a result of a single solution with no bindings.</p>
+        <p>In the following query the <code>SILENT</code> keyword is present. If the remote SPARQL endpoint is not available because the SPARQL endpoint does not exist, it is down or it is not
+        accessible the query will return a solution sequence of one empty solution mapping. If the <code>SILENT</code> keyword is not present, the query will stop and return the error.</p>
+        <div class="exampleGroup" id="fooService2">
+          <p>Data in <code>&lt;http://people.example.org/sparql&gt;</code> endpoint:</p>
+          <pre class="data">  &lt;http://example.org/people15&gt;  &lt;http://xmlns.com/foaf/0.1/name&gt;     "Charles" .</pre>
+          <div class="queryGroup">
+            <p>Query:</p>
+            <pre class="query">PREFIX foaf:   &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?name
+WHERE
+{
+  SERVICE SILENT &lt;http://people.example.org/sparql&gt; { 
+    &lt;http://example.org/people15&gt; foaf:name ?name . }
+}</pre>
+            <p>Query result if an error occurs while querying the remote SPARQL endpoint:</p>
+            <div class="result">
+              <span class="doc-ref" id="table2"></span>
+              <table class="resultTable">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="values">
+        <h3>Interplay of SERVICE and VALUES (Informative)</h3>
+        <p>SPARQL Query includes the <code>VALUES</code> clause (<a class="inform" data-cite="SPARQL12-QUERY#inline-data">VALUES</a>), which can be used to provide an unordered
+        solution sequence that is joined with the results of the query evaluation. Implementers of SPARQL Federated Query may use the <code>VALUES</code> clause to constrain the results received
+        from a remote endpoint based on solution bindings from evaluating other parts of the query.</p>
+        <p>The following example shows how <code>SERVICE</code> and <code>VALUES</code> can work together. Suppose a query that asks for all instances of foaf:Person in the default graph and also
+        their known people in the remote endpoint <code>http://example.org/sparql</code>:</p>
+        <p>Data in the default graph:</p>
+        <div class="exampleGroup" id="bindingsService1">
+          <pre class="data">   
+  @prefix foaf:  &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix : &lt;http://example.org/&gt; .
+  
+  :a a foaf:Person  ;
+     foaf:name     "Alan" ;
+     foaf:mbox;     "alan@example.org" .
+  :b a foaf:Person  ;
+     foaf:name     "Bob" ;
+     foaf:mbox     "bob@example.org" .
+  </pre>
+          <p>and data in the default graph the remote SPARQL endpoint <code>http://example.org/sparql</code>:</p>
+          <pre class="data"> 
+  @prefix foaf:  &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix : &lt;http://example.org/&gt; .
+  
+  :a  foaf:knows     :b . 
+  :b  foaf:knows     :c .
+  :c  foaf:knows     :a .
+  :a  foaf:interest  "SPARQL Basic Federated Query" . 
+  :b  foaf:interest  "SPARQL Query" .
+  :c  foaf:interest  "RDB2RDF Direct mapping" .
+  </pre>
+          <p>Query:</p>
+          <pre class="query">PREFIX foaf:   &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?s
+{
+  ?s a foaf:Person .
+  SERVICE &lt;http://example.org/sparql&gt; {?s foaf:knows ?o }
+}
+</pre>
+        </div>
+        <p>When the original query is executed naively, with an unconstrained service call the endpoint may return more results than necessary. It may also happen that the SPARQL endpoint will not
+        return all of them. Many existing SPARQL endpoints have restrictions in the number of results they return and may miss the ones matching subjects <code>?s</code> from the local default graph.
+        Thus, an implementation of a query planner for federated queries may decide to decompose the query into two queries instead, where first the bindings from the local default graph are
+        evaluated:</p>
+        <div class="exampleGroup" id="bindingsService2">
+          <p>Query:</p>
+          <pre class="query">PREFIX : &lt;http://example.org/&gt;
+PREFIX foaf:   &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?s
+{
+  ?s a foaf:Person
+} 
+</pre>
+          <p>This query, on the data above, has two solutions:</p>
+          <p>Query Result:</p>
+          <div class="result">
+            <span class="doc-ref" id="table04a"></span>
+            <table class="resultTable">
+              <tbody>
+                <tr>
+                  <th>s</th>
+                </tr>
+                <tr>
+                  <td>&lt;http://example.org/a&gt;</td>
+                </tr>
+                <tr>
+                  <td>&lt;http://example.org/b&gt;</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p>Next, dispatch to the remote endpoint &lt;http://example.org/sparql&gt; a constrained query with the solutions for <code>?s</code>:</p>
+        <pre class="query">PREFIX foaf:   &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX : &lt;http://example.org/&gt;
+SELECT * {?s foaf:knows ?o } VALUES (?s) { (:a) (:b) }</pre>
+        <p>This query on &lt;http://example.org/sparql&gt; has two solutions:</p>
+        <p>Query Result:</p>
+        <div class="result">
+          <span class="doc-ref" id="table04b"></span>
+          <table class="resultTable">
+            <tbody>
+              <tr>
+                <th>s</th>
+                <th>o</th>
+              </tr>
+              <tr>
+                <td>&lt;http://example.org/a&gt;</td>
+                <td>&lt;http://example.org/b&gt;</td>
+              </tr>
+              <tr>
+                <td>&lt;http://example.org/b&gt;</td>
+                <td>&lt;http://example.org/c&gt;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Both intermediary solution sequences can now be joined together, and projected to the requested variables to get to the expected two solution mappings for the overall query:</p>
+        <div class="result">
+          <span class="doc-ref" id="table04c"></span>
+          <table class="resultTable">
+            <tbody>
+              <tr>
+                <th>s</th>
+              </tr>
+              <tr>
+                <td>&lt;http://example.org/a&gt;</td>
+              </tr>
+              <tr>
+                <td>&lt;http://example.org/b&gt;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <section id="fedSemantics">
+      <h2>SPARQL Simple Federation Extension: semantics</h2>
+      <section id="defn_service">
+        <h3>Translation to the SPARQL Algebra</h3>
+        <p>The <code>SERVICE</code> extension is defined as an additional type of GroupGraphPattern, with an accompanying addition to SPARQL Query's <a data-cite="SPARQL12-QUERY#convertGraphPattern">Transform (syntax form)</a>:</p>
+        <blockquote>
+          <p>If the form is <code><a data-cite="SPARQL12-QUERY#rGroupGraphPattern">GroupGraphPattern</a></code></p>
+          <blockquote>
+            <p>From the <a data-cite="SPARQL12-QUERY#sparqlTranslateGraphPatterns">Translate Graph Patterns section</a> of [[[SPARQL12-QUERY]]] we extend the transformation of GroupGraphPattern to define the transformation of <code>SERVICE</code> patterns:</p>
+          </blockquote>
+        </blockquote>
+        <pre class="codeBlock">Let FS := the empty set
+Let G := the empty pattern, Z, a basic graph pattern which is the empty set.
+Let SilentOp := boolean, indicating SERVICE error behavior.
+
+For each element E in the GroupGraphPattern
+    If E is of the form FILTER(expr)
+        FS := FS ∪ {expr}
+        End
+
+    If E is of the form OPTIONAL{P} 
+        Let A := Transform(P)
+        If A is of the form Filter(F, A2)
+            G := LeftJoin(G, A2, F)
+        Else 
+            G := LeftJoin(G, A, true)
+            End
+        End
+
+    If E is of the form MINUS{P}
+        G := Minus(G, Transform(P))
+        End
+
+    If E is of the form BIND(expr AS var)
+        G := Extend(G, var, expr)
+        End
+
+    If E is any other form 
+        Let A := Transform(E)
+        G := Join(G, A)
+        End
+
+    <strong>If E is of the form SERVICE [SILENT] IRI {P}
+        Let G := Join(G, Service(IRI, Transform(P), SilentOp))
+        End</strong>
+   
+   End
+   
+If FS is not empty:
+  Let X := Conjunction of expressions in FS
+  G := Filter(X, G)
+
+The result is G.
+            </pre>
+      </section>
+      <section id="algebra_service">
+        <h3>SPARQL Simple Federation Extension Algebra</h3>
+        <p>The evaluation of <code>SERVICE</code> is defined in terms of the [[[?SPARQL12-RESULTS-XML]]]
+        returned by a [[[SPARQL12-PROTOCOL]]] execution of the nested graph pattern:</p>
+        <div class="defn">
+          <p><strong>Definition: <span class="doc-ref" id="defn_evalService">Evaluation of a Service Pattern</span></strong></p>Let
+          <ul>
+            <li>iri be an IRI,</li>
+            <li><code>Ω<sub>0</sub></code> the solution set with one empty solution, and</li>
+            <li>SilentOp be a boolean variable to indicate that SERVICE execution should ignore errors when true.</li>
+          </ul>
+          <p>then:</p>
+          <div class="defn">
+            eval(D(G), Service(IRI,P,SilentOp)) = Invocation( iri, P, SilentOp )
+          </div>where: Invocation(IRI, P, SilentOp) is
+          <ul>
+            <li>the multiset of solution mappings corresponding to the results of executing query <code>SELECT * WHERE Q</code> against the service endpoint with IRI iri where Q is the serialization
+            of P in SPARQL syntax, in case of a successful service invocation according to the SPARQL protocol, and otherwise</li>
+            <li><code>Ω<sub>0</sub>.</code> in case SilentOp is true, and otherwise</li>
+            <li>error.</li>
+          </ul>
+        </div>
+        <section id="algebra_service_examples">
+          <h4>SERVICE Examples</h4>
+          <p>In the folowing section we introduce two examples showing the evaluation of <code>SERVICE</code> patterns in the SPARQL algebra:</p>
+          <p>Example: a <code>SERVICE</code> graph pattern in a series of joins:</p>
+          <div class="algExample">
+            <div class="algExample1">
+              ... WHERE { { ?s :p1 ?v1 } SERVICE &lt;srvc&gt; {?s :p2 ?v2 } { ?s :p3 ?v2 } }
+            </div>
+            <div class="algExample2">
+              Join( Service( &lt;srvc&gt;,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BGP( ?s :p2 ?v2 ), false ),<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BGP( ?s :p3 ?v2 ) )
+            </div>
+          </div>
+          <p>Example: a <code>SERVICE SILENT</code> graph pattern in a series of joins:</p>
+          <div class="algExample">
+            <div class="algExample1">
+              ... WHERE { { ?s :p1 ?v1 } SERVICE SILENT &lt;srvc&gt; {?s :p2 ?v2 } { ?s :p3 ?v2 } }
+            </div>
+            <div class="algExample2">
+              Join( Service( &lt;srvc&gt;,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BGP( ?s :p2 ?v2 ), true ),<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BGP( ?s :p3 ?v2 ) )
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+    <section id="variableService">
+      <h2>SERVICE Variables (Informative)</h2>
+      <p>In the this section we do not present official evaluation semantics for the SPARQL pattern <code>SERVICE VAR</code>. We only provide indications about how the evaluation of the SPARQL
+      pattern <code>SERVICE VAR</code> can be evaluated.</p>
+      <p>A variable used in place of a service IRI indicates that the service call for any solution depends on that variable's binding in that solution. For instance, the default graph may contain
+      data about which services contain data about project endpoints. We assume the following data on various projects that contains information about SPARQL endpoints where data about these projects
+      (using the <a href="https://github.com/edumbill/doap/wiki">DOAP vocabulary</a>) can be queried from:</p>
+      <pre class="data">@prefix void:    &lt;http://rdfs.org/ns/void#&gt; .
+@prefix dc: &lt;http://purl.org/dc/elements/1.1/&gt; .
+@prefix doap: &lt;http://usefulinc.com/ns/doap#&gt; .
+
+[] dc:subject "Querying RDF" ;
+   void:sparqlEndpoint &lt;http://projects1.example.org/sparql&gt; .
+[] dc:subject "Querying RDF remotely" ;
+   void:sparqlEndpoint &lt;http://projects2.example.org/sparql&gt; .
+[] dc:subject "Updating RDF remotely"  ;
+   void:sparqlEndpoint &lt;http://projects3.example.org/sparql&gt; .
+
+</pre>
+      <p>Data in the default graph at remote SPARQL endpoint http://projects2.example.org/sparql:</p>
+      <pre class="data">_:project1  doap:name    "Query remote RDF Data" .
+_:project1  doap:created "2011-02-12"^^xsd:date .
+_:project2  doap:name    "Querying multiple SPARQL endpoints" .
+_:project2  doap:created "2011-02-13"^^xsd:date .
+</pre>
+      <p>Data in the default graph at remote SPARQL endpoint http://projects3.example.org/sparql:</p>
+      <pre class="data">_:project3  doap:name    "Update remote RDF Data" .
+_:project3  doap:created "2011-02-14"^^xsd:date .
+</pre>
+      <p>We now want to query the project names of projects on the subject "remote":</p>
+      <div class="queryGroup">
+        <pre class="query">PREFIX  void: &lt;http://rdfs.org/ns/void#&gt;
+PREFIX  dc:   &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX  doap: &lt;http://usefulinc.com/ns/doap#&gt; 
+
+SELECT ?service ?projectName
+WHERE {
+  # Find the service with subject "remote".
+  ?p dc:subject ?projectSubject ;
+     void:sparqlEndpoint ?service .
+     FILTER regex(?projectSubject, "remote")
+
+  # Query that service projects.
+  SERVICE ?service {
+     ?project  doap:name ?projectName . } 
+}
+
+</pre>
+        <p>In the following table we present the intuitive solutions for this query with the data above:</p>
+        <p>Query Result:</p>
+        <div class="result">
+          <span class="doc-ref" id="tableResultsVarEndpoint"></span>
+          <table class="resultTable">
+            <tbody>
+              <tr>
+                <th>service</th>
+                <th>projectName</th>
+              </tr>
+              <tr>
+                <td>&lt;http://projects2.example.org/sparql&gt;</td>
+                <td>"Query remote RDF Data"</td>
+              </tr>
+              <tr>
+                <td>&lt;http://projects2.example.org/sparql&gt;</td>
+                <td>"Querying multiple SPARQL endpoints"</td>
+              </tr>
+              <tr>
+                <td>&lt;http://projects3.example.org/sparql&gt;</td>
+                <td>"Update remote RDF Data"</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p>A <code>SERVICE</code> clause involving a variable can be executed as a series of separate invocations of SPARQL query services. The results of each invocation are combined using union.</p>
+      <p>The query engine must determine the possible target SPARQL query services. The exact mechanism for doing this is not defined in this document. Execution order may also be used to determine
+      the list of services to to be tried. The example above suggests a specific order of execution: evaluating the basic graph pattern and filter outside the <code>SERVICE</code> block first will
+      yield bindings for <code>?service</code> which may then be used to evaluate the <code>SERVICE</code> block:</p>
+      <pre class="query">?p dc:subject ?projectSubject ;
+   void:sparqlEndpoint ?service
+   FILTER regex(?projectSubject, "remote")</pre>
+      <p>Once <code>?service</code> has been evaluated it is possible to execute <code>SERVICE</code> for each value of <code>?service</code>:</p>
+      <pre class="query">SERVICE ?service {
+?project doap:name ?projectName . }</pre>
+      <p>Note that blank nodes are unique to any document which serializes them. Also, <code>SERVICE</code> calls depend on the [[[SPARQL12-PROTOCOL]]] which transfers serialized
+      RDF documents making blank nodes unique between service calls.</p>
+    </section>
+    <section id="conformance">
+      <h2>Conformance</h2>
+      <p>See section 4 <a data-cite="SPARQL12-QUERY#grammar">SPARQL Federated Query Grammar</a> regarding conformance of <a data-cite="SPARQL12-QUERY#defn_SPARQLQueryString">SPARQL Query strings</a> that include the SPARQL Federated Query Extensions. See section 3.1 <a href="#defn_service">Definition
+      of SERVICE</a> for conformance of query results for the <code>SERVICE</code> keyword.</p>
+      <p>This specification is intended for use in conjunction with the [[[SPARQL12-QUERY]]]. See that specification for its conformance
+      criteria.</p>
+    </section>
+    <section id="security">
+      <h2>Security Considerations</h2>
+      <p>SPARQL queries using <code>SERVICE</code> imply that a URI will be dereferenced, and that the result will be incorporated into a working data set. All of the security issues of <a class=
+      "norm" data-cite="SPARQL12-PROTOCOL#policy-security">SPARQL Protocol</a>, <a class="norm" data-cite="SPARQL12-QUERY#security">SPARQL Query</a>, and <a data-cite="rfc3986#section-7" class="norm">Uniform Resource
+      Identifier (URI): Generic Syntax Section 7</a> should be considered.</p>
+    </section>
+
+    <section id="sec-acknowledgements">
+      <h2>Acknowledgements</h2>
+      <p>The SPARQL Federated Query document is a product of the whole of the <a href="http://www.w3.org/2009/sparql/wiki/Main_Page">W3C SPARQL Working Group</a>, and our thanks for discussions,
+      comments, and reviews go to all present and past members.</p>
+      <p>In addition, we have had comments and discussions with many people through the working group comments list. All comments go to making a better document. Carlos would also like to
+      particularly thank Jorge Pérez, Oscar Corcho, and Marcelo Arenas for their discussions on the syntax and semantics of the Federated Query extension.</p>
+    </section>
+    
+    <section id="changes-1-1" class="appendix informative">
+      <h2>Changes between SPARQL 1.1 Federated Query and SPARQL 1.2 Federated Query</h2>
+      <ul>
+        <li>Refer to RDF as a data model instead of data format in <a href="#abstract" class="sectionRef"></a></li>
+        <li><a href="https://www.w3.org/2013/sparql-errata#errata-fq-1">errata-fq-1</a>: Incorrect example in <a href="#values">interplay of SERVICE and VALUES example</a></li>
+		<li>Update mentions on SPARQL and RDF 1.1 to 1.2.</li>
+      </ul>
+    </section>
+    
+<!-- BODY -->
+    <section id="privacy">
+      <h2>Privacy Considerations</h2>
+      <p>TODO</p>
+    </section>
+
+    <section id="internationalization">
+      <h2>Internationalization Considerations</h2>
+      <p>TODO</p>                
+    </section>
+
+    <section id="index"></section>
+
+  </body>
+</html>

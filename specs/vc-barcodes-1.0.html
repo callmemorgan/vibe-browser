@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Verifiable Credential Barcodes v1.0</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <!--
+      === NOTA BENE ===
+      For the three scripts below, if your spec resides on dev.w3 you can check them
+      out in the same tree and use relative links so that they'll work offline,
+     -->
+    <script src="//www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class="remove"
+      src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.5.1/dist/main.js"></script>
+    <script type="text/javascript" class="remove">
+      var respecConfig = {
+        subtitle: "Embedding Verifiable Credentials in optical barcodes",
+        // specification status (e.g., WD, LCWD, NOTE, etc.). If in doubt use ED.
+        group: "vc",
+        specStatus: "FPWD",
+
+        // the specification's short name, as in http://www.w3.org/TR/short-name/
+        shortName: "vc-barcodes-1.0",
+
+        // if you wish the publication date to be other than today, set this
+        publishDate:  "",
+
+        // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+        // and its maturity status
+        // previousPublishDate:  "1977-03-15",
+        // previousMaturity:  "WD",
+
+        // if there a publicly available Editor's Draft, this is the link
+        edDraftURI: "https://w3c.github.io/vc-barcodes/",
+        //latestVersion: "https://www.w3.org/community/reports/credentials/CG-FINAL-vc-barcodes-20260320/",
+
+        // if this is a LCWD, uncomment and set the end of its review period
+        //implementationReportURI: "",
+        //crEnd: "2024-01-17",
+
+        // if you want to have extra CSS, append them to this list
+        // it is recommended that the respec.css stylesheet be kept
+        //extraCSS:             ["spec.css", "prettify.css"],
+
+        // editors, add as many as you like
+        // only "name" is required
+        editors: [{
+          name: "Wesley Smith",
+          url: "https://www.linkedin.com/in/wesley-smith-phd-24973a12b/",
+          company: "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/",
+          w3cid: 152091
+        }, {
+          name: "Elaine Wooton",
+          url: "https://www.linkedin.com/in/ewootonidxqd/",
+          company: "Invited Expert",
+          w3cid: 166541
+        }, {
+          name: "Manu Sporny",
+          url: "https://www.linkedin.com/in/manusporny/",
+          company: "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/",
+          w3cid: 41758
+        }],
+
+        // authors, add as many as you like.
+        // This is optional, uncomment if you have authors as well as editors.
+        // only "name" is required. Same format as editors.
+
+        authors: [{
+          name: "Manu Sporny", url: "https://www.linkedin.com/in/manusporny/",
+          company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/",
+          w3cid: 41758
+        }, {
+          name: "Dave Longley", url: "https://github.com/dlongley",
+          company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/",
+          w3cid: 48025
+        }, {
+          name: "Wesley Smith",
+          url: "https://www.linkedin.com/in/wesley-smith-phd-24973a12b/",
+          company: "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"
+        }],
+
+        // name of the WG
+        //wg:           "W3C Credentials Community Group",
+
+        // URI of the public WG page
+        //wgURI:        "https://www.w3.org/community/credentials/",
+
+        // name (with the @w3c.org) of the public mailing to which comments are due
+        //wgPublicList: "public-credentials",
+
+        github: "https://github.com/w3c/vc-barcodes/",
+
+        otherLinks: [{
+          key: "Meetings:",
+          data: [{
+            value: "View next scheduled meeting",
+            href: "https://www.w3.org/events/meetings/8a197c4d-46a1-4377-b02c-0e05dbf1da7a/#next"
+          }]
+        }],
+
+        // URI of the patent status for this WG, for Rec-track documents
+        // !!!! IMPORTANT !!!!
+        // This is important for Rec-track documents, do not copy a patent URI from a random
+        // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+        // Team Contact.
+        // wgPatentURI:  "",
+        maxTocLevel: 3,
+        /*preProcess: [ webpayments.preProcess ],
+        alternateFormats: [ {uri: "diff-20111214.html", label: "diff to previous version"} ],
+        */
+        localBiblio: {
+          "CBOR-LD": {
+            title: "Compact Binary Object Representation for Linked Data v1.0",
+            href: "https://w3c.github.io/cbor-ld/"
+          },
+          "ICAO9303-3": {
+            title: "Machine Readable Travel Documents Part 3: Specifications Common to all MRTDs, Eighth Edition, 2021",
+            date: "2021",
+            href: "https://www.icao.int/publications/Documents/9303_p3_cons_en.pdf",
+            authors: [
+              "ICAO"
+            ],
+            publisher: "International Civil Aviation Organization"
+          },
+          "ISO15438-2015": {
+            title: "ISO/IEC 15438:2015: PDF417 Bar Code Symbology Specification",
+            date: "2015",
+            href: "https://www.iso.org/standard/65502.html",
+            authors: [
+              "ISO/IEC JTC 1/SC 31"
+            ],
+            publisher: "International Standards Organization"
+          },
+          "aamva-dl-id-card-design-standard": {
+            title: "AAMVA DL/ID Card Design Standard (2020)",
+            date: "2020",
+            href: "https://www.aamva.org/assets/best-practices,-guides,-standards,-manuals,-whitepapers/aamva-dl-id-card-design-standard-(2020)",
+            publisher: "American Association of Motor Vehicle Administrators"
+          }
+        },
+        lint: {"no-unused-dfns": false},
+        xref: ["INFRA", "VC-DATA-MODEL-2.0", "VC-DATA-INTEGRITY", "CID"],
+        postProcess: [window.respecVc.createVcExamples],
+        otherLinks: [{
+          key: "Related Specifications",
+          data: [{
+            value: "The Verifiable Credentials Data Model v2.0",
+            href: "https://www.w3.org/TR/vc-data-model-2.0/"
+          }, {
+            value: "Verifiable Credential Data Integrity v1.1",
+            href: "https://www.w3.org/TR/vc-data-integrity/"
+          }, {
+            value: "The Elliptic Curve Digital Signature Algorithm Cryptosuites v1.1",
+            href: "https://www.w3.org/TR/vc-di-ecdsa/"
+          }, {
+            value: "Compact Binary Object Representation for Linked Data v1.0",
+            href: "https://json-ld.github.io/cbor-ld-spec/"
+          }]
+        }]
+      };
+    </script>
+    <style>
+code {
+  color: rgb(199, 73, 0);
+  font-weight: bold;
+}
+pre.nohighlight {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+pre .highlight {
+  font-weight: bold;
+  color: green;
+}
+pre .comment {
+  font-weight: bold;
+  color: Gray;
+}
+.color-text {
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+ol.algorithm {
+  counter-reset: numsection;
+  list-style-type: none;
+}
+ol.algorithm li {
+  margin: 0.5em 0;
+}
+ol.algorithm li:before {
+  font-weight: bold;
+  counter-increment: numsection;
+  content: counters(numsection, ".") ") ";
+}
+    </style>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+This specification describes a mechanism to protect optical barcodes,
+such as those found on driver's licenses (PDF417) and travel documents (MRZ),
+using Verifiable Credentials [[VC-DATA-MODEL-2.0]]. The Verifiable Credential
+representations are compact enough such that they fit in under 150 bytes and
+can thus be integrated with traditional two-dimensional barcodes that are
+printed on physical cards using standard printing processes.
+      </p>
+    </section>
+
+    <section id="sotd">
+    </section>
+
+    <section>
+      <h2>Introduction</h2>
+      <p>
+Physical credentials, such as driver's licenses, passports, and travel
+credentials often include machine-readable data that can be used to quickly read
+the information from the document. This information is encoded in formats such
+as PDF417 [[ISO15438-2015]], machine-readable zone (MRZ) [[ICAO9303-3]], and
+other optically scannable codes that are formatted in one-dimensional or
+two-dimensional "bars"; thus the term "barcode". This information is often
+not protected from tampering and the readily available barcode generation and
+scanning libraries mean that it is fairly trivial for anyone to generate these
+barcodes.
+      </p>
+      <p>
+It is, therefore, useful for an <a>issuer</a> of these barcodes to protect
+the information contained within the barcode as well as the entity that
+generated the barcode.
+      </p>
+      <p>
+The [[[VC-DATA-MODEL-2.0]]] specification provides a global standard for
+expressing credential information, such as those in a driver's license or
+travel document. The [[[VC-DATA-INTEGRITY]]] specification provides a global
+standard for securing credential information. These two specifications, when
+combined, provide a means of protecting credentials from tampering,
+expressing authorship of the credential, and providing the current status of
+a credential in a privacy-protecting manner. These data formats, however, tend
+to be too large to express in an optical barcode.
+      </p>
+      <p>
+The [[[CBOR-LD]]] specification provides a means of compressing secured
+<a>verifiable credentials</a> to the point at which it becomes feasible to
+express the information as an optical barcode, or embedded within an optical
+barcode.
+      </p>
+      <p>
+This specification describes a mechanism to protect optical barcodes,
+such as those found on driver's licenses (PDF417) and travel documents (MRZ),
+by using a <a>verifiable credential</a> [[VC-DATA-MODEL-2.0]] to express
+information about either the barcode itself or the subject of the barcode.
+Next, this Verifiable Credential is secured using Data Integrity
+[[VC-DATA-INTEGRITY]], and then compressed using CBOR-LD [[CBOR-LD]].
+      </p>
+      <p>
+There are two main mechanisms by which a Verifiable Credential can
+be used to protect a barcode:
+        <ul>
+          <li>
+A barcode containing a Verifiable Credential can be added to a physical document —
+including a new document — that does not currently have a barcode on it. The
+Verifiable Credential within the barcode can contain some or all of the
+data from the document. In this use case, the barcode will generally contain only
+the Verifiable Credential.
+          </li>
+          <li>
+When a document already contains a barcode, security can be improved by replacing
+that barcode with a new one that includes a Verifiable Credential for improved
+security. In this scenario, the new, augmented barcode is expected to contain both
+the information from the original barcode and a newly added Verifiable Credential
+that digitally signs over the other information.
+          </li>
+        </ul>
+      </p>
+      <p>
+Both use cases achieve authenticity, integrity, and tamper resistance over the
+data protected by the Verifiable Credential. Additionally, for use cases that
+require it, these Verifiable Credentials can be revoked or suspended on a
+per-barcode basis.
+      </p>
+      <section>
+        <h2>Introductory Examples</h2>
+
+        <p>
+The following sections provide a few introductory examples of the ways this
+specification can be used to enhance existing physical credentials with
+digital signatures via [=verifiable credentials=].
+        </p>
+
+        <section>
+          <h3>Driver's License</h3>
+
+          <p>
+This section provides an example on how the technology in this specification
+can be utilized to secure the optical barcode on a driver's license that
+uses a PDF417 barcode. We start off with an example driver's license:
+          </p>
+
+          <figure id="dl-front">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/dl-front.png"
+                alt="Picture of the front of a driver's license issued by the state of Utopia which contains a picture of the individual that is the subject of the driver's license along with their attributes, such as name, address, height, weight, eye color, and driving privileges.">
+            <figcaption style="text-align: center;">
+  The front of a driver's license issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The back of the driver's license contains a PDF417 barcode:
+          </p>
+
+          <figure id="dl-back">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/dl-back.png"
+                alt="Picture of the back of a driver's license issued by the state of Utopia, containing usage rules as well as a PDF417 barcode that encodes much of the information displayed on the front of the card.">
+            <figcaption style="text-align: center;">
+A back of a driver's license issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The PDF417 data contains information that is secured using the algorithms
+described in this specification. Namely, the PDF417 barcode contains a
+<a>verifiable credential</a> of the following form.
+          </p>
+
+          <pre class="example nohighlight"
+              title="Verifiable Credential embedded in the PDF417 barcode">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vdl/v2",
+    "https://w3id.org/vdl/utopia/v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  <span class="comment">// the issuer value below is defined as a URL in the 'utopia/v1' context above</span>
+  "issuer": "did:web:dmv.utopia.example",
+  "credentialStatus": {
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "https://dmv.utopia.gov/statuses/12345/status-lists"
+    "terseStatusListIndex": 123567890
+  },
+  "credentialSubject": {
+    "type": "AamvaDriversLicenseScannableInformation",
+    "protectedComponentIndex": "uP_BA"
+  },
+  "proof": {
+    "type": "DataIntegrity",
+    "cryptosuite": "ecdsa-xi-2023",
+    <span class="comment">// the public key below is defined as a URL in the 'utopia/v1' context above</span>
+    "verificationMethod": "did:web:dmv.utopia.example#key-1",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4peo48uwK2EF4Fta8P...HzQMDYJ34r9gL"
+  }
+}
+          </pre>
+
+          <p>
+The <a>verifiable credential</a> above is then compressed using [[CBOR-LD]]
+to the following output (in CBOR Diagnostic Notation):
+          </p>
+
+          <pre class="example nohighlight"
+              title="CBOR-LD compressed Verifiable Credential (145 bytes)">
+1281{
+  1 => [ 32768, 32769, 32770],                           <span class="comment">// @context</span>
+  155 => [ 116, 164 ],                                   <span class="comment">// type</span>
+  192 => 174,                                            <span class="comment">// issuer</span>
+  186 => { 154 => 166, 206 => 178, 208 => 1234567890 },  <span class="comment">// credentialStatus</span>
+  188 => { 154 => 172, 180 => h'753FF040 },              <span class="comment">// credentialSubject</span>
+  194 => {                                               <span class="comment">// proof</span>
+    154 => 108,                                          <span class="comment">// type</span>
+    214 => 4,                                            <span class="comment">// cryptosuite</span>
+    224 => 230                                           <span class="comment">// verificationMethod</span>
+    228 => 176,                                          <span class="comment">// proofPurpose</span>
+    210 => Uint8Array(65) [ ... ],                       <span class="comment">// proofValue</span>
+  }
+}
+          </pre>
+
+        </section>
+
+        <section>
+          <h3>Employment Authorization</h3>
+
+          <p>
+This section provides an example on how the technology in this specification
+can be utilized to secure the machine-readable zone on an employment
+authorization document that uses a machine-readable zone (MRZ) on the back of
+the card. We start off with an example employment authorization document:
+          </p>
+
+          <figure id="ead-front">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/ead-front.png"
+                alt="Picture of the front of an employment authorization document issued by the state of Utopia which contains a picture of the individual that is the subject of the document along with their attributes, such as name, address, height, weight, eye color, and employment privileges.">
+            <figcaption style="text-align: center;">
+The front of an employment authorization document issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The back of the employment authorization document contains a machine-readable
+zone (MRZ) containing information designed to be read through optical character
+recognition:
+          </p>
+
+          <figure id="ead-back">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/ead-back.png"
+                alt="Picture of the back of a employment authorization document issued by the state of Utopia, containing usage rules as well as machine-readable zone data that encodes much of the information displayed on the front of the card.">
+            <figcaption style="text-align: center;">
+A back of an employment authorization document issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The MRZ data contains information that is secured using the algorithms
+described in this specification. Namely, the QR Code on the front of the
+card contains a <a>verifiable credential</a> of the following form, which secures
+the information on the back of the card.
+          </p>
+
+          <pre class="example nohighlight"
+              title="Verifiable Credential expressed as a QR Code on the front of the card">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/citizenship/v2",
+    "https://w3id.org/citizenship/utopia/v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  <span class="comment">// the value below is defined as a URL in the 'utopia/v1' context above</span>
+  "issuer": "did:web:immigration.utopia.example",
+  "credentialSubject": {
+    "type": "MachineReadableZone",
+  },
+  "proof": {
+    "type": "DataIntegrity",
+    "cryptosuite": "ecdsa-xi-2023",
+    <span class="comment">// the value below is defined as a URL in the 'utopia/v1' context above</span>
+    "verificationMethod": "did:web:immigration.utopia.example#key-4"
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4peo48uwK2EF4Fta8P...HzQMDYJ34r9gL"
+  }
+}
+          </pre>
+
+          <p class="note" title="credentialStatus is optional">
+Readers might note that the credential above does not contain the optional
+`credentialStatus` property. Not every optical barcode credential issuer will
+have the requirement to have revocable optical barcode credentials.
+          </p>
+
+          <p>
+The <a>verifiable credential</a> above is then compressed using [[CBOR-LD]]
+to the following output (in CBOR Diagnostic Notation):
+          </p>
+
+          <pre class="example nohighlight"
+              title="CBOR-LD compressed Verifiable Credential (120 bytes)">
+{
+  1 => [ 32768, 32769, 32770],           <span class="comment">// @context</span>
+  155 => [ 116, 176 ],                   <span class="comment">// type</span>
+  208 => 194,                          <span class="comment">// issuer</span>
+  204 => { 154 => 192 },                 <span class="comment">// credentialSubject</span>
+  210 => {                               <span class="comment">// proof</span>
+    154 => 108,                          <span class="comment">// type</span>
+    226 => 4,                        <span class="comment">// cryptosuite</span>
+    236 => 242                         <span class="comment">// verificationMethod</span>
+    240 => 196,                          <span class="comment">// proofPurpose</span>
+    210 => Uint8Array(65) [ ... ],       <span class="comment">// proofValue</span>
+  }
+}
+          </pre>
+
+        </section>
+
+        <section>
+          <h3>Birth Certificate</h3>
+
+          <p>
+This section provides an example on how the technology in this specification can
+be utilized to secure a birth certificate as a [=verifiable credential=], which
+is then expressed as a QR Code on the printed paper document:
+          </p>
+
+          <figure id="birth-certificate">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/bc-front.png"
+                alt="A picture of the front of a birth certificate containing information such as the newborn's name, parent's names, information about the hospital, attendees, and person responsible for the registration.">
+            <figcaption style="text-align: center;">
+The front of a birth certificate issued by a hospital in the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The QR Code encodes the following [=verifiable credential=]. The details of
+the encoding are available as separate tabs below:
+          </p>
+
+          <pre class="example vc nohighlight"
+              title="A verifiable credential expressing a short-form birth certificate"
+              data-vc-vm='https://vital-records.utopa.example/issuers/123'
+              data-vc-tabs="cbor-ld qr">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vital-records/v1rc1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "BirthCertificateCredential"
+  ],
+  "issuer": "https://hospital.example/issuer",
+  "validFrom": "2023-09-30T11:30:00Z",
+  "credentialSubject": {
+    "type": "BirthCertificate",
+    "certificationDate": "2023-09-30T13:44:52Z",
+    "newborn": {
+      "type": "Newborn",
+      "name": "Tim Doe",
+      "gender": "Male",
+      "birthDate": "2023-10-05T14:29:00Z",
+      "birthPlace": {
+        "type": "PostalAddress",
+        "streetAddress": "123 Hospital Rd",
+        "addressLocality": "Utopia Town",
+        "addressRegion": "Utopolis",
+        "postalCode": "12345",
+        "addressCountry": "Utopia"
+      },
+      "parent": [{
+        "type": "Mother",
+        "name": "Jane Doe",
+        "namePriorToMarriage": "Jane Smith"
+      }, {
+        "type": "Father",
+        "name": "John Doe"
+      }]
+    }
+  }
+}
+          </pre>
+
+        </section>
+
+      </section>
+
+      <section>
+        <h3>Design Goals</h3>
+        <p>
+The following are the design goals of the technology in this specification:
+        </p>
+        <ul>
+          <li>
+<b>Authenticity</b>: a Verifiable Credential Barcode that successfully verifies is
+guaranteed to have originated from the claimed issuing authority.
+          </li>
+          <li>
+<b>Integrity</b>: data on a document with a Verifiable Credential Barcode that
+successfully verifies is guaranteed to not have been modified as long as that data
+is secured by the barcode.
+          </li>
+          <li>
+<b>Real-time Status</b>: verification of a Verifiable Credential Barcode proves that
+the document has not been revoked or suspended, and this is done without a
+privacy-invasive "phone home" to a source-of-truth database.
+          </li>
+          <li>
+<b>Simplicity</b>: Verifiable Credential Barcodes reuse existing optical barcodes on
+documents (e.g., PDF417s on the back of AAMVA compliant Driver's Licenses) or add a
+new barcode in an easily consumable form (e.g., a QR code).
+          </li>
+          <li>
+<b>Conformance</b>: the Verifiable Credential Barcodes technology stack is aligned with
+global standards and standards-track technologies.
+          </li>
+        </ul>
+      </section>
+
+      <section id="terminology">
+        <h3>Terminology</h3>
+
+        <p>
+Terminology used throughout this document is defined in the
+<a data-cite="VC-DATA-MODEL-2.0#terminology">Terminology</a> section of the
+[[[VC-DATA-MODEL-2.0]]] specification as well as the [[[VC-DATA-INTEGRITY]]]
+specification.
+        </p>
+
+        <dl data-sort="ascending">
+          <dt><dfn data-cite="XPATH-FUNCTIONS#codepoint-collation" data-lt="code point order|code point ordered|unicode codepoint collation">Unicode code point order</dfn></dt>
+          <dd>
+This refers to determining the order of two Unicode strings (`A` and `B`),
+using <a>Unicode Codepoint Collation</a>,
+as defined in [[XPATH-FUNCTIONS]],
+which defines a
+<a href="https://en.wikipedia.org/wiki/Total_order">total ordering</a>
+of <a>strings</a> comparing code points.
+Note that for UTF-8 encoded strings, comparing the byte sequences gives the same result as <a>code point order</a>.
+          </dd>
+        </dl>
+
+      </section>
+
+      <section id="conformance">
+        <p>
+A <dfn>conforming document</dfn> is any concrete expression of the data model
+that complies with the normative statements in this specification. Specifically,
+all relevant normative statements in Sections
+<a href="#data-model"></a> and <a href="#algorithms"></a>
+of this document MUST be enforced.
+        </p>
+
+        <p>
+A <dfn class="lint-ignore">conforming processor</dfn> is any algorithm realized
+as software and/or hardware that generates or consumes a
+<a>conforming document</a>. Conforming processors MUST produce errors when
+non-conforming documents are consumed.
+        </p>
+
+      	<p>
+This document contains examples of JSON and JSON-LD data. Some of these examples
+are invalid JSON, as they include features such as inline comments (`//`)
+explaining certain portions and ellipses (`...`) indicating the omission of
+information that is irrelevant to the example. Such parts need to be
+removed if implementers want to treat the examples as valid JSON or JSON-LD.
+        </p>
+      </section>
+    </section>
+
+    <section>
+      <h2>Data Model</h2>
+
+      <p>
+The following sections outline the data model that is used by this specification
+to express [=verifiable credentials=] that secure optically printed information
+such as barcodes and machine-readable zones on travel documents.
+      </p>
+
+      <section>
+        <h3>OpticalBarcodeCredential</h3>
+
+        <p>
+An `OpticalBarcodeCredential` is used to secure the contents of an optical
+barcode in a way that provides 1) authorship information , 2) tamper
+resistance, and 3) optionally, revocation and suspension status. In other words,
+the credential can tell you who issued the optical barcode, if the
+optical barcode has been tampered with since it was first issued, and
+whether or not the <a>issuer</a> of the optical barcode still warrants that
+the document is still valid or not. These features provide significant
+anti-fraud protections for physical documents.
+        </p>
+
+        <p>
+The `credentialSubject` of an `OpticalBarcodeCredential` is either of type
+`AamvaDriversLicenseScannableInformation` or a `MachineReadableZone`. A
+`AamvaDriversLicenseScannableInformation` signifies that
+the <a>verifiable credential</a> secures the PDF417 barcode on the physical
+document as well as the information expressed in the
+<a>verifiable credential</a>. A `MachineReadableZone` signifies that
+the <a>verifiable credential</a> secures the machine-readable zone on the
+physical document as well as the information expressed in the
+<a>verifiable credential</a>.
+        </p>
+
+        <p>
+If an `OpticalBarcodeCredential` is of type `AamvaDriversLicenseScannableInformation`,
+there is a REQUIRED additional field `protectedComponentIndex` that contains information about which fields
+in the PDF417 are digitally signed. `protectedComponentIndex` MUST be a three byte/24 bit value that is
+multibase-base64url encoded for a total of 5 characters in the JSON-LD credential. There are 22
+mandatory fields in an AAMVA compliant driver's license PDF417 [[aamva-dl-id-card-design-standard]],
+and the first 22 bits of the `protectedComponentIndex` value correspond to these fields. Each AAMVA mandatory
+field begins with a three character element ID (e.g., `DBA` for document expiration date). To construct
+a mapping between bits in the `protectedComponentIndex` value and these fields, sort these element IDs
+according to Unicode code point order. Then, if a bit in position `i` of `protectedComponentIndex` is `1`, the
+AAMVA mandatory field in position `i` of the sorted element IDs is protected by the digital signature. The last two
+bits in `protectedComponentIndex` MUST be `0`. For more information, see Section [[[#create-opticaldatabytes]]].
+        </p>
+
+        <p>
+In order to achieve as much compression as possible, it is RECOMMENDED that the
+`issuer` and `verificationMethod` fields utilize terms from a JSON-LD Context,
+which can then be compressed down to a few bytes due to CBOR-LD's semantic
+compression mechanism.
+        </p>
+
+        <p>
+An example of an optical barcode credential that utilizes the properties
+specified in this section is provided below:
+        </p>
+
+        <pre class="example nohighlight"
+             title="An OpticalBarcodeCredential utilizing a TerseBitstringStatusListEntry">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vdl/v2",
+    "https://w3id.org/vdl/utopia/v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    <span class="highlight">"OpticalBarcodeCredential"</span>
+  ],
+  "issuer": "did:web:dmv.utopia.example",
+  "credentialStatus": <span class="highlight">{
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "dmv.utopia.gov/statuses/12345/status-lists"
+    "terseStatusListIndex": 123567890
+  }</span>,
+  "credentialSubject": {
+    <span class="highlight">"type": "AamvaDriversLicenseScannableInformation"</span>,
+    <span class="highlight">"protectedComponentIndex": "uP_BA"</span>
+  }
+}
+        </pre>
+      </section>
+
+      <section>
+        <h3>TerseBitstringStatusListEntry</h3>
+
+        <p>
+A `TerseBitstringStatusListEntry` is a compact representation
+of a `BitstringStatusListEntry` as defined in the [[[VC-BITSTRING-STATUS-LIST]]]
+specification.
+        </p>
+
+        <p>
+An object of type `TerseBitstringStatusListEntry` MUST have two additional properties:
+        </p>
+        <ul>
+          <li>
+`terseStatusListBaseUrl`, which identifies the location of the status lists associated with this credential.
+`terseStatusListBaseUrl` MUST be a URL [[URL]].
+          </li>
+          <li>
+`terseStatusListIndex`, which specifies an individual status at the above URL. `terseStatusListIndex` MUST be
+representable as a 32 bit unsigned integer.
+          </li>
+        </ul>
+        <p>
+To process a `TerseBitstringStatusListEntry`, apply the algorithm in Section
+[[[#convert-status-list-entries]]] to convert it to a `BitstringStatusListEntry`,
+then process it as in [[[VC-BITSTRING-STATUS-LIST]]].
+        <p>
+Implementers need to set a value |listLength| for the length of an individual status list. This then yields
+a number of status lists |listCount| = 2^32 / |listLength| for a 32-bit `terseStatusListIndex`.
+|listLength| is needed to convert from a `TerseBitstringStatusListEntry` to a `BitstringStatusListEntry`.
+Noting that some values of |listLength| will harm the privacy-preserving properties of these status lists,
+implementations MUST use |listLength| = 2^26 and |listCount| = 2^6.
+        </p>
+
+      </section>
+
+      <section>
+        <h3>Encoding to and from barcodes</h3>
+While the credentials in this specification use CBOR-LD to efficiently encode [=verifiable credentials=]
+in a binary format, binary data is often inefficient or incompatible to turn into standard barcode
+image formats directly. To that end, we provide requirements here for implementations.
+        <p>
+It is RECOMMENDED that implementers character-encode CBOR-LD encoded `AamvaDriversLicenseScannableInformation`
+credentials as base64url before encoding them in a PDF417. A multibase header MAY be prepended to the
+base-encoded VCB data. PDF417 field header specifications are expected to indicate whether a multibase
+header is present or absent.
+        </p>
+        <p>
+It is REQUIRED that implementers re-encode CBOR-LD encoded `MachineReadableZone` credentials
+as base45-multibase with the string 'VC1-' prepended before encoding them in a QR code.
+        </p>
+      </section>
+
+    </section>
+
+    <section>
+      <h2>Algorithms</h2>
+
+      <p>
+The following section describes algorithms for adding and verifying digital
+proofs that protect optical information, such as barcodes and machine-readable
+zones, on physical media, such as driver's licenses and travel documents.
+      </p>
+
+      <section>
+        <h3>General Algorithms</h3>
+
+        <p>
+This section contains algorithms that are general to encoding and decoding
+[=verifiable credentials=].
+        </p>
+
+        <section>
+          <h3>CBOR-LD Compression Tables</h3>
+
+          <p>
+This specification requires that an application-specific compression table is
+provided to a CBOR-LD processor when encoding and decoding
+<a>verifiable credentials</a>. A registry for all context URLs for various
+issuers is <a href="cbor-ld-compression-table.csv">
+provided as a comma-separated value file</a> and can be updated and modified via
+<a href="https://github.com/w3c-ccg/vc-barcodes/pulls/">
+change requests</a> to the file on an append-only and first-come-first-served
+basis. Implementations SHOULD retrieve and utilize the latest file on a monthly
+basis to ensure that compression and decompression supports the latest values.
+          </p>
+
+        </section>
+
+        <section>
+          <h3>Encode VC to QR Code</h3>
+
+        <p>
+The following algorithm specifies how to encode a [=verifiable credential=] into
+a text string that can be expressed in a QR Code. Required inputs are a
+[=verifiable credential=] ([=map=] |inputDocument|), and a set of options
+([=map=] |options|). The output is an encoded [=verifiable credential=]
+([=string=]) or an error. Whenever this algorithm encodes strings, it MUST use
+UTF-8 encoding.
+        </p>
+
+        <ol class="algorithm">
+          <li>
+Let |typeTable| be the value of |options|.|typeTable|.
+          </li>
+          <li>
+Let |registryEntryId| be the value of |options|.|registryEntryId|.
+          </li>
+          <li>
+Let |cborldDocument| be the result of the
+<a data-cite="CBOR-LD#json-ld-to-cbor-ld-compression-algorithm">
+JSON-LD to CBOR-LD Compression Algorithm</a>, passing |inputDocument|,
+|typeTable|, and |registryEntryId| as inputs. If an encoding error occurs, an
+error MUST be raised.
+          </li>
+          <li>
+Let |base45Value| be the result of the
+<a data-cite="CID#base-encode">Base Encoding</a> algorithm, passing
+|cborldDocument| as |bytes|, the integer `45` as |targetBase|, and
+`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:` as the |baseAlphabet|.
+          </li>
+          <li>
+Let |qrCodeText| be the result of concatenating the following values: `VC1-`,
+`R` (the <a data-cite="CID#multibase-0">Multibase</a> prefix for base45), and
+|base45Value|.
+          </li>
+          <li>
+Return |qrCodeText| as the encoded [=verifiable credential=], which can then be
+provided to any QR Code library as text to be encoded as a QR Code image.
+          </li>
+        </ol>
+
+        </section>
+
+        <section>
+          <h3>Decode QR Code to VC</h3>
+
+        <p>
+The following algorithm specifies how to decode a [=verifiable credential=] that
+has been encoded into a QR Code. Required inputs are a text string ([=string=]
+|inputDocument|), and a set of options ([=map=] |options|). The output is a
+[=verifiable credential=] ([=map=]) or an error. Whenever this algorithm encodes
+strings, it MUST use UTF-8 encoding.
+        </p>
+
+        <ol class="algorithm">
+          <li>
+Ensure that the |inputDocument| starts with the text `VC1-R`. If it does not an
+error MUST be raised.
+          </li>
+          <li>
+Let |base45Value| be |inputDocument| with the first five characters (`VC1-R`)
+removed.
+          </li>
+          <li>
+Let |cborldDocument| be the result of the
+<a data-cite="CID#base-decode">Base Decoding</a> algorithm, passing
+|base45Value| as |sourceEncoding|, the integer `45` as |sourceBase|, and
+`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:` as the |baseAlphabet|.
+          </li>
+          <li>
+Let |jsonldDocument| be the result of
+<a data-cite="CBOR-LD#cbor-ld-to-json-ld-decompression-algorithm">
+CBOR-LD to JSON-LD Decompression Algorithm</a>, passing |cborldDocument| as
+the input. If a decoding error occurs, an error MUST be raised.
+          </li>
+          <li>
+Return |jsonldDocument| as the decoded [=verifiable credential=].
+          </li>
+        </ol>
+
+        </section>
+
+      </section>
+
+
+      <section>
+        <h3>`OpticalBarcodeCredential` Algorithms</h3>
+
+        <p>
+This section contains algorithms that are specific to encoding and decoding
+[=verifiable credentials=] that have a `type` of `OpticalBarcodeCredential`.
+        </p>
+
+        <section>
+          <h3>Encode `OpticalBarcodeCredential`</h3>
+
+          <ol class="algorithm">
+            <li>
+Set |opticalData| to the data in the optical barcode to be secured.
+            </li>
+            <li>
+Set |statusListEntryVerbose| to the `BitstringStatusListCredential`
+(as defined in the [[[VC-BITSTRING-STATUS-LIST]]] specification) that the issuer
+wishes to add to the `OpticalBarcodeCredential`.
+            </li>
+            <li>
+Let |statusListEntryTerse| be an empty [=map=]. Set |statusListEntryTerse|.|type| to `TerseBitstringStatusListEntry` and |statusListEntryTerse|.|index| to the integer representation of |statusListEntryVerbose|.|statusListIndex|.
+            </li>
+            <li>
+Set |issuerUrl| to the URL the issuer wishes to use for credential verification.
+            </li>
+            <li>
+Set |unsignedStatus| to an `OpticalBarcodeCredential` with
+|unsignedStatus|.|issuer| set to |issuerUrl| and |unsignedStatus|.|credentialStatus|
+set to |statusListEntryTerse|.
+            </li>
+            <li>
+Set |signedStatusVc| to the result of using the algorithm in
+<a href="#add-proof-ecdsa-xi-2023"></a> to sign |opticalData|
+and |unsignedStatus|.
+            </li>
+            <li>
+Encode |signedStatusVc| using CBOR-LD [[CBOR-LD]] and add it to the designated area of the |opticalData|.
+            </li>
+            <li>
+Generate the machine-readable credential (MRZ or PDF417).
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Decode `OpticalBarcodeCredential`</h3>
+
+          <ol class="algorithm">
+            <li>
+Set |securedDocument| to the data in the PDF417 or MRZ.
+            </li>
+            <li>
+Set |verificationResult| to the result of applying the algorithm in Section
+[[[#verify-proof-ecdsa-xi-2023]]]to |securedDocument|.
+            </li>
+            <li>
+Set |credential| to the `OpticalBarcodeCredential` in |securedDocument|.
+            </li>
+            <li>
+Set |statusListEntry| to the result of applying the algorithm in Section
+[[[#convert-status-list-entries]]] to |credential|.
+            </li>
+            <li>
+Set |statusResult| to the result of applying the algorithm in
+<a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
+Bitstring Status List v1.0: Validate Algorithm</a> to |statusListEntry|.
+            </li>
+            <li>
+Return (|validationResult|, |statusResult|).
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Convert Status List Entries</h3>
+
+          <p>
+The algorithm in this section is used to convert the
+`TerseBitstringStatusListEntry` to a `BitstringStatusListEntry`, which is used
+after verification has been performed on the <a>verifiable credential</a>,
+during the validation process.
+          </p>
+
+          <p>
+After <a>verifiable credential</a> verification has been performed, the
+algorithm takes an `OpticalBarcodeCredential` <a>verifiable credential</a>
+([=struct=] |vc|), an integer |listLength| containing the number of entries
+in the `BitstringStatusListCredential` associated with |vc|, and a string
+|statusPurpose| (e.g., 'revocation', 'suspension'...) as input and returns
+a 'BitstringStatusListEntry' object.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Set |result| to be an empty [=map=].
+            </li>
+            <li>
+Set |listIndex| to |vc|.|credentialStatus|.|terseStatusListIndex|/|listLength| rounded down
+to the next lowest integer (i.e., apply the `floor()` operation).
+            </li>
+            <li>
+Set |statusListIndex| to |vc|.|credentialStatus|.|terseStatusListIndex| % |listLength|.
+            </li>
+            <li>
+Set |result|.|statusListCredential| to the concatenation of the following values:
+|vc|.|credentialStatus|.|terseStatusListBaseUrl|, '/', |statusPurpose|, '/', |listIndex|.
+            </li>
+            <li>
+Set |result|.|type| to 'BitstringStatusListEntry'.
+            </li>
+            <li>
+Set |result|.|statusListIndex| to |statusListIndex|.
+            </li>
+            <li>
+Set |result|.|statusPurpose| to |statusPurpose|.
+            </li>
+            <li>
+Return |result|.
+            </li>
+          </ol>
+
+          <p>
+|result| can be used as input to the
+<a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
+validation algorithm</a> in the [[[VC-BITSTRING-STATUS-LIST]]] specification.
+          </p>
+
+          <p class="note" title="Status lists are optional">
+Implementers are advised that not all <a>issuers</a> will publish status
+list information for their <a>verifiable credentials</a>. Some <a>issuers</a>
+might require authorization before allowing a <a>verifier</a> to access a
+status list credential.
+          </p>
+
+        </section>
+
+        <section>
+          <h3>ecdsa-xi-2023</h3>
+
+          <p>
+The `ecdsa-xi-2023` cryptosuite is effectively the `ecdsa-rdfc-2019`
+algorithm [[VC-DI-ECDSA]] with an added step that takes some "extra information"
+(xi) as input, such as the original optical barcode data, and includes that data
+in the information that is protected by the digital signature. The algorithms in
+this section detail how such a signature is created and verified.
+          </p>
+
+          <section>
+            <h4>Add Proof (ecdsa-xi-2023)</h4>
+
+            <p>
+To generate a proof, the algorithm in
+<a href="https://www.w3.org/TR/vc-data-integrity/#add-proof">
+Section 4.1: Add Proof</a> in the Data Integrity
+[[VC-DATA-INTEGRITY]] specification MUST be executed.
+For that algorithm, the cryptographic suite specific
+<a href="https://www.w3.org/TR/vc-data-integrity/#dfn-transformation-algorithm">
+transformation algorithm</a> is defined in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#transformation-ecdsa-rdfc-2019">
+Transformation (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]], the
+<a href="https://www.w3.org/TR/vc-data-integrity/#dfn-hashing-algorithm">
+hashing algorithm</a> is defined in Section
+<a href="#hashing-ecdsa-xi-2023"></a>, and the
+<a href="https://www.w3.org/TR/vc-data-integrity/#dfn-proof-serialization-algorithm">
+proof serialization algorithm</a> is defined in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#proof-serialization-ecdsa-rdfc-2019">
+Proof Serialization (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]].
+            </p>
+          </section>
+
+          <section>
+            <h4>Verify Proof (ecdsa-xi-2023)</h4>
+
+            <p>
+To verify a proof, the algorithm in
+<a href="https://www.w3.org/TR/vc-data-integrity/#verify-proof">
+Section 4.2: Verify Proof</a> in the Data Integrity [[VC-DATA-INTEGRITY]]
+specification MUST be executed. For that algorithm, the cryptographic suite
+specific
+<a href="https://www.w3.org/TR/vc-data-integrity/#dfn-transformation-algorithm">
+transformation algorithm</a> is defined in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#transformation-ecdsa-rdfc-2019">
+Transformation (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]], the
+<a href="https://www.w3.org/TR/vc-data-integrity/#dfn-hashing-algorithm">
+hashing algorithm</a> is defined in
+Section <a href="#hashing-ecdsa-xi-2023"></a>, and the
+<a href="https://www.w3.org/TR/vc-data-integrity/#dfn-proof-serialization-algorithm">
+proof verification algorithm</a> is defined in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#proof-verification-ecdsa-rdfc-2019">
+Proof Verification (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]].
+            </p>
+          </section>
+
+          <section>
+            <h4>Hashing (ecdsa-xi-2023)</h4>
+
+            <p>
+The hashing algorithm is what is defined in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#hashing-ecdsa-rdfc-2019">
+Hashing (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]] specification
+with the addition of the hashing of the optical data, as described below. It is
+presumed that the implementation makes the machine-readable optical data (PDF417
+or MRZ data) available to this hashing algorithm.
+            </p>
+
+            <p>
+The required inputs to this algorithm are a <em>transformed data document</em>
+(<var>transformedDocument</var>), a <em>canonical proof configuration</em>
+(<var>canonicalProofConfig</var>), and the <em>optical data</em>
+(<var>opticalDataBytes</var>). A single <em>hash data</em> value represented as
+series of bytes is produced as output.
+            </p>
+
+            <p>
+The hashing algorithm is what is defined in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#hashing-ecdsa-rdfc-2019">
+Hashing (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]] with step 3
+replaced with the following two steps:
+            </p>
+
+            <ol class="algorithm">
+              <li>
+Let <var>opticalDataHash</var> be the result of applying the same hash algorithm
+that was applied to <var>hashData</var> to the <var>opticalDataBytes</var>
+value.
+              </li>
+              <li>
+Let <var>hashData</var> be the result of joining <var>proofConfigHash</var> (the
+first hash), <var>transformedDocumentHash</var> (the second hash), and
+<var>opticalDataHash</var> (the third hash).
+              </li>
+            </ol>
+
+          </section>
+
+          <section>
+            <h4> Create opticalDataBytes</h4>
+
+            <section>
+              <h5>`AamvaDriversLicenseScannableInformation` Credentials</h5>
+              <ol class="algorithm">
+                <li>
+Set |dataToCanonicalize| to an empty array.
+                </li>
+                <li>
+Set |bitfieldDecoded| to be first 22 bits of the length 24 bitstring resulting from decoding
+  `credentialSubject.protectedComponentIndex` from multibase-base64url to binary.
+                </li>
+                <li>
+Set |fieldsAlphabetized| to be an array containing the 22 AAMVA mandatory PDF417 Element IDs
+  [[aamva-dl-id-card-design-standard]] sorted in Unicode code point order (i.e., ['DAC', 'DAD' ... 'DDG']).
+                </li>
+                <li>
+For each bit with value `1` in |bitfieldDecoded|:
+                  <ol class="algorithm">
+                    <li>
+Set the string |fieldName| to |fieldsAlphabetized|[|i|], where |i| is the index of the bit in |bitfieldDecoded|.
+                    </li>
+                    <li>
+Set the string |fieldData| to the data that will be in the PDF417 associated with that field name.
+                    </li>
+                    <li>
+Concatenate |fieldData| to the end of |fieldName|, concatenate a newline character (`\n`, `U+000A`) to the end,
+and append the result to |dataToCanonicalize|.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set |canonicalizedData| to the result of sorting |dataToCanonicalize| in Unicode code point order and then applying a join operation
+to create a single string from the array.
+                </li>
+                <li>
+Hash |canonicalizedData| and return the result.
+                </li>
+              </ol>
+            </section>
+
+            <section>
+              <h5>`MachineReadableZone` Credentials</h5>
+              <ol class="algorithm">
+                <li>
+Set |dataToCanonicalize| to an empty array.
+                </li>
+                <li>
+For each line in the Machine Readable Zone on the credential:
+                  <ol class="algorithm">
+                    <li>
+Set |mrzLine| to a string containing the data in that line.
+                    </li>
+                    <li>
+Append a newline character to the end of |mrzLine| and append |mrzLine| to |dataToCanonicalize|.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set |canonicalizedData| to the result of ordering the elements of |dataToCanonicalize| to match the order they appear
+on the credential and then applying a join operation to create a single string from the array.
+                </li>
+                <li>
+Hash |canonicalizedData| and return the result.
+                </li>
+              </ol>
+            </section>
+          </section>
+          <section>
+            <h4>Proof Configuration (ecdsa-xi-2023)</h4>
+
+            <p>
+The proof configuration algorithm is what is defined in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#proof-configuration-ecdsa-rdfc-2019">
+Proof Configuration (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]] with
+step 4 replaced with the following step:
+            </p>
+
+            <ol class="algorithm">
+              <li>
+If <var>options</var>.<var>type</var> is not set to `DataIntegrityProof` and
+<var>proofConfig</var>.<var>cryptosuite</var> is not set to `ecdsa-xi-2023`, an
+`INVALID_PROOF_CONFIGURATION` error MUST be raised.
+              </li>
+            </ol>
+
+          </section>
+        </section>
+      </section>
+    </section>
+
+    <section class="informative">
+      <h2>Security Considerations</h2>
+
+      <p class="advisement">
+Before reading this section, readers are urged to familiarize themselves
+with general security advice provided in the
+<a href="https://www.w3.org/TR/vc-data-integrity/#security-considerations">
+Security Considerations section of the Data Integrity specification</a> as
+well as the specific security advice provided in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#security-considerations">
+Security Considerations section of the ECDSA Cryptosuites specification</a>.
+      </p>
+
+      <p>
+In the following sections, we review these important points and direct
+the reader to additional information.
+      </p>
+
+      <section>
+        <h3>Optical Data Duplication</h3>
+        <p>
+One attack vector against `OpticalBarcodeCredentials` involves duplicating
+an optical barcode containing a digital signature for use on a fraudulent document.
+While a duplicated barcode will pass signature validation like the original, this attack
+is mitigated by the document verifier checking the following three things: the signed data
+matches the data visible on the document, the signed data matches the physical attributes of
+the user, and the visible data matches the physical attributes of the user. When these
+three are all equivalent, the only way the `OpticalBarcodeCredential` could be a
+duplicate is if the fraudulent document creator had access to a real
+`OpticalBarcodeCredential` where the signed physical attributes fully overlapped
+with those of the user of the fraudulent document. The low likelihood of an undetected
+stolen `OpticalBarcodeCredential` existing that completely matches the appearance
+of an arbitrary person makes this attack unlikely to succeed.
+        </p>
+      </section>
+      <section>
+        <h3>Partially Signed Optical Data</h3>
+        <p>
+It is possible that in some cases the digital signature cannot be created
+over the entirety of the existing optical data. For example, consider a case
+where a serial number is injected by a physical credential manufacturer such
+that it is not known to the issuer at signature time. In this case, the verifier
+will assume that any data not digitally signed could have been changed in
+the optical barcode without impacting the `OpticalBarcodeCredential's`
+ability to successfully validate.
+       </p>
+       <p>
+When checking that data from the optical barcode matches the data visible on the
+document as well as the characteristics of the document holder, implementers
+are advised to only use the fields that are digitally signed. [=Verifiers=] are
+advised to only use fields protected by the digital signature, no matter how
+commonly the other fields are used for fraud detection on unsigned documents. For
+example, if eye color and hair color are protected by the signature, but the
+[=holder=]'s portrait is not, [=verifiers=] are advised to emphasize the eye
+color and hair color when attempting to detect fraud over the portrait.
+       </p>
+       <p>
+Implementers of software used by [=verifiers=] are advised to only display card data
+that has been secured via digital signature during the verification process. Displaying
+unsigned data, which could have been tampered with, could interfere with fraud detection.
+       </p>
+      </section>
+      <section>
+        <h3>Safe Verification</h3>
+        <p>
+[=Verifiers=] are advised to always use trusted programs and interfaces to check the validity
+of the `OpticalBarcodeCredential`. Use of untrusted software to verify a document
+could result in a fraudulent credential being accepted, or a genuine credential being stolen.
+        </p>
+      </section>
+    </section>
+
+    <section>
+      <h2>Privacy Considerations</h2>
+
+      <p class="advisement">
+Before reading this section, readers are urged to familiarize themselves
+with general security advice provided in the
+<a href="https://www.w3.org/TR/vc-data-integrity/#privacy-considerations">
+Security Considerations section of the Data Integrity specification</a> as
+well as the specific security advice provided in the
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#privacy-considerations">
+Security Considerations section of the ECDSA Cryptosuites specification</a>.
+      </p>
+
+      <p>
+The following section describes privacy considerations that developers
+implementing this specification should be aware of in order to avoid violating
+privacy assumptions.
+      </p>
+
+      <div class="issue">
+Add more privacy considerations including at least the following:
+        <ul>
+          <li>
+Barcodes can be read at a distance; therefore information that is very
+sensitive should not be encoded into a barcode and might be better transmitted
+via NFC or an encrypted online communication channel.
+          </li>
+        </ul>
+      </div>
+
+    </section>
+
+    <section class="informative">
+      <h2> Test Vectors</h2>
+      <p>
+This section contains examples of Verifiable Credential Barcodes as well
+as step-by-step processes for how they are generated and how they are verified.
+      </p>
+      <p>
+In this section we will analyze two running examples: a VCB securing
+the MRZ of a Utopia Employment Authorization Document, and a VCB securing
+the PDF417 of a Utopia Driver's License.
+      </p>
+      <section>
+        <h3>Creating VCBs</h3>
+        <section>
+          <h4>Utopia Driver's License</h4>
+          <p>
+We start with the data that will be signed by the VCB (i.e., mandatory AAMVA fields
+from a PDF417):
+          </p>
+          <pre class="example nohighlight"
+          title="Fields from a PDF417 that might appear on a Utopia Driver's License">
+DACJOHN
+DADNONE
+DAG123 MAIN ST
+DAIANYVILLE
+DAJUTO
+DAKF87P20000
+DAQF987654321
+DAU069 IN
+DAYBRO
+DBA04192030
+DBB04191988
+DBC1
+DBD01012024
+DCAC
+DCBNONE
+DCDNONE
+DCFUTODOCDISCRIM
+DCGUTO
+DCSSMITH
+DDEN
+DDFN
+DDGN
+          </pre>
+          <section>
+            <h5>
+Creating `opticalDataBytes`
+            </h5>
+
+            <p>
+Assume for simplicity that the only data in the PDF417 that you want to sign is first
+name (`DAC`), last name (`DCS`), and license number (`DAQ`). The bitstring value for use in
+`protectedComponentIndex` is then |100000100000000000100000|, and the value of
+`protectedComponentIndex` is `"uggAg"`. Applying
+<a href="#create-opticaldatabytes"></a>, we get
+            </p>
+            <pre class="example nohighlight"
+title="Data from the canonicalization of a Utopia Driver's License">
+canonicalizedData = 'DACJOHN\nDAQ987654321\nDCSSMITH\n'
+opticalDataBytes:
+  [188,  38, 200, 146, 227, 213,  90, 250,
+  50,  18, 126, 254,  47, 177,  91,  23,
+  64, 129, 104, 223, 136,  81, 116,  67,
+  136, 125, 137, 165, 117,  63, 152, 207]
+            </pre>
+          </section>
+          <p>
+We can now use this hash value with
+<a href="#hashing-ecdsa-xi-2023"></a> to sign the VC.
+Executing  <a href="#encode-opticalbarcodecredential"></a> with a
+`BitstringStatusListCredential`, we get the following JSON-LD VC:
+          </p>
+          <section>
+            <h5>
+Example VC
+            </h5>
+            <pre class="example nohighlight"
+  title="A JSON-LD VC for a Utopia Driver's License VCB">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "AamvaDriversLicenseScannableInformation",
+    "protectedComponentIndex": "uggAg"
+  },
+  "issuer": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+  "credentialStatus": {
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists",
+    "terseStatusListIndex": 3851559041
+  },
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4g6G3dAZhhtPxPWgFvkiRv7krtCaeJxjokvL46fchAFCXEY3FeX2vn46MDgBaw779g1E1jswZJxxreZDCrtHg2qH"
+  }
+}
+            </pre>
+          </section>
+
+          <section>
+            <h4>CBOR-LD Compression and Encoding</h4>
+            <p>
+We can now apply CBOR-LD compression to this VC. Here, we use the newest
+version of CBOR-LD; however, at the end of the section, we provide VCBs
+encoded using older versions of CBOR-LD for interoperability testing
+with CBOR-LD implementations that are not up to date.
+            </p>
+            <p>
+For this specification, we have reserved the CBOR-LD registry entry
+with value `100` (i.e., these payloads will begin with tag `0x0664`). The parameters
+to encode using CBOR-LD, which can be found in the registry in the CBOR-LD
+specification, are then as follows:
+            </p>
+            <pre class="example nohighlight"
+            title="CBOR-LD encoding parameters">
+registryEntryId: 100
+typeTable:
+{
+  "context":
+    {
+      "https://www.w3.org/ns/credentials/v2": 32768,
+      "https://w3id.org/vc-barcodes/v1": 32769,
+      "https://w3id.org/utopia/v2": 32770
+    },
+
+  "https://w3id.org/security#cryptosuiteString":
+    {
+      "ecdsa-rdfc-2019": 1,
+      "ecdsa-sd-2023": 2,
+      "eddsa-rdfc-2022": 3,
+      "ecdsa-xi-2023": 4
+    }
+}
+            </pre>
+            <p>
+The term-to-ID mapping that should result from processing the contexts and assigning
+integer values to context terms is as follows:
+            </p>
+            <pre class="example nohighlight"
+            title="The term-to-ID map created by CBOR-LD when compressing a Utopia DL">
+Map(97) {
+  '@context' => 0,
+  '@type' => 2,
+  '@id' => 4,
+  '@value' => 6,
+  '@direction' => 8,
+  '@graph' => 10,
+  '@included' => 12,
+  '@index' => 14,
+  '@json' => 16,
+  '@language' => 18,
+  '@list' => 20,
+  '@nest' => 22,
+  '@reverse' => 24,
+  '@base' => 26,
+  '@container' => 28,
+  '@default' => 30,
+  '@embed' => 32,
+  '@explicit' => 34,
+  '@none' => 36,
+  '@omitDefault' => 38,
+  '@prefix' => 40,
+  '@preserve' => 42,
+  '@protected' => 44,
+  '@requireAll' => 46,
+  '@set' => 48,
+  '@version' => 50,
+  '@vocab' => 52,
+  '...' => 100,
+  'BitstringStatusList' => 102,
+  'BitstringStatusListCredential' => 104,
+  'BitstringStatusListEntry' => 106,
+  'DataIntegrityProof' => 108,
+  'EnvelopedVerifiableCredential' => 110,
+  'EnvelopedVerifiablePresentation' => 112,
+  'JsonSchema' => 114,
+  'JsonSchemaCredential' => 116,
+  'VerifiableCredential' => 118,
+  'VerifiablePresentation' => 120,
+  '_sd' => 122,
+  '_sd_alg' => 124,
+  'aud' => 126,
+  'cnf' => 128,
+  'description' => 130,
+  'digestMultibase' => 132,
+  'digestSRI' => 134,
+  'exp' => 136,
+  'iat' => 138,
+  'id' => 140,
+  'iss' => 142,
+  'jku' => 144,
+  'kid' => 146,
+  'mediaType' => 148,
+  'name' => 150,
+  'nbf' => 152,
+  'sub' => 154,
+  'type' => 156,
+  'x5u' => 158,
+  'AamvaDriversLicenseScannableInformation' => 160,
+  'MachineReadableZone' => 162,
+  'OpticalBarcodeCredential' => 164,
+  'TerseBitstringStatusListEntry' => 166,
+  'protectedComponentIndex' => 168,
+  'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj' => 170,
+  'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj' => 172,
+  'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj' => 174,
+  'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj' => 176,
+  'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists' => 178,
+  'confidenceMethod' => 180,
+  'credentialSchema' => 182,
+  'credentialStatus' => 184,
+  'credentialSubject' => 186,
+  'evidence' => 188,
+  'issuer' => 190,
+  'proof' => 192,
+  'refreshService' => 194,
+  'relatedResource' => 196,
+  'renderMethod' => 198,
+  'termsOfUse' => 200,
+  'validFrom' => 202,
+  'validUntil' => 204,
+  'terseStatusListBaseUrl' => 206,
+  'terseStatusListIndex' => 208,
+  'challenge' => 210,
+  'created' => 212,
+  'cryptosuite' => 214,
+  'domain' => 216,
+  'expires' => 218,
+  'nonce' => 220,
+  'previousProof' => 222,
+  'proofPurpose' => 224,
+  'proofValue' => 226,
+  'verificationMethod' => 228,
+  'assertionMethod' => 230,
+  'authentication' => 232,
+  'capabilityDelegation' => 234,
+  'capabilityInvocation' => 236,
+  'keyAgreement' => 238
+}
+            </pre>
+            <p>
+For more information on the above, see <a href="#implementation-notes"></a>.
+            </p>
+            <p>
+This results in the following encoded credential:
+            </p>
+            <pre class="example nohighlight"
+            title="A CBOR-LD compressed Utopia Driver's License VC">
+D9CB1D821864A60183198000198001198002189D82187618A418B8A3189C18A618CE18B218D01AE592208118BAA2189C18A018A8447582002018BE18AA18C0A5189C186C18D60418E018E618E258417AB7C2E56B49E2CCE62184CE26818E15A8B173164401B5D3BB93FFD6D2B5EB8F6AC0971502AE3DD49D17EC66528164034C912685B8111BC04CDC9EC13DBADD91CC18E418AC
+
+diagnostic:
+51997([
+  100,
+  {
+    1: [32768, 32769, 32770],
+    157: [118, 164],
+    184: {156: 166, 206: 178, 208: 3851559041},
+    186: {156: 160, 168: h'75820020'},
+    190: 170,
+    192: {
+      156: 108,
+      214: 4,
+      224: 230,
+      226: h'7AB7C2E56B49E2CCE62184CE26818E15A8B173164401B5D3BB93FFD6D2B5EB8F6AC0971502AE3DD49D17EC66528164034C912685B8111BC04CDC9EC13DBADD91CC',
+      228: 172
+    }
+  }
+])
+            </pre>
+            <p>
+Encoding the Driver's License CBOR-LD as base64url and inserting the result into the
+PDF417 bytes in the 'ZZA' field in the 'ZZ' subfile:
+            </p>
+            <pre class="example nohighlight"
+            title="Bytes from a PDF417 including an encoded Utopia Driver's License VCB">
+bytes(@\n\x1e\rANSI 000000090002DL00410234ZZ02750202DLDAQF987654321\nDCSSMITH\nDDEN\nDACJOHN\nDDFN\nDADNONE\nDDGN\nDCAC\nDCBNONE\nDCDNONE\nDBD01012024\nDBB04191988\nDBA04192030\nDBC1\nDAU069 IN\nDAYBRO\nDAG123 MAIN ST\nDAIANYVILLE\nDAJUTO\nDAKF87P20000  \nDCFUTODOCDISCRIM\nDCGUTO\nDAW158\nDCK1234567890\nDDAN\rZZZZA2csdghhkpgGDGYAAGYABGYACGJ2CGHYYpBi4oxicGKYYzhiyGNAa5ZIggRi6ohicGKAYqER1ggAgGL4YqhjApRicGGwY1gQY4BjmGOJYQXq3wuVrSeLM5iGEziaBjhWosXMWRAG107uT/9bSteuPasCXFQKuPdSdF+xmUoFkA0yRJoW4ERvATNyewT263ZHMGOQYrA==\r)
+            </pre>
+            <p>
+The above can now be turned into a barcode:
+            </p>
+            <figure id="dl-barcode">
+              <img style="margin: auto; display: block; border-radius:15px; width: 80%;"
+                    src="diagrams/dl-barcode.png"
+                    alt="A VCB from a Utopia driver's license.">
+              <figcaption style="text-align: center;">
+A VCB from a Utopia driver's license.
+              </figcaption>
+            </figure>
+          </section>
+        </section>
+        <section>
+          <h4>Utopia Employment Authorization Document</h4>
+
+          <p>
+We start with the data that will be signed by the VCB (i.e an MRZ):
+          </p>
+          <pre class="example nohighlight"
+              title="A Machine-Readable Zone that might appear on a Utopia EAD">
+IAUTO0000007010SRC0000000701&lt;&lt;
+8804192M2601058NOT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;5
+SMITH&lt;&lt;JOHN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+          </pre>
+          <section>
+            <h5>
+Creating `opticalDataBytes`
+            </h5>
+            <p>
+For the EAD, we apply <a href="#create-opticaldatabytes"></a>:
+            </p>
+            <pre class="example nohighlight"
+            title="Data from the canonicalization of a Utopia EAD MRZ">
+canonicalizedData =
+  'IAUTO0000007010SRC0000000701&lt;&lt;\n' +
+  '8804192M2601058NOT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;5\n' +
+  'SMITH&lt;&lt;JOHN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\n'
+opticalDataBytes:
+[8, 198, 126, 183,  25, 160, 166, 112,
+254, 184, 189,  47, 225, 211, 125, 210,
+132, 137, 45,  86, 169,  28,  57, 165,
+46, 253, 9, 137, 145,  42, 192, 113]
+            </pre>
+            <p>
+We can now use this hash value with
+<a href="#hashing-ecdsa-xi-2023"></a> to sign the VC.
+Executing  <a href="#encode-opticalbarcodecredential"></a> without
+adding status, we get the following JSON-LD VC:
+            </p>
+          </section>
+          <section>
+            <h5>
+Example VC
+            </h5>
+            <pre class="example nohighlight"
+            title="A JSON-LD VC for a Utopia EAD VCB">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "MachineReadableZone"
+  },
+  "issuer": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4B8AQgjwgsEdcPEZkrkK2mTVKn7qufoDgDkv9Qitf9tjxQPMoJaGdXwDrThjp7LUdvzsDJ7UwYu6Xpm9fjbo6QnJ"
+  }
+}
+            </pre>
+          </section>
+          <section>
+            <h4>CBOR-LD Compression and Encoding</h4>
+            <p>
+We can now apply CBOR-LD compression to this VC. Here we use the newest
+version of CBOR-LD, however at the end of the section we provide VCBs
+encoded using older versions of CBOR-LD for interoperability testing
+with CBOR-LD implementations that are not up to date.
+            </p>
+            <p>
+For this specficiation, we have reserved the CBOR-LD registry entry
+with value `100` (i.e., these payloads will begin with tag `0x0664`). The parameters
+to encode using CBOR-LD, which can be found in the registry in the CBOR-LD
+specification, are then as follows:
+            </p>
+            <pre class="example nohighlight"
+            title="CBOR-LD encoding parameters">
+registryEntryId: 100
+typeTable:
+{
+  "context":
+    {
+      "https://www.w3.org/ns/credentials/v2": 32768,
+      "https://w3id.org/vc-barcodes/v1": 32769,
+      "https://w3id.org/utopia/v2": 32770
+    },
+
+  "https://w3id.org/security#cryptosuiteString":
+    {
+      "ecdsa-rdfc-2019": 1,
+      "ecdsa-sd-2023": 2,
+      "eddsa-rdfc-2022": 3,
+      "ecdsa-xi-2023": 4
+    }
+}
+            </pre>
+            <p>
+The term-to-ID mapping that should result from processing the contexts and assigning
+integer values to context terms is as follows:
+            </p>
+            <pre class="example nohighlight"
+            title="The term-to-ID map created by CBOR-LD when compressing a Utopia EAD">
+Map(95) {
+  '@context' => 0,
+  '@type' => 2,
+  '@id' => 4,
+  '@value' => 6,
+  '@direction' => 8,
+  '@graph' => 10,
+  '@included' => 12,
+  '@index' => 14,
+  '@json' => 16,
+  '@language' => 18,
+  '@list' => 20,
+  '@nest' => 22,
+  '@reverse' => 24,
+  '@base' => 26,
+  '@container' => 28,
+  '@default' => 30,
+  '@embed' => 32,
+  '@explicit' => 34,
+  '@none' => 36,
+  '@omitDefault' => 38,
+  '@prefix' => 40,
+  '@preserve' => 42,
+  '@protected' => 44,
+  '@requireAll' => 46,
+  '@set' => 48,
+  '@version' => 50,
+  '@vocab' => 52,
+  '...' => 100,
+  'BitstringStatusList' => 102,
+  'BitstringStatusListCredential' => 104,
+  'BitstringStatusListEntry' => 106,
+  'DataIntegrityProof' => 108,
+  'EnvelopedVerifiableCredential' => 110,
+  'EnvelopedVerifiablePresentation' => 112,
+  'JsonSchema' => 114,
+  'JsonSchemaCredential' => 116,
+  'VerifiableCredential' => 118,
+  'VerifiablePresentation' => 120,
+  '_sd' => 122,
+  '_sd_alg' => 124,
+  'aud' => 126,
+  'cnf' => 128,
+  'description' => 130,
+  'digestMultibase' => 132,
+  'digestSRI' => 134,
+  'exp' => 136,
+  'iat' => 138,
+  'id' => 140,
+  'iss' => 142,
+  'jku' => 144,
+  'kid' => 146,
+  'mediaType' => 148,
+  'name' => 150,
+  'nbf' => 152,
+  'sub' => 154,
+  'type' => 156,
+  'x5u' => 158,
+  'AamvaDriversLicenseScannableInformation' => 160,
+  'MachineReadableZone' => 162,
+  'OpticalBarcodeCredential' => 164,
+  'TerseBitstringStatusListEntry' => 166,
+  'protectedComponentIndex' => 168,
+  'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj' => 170,
+  'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj' => 172,
+  'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj' => 174,
+  'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj' => 176,
+  'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists' => 178,
+  'confidenceMethod' => 180,
+  'credentialSchema' => 182,
+  'credentialStatus' => 184,
+  'credentialSubject' => 186,
+  'evidence' => 188,
+  'issuer' => 190,
+  'proof' => 192,
+  'refreshService' => 194,
+  'relatedResource' => 196,
+  'renderMethod' => 198,
+  'termsOfUse' => 200,
+  'validFrom' => 202,
+  'validUntil' => 204,
+  'challenge' => 206,
+  'created' => 208,
+  'cryptosuite' => 210,
+  'domain' => 212,
+  'expires' => 214,
+  'nonce' => 216,
+  'previousProof' => 218,
+  'proofPurpose' => 220,
+  'proofValue' => 222,
+  'verificationMethod' => 224,
+  'assertionMethod' => 226,
+  'authentication' => 228,
+  'capabilityDelegation' => 230,
+  'capabilityInvocation' => 232,
+  'keyAgreement' => 234
+}
+            </pre>
+            <p>
+For more information on the above, see <a href="#implementation-notes"></a>.
+            </p>
+            <p>
+Compression then results in the following encoded credential:
+            </p>
+            <pre class="example nohighlight"
+            title="A CBOR-LD compressed Utopia EAD VC">
+D9CB1D821864A50183198000198001198002189D82187618A418BAA1189C18A218BE18AE18C0A5189C186C18D20418DC18E218DE58417A9EC7F688F60CAA8C757592250B3F6D6E18419941F186E1ED4245770E687502D51D01CD2C2295E4338178A51A35C2F044A85598E15DB9AEF00261BC5C95A744E718E018B0
+
+diagnostic:
+51997([
+  100,
+  {
+    1: [32768, 32769, 32770],
+    157: [118, 164],
+    186: {156: 162},
+    190: 174,
+    192: {
+      156: 108,
+      210: 4,
+      220: 226,
+      222: h'7A9EC7F688F60CAA8C757592250B3F6D6E18419941F186E1ED4245770E687502D51D01CD2C2295E4338178A51A35C2F044A85598E15DB9AEF00261BC5C95A744E7',
+      224: 176
+    }
+  }
+])
+            </pre>
+            <p>
+Encoding the EAD CBOR-LD as base45-multibase and prepending 'VC1-':
+            </p>
+            <pre class="example nohighlight"
+            title="An encoded Utopia EAD VCB">
+VC1-R0OR*W3Y33V%K PG88G3A3B60A8G1534KG$-ENXKWQN053653Y53I53 539*K0XJ.TDYOQJ63P63L6337BPMFPCP7EH2R12YH%%EXU4$08E-D8D86F8E2HX:T8Z8/ 1TZEH.QBA03Q5W.I0N6FBF4E3:SOQU8. A3MSELNHFU0GCVVBP6LU9T%ES-3
+            </pre>
+            <p>
+The above can now be turned into a QR code:
+            </p>
+          </section>
+          <section>
+            <h5>Employment Authorization Document</h5>
+            <figure id="ead-qr-creating-vcbs">
+              <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                  src="diagrams/ead-qr.png"
+                  alt="A VCB from a Utopia EAD.">
+              <figcaption style="text-align: center;">
+A VCB from a Utopia EAD.
+              </figcaption>
+            </figure>
+            <p>
+For use with the following MRZ:
+            </p>
+            <figure id="ead-back-creating-vcbs">
+              <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                  src="diagrams/ead-back.png"
+                  alt="An MRZ on a Utopia Employment Authorization Document.">
+              <figcaption style="text-align: center;">
+An MRZ on a Utopia Employment Authorization Document.
+              </figcaption>
+            </figure>
+          </section>
+        </section>
+      </section>
+      <section>
+        <h3>Verifying VCBs</h3>
+        <p>
+We now apply the reverse process to verify.
+        </p>
+        <section>
+          <h4>Utopia Driver's License</h4>
+          <section>
+            <h4>Decoding and Decompressing</h4>
+            <p>
+We first read the data from the PDF417:
+            </p>
+            <pre class="example nohighlight"
+            title="Bytes from a PDF417 including an encoded Utopia Driver's License VCB">
+bytes(@\n\x1e\rANSI 000000090002DL00410234ZZ02750202DLDAQF987654321\nDCSSMITH\nDDEN\nDACJOHN\nDDFN\nDADNONE\nDDGN\nDCAC\nDCBNONE\nDCDNONE\nDBD01012024\nDBB04191988\nDBA04192030\nDBC1\nDAU069 IN\nDAYBRO\nDAG123 MAIN ST\nDAIANYVILLE\nDAJUTO\nDAKF87P20000  \nDCFUTODOCDISCRIM\nDCGUTO\nDAW158\nDCK1234567890\nDDAN\rZZZZA2csdghhkpgGDGYAAGYABGYACGJ2CGHYYpBi4oxicGKYYzhiyGNAa5ZIggRi6ohicGKAYqER1ggAgGL4YqhjApRicGGwY1gQY4BjmGOJYQXq3wuVrSeLM5iGEziaBjhWosXMWRAG107uT_9bSteuPasCXFQKuPdSdF-xmUoFkA0yRJoW4ERvATNyewT263ZHMGOQYrA==\r)
+            </pre>
+
+            <p>
+We extract the data in field 'ZZA' in subfile 'ZZ', undoing the base encoding:
+            </p>
+            <pre class="example nohighlight"
+            title="A Utopia Driver's License VC compressed with CBOR-LD">
+D9CB1D821864A60183198000198001198002189D82187618A418B8A3189C18A618CE18B218D01AE592208118BAA2189C18A018A8447582002018BE18AA18C0A5189C186C18D60418E018E618E258417AB7C2E56B49E2CCE62184CE26818E15A8B173164401B5D3BB93FFD6D2B5EB8F6AC0971502AE3DD49D17EC66528164034C912685B8111BC04CDC9EC13DBADD91CC18E418AC
+            </pre>
+            <p>
+We now decompress with CBOR-LD to get the original JSON-LD VC to be
+verified. Again, the parameters are associated with CBOR-LD
+registry entry `100`.
+            </p>
+            <pre class="example nohighlight"
+            title="CBOR-LD decoding parameters">
+typeTable:
+{
+  "context":
+    {
+      "https://www.w3.org/ns/credentials/v2": 32768,
+      "https://w3id.org/vc-barcodes/v1": 32769,
+      "https://w3id.org/utopia/v2": 32770
+    },
+
+  "https://w3id.org/security#cryptosuiteString":
+    {
+      "ecdsa-rdfc-2019": 1,
+      "ecdsa-sd-2023": 2,
+      "eddsa-rdfc-2022": 3,
+      "ecdsa-xi-2023": 4
+    }
+}
+            </pre>
+            <p>
+The ID-to-term mapping that should result from processing the contexts and assigning
+integer values to context terms is as follows. Note that this is the inverse of the map
+constructed during compression.
+            </p>
+            <pre class="example nohighlight"
+            title="The ID-to-term map created by CBOR-LD when decompressing a Utopia DL">
+Map(97) {
+  0 => '@context',
+  2 => '@type',
+  4 => '@id',
+  6 => '@value',
+  8 => '@direction',
+  10 => '@graph',
+  12 => '@included',
+  14 => '@index',
+  16 => '@json',
+  18 => '@language',
+  20 => '@list',
+  22 => '@nest',
+  24 => '@reverse',
+  26 => '@base',
+  28 => '@container',
+  30 => '@default',
+  32 => '@embed',
+  34 => '@explicit',
+  36 => '@none',
+  38 => '@omitDefault',
+  40 => '@prefix',
+  42 => '@preserve',
+  44 => '@protected',
+  46 => '@requireAll',
+  48 => '@set',
+  50 => '@version',
+  52 => '@vocab',
+  100 => '...',
+  102 => 'BitstringStatusList',
+  104 => 'BitstringStatusListCredential',
+  106 => 'BitstringStatusListEntry',
+  108 => 'DataIntegrityProof',
+  110 => 'EnvelopedVerifiableCredential',
+  112 => 'EnvelopedVerifiablePresentation',
+  114 => 'JsonSchema',
+  116 => 'JsonSchemaCredential',
+  118 => 'VerifiableCredential',
+  120 => 'VerifiablePresentation',
+  122 => '_sd',
+  124 => '_sd_alg',
+  126 => 'aud',
+  128 => 'cnf',
+  130 => 'description',
+  132 => 'digestMultibase',
+  134 => 'digestSRI',
+  136 => 'exp',
+  138 => 'iat',
+  140 => 'id',
+  142 => 'iss',
+  144 => 'jku',
+  146 => 'kid',
+  148 => 'mediaType',
+  150 => 'name',
+  152 => 'nbf',
+  154 => 'sub',
+  156 => 'type',
+  158 => 'x5u',
+  160 => 'AamvaDriversLicenseScannableInformation',
+  162 => 'MachineReadableZone',
+  164 => 'OpticalBarcodeCredential',
+  166 => 'TerseBitstringStatusListEntry',
+  168 => 'protectedComponentIndex',
+  170 => 'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj',
+  172 => 'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj',
+  174 => 'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj',
+  176 => 'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj',
+  178 => 'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists',
+  180 => 'confidenceMethod',
+  182 => 'credentialSchema',
+  184 => 'credentialStatus',
+  186 => 'credentialSubject',
+  188 => 'evidence',
+  190 => 'issuer',
+  192 => 'proof',
+  194 => 'refreshService',
+  196 => 'relatedResource',
+  198 => 'renderMethod',
+  200 => 'termsOfUse',
+  202 => 'validFrom',
+  204 => 'validUntil',
+  206 => 'terseStatusListBaseUrl',
+  208 => 'terseStatusListIndex',
+  210 => 'challenge',
+  212 => 'created',
+  214 => 'cryptosuite',
+  216 => 'domain',
+  218 => 'expires',
+  220 => 'nonce',
+  222 => 'previousProof',
+  224 => 'proofPurpose',
+  226 => 'proofValue',
+  228 => 'verificationMethod',
+  230 => 'assertionMethod',
+  232 => 'authentication',
+  234 => 'capabilityDelegation',
+  236 => 'capabilityInvocation',
+  238 => 'keyAgreement'
+}
+            </pre>
+            <p>
+For more information on the above, see <a href="#implementation-notes"></a>.
+            </p>
+            <p>
+Decompression then yields the following credential:
+            </p>
+            <pre class="example nohighlight"
+  title="A JSON-LD VC for a Utopia Driver's License VCB">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "AamvaDriversLicenseScannableInformation",
+    "protectedComponentIndex": "uggAg"
+  },
+  "issuer": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+  "credentialStatus": {
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists",
+    "terseStatusListIndex": 3851559041
+  },
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4g6G3dAZhhtPxPWgFvkiRv7krtCaeJxjokvL46fchAFCXEY3FeX2vn46MDgBaw779g1E1jswZJxxreZDCrtHg2qH"
+  }
+}
+            </pre>
+          </section>
+          <section>
+            <h4>Verifying</h4>
+            <p>
+We apply <a href="#create-opticaldatabytes"></a>
+to create the |opticalDataBytes| that `ecdsa-xi-2023` requires, using the
+scanned PDF417 and `protectedComponentIndex` as input.
+            </p>
+            <pre class="example nohighlight"
+title="A canonicalization of a Utopia Driver's License PDF417">
+canonicalizedData = 'DACJOHN\nDAQ987654321\nDCSSMITH\n'
+opticalDataBytes:
+  [188,  38, 200, 146, 227, 213,  90, 250,
+  50,  18, 126, 254,  47, 177,  91,  23,
+  64, 129, 104, 223, 136,  81, 116,  67,
+  136, 125, 137, 165, 117,  63, 152, 207]
+            </pre>
+
+            <p>
+We then apply <a href="#hashing-ecdsa-xi-2023"></a> and
+<a href="#verify-proof-ecdsa-xi-2023"></a> to verify
+the credential.
+            </p>
+          </section>
+          <section>
+            <h4>Status Checking</h4>
+            <p>
+The last step is to check the status information on the Driver's License
+credential. We apply <a href="#convert-status-list-entries"></a>
+to convert the `TerseBitstringStatusListEntry` into a `BitstringStatusListEntry`.
+Here we check two status types, 'revocation' and 'suspension', passing those
+strings as values of |statusPurpose|.
+            </p>
+            <pre class="example nohighlight"
+            title="A BitstringStatusListEntry for status purpose: revocation">
+{
+  type: 'BitstringStatusListEntry',
+  statusListCredential: 'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists/revocation/29385',
+  statusListIndex: 8321,
+  statusPurpose: 'revocation'
+}
+            </pre>
+            <pre class="example nohighlight"
+            title="A BitstringStatusListEntry for status purpose: suspension">
+{
+  type: 'BitstringStatusListEntry',
+  statusListCredential: 'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists/suspension/29385',
+  statusListIndex: 8321,
+  statusPurpose: 'suspension'
+}
+            </pre>
+            <p>
+These can then be validated as in the <a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
+  Bitstring Status List v1.0: Validate Algorithm</a>.
+            </p>
+          </section>
+        </section>
+        <section>
+          <h4>Utopia Employment Authorization Document</h4>
+          <section>
+            <h4>Decoding and Decompressing</h4>
+            <p>
+We first read the data from the QR code:
+            </p>
+            <pre class="example nohighlight"
+            title="An encoded Utopia Driver's License EAD">
+VC1-R0OR*W3Y33V%K PG88G3A3B60A8G1534KG$-ENXKWQN053653Y53I53 539*K0XJ.TDYOQJ63P63L6337BPMFPCP7EH2R12YH%%EXU4$08E-D8D86F8E2HX:T8Z8/ 1TZEH.QBA03Q5W.I0N6FBF4E3:SOQU8. A3MSELNHFU0GCVVBP6LU9T%ES-3
+            </pre>
+            <p>
+We extract the data after 'VC1-' undoing the base encoding:
+            </p>
+            <pre class="example nohighlight"
+            title="A CBOR-LD compressed Utopia EAD VC">
+D9CB1D821864A50183198000198001198002189D82187618A418BAA1189C18A218BE18AE18C0A5189C186C18D20418DC18E218DE58417A9EC7F688F60CAA8C757592250B3F6D6E18419941F186E1ED4245770E687502D51D01CD2C2295E4338178A51A35C2F044A85598E15DB9AEF00261BC5C95A744E718E018B0
+            </pre>
+            <p>
+We now decompress with CBOR-LD to get the original JSON-LD VC to be
+verified. Again, the parameters are associated with CBOR-LD
+registry entry `100`.
+            </p>
+            <pre class="example nohighlight"
+            title="CBOR-LD decoding parameters">
+typeTable:
+{
+  "context":
+    {
+      "https://www.w3.org/ns/credentials/v2": 32768,
+      "https://w3id.org/vc-barcodes/v1": 32769,
+      "https://w3id.org/utopia/v2": 32770
+    },
+
+  "https://w3id.org/security#cryptosuiteString":
+    {
+      "ecdsa-rdfc-2019": 1,
+      "ecdsa-sd-2023": 2,
+      "eddsa-rdfc-2022": 3,
+      "ecdsa-xi-2023": 4
+    }
+}
+            </pre>
+            <p>
+The ID-to-term mapping that should result from processing the contexts and assigning
+integer values to context terms is as follows. Note that this is the inverse of the map
+constructed during compression.
+            </p>
+            <pre class="example nohighlight"
+            title="The ID-to-term map created by CBOR-LD when decompressing a Utopia EAD">
+Map(95) {
+  0 => '@context',
+  2 => '@type',
+  4 => '@id',
+  6 => '@value',
+  8 => '@direction',
+  10 => '@graph',
+  12 => '@included',
+  14 => '@index',
+  16 => '@json',
+  18 => '@language',
+  20 => '@list',
+  22 => '@nest',
+  24 => '@reverse',
+  26 => '@base',
+  28 => '@container',
+  30 => '@default',
+  32 => '@embed',
+  34 => '@explicit',
+  36 => '@none',
+  38 => '@omitDefault',
+  40 => '@prefix',
+  42 => '@preserve',
+  44 => '@protected',
+  46 => '@requireAll',
+  48 => '@set',
+  50 => '@version',
+  52 => '@vocab',
+  100 => '...',
+  102 => 'BitstringStatusList',
+  104 => 'BitstringStatusListCredential',
+  106 => 'BitstringStatusListEntry',
+  108 => 'DataIntegrityProof',
+  110 => 'EnvelopedVerifiableCredential',
+  112 => 'EnvelopedVerifiablePresentation',
+  114 => 'JsonSchema',
+  116 => 'JsonSchemaCredential',
+  118 => 'VerifiableCredential',
+  120 => 'VerifiablePresentation',
+  122 => '_sd',
+  124 => '_sd_alg',
+  126 => 'aud',
+  128 => 'cnf',
+  130 => 'description',
+  132 => 'digestMultibase',
+  134 => 'digestSRI',
+  136 => 'exp',
+  138 => 'iat',
+  140 => 'id',
+  142 => 'iss',
+  144 => 'jku',
+  146 => 'kid',
+  148 => 'mediaType',
+  150 => 'name',
+  152 => 'nbf',
+  154 => 'sub',
+  156 => 'type',
+  158 => 'x5u',
+  160 => 'AamvaDriversLicenseScannableInformation',
+  162 => 'MachineReadableZone',
+  164 => 'OpticalBarcodeCredential',
+  166 => 'TerseBitstringStatusListEntry',
+  168 => 'protectedComponentIndex',
+  170 => 'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj',
+  172 => 'did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj',
+  174 => 'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj',
+  176 => 'did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj',
+  178 => 'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists',
+  180 => 'confidenceMethod',
+  182 => 'credentialSchema',
+  184 => 'credentialStatus',
+  186 => 'credentialSubject',
+  188 => 'evidence',
+  190 => 'issuer',
+  192 => 'proof',
+  194 => 'refreshService',
+  196 => 'relatedResource',
+  198 => 'renderMethod',
+  200 => 'termsOfUse',
+  202 => 'validFrom',
+  204 => 'validUntil',
+  206 => 'challenge',
+  208 => 'created',
+  210 => 'cryptosuite',
+  212 => 'domain',
+  214 => 'expires',
+  216 => 'nonce',
+  218 => 'previousProof',
+  220 => 'proofPurpose',
+  222 => 'proofValue',
+  224 => 'verificationMethod',
+  226 => 'assertionMethod',
+  228 => 'authentication',
+  230 => 'capabilityDelegation',
+  232 => 'capabilityInvocation',
+  234 => 'keyAgreement'
+}
+            </pre>
+            <p>
+For more information on the above, see <a href="#implementation-notes"></a>.
+            </p>
+            <p>
+Decompression then yields the following credential:
+            </p>
+            <pre class="example nohighlight"
+            title="A JSON-LD VC for a Utopia EAD VCB">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "MachineReadableZone"
+  },
+  "issuer": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4B8AQgjwgsEdcPEZkrkK2mTVKn7qufoDgDkv9Qitf9tjxQPMoJaGdXwDrThjp7LUdvzsDJ7UwYu6Xpm9fjbo6QnJ"
+  }
+}
+            </pre>
+          </section>
+          <section>
+            <h4>Verifying</h4>
+            <p>
+We apply <a href="#create-opticaldatabytes"></a> to create
+the |opticalDataBytes| that `ecdsa-xi-2023` requires,using the MRZ
+on the EAD as input for the EAD:
+            </p>
+            <pre class="example nohighlight"
+            title="A canonicalization of a Utopia EAD MRZ">
+canonicalizedData =
+  'IAUTO0000007010SRC0000000701&lt;&lt;\n' +
+  '8804192M2601058NOT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;5\n' +
+  'SMITH&lt;&lt;JOHN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\n'
+opticalDataBytes:
+[8, 198, 126, 183,  25, 160, 166, 112,
+254, 184, 189,  47, 225, 211, 125, 210,
+132, 137, 45,  86, 169,  28,  57, 165,
+46, 253, 9, 137, 145,  42, 192, 113]
+            </pre>
+            <p>
+We then apply <a href="#hashing-ecdsa-xi-2023"></a> and
+<a href="#verify-proof-ecdsa-xi-2023"></a> to verify
+the credential.
+            </p>
+          </section>
+        </section>
+      </section>
+      <section>
+        <h3>
+Implementation Notes
+        </h3>
+        <section>
+          <h4>
+CBOR-LD
+          </h4>
+          <p>
+When building maps from context terms to CBOR-LD integers, note that
+some contexts include other contexts inside of them, nested under particular
+types of objects. These nested contexts are called "type-scoped contexts" and they only
+become active when the associated type is used in the data. This is important for term ID
+assignment because the terms in a context are only assigned IDs once that context becomes
+active. In these test vectors, this is why the maps created for the Driver's License and
+the Employment Authorization Document are different even though the two credentials use
+identical contexts.
+          </p>
+          <p>
+In addition, note that odd numbers are used in CBOR-LD to express terms when the associated
+value is plural. For example, in the CBOR-LD term-to-ID and ID-to-term maps above, "type" is
+mapped to 156, but in places where multiple types are expressed in a VC, 157 is used instead.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h3>
+Legacy CBOR-LD encoded credentials
+        </h3>
+This process is used to test whether a CBOR-LD implementation that is not fully
+up to date has been used.
+
+        <section>
+          <h4>
+CBOR-LD Version 6.X
+          </h4>
+The process remains
+the same, with the exception of the CBOR-LD decoding step, for which the following |appContextMap|
+should be used:
+          <pre class="example nohighlight"
+               title="A BitstringStatusListEntry for status purpose: suspension">
+appContextMap:
+[['https://www.w3.org/ns/credentials/v2', 32768],
+['https://w3id.org/vc-barcodes/v1', 32769],
+['https://w3id.org/utopia/v2', 32770]]
+          </pre>
+          <section>
+            <h4>Utopia Driver's License</h4>
+            <figure id="dl-barcode-cborld-6">
+              <img style="margin: auto; display: block; border-radius:15px; width: 80%;"
+                   src="diagrams/dl-barcode-cborld-6.png"
+                   alt="A VCB from a Utopia driver's license encoded with legacy CBOR-LD.">
+              <figcaption style="text-align: center;">
+  A VCB from a Utopia driver's license encoded with legacy CBOR-LD.
+              </figcaption>
+            </figure>
+          </section>
+          <section>
+            <h5>Utopia Employment Authorization Document</h5>
+            <figure id="ead-qr-cborld-6">
+              <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                   src="diagrams/ead-qr-cborld-6.png"
+                   alt="A VCB from a Utopia EAD encoded with legacy CBOR-LD.">
+              <figcaption style="text-align: center;">
+  A VCB from a Utopia EAD encoded with legacy CBOR-LD.
+              </figcaption>
+            </figure>
+            <p>
+  For use with the following MRZ:
+            </p>
+            <figure id="ead-back-cborld-6">
+              <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                   src="diagrams/ead-back.png"
+                   alt="An MRZ on a Utopia Employment Authorization Document.">
+              <figcaption style="text-align: center;">
+  An MRZ on a Utopia Employment Authorization Document.
+              </figcaption>
+            </figure>
+          </section>
+        </section>
+        <section>
+          <h4>
+CBOR-LD Version 7.X
+          </h4>
+          <section>
+            <h4>Utopia Driver's License</h4>
+            <figure id="dl-barcode-cborld-7">
+              <img style="margin: auto; display: block; border-radius:15px; width: 80%;"
+                   src="diagrams/dl-barcode-cborld-7.png"
+                   alt="A VCB from a Utopia driver's license encoded with legacy CBOR-LD.">
+              <figcaption style="text-align: center;">
+  A VCB from a Utopia driver's license encoded with legacy CBOR-LD.
+              </figcaption>
+            </figure>
+          </section>
+          <section>
+            <h5>Utopia Employment Authorization Document</h5>
+            <figure id="ead-qr-cborld-7">
+              <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                   src="diagrams/ead-qr-cborld-7.png"
+                   alt="A VCB from a Utopia EAD encoded with legacy CBOR-LD.">
+              <figcaption style="text-align: center;">
+  A VCB from a Utopia EAD encoded with legacy CBOR-LD.
+              </figcaption>
+            </figure>
+            <p>
+  For use with the following MRZ:
+            </p>
+            <figure id="ead-back-cborld-7">
+              <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                   src="diagrams/ead-back.png"
+                   alt="An MRZ on a Utopia Employment Authorization Document.">
+              <figcaption style="text-align: center;">
+  An MRZ on a Utopia Employment Authorization Document.
+              </figcaption>
+            </figure>
+          </section>
+        </section>
+      </section>
+    </section>
+    <section class="informative">
+      <h2>Revision History</h2>
+      <p>
+This section contains the substantive changes that have been made to this
+specification over time.
+      </p>
+
+      <p class="issue" title="Content will be filled in after standards-track has been started">
+The content for this specification will be filled in after the
+standards-track process has been started.
+      </p>
+
+    </section>
+
+  </body>
+</html>

@@ -1,0 +1,4167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Integrity ECDSA Cryptosuites v1.1</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <!--
+      === NOTA BENE ===
+      For the three scripts below, if your spec resides on dev.w3 you can check them
+      out in the same tree and use relative links so that they'll work offline,
+     -->
+    <script src="//www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class="remove" src="https://w3c.github.io/vc-data-integrity/common.js"></script>
+
+    <script type="text/javascript" class="remove">
+      var respecConfig = {
+        subtitle: "Achieving Data Integrity using ECDSA with NIST-compliant curves",
+        // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+        group: "vc",
+        specStatus: "ED",
+
+        // the specification's short name, as in http://www.w3.org/TR/short-name/
+        shortName: "vc-di-ecdsa-1.1",
+
+        // if you wish the publication date to be other than today, set this
+        //publishDate: "2025-5-15",
+        //crEnd: "2025-01-19",
+        //prEnd: "2025-4-17",
+
+        // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+        // and its maturity status
+        previousPublishDate:  "2025-05-15",
+        previousMaturity:  "REC",
+
+        // if there a publicly available Editor's Draft, this is the link
+        edDraftURI: "https://w3c.github.io/vc-di-ecdsa/",
+        //errata: "https://w3c.github.io/vc-di-ecdsa/errata.html",
+
+        //latestVersion: "https://www.w3.org/community/reports/credentials/CG-FINAL-di-ecdsa-2019-20220724/",
+
+        // if this is a LCWD, uncomment and set the end of its review period
+        //implementationReportURI: "https://w3c.github.io/vc-di-ecdsa-test-suite/",
+
+        // if you want to have extra CSS, append them to this list
+        // it is recommended that the respec.css stylesheet be kept
+        //extraCSS:             ["spec.css", "prettify.css"],
+
+        // editors, add as many as you like
+        // only "name" is required
+        editors: [{
+          name: "Manu Sporny",
+          url: "https://www.linkedin.com/in/manusporny/",
+          company: "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/",
+          w3cid: 41758
+        }, {
+          name: "Dave Longley", url: "https://digitalbazaar.com/",
+          company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/",
+          w3cid: 48025
+        }, {
+          name: "Greg Bernstein", url: "https://www.grotto-networking.com/",
+          company: "Invited Expert", w3cid: 140479
+        }],
+
+        // authors, add as many as you like.
+        // This is optional, uncomment if you have authors as well as editors.
+        // only "name" is required. Same format as editors.
+
+        authors: [{
+          name: "Dave Longley", url: "https://digitalbazaar.com/",
+          company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/",
+          w3cid: 48025
+        }, {
+          name: "Manu Sporny", url: "https://www.linkedin.com/in/manusporny/",
+          company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/",
+          w3cid: 41758
+        }, {
+          name: "Greg Bernstein", url: "https://www.grotto-networking.com/",
+          company: "Invited Expert", w3cid: 140479
+        }],
+
+        // extend the bibliography entries
+        //localBiblio: webpayments.localBiblio,
+
+        // name of the WG
+        //wg:           "W3C Credentials Community Group",
+
+        // URI of the public WG page
+        //wgURI:        "https://www.w3.org/community/credentials/",
+
+        // name (with the @w3c.org) of the public mailing to which comments are due
+        //wgPublicList: "public-credentials",
+
+        github: "https://github.com/w3c/vc-di-ecdsa/",
+
+        // URI of the patent status for this WG, for Rec-track documents
+        // !!!! IMPORTANT !!!!
+        // This is important for Rec-track documents, do not copy a patent URI from a random
+        // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+        // Team Contact.
+        // wgPatentURI:  "",
+        maxTocLevel: 4,
+        /*preProcess: [ webpayments.preProcess ],
+        alternateFormats: [ {uri: "diff-20111214.html", label: "diff to previous version"} ],
+        */
+        localBiblio: {
+          SECG2: {
+            title: "SEC 2: Recommended Elliptic Curve Domain Parameters",
+            href: "https://www.secg.org/sec2-v2.pdf",
+            date: "January 27, 2010",
+            publisher: "Certicom Research"
+          },
+          "NIST-SP-800-186": {
+            title: "Recommendations for Discrete Logarithm-based Cryptography: Elliptic Curve Domain Parameters",
+            authors: ["Lily Chen", "Dustin Moody", "Karen Randall", "Andrew Regenscheid", "Angela Robinson"],
+            date: "February 2023",
+            publisher: "National Institute of Standards and Technology"
+          },
+          "NIST-SP-800-186": {
+            title: "Recommendations for Discrete Logarithm-based Cryptography: Elliptic Curve Domain Parameters",
+            authors: ["Lily Chen", "Dustin Moody", "Karen Randall", "Andrew Regenscheid", "Angela Robinson"],
+            date: "February 2023",
+            publisher: "National Institute of Standards and Technology"
+          },
+          "NIST-SP-800-57-Part-1": {
+            title: "Recommendation for Key Management: Part 1 – General",
+            authors: ["Elaine Barker"],
+            date: "May 2020",
+            publisher: "National Institute of Standards and Technology",
+            href: "https://doi.org/10.6028/NIST.SP.800-57pt1r5"
+          }
+        },
+        xref: ["INFRA", "VC-DATA-MODEL-2.0", "VC-DATA-INTEGRITY"],
+        lint: { "informative-dfn": false },
+        otherLinks: [{
+          key: "Related Specifications",
+          data: [{
+            value: "The Verifiable Credentials Data Model v2.1",
+            href: "https://www.w3.org/TR/vc-data-model-2.1/"
+          }, {
+            value: "Verifiable Credential Data Integrity v1.1",
+            href: "https://www.w3.org/TR/vc-data-integrity-1.1/"
+          }, {
+            value: "Controlled Identifiers v1.1",
+            href: "https://www.w3.org/TR/cid-1.1/"
+          }, {
+            value: "Data Integrity EdDSA Cryptosuites v1.1",
+            href: "https://www.w3.org/TR/vc-di-eddsa-1.1/"
+          }, {
+            value: "Data Integrity BBS Cryptosuites v1.0",
+            href: "https://www.w3.org/TR/vc-di-bbs/"
+          }]
+        }]
+      };
+    </script>
+    <style>
+code {
+  color: rgb(199, 73, 0);
+  font-weight: bold;
+}
+pre.nohighlight {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+pre .highlight {
+  font-weight: bold;
+  color: green;
+}
+pre .comment {
+  font-weight: bold;
+  color: Gray;
+}
+.color-text {
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+ol.algorithm {
+  counter-reset: numsection;
+  list-style-type: none;
+}
+ol.algorithm li {
+  margin: 0.5em 0;
+}
+ol.algorithm li:before {
+  font-weight: bold;
+  counter-increment: numsection;
+  content: counters(numsection, ".") ") ";
+}
+    </style>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+This specification describes Data Integrity cryptosuites for use when
+generating a digital signature using the Elliptic Curve Digital Signature
+Algorithm (ECDSA).
+      </p>
+    </section>
+
+    <section id="sotd">
+      <p>
+Comments regarding this specification are welcome at any time.
+Please file issues directly on
+<a href="https://github.com/w3c/vc-di-ecdsa/issues/">GitHub</a>,
+or send them to
+<a href="mailto:public-vc-comments@w3.org">public-vc-comments@w3.org</a>
+if that is not possible.
+(<a href="mailto:public-vc-comments-request@w3.org?subject=subscribe">subscribe</a>,
+<a href="https://lists.w3.org/Archives/Public/public-vc-comments/">archives</a>).
+      </p>
+    </section>
+
+    <section>
+      <h2>Introduction</h2>
+      <p>
+This specification defines a cryptographic suite for the purpose of creating,
+and verifying proofs for ECDSA signatures in conformance with the
+Data Integrity [[VC-DATA-INTEGRITY]] specification. ECDSA signatures are
+specified in [[FIPS-186-5]] with elliptic curves P-256 and P-384 specified in
+[[NIST-SP-800-186]]. [[FIPS-186-5]] includes the <em>deterministic</em> ECDSA
+algorithm which is also specified in [[RFC6979]].
+      </p>
+
+      <div class="note">
+        <p>
+The elliptic curves P-256 and P-384 of [[NIST-SP-800-186]] are respectively referred
+to as <em>secp256r1</em> and <em>secp384r1</em> in [[SECG2]]. This notation is
+sometimes also used by ECDSA software libraries.
+        </p>
+        <p>
+Developers are cautioned to not confuse <em>secp256<b>r</b>1</em> terms with
+<em>secp256<b>k</b>1</em> terms; the latter are from a third, <em>different</em>,
+elliptic curve, that is not used by this specification. ECDSA software libraries
+might not implement all of these curves, so developers need to take care when
+choosing an ECDSA software library for their implementation.
+        </p>
+      </div>
+
+      <p>
+This specification uses either the RDF Dataset Canonicalization Algorithm
+[[RDF-CANON]] or the JSON Canonicalization Scheme [[RFC8785]] to transform the
+input document into its canonical form. It uses one of two mechanisms to digest
+and sign: SHA-256 [[RFC6234]] as the message digest algorithm and ECDSA with
+Curve P-256 as the signature algorithm, or SHA-384 [[RFC6234]] as the message
+digest algorithm and ECDSA with Curve P-384 as the signature algorithm.
+      </p>
+
+      <section id="terminology">
+        <h3>Terminology</h3>
+
+        <p>
+Terminology used throughout this document is defined in the
+<a data-cite="VC-DATA-INTEGRITY#terminology">Terminology</a> section of the
+[[[VC-DATA-INTEGRITY]]] specification.
+        </p>
+
+      </section>
+
+      <section id="conformance">
+        <p>
+A <dfn>conforming proof</dfn> is any concrete expression of the data model
+that complies with the normative statements in this specification. Specifically,
+all relevant normative statements in Sections
+[[[#data-model]]] and [[[#algorithms]]]
+of this document MUST be enforced.
+        </p>
+
+        <p>
+A <dfn class="lint-ignore">conforming processor</dfn> is any algorithm realized
+as software and/or hardware that generates or consumes a
+[=conforming proof=]. Conforming processors MUST produce errors when
+non-conforming documents are consumed.
+        </p>
+	<p>
+This document contains examples of JSON and JSON-LD data. Some of these examples
+are invalid JSON, as they include features such as inline comments (`//`)
+explaining certain portions and ellipses (`...`) indicating the omission of
+information that is irrelevant to the example. Such parts need to be
+removed if implementers want to treat the examples as valid JSON or JSON-LD.
+        </p>
+      </section>
+
+    </section>
+
+    <section>
+      <h2>Data Model</h2>
+
+      <p>
+The following sections outline the data model that is used by this specification
+to express verification methods, such as cryptographic public keys, and
+data integrity proofs, such as digital signatures.
+      </p>
+
+      <section>
+        <h3>Verification Methods</h3>
+
+        <p>
+These verification methods are used to verify Data Integrity Proofs
+[[VC-DATA-INTEGRITY]] produced using Elliptic Curve cryptographic key material
+that is compliant with [[FIPS-186-5]]. The encoding formats for these key types
+are provided in this section. Lossless cryptographic key transformation
+processes that result in equivalent cryptographic key material MAY be used
+during the processing of digital signatures.
+        </p>
+
+        <section>
+          <h4>Multikey</h4>
+
+          <p>
+The <a data-cite="CID#Multikey">Multikey format</a>, defined in
+[[[CID]]], is used to express public keys for the cryptographic
+suites defined in this specification.
+          </p>
+
+          <p>
+The `publicKeyMultibase` property represents a Multibase-encoded Multikey
+expression of a P-256 or P-384 public key.
+          </p>
+
+          <p>
+The `publicKeyMultibase` value of the verification method MUST start with the
+base-58-btc prefix (`z`), as defined in the
+<a data-cite="CID#multibase-0">Multibase section</a> of
+[[[CID]]]. A Multibase-encoded ECDSA 256-bit public key value or
+an ECDSA 384-bit public key value follows, as defined in the
+<a data-cite="CID#Multikey">Multikey section</a> of
+[[[CID]]]. Any other encoding MUST NOT be allowed.
+          </p>
+
+          <p class="advisement">
+Developers are advised to not accidentally publish a representation of a private
+key. Implementations of this specification will raise errors in the event of a
+Multicodec value other than `0x1200` or `0x1201` being used in a
+`publicKeyMultibase` value.
+          </p>
+
+          <pre class="example nohighlight"
+            title="An P-256 public key encoded as a Multikey">
+{
+  "id": "https://example.com/issuer/123#key-0",
+  "type": "Multikey",
+  "controller": "https://example.com/issuer/123",
+  "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv"
+}
+          </pre>
+
+          <pre class="example nohighlight"
+            title="An P-384 public key encoded as a Multikey">
+{
+  "id": "https://example.com/issuer/123#key-0",
+  "type": "Multikey",
+  "controller": "https://example.com/issuer/123",
+  "publicKeyMultibase": "z82LkvCwHNreneWpsgPEbV3gu1C6NFJEBg4srfJ5gdxEsMGRJ
+    Uz2sG9FE42shbn2xkZJh54"
+}
+          </pre>
+
+          <pre class="example nohighlight" title="Two public keys (P-256 and P-384)
+            encoded as Multikeys in a controller document">
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/multikey/v1"
+  ],
+  "id": "did:example:123",
+  "verificationMethod": [{
+    "id": "https://example.com/issuer/123#key-1",
+    "type": "Multikey",
+    "controller": "https://example.com/issuer/123",
+    "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv"
+  }, {
+    "id": "https://example.com/issuer/123#key-2",
+    "type": "Multikey",
+    "controller": "https://example.com/issuer/123",
+    "publicKeyMultibase": "z82LkvCwHNreneWpsgPEbV3gu1C6NFJEBg4srfJ5gdxEsMGRJ
+      Uz2sG9FE42shbn2xkZJh54"
+  }],
+  "authentication": [
+    "did:example:123#key-1"
+  ],
+  "assertionMethod": [
+    "did:example:123#key-2"
+  ],
+  "capabilityDelegation": [
+    "did:example:123#key-2"
+  ],
+  "capabilityInvocation": [
+    "did:example:123#key-2"
+  ]
+}
+          </pre>
+
+          <p>
+The `secretKeyMultibase` property represents a Multibase-encoded Multikey
+expression of a P-256 or P-384 secret key (also sometimes referred to as a
+private key).
+          </p>
+
+          <p>
+The `secretKeyMultibase` value of the verification method MUST start with the
+base-58-btc prefix (`z`), as defined in the
+<a data-cite="CID#multibase-0">Multibase section</a> of
+[[[CID]]]. A Multibase-encoded ECDSA 256-bit secret key value or
+an ECDSA 384-bit secret key value follows, as defined in the
+<a data-cite="CID#Multikey">Multikey section</a> of
+[[[CID]]]. Any other encoding MUST NOT be allowed.
+          </p>
+
+
+          <p class="advisement">
+            Developers are advised to prevent accidental publication of a representation of a secret
+            key, and to not export the `secretKeyMultibase` property by default, when serializing
+            key pairs as Multikey.
+          </p>
+
+        </section>
+
+      </section>
+
+      <section>
+        <h3>Proof Representations</h3>
+
+        <p>
+This section details the proof representation formats that are defined by
+this specification.
+        </p>
+
+        <section>
+          <h4>DataIntegrityProof</h4>
+
+          <p>
+A proof contains the attributes specified in the
+<a href="https://www.w3.org/TR/vc-data-integrity/#proofs">Proofs section</a>
+of [[VC-DATA-INTEGRITY]] with the following restrictions.
+          </p>
+          <p>
+The `type` property MUST be `DataIntegrityProof`.
+          </p>
+          <p>
+The `cryptosuite` property MUST be `ecdsa-rdfc-2019`,
+`ecdsa-jcs-2019`, or `ecdsa-sd-2023`.
+          </p>
+          <p>
+The value of the `proofValue` property is produced according to
+the `cryptosuite` type and is specified in either
+Section [[[#create-proof-ecdsa-rdfc-2019]]], or
+Section [[[#create-proof-ecdsa-jcs-2019]]], or
+Section [[[#create-base-proof-ecdsa-sd-2023]]], or
+Section [[[#add-derived-proof-ecdsa-sd-2023]]].
+          </p>
+
+          <pre class="example nohighlight"
+            title="An ECDSA P-256 digital signature expressed as a
+              DataIntegrityProof">
+{
+  "@context": [
+    {"myWebsite": "https://vocabulary.example/myWebsite"},
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "myWebsite": "https://hello.world.example/",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "cryptosuite": "ecdsa-rdfc-2019",
+    "created": "2023-02-24T23:36:38Z",
+    "verificationMethod": "https://vc.example/issuers/5678#zDnaepBuvsQ8cpsWrVKw8
+      fbpGpvPeNSjVPTWoq6cRqaYzBKVP",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z2iAR3F2Sk3mWfYyrinKzSQpSbvfxnz9kkv7roxxumB5RZDP9JUw5QAXuchUd
+      huiwE18hyyZTjiEreKmhH3oj9Q8"
+  }
+}
+          </pre>
+
+        </section>
+      </section>
+    </section>
+
+    <section>
+      <h2>Algorithms</h2>
+
+      <p>
+The following section describes multiple Data Integrity cryptographic suites
+that utilize the Elliptic Curve Digital Signature Algorithm (ECDSA)
+[[FIPS-186-5]]. When generating ECDSA signatures, the signature value MUST be
+expressed according to section 7 of [[RFC4754]] (sometimes referred to as the
+IEEE P1363 format) and encoded according to the specific cryptosuite proof
+generation algorithm. All ECDSA signatures SHOULD use the <em>deterministic</em>
+variant of the algorithm defined in [[FIPS-186-5]].
+      </p>
+
+      <p>
+Implementations SHOULD fetch and cache verification method information as
+early as possible when adding or verifying proofs. Parameters passed to
+functions in this section use information from the verification method
+&mdash; such as the public key size &mdash; to determine function parameters
+&mdash; such as the cryptographic hashing algorithm.
+      </p>
+
+      <p id="canon-and-hash">
+When the RDF Dataset Canonicalization Algorithm (RDFC-1.0) [[RDF-CANON]] is used
+with ECDSA algorithms, the cryptographic hashing function used by RDFC-1.0 is
+chosen based on the size of the associated public key. For P-256 keys, the
+default hashing function, SHA-2 with 256 bits of output, MUST be used. For P-384
+keys, SHA-2 with 384-bits of output MUST be used, specified via the RDFC-1.0
+<a data-cite="RDF-CANON#dfn-hash-algorithm">implementation-specific parameter</a>.
+      </p>
+
+      <p class="advisement">
+When the RDF Dataset Canonicalization Algorithm [[RDF-CANON]] is used,
+implementations of that algorithm will detect
+<a data-cite="RDF-CANON#dataset-poisoning">dataset poisoning</a>
+by default, and abort processing upon detection.
+      </p>
+
+      <section>
+        <h3>Instantiate Cryptosuite</h3>
+
+        <p>
+This algorithm is used to configure a cryptographic suite to be used by the
+<a data-cite="VC-DATA-INTEGRITY#add-proof">Add Proof</a> and
+<a data-cite="VC-DATA-INTEGRITY#verify-proof">Verify Proof</a>
+functions in [[[VC-DATA-INTEGRITY]]]. The algorithm takes an options object
+([=map=] |options|) as input and returns a [=data integrity cryptographic suite
+instance|cryptosuite instance=] ([=struct=] |cryptosuite|).
+        </p>
+
+        <ol class="algorithm">
+          <li>
+Initialize |cryptosuite| to an empty [=struct=].
+          </li>
+          <li>
+If |options|.|type| does not equal `DataIntegrityProof`, return |cryptosuite|.
+          </li>
+          <li>
+If |options|.|cryptosuite| is `ecdsa-rdfc-2019` then:
+            <ol class="algorithm">
+              <li>
+Set |cryptosuite|.|createProof| to the algorithm in Section
+[[[#create-proof-ecdsa-rdfc-2019]]].
+              </li>
+              <li>
+Set |cryptosuite|.|verifyProof| to the algorithm in Section
+[[[#proof-verification-ecdsa-rdfc-2019]]].
+              </li>
+            </ol>
+          </li>
+          <li>
+If |options|.|cryptosuite| is `ecdsa-jcs-2019` then:
+            <ol class="algorithm">
+              <li>
+Set |cryptosuite|.|createProof| to the algorithm in Section
+[[[#create-proof-ecdsa-jcs-2019]]].
+              </li>
+              <li>
+Set |cryptosuite|.|verifyProof| to the algorithm in Section
+[[[#proof-verification-ecdsa-jcs-2019]]].
+              </li>
+            </ol>
+          </li>
+          <li>
+If |options|.|cryptosuite| is `ecdsa-sd-2023` then:
+            <ol class="algorithm">
+              <li>
+Set |cryptosuite|.|createProof| to the algorithm in Section
+[[[#create-base-proof-ecdsa-sd-2023]]].
+              </li>
+              <li>
+Set |cryptosuite|.|verifyProof| to the algorithm in Section
+[[[#verify-derived-proof-ecdsa-sd-2023]]].
+              </li>
+            </ol>
+          </li>
+          <li>
+Return |cryptosuite|.
+          </li>
+        </ol>
+
+      </section>
+
+      <section>
+        <h3>ecdsa-rdfc-2019</h3>
+
+        <p>
+The `ecdsa-rdfc-2019` cryptographic suite takes an input document, canonicalizes
+the document using the [[[RDF-CANON]]]
+[[RDF-CANON]], and then cryptographically hashes and signs the output
+resulting in the production of a data integrity proof. The algorithms in this
+section also include the verification of such a data integrity proof.
+        </p>
+
+        <section>
+          <h4>Create Proof (ecdsa-rdfc-2019)</h4>
+
+          <p>
+The following algorithm specifies how to create a [=data integrity proof=] given
+an <a>unsecured data document</a>. Required inputs are an
+<a>unsecured data document</a> ([=map=] |unsecuredDocument|), and a set of proof
+options ([=map=] |options|). A [=data integrity proof=] ([=map=]), or an error,
+is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |proof| be a clone of the proof options, |options|.
+            </li>
+            <li>
+Let |proofConfig| be the result of running the algorithm in
+Section [[[#proof-configuration-ecdsa-rdfc-2019]]] with
+|options| passed as a parameter.
+            </li>
+            <li>
+Let |transformedData| be the result of running the algorithm in Section <a
+href="#transformation-ecdsa-rdfc-2019"></a> with |unsecuredDocument|,
+|proofConfig|, and |options| passed as parameters.
+            </li>
+            <li>
+Let |hashData| be the result of running the algorithm in Section
+[[[#hashing-ecdsa-rdfc-2019]]] with |transformedData| and |proofConfig|
+passed as a parameters.
+            </li>
+            <li>
+Let |proofBytes| be the result of running the algorithm in Section
+[[[#proof-serialization-ecdsa-rdfc-2019]]] with |hashData| and
+|options| passed as parameters.
+            </li>
+            <li>
+Let |proof|.|proofValue| be a <a data-cite="CID#multibase-0">
+base58-btc-encoded Multibase value</a> of the |proofBytes|.
+            </li>
+            <li>
+Return |proof| as the [=data integrity proof=].
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Verify Proof (ecdsa-rdfc-2019)</h4>
+
+          <p>
+The following algorithm specifies how to verify a [=data integrity proof=] given
+an <a>secured data document</a>. Required inputs are an
+<a>secured data document</a> ([=map=] |securedDocument|). This algorithm returns
+a <dfn>verification result</dfn>, which is a [=struct=] whose
+[=struct/items=] are:
+          </p>
+          <dl>
+            <dt><dfn data-dfn-for="verification result">verified</dfn></dt>
+            <dd>`true` or `false`</dd>
+            <dt><dfn data-dfn-for="verification result">verifiedDocument</dfn></dt>
+            <dd>
+<a data-cite="INFRA#nulls">Null</a>, if [=verification result/verified=] is
+`false`; otherwise, an [=unsecured data document=]
+            </dd>
+          </dl>
+
+          <ol class="algorithm">
+          <li>
+Let |unsecuredDocument| be a copy of |securedDocument| with
+the `proof` value removed.
+          </li>
+          <li>
+Let |proofConfig| be a copy of |securedDocument|.|proof| with `proofValue`
+removed.
+          </li>
+          <li>
+Let |proofBytes| be the
+<a data-cite="CID#multibase-0">Multibase decoded base58-btc
+value</a> in |securedDocument|.|proof|.|proofValue|.
+          </li>
+          <li>
+Let |transformedData| be the result of running the algorithm in Section <a
+href="#transformation-ecdsa-rdfc-2019"></a> with |unsecuredDocument| and
+|proofConfig| passed as parameters.
+          </li>
+          <li>
+Let |hashData| be the result of running the algorithm in Section
+[[[#hashing-ecdsa-rdfc-2019]]] with |transformedData| and |proofConfig|
+passed as a parameters.
+          </li>
+          <li>
+Let |verified:boolean| be the result of running the algorithm in Section
+[[[#proof-verification-ecdsa-rdfc-2019]]] algorithm on |hashData|,
+|proofBytes|, and |proofConfig|.
+            </li>
+            <li>
+Return a [=verification result=] with [=struct/items=]:
+              <dl data-link-for="verification result">
+                <dt>[=verified=]</dt>
+                <dd>|verified|</dd>
+                <dt>[=verifiedDocument=]</dt>
+                <dd>
+|unsecuredDocument| if |verified| is `true`, otherwise <a data-cite="INFRA#nulls">Null</a></dd>
+              </dl>
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Transformation (ecdsa-rdfc-2019)</h4>
+
+          <p>
+The following algorithm specifies how to transform an unsecured input document
+into a transformed document that is ready to be provided as input to the
+hashing algorithm in Section [[[#hashing-ecdsa-rdfc-2019]]].
+          </p>
+
+          <p>
+Required inputs to this algorithm are an
+<a data-cite="vc-data-integrity#dfn-unsecured-data-document">
+unsecured data document</a> (|unsecuredDocument|) and
+transformation options (|options|). The
+transformation options MUST contain a type identifier for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and a cryptosuite
+identifier (|cryptosuite|). A <em>transformed data document</em> is
+produced as output. Whenever this algorithm encodes strings, it MUST use UTF-8
+encoding.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+If |options|.|type| is not set to the string
+`DataIntegrityProof` and |options|.|cryptosuite| is not
+set to the string `ecdsa-rdfc-2019`,
+an error MUST be raised and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_TRANSFORMATION_ERROR">PROOF_TRANSFORMATION_ERROR</a>.
+            </li>
+            <li>
+Let |canonicalDocument| be the result of converting |unsecuredDocument| to
+<a data-cite="JSON-LD11-API#expansion-algorithm">JSON-LD expanded form</a>
+and then <a data-cite="JSON-LD11-API#deserialize-json-ld-to-rdf-algorithm">
+to RDF statements</a>, applying the <a data-cite="RDF-CANON#canon-algorithm">RDF Dataset Canonicalization
+Algorithm</a> [[RDF-CANON]] to the result, and then serializing the result to a
+<a data-cite="RDF-CANON#dfn-serialized-canonical-form">serialized canonical form</a> [[RDF-CANON]].
+For canonicalization, one is expected to use a hash algorithm that has an appropriate security level for
+the curve used; see <a href="#canon-and-hash">further details</a>.
+            </li>
+            <li>
+Return |canonicalDocument| as the <em>transformed data document</em>.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>Hashing (ecdsa-rdfc-2019)</h4>
+
+          <p>
+The following algorithm specifies how to cryptographically hash a
+<em>transformed data document</em> and <em>proof configuration</em>
+into cryptographic hash data that is ready to be provided as input to the
+algorithms in Section [[[#proof-serialization-ecdsa-rdfc-2019]]] or
+Section [[[#proof-verification-ecdsa-rdfc-2019]]]. One must use the hash
+algorithm appropriate in security level to the curve used, i.e., for curve
+P-256 one uses SHA-256 and for curve P-384 one uses SHA-384.
+          </p>
+
+          <p>
+The required inputs to this algorithm are a <em>transformed data document</em>
+(|transformedDocument|) and <em>canonical proof configuration</em>
+(|canonicalProofConfig|). A single <em>hash data</em> value represented as
+series of bytes is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |transformedDocumentHash| be the result of applying the
+SHA-256 (SHA-2 with 256-bit output) or SHA-384 (SHA-2 with 384-bit output)
+cryptographic hashing algorithm [[RFC6234]] to the
+respective curve P-256 or curve P-384 |transformedDocument|.
+Respective |transformedDocumentHash| will be exactly 32 or 48 bytes
+in size.
+            </li>
+            <li>
+Let |proofConfigHash| be the result of applying the
+SHA-256 (SHA-2 with 256-bit output) or SHA-384 (SHA-2 with 384-bit output)
+cryptographic hashing algorithm [[RFC6234]] to the respective curve P-256 or curve P-384
+|canonicalProofConfig|. Respective |proofConfigHash|
+will be exactly 32 or 48 bytes in size.
+            </li>
+            <li>
+Let |hashData| be the result of joining |proofConfigHash| (the
+first hash) with |transformedDocumentHash| (the second hash).
+            </li>
+            <li>
+Return |hashData| as the <em>hash data</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Proof Configuration (ecdsa-rdfc-2019)</h4>
+
+          <p>
+The following algorithm specifies how to generate a
+<em>proof configuration</em> from a set of <em>proof options</em>
+that is used as input to the <a href="#hashing-ecdsa-rdfc-2019">proof hashing algorithm</a>.
+          </p>
+
+          <p>
+The required inputs to this algorithm are <em>proof options</em>
+(|options|). The <em>proof options</em> MUST contain a type identifier
+for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and MUST contain a cryptosuite
+identifier (|cryptosuite|). A <em>proof configuration</em>
+object is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |proofConfig| be a clone of the |options| object.
+            </li>
+            <li>
+If |proofConfig|.|type| is not set to `DataIntegrityProof` and/or
+|proofConfig|.|cryptosuite| is not set to `ecdsa-rdfc-2019`, an
+error MUST be raised and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_GENERATION_ERROR">PROOF_GENERATION_ERROR</a>.
+            </li>
+            <li>
+If |proofConfig|.|created| is set and if the value is not a
+valid [[XMLSCHEMA11-2]] datetime, an error MUST be
+raised and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_GENERATION_ERROR">PROOF_GENERATION_ERROR</a>.
+            </li>
+            <li>
+Set |proofConfig|.<var>@context</var> to
+|unsecuredDocument|.<var>@context</var>.
+            </li>
+            <li>
+Let |canonicalProofConfig| be the result of applying the
+[[[RDF-CANON]]] [[RDF-CANON]] to the |proofConfig|.
+            </li>
+            <li>
+Return |canonicalProofConfig|.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Proof Serialization (ecdsa-rdfc-2019)</h4>
+
+          <p>
+The following algorithm specifies how to serialize a digital signature from
+a set of cryptographic hash data. This
+algorithm is designed to be used in conjunction with the algorithms defined
+in the Data Integrity [[VC-DATA-INTEGRITY]] specification,
+<a data-cite="vc-data-integrity#algorithms">
+Section 4: Algorithms</a>. Required inputs are
+cryptographic hash data (|hashData|) and
+<em>proof options</em> (|options|). The
+<em>proof options</em> MUST contain a type identifier for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and MAY contain a cryptosuite
+identifier (|cryptosuite|). A single <em>digital proof</em> value
+represented as series of bytes is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |privateKeyBytes| be the result of retrieving the
+private key bytes (or a signing interface enabling the use of the private key
+bytes) associated with the verification method identified by the
+|options|.|verificationMethod| value.
+            </li>
+            <li>
+Let |proofBytes| be the result of applying the Elliptic Curve Digital
+Signature Algorithm (ECDSA) [[FIPS-186-5]], with |hashData| as the data
+to be signed using the private key specified by |privateKeyBytes|.
+|proofBytes| will be exactly 64 bytes in size for a P-256 key, and
+96 bytes in size for a P-384 key.
+            </li>
+            <li>
+Return |proofBytes| as the <em>digital proof</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Proof Verification (ecdsa-rdfc-2019)</h4>
+
+          <p>
+The following algorithm specifies how to verify a digital signature from
+a set of cryptographic hash data. This
+algorithm is designed to be used in conjunction with the algorithms defined
+in the Data Integrity [[VC-DATA-INTEGRITY]] specification,
+<a data-cite="vc-data-integrity#algorithms">
+Section 4: Algorithms</a>. Required inputs are
+cryptographic hash data (|hashData|),
+a digital signature (|proofBytes|) and
+proof options (|options|). A <em>verification result</em>
+represented as a boolean value is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |publicKeyBytes| be the result of retrieving the
+public key bytes associated with the
+|options|.|verificationMethod| value as described in the
+[[[CID]]] specification,
+<a data-cite="CID#retrieve-verification-method">
+Section: Retrieve Verification Method</a>.
+            </li>
+            <li>
+Let |verificationResult| be the result of applying the verification
+algorithm Elliptic Curve Digital Signature Algorithm (ECDSA) [[FIPS-186-5]],
+with |hashData| as the data to be verified against the
+|proofBytes| using the public key specified by
+|publicKeyBytes|.
+            </li>
+            <li>
+Return |verificationResult| as the <em>verification result</em>.
+            </li>
+          </ol>
+
+        </section>
+      </section>
+      <section>
+        <h3>ecdsa-jcs-2019</h3>
+
+        <p>
+The `ecdsa-jcs-2019` cryptographic suite takes an input document, canonicalizes
+the document using the JSON Canonicalization Scheme [[RFC8785]], and then
+cryptographically hashes and signs the output
+resulting in the production of a data integrity proof. The algorithms in this
+section also include the verification of such a data integrity proof.
+        </p>
+
+        <section>
+          <h4>Create Proof (ecdsa-jcs-2019)</h4>
+          <p>
+The following algorithm specifies how to create a [=data integrity proof=] given
+an <a>unsecured data document</a>. Required inputs are an
+<a>unsecured data document</a> ([=map=] |unsecuredDocument|), and a set of proof
+options ([=map=] |options|). A [=data integrity proof=] ([=map=]), or an error,
+is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |proof| be a clone of the proof options, |options|.
+            </li>
+            <li>
+If <var>unsecuredDocument</var>.<var>@context</var> is present, set
+<var>proof</var>.<var>@context</var> to
+<var>unsecuredDocument</var>.<var>@context</var>.
+            </li>
+            <li>
+Let |proofConfig| be the result of running the algorithm in
+Section [[[#proof-configuration-ecdsa-jcs-2019]]] with
+|proof| passed as the <em>proof options</em> parameter.
+            </li>
+            <li>
+Let |transformedData| be the result of running the algorithm in Section <a
+href="#transformation-ecdsa-jcs-2019"></a> with |unsecuredDocument|
+and |options| passed as parameters.
+            </li>
+            <li>
+Let |hashData| be the result of running the algorithm in Section
+[[[#hashing-ecdsa-jcs-2019]]] with |transformedData| and |proofConfig|
+passed as a parameters.
+            </li>
+            <li>
+Let |proofBytes| be the result of running the algorithm in Section
+[[[#proof-serialization-ecdsa-jcs-2019]]] with |hashData| and
+|options| passed as parameters.
+            </li>
+            <li>
+Let |proof|.|proofValue| be a <a data-cite="CID#multibase-0">
+base58-btc-encoded Multibase value</a> of the |proofBytes|.
+            </li>
+            <li>
+Return |proof| as the [=data integrity proof=].
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>Verify Proof (ecdsa-jcs-2019)</h4>
+          <p>
+The following algorithm specifies how to verify a [=data integrity proof=] given
+an <a>secured data document</a>. Required inputs are an
+<a>secured data document</a> ([=map=] |securedDocument|). This algorithm returns
+a [=verification result=], which is a [=struct=] whose [=struct/items=] are:
+          </p>
+
+          <dl>
+            <dt>[=verification result/verified=]</dt>
+            <dd>`true` or `false`</dd>
+            <dt>[=verification result/verifiedDocument=]</dt>
+            <dd>
+if [=verification result/verified=] is `true`, an [=unsecured data document=];
+otherwise <a data-cite="INFRA#nulls">Null</a>
+            </dd>
+          </dl>
+
+          <ol class="algorithm">
+            <li>
+Let |unsecuredDocument| be a copy of |securedDocument| with the `proof` value
+removed.
+            </li>
+            <li>
+Let |proofOptions| be the result of a copy of |securedDocument|.|proof| with
+`proofValue` removed.
+            </li>
+            <li>
+Let |proofBytes| be the
+<a data-cite="CID#multibase-0">Multibase decoded base58-btc
+value</a> in |securedDocument|.|proof|.|proofValue|.
+            </li>
+            <li>
+If |proofOptions|.<var>@context</var> exists:
+              <ol class="algorithm">
+                <li>
+Check that the |securedDocument|.<var>@context</var> starts with all values
+contained in the |proofOptions|.<var>@context</var> in the same order.
+Otherwise, set |verified| to `false` and skip to the last step.
+                </li>
+                <li>
+Set |unsecuredDocument|.<var>@context</var> equal to
+|proofOptions|.<var>@context</var>.
+                </li>
+              </ol>
+            </li>
+            <li>
+Let |transformedData| be the result of running the algorithm in Section
+[[[#transformation-ecdsa-jcs-2019]]] with |unsecuredDocument| and
+|proofOptions| passed as parameters.
+              </li>
+            <li>
+Let |proofConfig| be the result of running the algorithm in Section
+[[[#proof-configuration-ecdsa-jcs-2019]]] with |proofOptions| passed
+as the parameter.
+            </li>
+            <li>
+Let |hashData| be the result of running the algorithm in Section
+[[[#hashing-ecdsa-jcs-2019]]] with |transformedData| and |proofConfig| passed as
+a parameters.
+            </li>
+            <li>
+Let |verified:boolean| be the result of running the algorithm in Section
+[[[#proof-verification-ecdsa-jcs-2019]]] on |hashData|, |proofBytes|, and
+|proofConfig|.
+              </li>
+              <li>
+Return a [=verification result=] with [=struct/items=]:
+                <dl data-link-for="verification result">
+                  <dt>[=verified=]</dt>
+                  <dd>|verified|</dd>
+                  <dt>[=verifiedDocument=]</dt>
+                  <dd>
+if |verified| is `true`, |unsecuredDocument|;
+otherwise, <a data-cite="INFRA#nulls">Null</a></dd>
+                </dl>
+              </li>
+            </ol>
+        </section>
+
+        <section>
+          <h4>Transformation (ecdsa-jcs-2019)</h4>
+
+          <p>
+The following algorithm specifies how to transform an unsecured input document
+into a transformed document that is ready to be provided as input to the
+hashing algorithm in Section [[[#hashing-ecdsa-jcs-2019]]].
+          </p>
+
+          <p>
+Required inputs to this algorithm are an
+<a data-cite="vc-data-integrity#dfn-unsecured-data-document">
+unsecured data document</a> (|unsecuredDocument|) and
+transformation options (|options|). The
+transformation options MUST contain a type identifier for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and a cryptosuite
+identifier (|cryptosuite|). A <em>transformed data document</em> is
+produced as output. Whenever this algorithm encodes strings, it MUST use UTF-8
+encoding.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+If |options|.|type| is not set to the string
+`DataIntegrityProof` or |options|.|cryptosuite| is not
+set to the string `ecdsa-jcs-2019`, an error MUST be raised and SHOULD
+convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_TRANSFORMATION_ERROR">PROOF_TRANSFORMATION_ERROR</a>.
+            </li>
+            <li>
+Let |canonicalDocument| be the result of applying the
+JSON Canonicalization Scheme [[RFC8785]] to a JSON serialization of the
+|unsecuredDocument|.
+            </li>
+            <li>
+Return |canonicalDocument| as the <em>transformed data document</em>.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>Hashing (ecdsa-jcs-2019)</h4>
+
+          <p>
+The following algorithm specifies how to cryptographically hash a
+<em>transformed data document</em> and <em>proof configuration</em>
+into cryptographic hash data that is ready to be provided as input to the
+algorithms in Section [[[#proof-serialization-ecdsa-jcs-2019]]] or
+Section [[[#proof-verification-ecdsa-jcs-2019]]]. One must use the
+hash algorithm appropriate in security level to the curve used, i.e., for curve
+P-256 one uses SHA-256, and for curve P-384 one uses SHA-384.
+          </p>
+
+          <p>
+The required inputs to this algorithm are a <em>transformed data document</em>
+(|transformedDocument|) and a <em>canonical proof configuration</em>
+(|canonicalProofConfig|). A single <em>hash data</em> value represented as
+series of bytes is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |transformedDocumentHash| be the result of applying the SHA-256
+(SHA-2 with 256-bit output) or SHA-384 (SHA-2 with 384-bit output)
+cryptographic hashing algorithm [[RFC6234]] to the
+respective curve P-256 or curve P-384 |transformedDocument|.
+Respective |transformedDocumentHash| will be exactly 32 or 48 bytes
+in size.
+            </li>
+            <li>
+Let |proofConfigHash| be the result of applying the SHA-256
+(SHA-2 with 256-bit output) or SHA-384 (SHA-2 with 384-bit output)
+cryptographic hashing algorithm [[RFC6234]] to the
+respective curve P-256 or curve P-384 |canonicalProofConfig|.
+Respective |proofConfigHash| will be exactly 32 or 48 bytes in size.
+            </li>
+            <li>
+Let |hashData| be the result of concatenating |proofConfigHash| (the
+first hash) followed by |transformedDocumentHash| (the second hash).
+            </li>
+            <li>
+Return |hashData| as the <em>hash data</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Proof Configuration (ecdsa-jcs-2019)</h4>
+
+          <p>
+The following algorithm specifies how to generate a
+<em>proof configuration</em> from a set of <em>proof options</em>
+that is used as input to the
+<a href="#hashing-ecdsa-jcs-2019">proof hashing algorithm</a>.
+          </p>
+          <p>
+The required inputs to this algorithm are the <em>proof options</em>
+(|options|). The <em>proof options</em> MUST contain a type identifier
+for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and MUST contain a cryptosuite
+identifier (|cryptosuite|). A <em>proof configuration</em>
+object is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |proofConfig| be a clone of the |options| object.
+            </li>
+            <li>
+If |proofConfig|.|type| is not set to `DataIntegrityProof` and/or
+|proofConfig|.|cryptosuite| is not set to `ecdsa-jcs-2019`,
+an error MUST be raised and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_GENERATION_ERROR">PROOF_GENERATION_ERROR</a>.
+            </li>
+            <li>
+If |proofConfig|.|created| is set and if the value is not a
+valid [[XMLSCHEMA11-2]] datetime, an error MUST be raised and SHOULD convey
+an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_GENERATION_ERROR">PROOF_GENERATION_ERROR</a>.
+            </li>
+            <li>
+Let |canonicalProofConfig| be the result of applying the
+JSON Canonicalization Scheme [[RFC8785]] to the |proofConfig|.
+            </li>
+            <li>
+Return |canonicalProofConfig|.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Proof Serialization (ecdsa-jcs-2019)</h4>
+
+          <p>
+The following algorithm specifies how to serialize a digital signature from
+a set of cryptographic hash data. This
+algorithm is designed to be used in conjunction with the algorithms defined
+in the Data Integrity [[VC-DATA-INTEGRITY]] specification,
+<a data-cite="vc-data-integrity#algorithms">
+Section 4: Algorithms</a>. Required inputs are
+cryptographic hash data (|hashData|) and
+<em>proof options</em> (|options|). The
+<em>proof options</em> MUST contain a type identifier for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and MAY contain a cryptosuite
+identifier (|cryptosuite|). A single <em>digital proof</em> value
+represented as series of bytes is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |privateKeyBytes| be the result of retrieving the
+private key bytes associated with the
+|options|.|verificationMethod| value.
+            </li>
+            <li>
+Let |proofBytes| be the result of applying the Elliptic Curve Digital
+Signature Algorithm (ECDSA) [[FIPS-186-5]], with |hashData| as the data
+to be signed using the private key specified by |privateKeyBytes|.
+|proofBytes| will be exactly 64 bytes in size for a P-256 key, and
+96 bytes in size for a P-384 key.
+            </li>
+            <li>
+Return |proofBytes| as the <em>digital proof</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Proof Verification (ecdsa-jcs-2019)</h4>
+
+          <p>
+The following algorithm specifies how to verify a digital signature from
+a set of cryptographic hash data. This
+algorithm is designed to be used in conjunction with the algorithms defined
+in the Data Integrity [[VC-DATA-INTEGRITY]] specification,
+<a data-cite="vc-data-integrity#algorithms">
+Section 4: Algorithms</a>. Required inputs are
+cryptographic hash data (|hashData|),
+a digital signature (|proofBytes|), and
+proof options (|options|). A <em>verification result</em>
+represented as a boolean value is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |publicKeyBytes| be the result of retrieving the
+public key bytes associated with the
+|options|.|verificationMethod| value as described in the
+[[[CID]]] specification,
+<a data-cite="CID#retrieve-verification-method">
+Section: Retrieve Verification Method</a>.
+            </li>
+            <li>
+Let |verificationResult| be the result of applying the verification
+algorithm, Elliptic Curve Digital Signature Algorithm (ECDSA) [[FIPS-186-5]],
+with |hashData| as the data to be verified against the
+|proofBytes| using the public key specified by
+|publicKeyBytes|.
+            </li>
+            <li>
+Return |verificationResult| as the <em>verification result</em>.
+            </li>
+          </ol>
+
+        </section>
+      </section>
+
+      <section>
+        <h4>Selective Disclosure Functions</h4>
+
+        <p>
+The following section contains a set of functions that are used throughout
+cryptographic suites that perform selective disclosure.
+        </p>
+
+        <section>
+          <h4>labelReplacementCanonicalizeNQuads</h4>
+
+          <p>
+The following algorithm canonicalizes an array of N-Quad [[N-QUADS]] strings and replaces
+any blank node identifiers in the canonicalized result using a label map
+factory function, |labelMapFactoryFunction|. The required inputs are
+an array of N-Quad strings (|nquads|), and a label map factory function
+(|labelMapFactoryFunction|). Any custom options can also be passed. An
+N-Quads representation of the <em>canonicalNQuads</em> as an array of N-Quad
+strings, with the replaced blank node labels, and a map from the old blank node
+IDs to the new blank node IDs, <em>labelMap</em>, is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Run the RDF Dataset Canonicalization Algorithm [[RDF-CANON]] on
+the joined |nquads|, passing any custom options, and as output,
+get the canonicalized dataset, which includes a canonical bnode identifier
+map, |canonicalIdMap|.
+            </li>
+            <li>
+Pass |canonicalIdMap| to |labelMapFactoryFunction| to produce
+a new bnode identifier map, <em>labelMap</em>.
+            </li>
+            <li>
+Use the canonicalized dataset and <em>labelMap</em> to produce the canonical
+N-Quads representation as an array of N-Quad strings, <em>canonicalNQuads</em>.
+            </li>
+            <li>
+Return an object containing <em>labelMap</em> and <em>canonicalNQuads</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>labelReplacementCanonicalizeJsonLd</h4>
+
+          <p>
+The following algorithm canonicalizes a JSON-LD document and replaces any blank
+node identifiers in the canonicalized result using a label map factory
+function, |labelMapFactoryFunction|. The required inputs are a JSON-LD
+document (|document|) and a label map factory function
+(|labelMapFactoryFunction|). Additional custom options (such as
+a document loader) can also be passed. An N-Quads representation of the
+<em>canonicalNQuads</em> as an array of N-Quad strings, with the replaced
+blank node labels, and a map from the old blank node IDs to the new blank node
+IDs, <em>labelMap</em>, is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Deserialize the JSON-LD document to RDF, |rdf|, using the <a
+href="https://www.w3.org/TR/json-ld11-api/#deserialize-json-ld-to-rdf-algorithm">
+Deserialize JSON-LD to RDF algorithm</a>, passing any custom options (such
+as a document loader).
+            </li>
+            <li>
+Serialize |rdf| to an array of N-Quad strings, |nquads|.
+            </li>
+            <li>
+Return the result of calling the algorithm in Section
+[[[#labelreplacementcanonicalizenquads]]], passing |nquads|,
+|labelMapFactoryFunction|, and any custom options.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>createLabelMapFunction</h4>
+
+          <p>
+The following algorithm creates a label map factory function that uses an
+input label map to replace canonical blank node identifiers with another
+value. The required input is a label map, |labelMap|. A
+function, <em>labelMapFactoryFunction</em>, is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Create a function, |labelMapFactoryFunction|, with one required input
+(a canonical node identifier map, |canonicalIdMap|), that will
+return a blank node identifier map, <em>bnodeIdMap</em>, as output. Set the
+function's implementation to:
+              <ol class="algorithm">
+                <li>
+Generate a new empty bnode identifier map, <em>bnodeIdMap</em>.
+                </li>
+                <li>
+For each map entry, <em>entry</em>, in |canonicalIdMap|:
+                  <ol class="algorithm">
+                    <li>
+Use the canonical identifier from the value in <em>entry</em> as a key
+in |labelMap| to get the new label, <em>newLabel</em>.
+                    </li>
+                    <li>
+Add a new entry, |newEntry|, to <em>bnodeIdMap</em> using the key
+from <em>entry</em> and <em>newLabel</em> as the value.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Return <em>bnodeIdMap</em>.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return |labelMapFactoryFunction|.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>createHmacIdLabelMapFunction</h4>
+
+          <p>
+The following algorithm creates a label map factory function that uses an
+HMAC to replace canonical blank node identifiers with their encoded HMAC
+digests. The required input is an HMAC (previously initialized with a
+secret key), |HMAC|. A function, <em>labelMapFactoryFunction</em>, is
+produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Create a function, |labelMapFactoryFunction|, with one required input
+(a canonical node identifier map, |canonicalIdMap|), that will
+return a blank node identifier map, <em>bnodeIdMap</em>, as output. Set the
+function's implementation to:
+              <ol class="algorithm">
+                <li>
+Generate a new empty bnode identifier map, <em>bnodeIdMap</em>.
+                </li>
+                <li>
+For each map entry, <em>entry</em>, in |canonicalIdMap|:
+                  <ol class="algorithm">
+                    <li>
+HMAC the canonical identifier from the value in <em>entry</em> to get an HMAC
+digest, <em>digest</em>.
+                    </li>
+                    <li>
+Generate a new string value, <em>b64urlDigest</em>, and initialize it to "u"
+followed by appending a base64url-no-pad encoded version of the <em>digest</em>
+value.
+                    </li>
+                    <li>
+Add a new entry, |newEntry|, to <em>bnodeIdMap</em> using the key
+from <em>entry</em> and <em>b64urlDigest</em> as the value.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Return <em>bnodeIdMap</em>.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return |labelMapFactoryFunction|.
+            </li>
+          </ol>
+
+          <p class="note" title="Other algorithms are possible">
+A different primitive could be created that returned a label map factory
+function that would instead sort the resulting HMAC digests and assign labels
+in the produced label map using a prefix and integers based on their sorted
+order. This primitive might be useful for selective disclosure schemes,
+such as BBS, that favor unlinkability over minimizing unrevealed data leakage.
+          </p>
+
+        </section>
+
+        <section>
+          <h4>skolemizeNQuads</h4>
+
+          <p>
+The following algorithm replaces all blank node identifiers in an array of
+N-Quad strings with custom scheme URNs. The required inputs are an array of
+N-Quad strings (|inputNQuads|) and a URN scheme (|urnScheme|).
+An array of N-Quad strings, <em>skolemizedNQuads</em>, is produced as output.
+This operation is intended to be reversible through the use of the algorithm in
+Section [[[#deskolemizenquads]]].
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Create a new array of N-Quad strings, <em>skolemizedNQuads</em>.
+            </li>
+            <li>
+For each N-Quad string, <em>s1</em>, in |inputNQuads|:
+              <ol class="algorithm">
+                <li>
+Create a new string, <em>s2</em>, that is a copy of <em>s1</em> replacing any
+occurrence of a blank node identifier with a URN ("urn:"), plus the input
+custom scheme (|urnScheme|), plus a colon (":"), and
+the value of the blank node identifier. For example, a regular expression
+of a similar form to the following would achieve the desired result:
+<code>s1.replace(/(_:([^\s]+))/g, '&lt;urn:custom-scheme:$2>')</code>.
+                </li>
+                <li>
+Append <em>s2</em> to <em>skolemizedNQuads</em>.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return <em>skolemizedNQuads</em>.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>deskolemizeNQuads</h4>
+
+          <p>
+The following algorithm replaces all custom scheme URNs in an array of
+N-Quad statements with a blank node identifier. The required inputs are an array
+of N-Quad strings (|inputNQuads|) and a URN scheme
+(|urnScheme|). An array of N-Quad strings,
+<em>deskolemizedNquads</em>, is produced as output. This operation is intended
+to reverse use of the algorithm in Section [[[#deskolemizenquads]]].
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Create a new array of N-Quad strings, <em>deskolemizedNQuads</em>.
+            </li>
+            <li>
+For each N-Quad string, <em>s1</em>, in |inputNQuads|:
+              <ol class="algorithm">
+                <li>
+Create a new string, <em>s2</em>, that is a copy of <em>s1</em> replacing any
+occurrence of a URN ("urn:"), plus the input
+custom scheme (|urnScheme|), plus a colon (":"), and
+the value of the blank node identifier with a blank node prefix ("_:"), plus
+the value of the blank node identifier. For example, a regular expression
+of a similar form to the following would achieve the desired result:
+<code>s1.replace(/(&lt;urn:custom-scheme:([^>]+)>)/g, '_:$2').</code>.
+                </li>
+                <li>
+Append <em>s2</em> to <em>deskolemizedNQuads</em>.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return <em>deskolemizedNQuads</em>.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>skolemizeExpandedJsonLd</h4>
+
+          <p>
+The following algorithm replaces all blank node identifiers in an expanded
+JSON-LD document with custom-scheme URNs, including assigning such URNs to
+blank nodes that are unlabeled. The required inputs are an expanded JSON-LD document
+(|expanded|), a custom URN scheme
+(|urnScheme|), a UUID string or other comparably random string
+(|randomString|), and reference to a shared integer (|count|).
+Any additional custom options (such as a document loader) can also be passed.
+It produces the expanded form of the skolemized JSON-LD document
+(|skolemizedExpandedDocument| as output. The skolemization used in this
+operation is intended to be reversible through the use of the algorithm in
+Section [[[#todeskolemizednquads]]].
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |skolemizedExpandedDocument| to an empty array.
+            </li>
+            <li>
+For each |element| in |expanded|:
+              <ol class="algorithm">
+                <li>
+If either |element| is not an object or it contains the key
+<em>@value</em>, append a copy of |element| to
+|skolemizedExpandedDocument| and continue to the next
+|element|.
+                </li>
+                <li>
+Otherwise, initialize |skolemizedNode| to an object, and for
+each <em>property</em> and <em>value</em> in |element|:
+                  <ol class="algorithm">
+                    <li>
+If <em>value</em> is an array, set the value of <em>property</em> in
+|skolemizedNode| to the result of calling this algorithm
+recursively passing <em>value</em> for |expanded| and keeping the
+other parameters the same.
+                    </li>
+                    <li>
+Otherwise, set the value of <em>property</em> in |skolemizedNode| to
+the first element in the array result of calling this algorithm recursively
+passing an array with <em>value</em> as its only element for |expanded|
+and keeping the other parameters the same.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+If |skolemizedNode| has no <em>@id</em> property, set the value of
+the <em>@id</em> property in |skolemizedNode| to the concatenation
+of "urn:", |urnScheme|, "_",  |randomString|, "_" and the value of
+|count|, incrementing the value of |count| afterwards.
+                </li>
+                <li>
+Otherwise, if the value of the <em>@id</em> property in
+|skolemizedNode| starts with "_:", preserve the existing blank node
+identifier when skolemizing by setting the value of the <em>@id</em> property
+in |skolemizedNode| to the concatenation of "urn:",
+|urnScheme|, and the blank node identifier (i.e., the existing
+value of the <em>@id</em> property minus the "_:" prefix; e.g., if the
+existing value of the <em>@id</em> property is `_:b0`, the blank node
+identifier is `b0`).
+                </li>
+                <li>
+Append |skolemizedNode| to |skolemizedExpandedDocument|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return |skolemizedExpandedDocument|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>skolemizeCompactJsonLd</h4>
+
+          <p>
+The following algorithm replaces all blank node identifiers in a compact
+JSON-LD document with custom-scheme URNs. The required inputs are a compact
+JSON-LD document (|document|) and a custom URN scheme
+(|urnScheme|) which defaults to "custom-scheme:". The |document| is assumed to
+use only one
+<em>@context</em> property at the top level of the document. Any additional
+custom options (such as a document loader) can also be passed. It produces both
+an expanded form of the skolemized JSON-LD document
+(|skolemizedExpandedDocument| and a compact form of the skolemized
+JSON-LD document (|skolemizedCompactDocument|) as output. The
+skolemization used in this operation is intended to be reversible through the
+use of the algorithm in Section [[[#todeskolemizednquads]]] which uses the
+same custom URN scheme (|urnScheme|).
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |expanded| to the result of the JSON-LD
+<a href="https://www.w3.org/TR/json-ld11-api/#expansion-algorithm">
+Expansion Algorithm</a>, passing |document| and any custom
+options.
+            </li>
+            <li>
+Initialize |skolemizedExpandedDocument| to the result of the
+algorithm in Section [[[#skolemizeexpandedjsonld]]].
+            </li>
+            <li>
+Initialize |skolemizedCompactDocument| to the result of the JSON-LD
+<a href="https://www.w3.org/TR/json-ld11-api/#compaction-algorithm">
+Compaction Algorithm</a>, passing |skolemizedExpandedDocument| and any
+custom options.
+            </li>
+            <li>
+Return an object with both |skolemizedExpandedDocument| and
+|skolemizedCompactDocument|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>toDeskolemizedNQuads</h4>
+
+          <p>
+The following algorithm converts a skolemized JSON-LD document, such as one
+created using the algorithm in Section [[[#skolemizecompactjsonld]]],
+to an array of deskolemized N-Quads. The required input is a JSON-LD document,
+<em>skolemizedDocument</em>. Additional custom options (such as a document
+loader) can be passed. An array of deskolemized N-Quad strings
+(|deskolemizedNQuads|) is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |skolemizedDataset| to the result of the
+<a href="https://www.w3.org/TR/json-ld11-api/#deserialize-json-ld-to-rdf-algorithm">
+Deserialize JSON-LD to RDF</a> algorithm, passing any custom options (such as a
+document loader), to convert |skolemizedDocument| from JSON-LD to RDF in N-Quads
+format.
+            </li>
+            <li>
+Split |skolemizedDataset| into an array of individual N-Quads,
+|skolemizedNQuads|.
+            </li>
+            <li>
+Set |deskolemizedNQuads| to the result of the algorithm in Section
+[[[#deskolemizenquads]]] with |skolemizedNQuads| and "custom-scheme:"
+as parameters. Implementations MAY choose a different <em>urnScheme</em>
+that is different than "custom-scheme:" so long as the same scheme name was
+used to generate <em>skolemizedDocument</em>.
+            </li>
+            <li>
+Return |deskolemizedNQuads|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>jsonPointerToPaths</h4>
+
+          <p>
+The following algorithm converts a JSON Pointer [[RFC6901]] to an array of paths
+into a JSON tree. The required input is a JSON Pointer string
+(|pointer|). An array of paths (<em>paths</em>) is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |paths| to an empty array.
+            </li>
+            <li>
+Initialize |splitPath| to an array by splitting |pointer| on the
+"/" character and skipping the first, empty, split element. In Javascript
+notation, this step is equivalent to the following code:
+`pointer.split('/').slice(1)`
+            </li>
+            <li>
+For each |path| in |splitPath|:
+              <ol class="algorithm">
+                <li>
+If |path| does not include `~`, then add |path| to |paths|, converting it to
+an integer if it parses as one, leaving it as a string if it does not.
+                </li>
+                <li>
+Otherwise, unescape any JSON pointer escape sequences in |path| and add the
+result to |paths|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return |paths|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>createInitialSelection</h4>
+
+          <p>
+The following algorithm creates an initial selection (a fragment of a JSON-LD
+document) based on a JSON-LD object. This is a helper function used within the
+algorithm in Section [[[#selectjsonld]]]. The required input is a
+JSON-LD object (|source|). A JSON-LD document fragment object
+(|selection|) is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |selection| to an empty object.
+            </li>
+            <li>
+If |source| has an `id` that is not a blank node identifier, set
+|selection|.|id| to its value. Note: All non-blank node identifiers in the path of
+any JSON Pointer MUST be included in the selection, this includes any root
+document identifier.
+            </li>
+            <li>
+If |source|.|type| is set, set |selection|.|type| to its value.
+Note: The selection MUST include all `type`s in the path of any JSON Pointer,
+including any root document `type`.
+            </li>
+            <li>
+Return |selection|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>selectPaths</h4>
+
+          <p>
+The following algorithm selects a portion of a compact JSON-LD document using
+paths parsed from a parsed JSON Pointer. This is a helper function used within
+the algorithm in Section [[[#selectjsonld]]]. The required inputs are an
+array of paths (|paths|) parsed from a JSON Pointer, a compact JSON-LD
+document (|document|), a selection document
+(|selectionDocument|) to be populated, and an array of arrays
+(|arrays|) for tracking selected arrays. This algorithm produces
+no output; instead it populates the given |selectionDocument| with
+any values selected via |paths|.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |parentValue| to |document|.
+            </li>
+            <li>
+Initialize |value| to |parentValue|.
+            </li>
+            <li>
+Initialize |selectedParent| to |selectionDocument|.
+            </li>
+            <li>
+Initialize |selectedValue| to |selectedParent|.
+            </li>
+            <li>
+For each |path| in |paths|:
+              <ol class="algorithm">
+                <li>
+Set |selectedParent| to |selectedValue|.
+                </li>
+                <li>
+Set |parentValue| to |value|.
+                </li>
+                <li>
+Set |value| to |parentValue|.|path|. If |value| is now undefined,
+an error MUST be raised and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_GENERATION_ERROR">PROOF_GENERATION_ERROR</a>,
+indicating that the JSON pointer does not match the given |document|.
+                </li>
+                <li>
+Set |selectedValue| to |selectedParent|.|path|.
+                </li>
+                <li>
+If |selectedValue| is now undefined:
+                  <ol class="algorithm">
+                    <li>
+If |value| is an array, set |selectedValue| to an empty array and append
+|selectedValue| to |arrays|.
+                    </li>
+                    <li>
+Otherwise, set |selectedValue| to an initial selection passing |value| as
+|source| to the algorithm in Section [[[#createinitialselection]]].
+                    </li>
+                    <li>
+Set |selectedParent|.|path| to |selectedValue|.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+Note: With path traversal complete at the target value, the selected value will
+now be computed.
+            </li>
+            <li>
+If |value| is a literal, set |selectedValue| to |value|.
+            </li>
+            <li>
+If |value| is an array, Set |selectedValue| to a copy of |value|.
+            </li>
+            <li>
+In all other cases, set |selectedValue| to an object that merges a shallow copy of
+|selectedValue| with a deep copy of |value|, e.g., `{...selectedValue,
+&hellip;deepCopy(value)}`.
+            </li>
+            <li>
+Get the last |path|, |lastPath|, from |paths|.
+            </li>
+            <li>
+Set |selectedParent|.|lastPath| to |selectedValue|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>selectJsonLd</h4>
+
+          <p>
+The following algorithm selects a portion of a compact JSON-LD document using
+an array of JSON Pointers. The required inputs are an array of JSON Pointers
+(|pointers|) and a compact JSON-LD document (|document|). The
+|document| is assumed to use a JSON-LD context that aliases `@id`
+and `@type` to `id` and `type`, respectively, and to use only one
+<em>`@context`</em> property at the top level of the document. A new JSON-LD
+document that represents a selection (<em>selectionDocument</em>) of the
+original JSON-LD document is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+If |pointers| is empty, return `null`. This indicates nothing has been selected
+from the original document.
+            </li>
+            <li>
+Initialize |arrays| to an empty array. This variable will be used to track
+selected sparse arrays to make them dense after all |pointers| have
+been processed.
+            </li>
+            <li>
+Initialize |selectionDocument| to an initial selection passing |document| as
+|source| to the algorithm in Section [[[#createinitialselection]]].
+            </li>
+            <li>
+Set the value of the <em>`@context`</em> property in |selectionDocument| to
+a copy of the value of the <em>`@context`</em> property in |document|.
+            <li>
+For each |pointer| in |pointers|, walk the document from root to the pointer
+target value, building the |selectionDocument|:
+              <ol class="algorithm">
+                <li>
+Parse the |pointer| into an array of paths, |paths|, using the
+algorithm in Section [[[#jsonpointertopaths]]].
+                </li>
+                <li>
+Use the algorithm in Section [[[#selectpaths]]], passing
+|document|, |paths|, |selectionDocument|, and
+|arrays|.
+                </li>
+              </ol>
+            </li>
+            <li>
+For each |array| in |arrays|:
+              <ol class="algorithm">
+                <li>
+Make |array| dense by removing any undefined elements between
+elements that are defined.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return |selectionDocument|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>relabelBlankNodes</h4>
+
+          <p>
+The following algorithm relabels the blank node identifiers in an array of
+N-Quad strings using a blank node label map. The required inputs are an array
+of N-Quad strings (|nquads|) and a blank node label map
+(|labelMap|). An array of N-Quad strings with relabeled blank node
+identifiers (|relabeledNQuads|) is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Create a new array of N-Quad strings, <em>relabeledNQuads</em>.
+            </li>
+            <li>
+For each N-Quad string, <em>s1</em>, in |nquads|:
+              <ol class="algorithm">
+                <li>
+Create a new string, <em>s2</em>, such it that is a copy of <em>s1</em> except
+each blank node identifier therein has been replaced with the value associated
+with it as a key in |labelMap|.
+                </li>
+                <li>
+Append <em>s2</em> to <em>relabeledNQuads</em>.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return <em>relabeledNQuads</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>selectCanonicalNQuads</h4>
+
+          <p>
+The following algorithm selects a portion of a skolemized compact JSON-LD
+document using an array of JSON Pointers, and outputs the resulting canonical
+N-Quads with any blank node labels replaced using the given label map. The
+required inputs are an array of JSON Pointers (|pointers|), a
+skolemized compact JSON-LD document (|skolemizedCompactDocument|),
+and a blank node label map (|labelMap|). Additional custom options
+(such as a document loader) can be passed. The |document| is assumed
+to use a JSON-LD context that aliases `@id` and `@type` to `id` and `type`,
+respectively, and to use only one <em>`@context`</em> property at the top level
+of the document. An object containing the new JSON-LD document that represents
+a selection of the original JSON-LD document (|selectionDocument|), an
+array of deskolemized N-Quad strings (|deskolemizedNQuads|), and an
+array of canonical N-Quads with replacement blank node labels (|nquads|)
+is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |selectionDocument| to the result of the algorithm
+in Section [[[#selectjsonld]]], passing |pointers|,
+and |skolemizedCompactDocument| as <em>document</em>.
+            </li>
+            <li>
+Initialize |deskolemizedNQuads| to the result of the algorithm
+in Section [[[#todeskolemizednquads]]], passing
+|selectionDocument| as |skolemizedCompactDocument|, and
+any custom options.
+            </li>
+            <li>
+Initialize |nquads| to the result of the algorithm
+in Section [[[#relabelblanknodes]]], passing |labelMap|,
+and |deskolemizedNQuads| as |nquads|.
+            </li>
+            <li>
+Return an object containing |selectionDocument|,
+|deskolemizedNQuads|, and |nquads|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>canonicalizeAndGroup</h4>
+
+          <p>
+The following algorithm is used to output canonical N-Quad strings that match
+custom selections of a compact JSON-LD document. It does this by canonicalizing
+a compact JSON-LD document (replacing any blank node identifiers using a label
+map) and grouping the resulting canonical N-Quad strings according to
+the selection associated with each group. Each group will be defined using an
+assigned name and array of JSON pointers. The JSON pointers will be used to
+select portions of the skolemized document, such that the output can be
+converted to canonical N-Quads to perform group matching.
+          </p>
+
+          <p>
+The required inputs are a compact JSON-LD document (|document|),
+a label map factory function (|labelMapFactoryFunction|), and a map
+of named group definitions (|groupDefinitions|). Additional custom
+options (such as a document loader) can be passed. The |document| is
+assumed to use a JSON-LD context that aliases `@id` and `@type` to `id` and
+`type`, respectively, and to use only one <em>`@context`</em> property at the top
+level of the document. An object containing the created groups
+(|groups|), the skolemized compact JSON-LD document
+(|skolemizedCompactDocument|), the skolemized expanded JSON-LD
+document (|skolemizedExpandedDocument|), the deskolemized N-Quad
+strings (|deskolemizedNQuads|), the blank node label map
+(|labelMap|), and the canonical N-Quad strings |nquads|, is
+produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |skolemizedExpandedDocument| and
+|skolemizedCompactDocument| to their associated values in the
+result of the algorithm in Section [[[#skolemizecompactjsonld]]],
+passing |document| and any custom options.
+            </li>
+            <li>
+Initialize |deskolemizedNQuads| to the result of the
+algorithm in Section [[[#todeskolemizednquads]]], passing
+|skolemizedExpandedDocument| and any custom options.
+            </li>
+            <li>
+Initialize |nquads| and |labelMap| to their associated
+values in the result of the algorithm in Section
+[[[#labelreplacementcanonicalizenquads]]], passing
+|labelMapFactoryFunction|, |deskolemizedNQuads| as
+|nquads|, and any custom options.
+            </li>
+            <li>
+Initialize |selections| to a new map.
+            </li>
+            <li>
+For each key (|name|) and value (|pointers|) entry in
+|groupDefinitions|:
+              <ol class="algorithm">
+                <li>
+Add an entry with a key of |name| and a value that is the result
+of the algorithm in Section [[[#selectcanonicalnquads]]], passing
+|pointers|, |labelMap|, |skolemizedCompactDocument|
+as |document|, and any custom options.
+                </li>
+              </ol>
+            </li>
+            <li>
+Initialize |groups| to an empty object.
+            </li>
+            <li>
+For each key (|name|) and value (|selectionResult|) entry in
+|selections|:
+              <ol class="algorithm">
+                <li>
+Initialize |matching| to an empty map.
+                </li>
+                <li>
+Initialize |nonMatching| to an empty map.
+                </li>
+                <li>
+Initialize |selectedNQuads| to <em>nquads</em> from
+|selectionResult|.
+                </li>
+                <li>
+Initialize |selectedDeskolemizedNQuads| from
+<em>deskolemizedNQuads</em> from |selectionResult|.
+                </li>
+                <li>
+For each element (|nq|) and index (|index|) in
+|nquads|:
+                  <ol class="algorithm">
+                    <li>
+Create a map entry, |entry|, with a key of |index| and a
+value of |nq|.
+                    </li>
+                    <li>
+If |selectedNQuads| includes |nq| then add |entry|
+to |matching|; otherwise, add |entry| to |nonMatching|.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set |name| in |groups| to an object containing
+|matching|, |nonMatching|, and
+|selectedDeskolemizedNQuads| as |deskolemizedNQuads|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return an object containing |groups|,
+|skolemizedExpandedDocument|, |skolemizedCompactDocument|,
+|deskolemizedNQuads|, |labelMap|, and |nquads|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>hashMandatoryNQuads</h4>
+
+          <p>
+The following algorithm cryptographically hashes an array of mandatory to
+disclose N-Quads using a provided hashing API. The required input is an array of
+mandatory to disclose N-Quads (|mandatory|) and a hashing function
+(|hasher|). A cryptographic hash (<em>mandatoryHash</em>) is produced
+as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize `bytes` to the UTF-8 representation of the joined `mandatory`
+N-Quads.
+            </li>
+            <li>
+Initialize `mandatoryHash` to the result of using `hasher` to hash `bytes`.
+            </li>
+            <li>
+Return `mandatoryHash`.
+            </li>
+          </ol>
+        </section>
+      </section>
+
+
+      <section>
+        <h3>ecdsa-sd-2023 Functions</h3>
+
+        <p>
+This section contains subalgorithms that are useful to the `ecdsa-sd-2023`
+cryptographic suite.
+        </p>
+
+        <section>
+          <h4>serializeSignData</h4>
+
+          <p>
+The following algorithm serializes the data that is to be signed by the private
+key associated with the base proof verification method. The required inputs are
+the proof options hash (|proofHash|), the proof-scoped multikey-encoded
+public key (|publicKey|), and the mandatory hash
+(|mandatoryHash|). A single <em>sign data</em> value,
+represented as series of bytes, is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Return the concatenation of |proofHash|, |publicKey|, and
+|mandatoryHash|, in that order, as <em>sign data</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>serializeBaseProofValue</h4>
+
+          <p>
+The following algorithm serializes the base proof value, including the
+base signature, public key, HMAC key, signatures, and mandatory pointers.
+The required inputs are a base signature |baseSignature|, a public key
+|publicKey|, an HMAC key |hmacKey|, an array of
+|signatures|, and an array of |mandatoryPointers|.
+A single <em>base proof</em> string value is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize a byte array, |proofValue|, that starts with the ECDSA-SD base proof
+header bytes 0xd9, 0x5d, and 0x00.
+            </li>
+            <li>
+Initialize |components| to an array with five elements containing the values of:
+|baseSignature|, |publicKey|, |hmacKey|, |signatures|, and |mandatoryPointers|.
+            </li>
+            <li>
+CBOR-encode |components| per [[RFC8949]] where CBOR tagging MUST NOT be used on
+any of the |components|. Append the produced encoded value to |proofValue|.
+            </li>
+            <li>
+Initialize |baseProof| to a string with the Multibase
+base64url-no-pad-encoding of |proofValue| as described in the
+<a data-cite="CID#multibase-0">
+Multibase section</a> of [[[CID]]]. That is, return a string
+starting with "`u`" and ending with the base64url-no-pad-encoded value of
+|proofValue|.
+            </li>
+            <li>
+Return |baseProof| as <em>base proof</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>parseBaseProofValue</h4>
+
+          <p>
+The following algorithm parses the components of an `ecdsa-sd-2023` selective
+disclosure base proof value. The required inputs are a proof value
+(|proofValue|). A single object <em>parsed base proof</em>, containing
+five elements, using the names `baseSignature`, `publicKey`, `hmacKey`,
+`signatures`, and `mandatoryPointers`, is produced  as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+If the |proofValue| string does not start with `u`, indicating that it is
+a multibase-base64url-no-pad-encoded value, an error MUST be raised
+and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_VERIFICATION_ERROR">PROOF_VERIFICATION_ERROR</a>.
+            </li>
+            <li>
+Initialize |decodedProofValue| to the result of base64url-no-pad-decoding the
+substring after the leading `u` in |proofValue|.
+            </li>
+            <li>
+If the |decodedProofValue| does not start with the ECDSA-SD base proof
+header bytes `0xd9`, `0x5d`, and `0x00`, an error MUST be raised and SHOULD
+convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_VERIFICATION_ERROR">PROOF_VERIFICATION_ERROR</a>.
+            </li>
+            <li>
+Initialize |components| to an array that is the result of CBOR-decoding the
+bytes that follow the three-byte ECDSA-SD base proof header. Confirm that the result
+is an array of five elements.
+            </li>
+            <li>
+Return an object with properties set to the five elements, using the names
+`baseSignature`, `publicKey`, `hmacKey`, `signatures`, and `mandatoryPointers`,
+respectively.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>createDisclosureData</h4>
+
+          <p>
+The following algorithm creates data to be used to generate a derived proof. The
+inputs include a JSON-LD document (|document|), an ECDSA-SD base proof
+(|proof|), an array of JSON pointers to use to selectively disclose
+statements (|selectivePointers|), and any custom JSON-LD API options,
+such as a document loader). A single object, <em>disclosure data</em>, is
+produced as output, which contains the "baseSignature", "publicKey",
+"signatures" for "filteredSignatures", "labelMap", "mandatoryIndexes", and
+"revealDocument" fields.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |baseSignature|, |publicKey|, |hmacKey|, |signatures|, and
+|mandatoryPointers| to the values of the associated properties in the object
+returned when calling the algorithm in Section
+[[[#parsebaseproofvalue]]], passing the |proofValue| from |proof|.
+            </li>
+            <li>
+Initialize |hmac| to an HMAC API using |hmacKey|. The HMAC uses the same hash
+algorithm used in the signature algorithm, i.e., SHA-256 for a P-256 curve.
+            </li>
+            <li>
+Initialize |labelMapFactoryFunction| to the result of calling the algorithm of
+section [[[#createhmacidlabelmapfunction]]], passing |hmac|.
+            </li>
+            <li>
+Initialize |combinedPointers| to the concatenation of |mandatoryPointers|
+and |selectivePointers|.
+            </li>
+            <li>
+Initialize |groupDefinitions| to a map with the following entries: key of
+the string `"mandatory"` and value of |mandatoryPointers|, key of the string
+`"selective"` and value of |selectivePointers|, and key of the string `"combined"`
+and value of |combinedPointers|.
+            </li>
+            <li>
+Initialize |groups| and |labelMap| to their associated values in the result
+of calling the algorithm in Section
+[[[#canonicalizeandgroup]]], passing |document|,
+|labelMapFactoryFunction|, |groupDefinitions|, and any custom
+JSON-LD API options as parameters. Note: This step transforms the document into
+an array of canonical N-Quad strings with pseudorandom blank node identifiers
+based on |hmac|, and groups the N-Quad strings according to selections based on
+JSON pointers.
+            </li>
+            <li>
+Initialize |relativeIndex| to zero.
+            </li>
+            <li>
+Initialize |mandatoryIndexes| to an empty array.
+            </li>
+            <li>
+For each |absoluteIndex| in the keys in |groups|.|combined|.|matching|, convert
+the absolute index of any mandatory N-Quad to an index relative to the combined
+output that is to be revealed:
+              <ol class="algorithm">
+                <li>
+If |groups|.|mandatory|.|matching| has |absoluteIndex| as a key, then append
+|relativeIndex| to |mandatoryIndexes|.
+                </li>
+                <li>
+Increment |relativeIndex|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Determine which signatures match a selectively disclosed statement, which
+requires incrementing an index counter while iterating over all |signatures|,
+skipping over any indexes that match the mandatory group.
+              <ol class="algorithm">
+                <li>
+Initialize |index| to `0`.
+                </li>
+                <li>
+Initialize |filteredSignatures| to an empty array.
+                </li>
+                <li>
+For each |signature| in |signatures|:
+                  <ol class="algorithm">
+                    <li>
+While |index| is in |groups|.|mandatory|.|matching|, increment |index|.
+                    </li>
+                    <li>
+If |index| is in |groups|.|selective|.|matching|, add |signature| to
+|filteredSignatures|.
+                    </li>
+                    <li>
+Increment |index|.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+Initialize |revealDocument| to the result of the calling the algorithm in Section
+[[[#selectjsonld]]], passing |document|, and |combinedPointers| as |pointers|.
+            </li>
+            <li>
+Run the RDF Dataset Canonicalization Algorithm [[RDF-CANON]] on
+the joined |combinedGroup.deskolemizedNQuads|, passing any custom
+options, and get the canonical bnode identifier map, |canonicalIdMap|.
+Note: This map includes the canonical blank node identifiers that a verifier
+will produce when they canonicalize the reveal document.
+            </li>
+            <li>
+Initialize |verifierLabelMap| to an empty map. This map will map
+the canonical blank node identifiers the verifier will produce when they
+canonicalize the revealed document to the blank node identifiers that were
+originally signed in the base proof.
+            </li>
+            <li>
+For each key (|inputLabel|) and value (|verifierLabel|) in |canonicalIdMap|:
+              <ol class="algorithm">
+                <li>
+Add an entry to |verifierLabelMap| using |verifierLabel| as the key and the
+value associated with |inputLabel| as a key in |labelMap| as the value.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return an object with properties matching |baseSignature|, |publicKey|,
+`signatures` for |filteredSignatures|, `verifierLabelMap` for |labelMap|,
+|mandatoryIndexes|, and |revealDocument|.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>compressLabelMap</h4>
+
+          <p>
+The following algorithm compresses a label map. The required inputs are
+label map (|labelMap|). The output is a <em>compressed label map</em>.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |map| to an empty map.
+            </li>
+            <li>
+For each entry (|k|, |v|) in |labelMap|:
+              <ol class="algorithm">
+                <li>
+Add an entry to |map| with a key that is a base-10 integer parsed from the
+characters following the "c14n" prefix in |k| and a value that is a byte array
+resulting from base64url-no-pad-decoding the characters after the "u" prefix in
+                |v|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return |map| as <em>compressed label map</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>decompressLabelMap</h4>
+
+          <p>
+The following algorithm decompresses a label map. The required input is a
+compressed label map (|compressedLabelMap|). The output is a
+<em>decompressed label map</em>.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |map| to an empty map.
+            </li>
+            <li>
+For each entry (|k|, |v|) in |compressedLabelMap|:
+              <ol class="algorithm">
+                <li>
+Add an entry to |map| with a key that adds the prefix "c14n" to |k| and a value
+that adds a prefix of "u" to the base64url-no-pad-encoded value for |v|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return |map| as <em>decompressed label map</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>serializeDerivedProofValue</h4>
+
+          <p>
+The following algorithm serializes a derived proof value. The required inputs
+are a base signature (|baseSignature|), public key
+(|publicKey|), an array of signatures (|signatures|), a label
+map (|labelMap|), and an array of mandatory indexes
+(|mandatoryIndexes|). A single <em>derived proof</em> value, serialized
+as a byte string, is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |compressedLabelMap| to the result of calling the algorithm in
+Section [[[#compresslabelmap]]], passing |labelMap| as the parameter.
+            </li>
+            <li>
+Initialize a byte array, |proofValue|, that starts with the ECDSA-SD disclosure
+proof header bytes `0xd9`, `0x5d`, and `0x01`.
+            </li>
+            <li>
+Initialize |components| to an array with five elements containing the values of:
+|baseSignature|, |publicKey|, |signatures|, |compressedLabelMap|, and
+|mandatoryIndexes|.
+            </li>
+            <li>
+CBOR-encode |components| per [[RFC8949]] where CBOR tagging MUST NOT be used on
+any of the |components|. Append the produced encoded value to |proofValue|.
+            </li>
+            <li>
+Return the <em>derived proof</em> as a string with the
+base64url-no-pad-encoding of |proofValue| as described in the
+<a data-cite="CID#multibase-0">
+Multibase section</a> of [[[CID]]]. That is, return a string
+starting with "`u`" and ending with the base64url-no-pad-encoded value of
+|proofValue|.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>parseDerivedProofValue</h4>
+
+          <p>
+The following algorithm parses the components of the derived proof value.
+The required input is a derived proof value (|proofValue|).
+A single <em>derived proof value</em> value object is produced as output, which
+contains a set to five elements, using the names "baseSignature", "publicKey",
+"signatures", "labelMap", and "mandatoryIndexes".
+          </p>
+
+          <ol class="algorithm">
+            <li>
+If the |proofValue| string does not start with `u`, indicating that it is a
+multibase-base64url-no-pad-encoded value, an error MUST be raised
+and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_VERIFICATION_ERROR">PROOF_VERIFICATION_ERROR</a>.
+            </li>
+            <li>
+Initialize |decodedProofValue| to the result of base64url-no-pad-decoding the
+substring after the leading `u` in |proofValue|.
+            </li>
+            <li>
+If the |decodedProofValue| does not start with the ECDSA-SD disclosure proof
+header bytes `0xd9`, `0x5d`, and `0x01`, an error MUST be raised
+and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_VERIFICATION_ERROR">PROOF_VERIFICATION_ERROR</a>.
+            </li>
+            <li>
+Initialize |components| to an array that is the result of CBOR-decoding the bytes
+that follow the three-byte ECDSA-SD disclosure proof header. If the result is not
+an array of the following five elements — a byte array of length 64; a byte array
+of length 36; an array of byte arrays, each of length 64; a map of integers to
+byte arrays, each of length 32; and an array of integers — an error MUST be raised
+and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_VERIFICATION_ERROR">PROOF_VERIFICATION_ERROR</a>.
+            </li>
+            <li>
+Replace the fourth element in |components| using the result of calling the
+algorithm in Section [[[#decompresslabelmap]]], passing the existing
+fourth element of |components| as |compressedLabelMap|.
+            </li>
+            <li>
+Return <em>derived proof value</em> as an object with properties set to the five
+elements, using the names "baseSignature", "publicKey", "signatures",
+"labelMap", and "mandatoryIndexes", respectively.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>createVerifyData</h4>
+
+          <p>
+The following algorithm creates the data needed to perform verification of an
+ECDSA-SD-protected [=verifiable credential=]. The inputs include a JSON-LD
+document (|document|), an ECDSA-SD disclosure proof (|proof|),
+and any custom JSON-LD API options, such as a document loader. A single
+<em>verify data</em> object value is produced as output containing the following
+fields: "baseSignature", "proofHash", "publicKey", "signatures", "nonMandatory",
+and "mandatoryHash".
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |proofHash| to the result of perform RDF Dataset Canonicalization
+[[RDF-CANON]] on the proof options. The hash used is the same as the one used in
+the signature algorithm, i.e., SHA-256 for a P-256 curve. Note: This step can be
+performed in parallel; it only needs to be completed before this algorithm needs
+to use the |proofHash| value.
+            </li>
+            <li>
+Initialize |baseSignature|, |publicKey|, |signatures|, |labelMap|, and
+|mandatoryIndexes|, to the values associated with their property names in the
+object returned when calling the algorithm in Section
+[[[#parsederivedproofvalue]]], passing |proofValue| from |proof|.
+            </li>
+            <li>
+Initialize |labelMapFactoryFunction| to the result of calling the algorithm of
+Section [[[#createlabelmapfunction]]].
+            </li>
+            <li>
+Initialize |nquads| to the result of calling the algorithm of section
+[[[#labelreplacementcanonicalizejsonld]]], passing |document|,
+|labelMapFactoryFunction|, and any custom
+JSON-LD API options. Note: This step transforms the document into an array of
+canonical N-Quads with pseudorandom blank node identifiers based on |labelMap|.
+            </li>
+            <li>
+Initialize |mandatory| to an empty array.
+            </li>
+            <li>
+Initialize |nonMandatory| to an empty array.
+            </li>
+            <li>
+For each entry (|index|, |nq|) in |nquads|, separate the N-Quads into mandatory
+and non-mandatory categories:
+              <ol class="algorithm">
+                <li>
+If |mandatoryIndexes| includes |index|, add |nq| to |mandatory|.
+                </li>
+                <li>
+Otherwise, add |nq| to |nonMandatory|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Initialize |mandatoryHash| to the result of calling the "hashMandatory"
+primitive, passing |mandatory|.
+            </li>
+            <li>
+Return an object with properties matching |baseSignature|, |proofHash|,
+|publicKey|, |signatures|, |nonMandatory|, and |mandatoryHash|.
+            </li>
+          </ol>
+
+        </section>
+
+      </section>
+
+      <section>
+        <h3>ecdsa-sd-2023</h3>
+
+        <p>
+The `ecdsa-sd-2023` cryptographic suite takes an input document, canonicalizes
+the document using the [[[RDF-CANON]]]
+[[RDF-CANON]], and then cryptographically hashes and signs the output
+resulting in the production of a data integrity proof. The algorithms in this
+section also include the verification of such a data integrity proof.
+        </p>
+
+        <section>
+          <h4>Create Base Proof (ecdsa-sd-2023)</h4>
+
+
+          <p>
+The following algorithm specifies how to create a [=data integrity proof=] given
+an <a>unsecured data document</a>. Required inputs are an
+<a>unsecured data document</a> ([=map=] |unsecuredDocument|), and a set of proof
+options ([=map=] |options|). A [=data integrity proof=] ([=map=]), or an error,
+is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |proof| be a clone of the proof options, |options|.
+            </li>
+            <li>
+Let |proofConfig| be the result of running the algorithm in
+Section [[[#base-proof-configuration-ecdsa-sd-2023]]] with
+|options| passed as a parameter.
+            </li>
+            <li>
+Let |transformedData| be the result of running the algorithm in Section <a
+href="#base-proof-transformation-ecdsa-sd-2023"></a> with |unsecuredDocument|,
+|proofConfig|, and |options| passed as parameters.
+            </li>
+            <li>
+Let |hashData| be the result of running the algorithm in Section
+[[[#base-proof-hashing-ecdsa-sd-2023]]] with |transformedData| and |proofConfig|
+passed as a parameters.
+            </li>
+            <li>
+Let |proofBytes| be the result of running the algorithm in Section
+[[[#base-proof-serialization-ecdsa-sd-2023]]] with |hashData| and
+|options| passed as parameters.
+            </li>
+            <li>
+Let |proof|.|proofValue| be a <a data-cite="CID#multibase-0">
+base64-url-encoded Multibase value</a> of the |proofBytes|.
+            </li>
+            <li>
+Return |proof| as the [=data integrity proof=].
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>Base Proof Transformation (ecdsa-sd-2023)</h4>
+
+          <p>
+The following algorithm specifies how to transform an unsecured input document
+into a transformed document that is ready to be provided as input to the
+hashing algorithm in Section [[[#base-proof-hashing-ecdsa-sd-2023]]].
+          </p>
+
+          <p>
+Required inputs to this algorithm are an
+<a data-cite="vc-data-integrity#dfn-unsecured-data-document">
+unsecured data document</a> (|unsecuredDocument|) and
+transformation options (|options|). The
+transformation options MUST contain a type identifier for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|), a cryptosuite
+identifier (|cryptosuite|), and a verification method
+(|verificationMethod|). The transformation options MUST contain an
+array of mandatory JSON pointers (|mandatoryPointers|) and MAY contain
+additional options, such as a JSON-LD document loader. A <em>transformed data
+document</em> is produced as output. Whenever this algorithm encodes strings, it
+MUST use UTF-8 encoding.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |hmac| to an HMAC API using a locally generated and exportable HMAC
+key. The HMAC uses the same hash algorithm used in the signature algorithm,
+which is detected via the |verificationMethod| provided to the
+function, i.e., SHA-256 for a P-256 curve. Per the recommendations of
+[[RFC2104]], the HMAC key MUST be the same length as the digest size; for SHA-256,
+this is 256 bits or 32 bytes.
+            </li>
+            <li>
+Initialize |labelMapFactoryFunction| to the result of calling the algorithm of
+Section [[[#createhmacidlabelmapfunction]]], passing |hmac|.
+            </li>
+            <li>
+Initialize |groupDefinitions| to a map with an entry with a key of the string
+"mandatory" and a value of |mandatoryPointers|.
+            </li>
+            <li>
+Initialize |groups| to the result of calling the algorithm in Section
+[[[#canonicalizeandgroup]]], passing |labelMapFactoryFunction|,
+|groupDefinitions|, |unsecuredDocument| as |document|, and any custom JSON-LD
+API options. Note: This step transforms the document into an array of canonical
+N-Quads with pseudorandom blank node identifiers based on |hmac|, and groups
+the N-Quad strings according to selections based on JSON pointers.
+            </li>
+            <li>
+Initialize |mandatory| to the values in the |groups|.|mandatory|.|matching| map.
+            </li>
+            <li>
+Initialize |nonMandatory| to the values in the
+|groups|.|mandatory|.|nonMatching| map.
+            </li>
+            <li>
+Initialize |hmacKey| to the result of exporting the HMAC key from |hmac|.
+            </li>
+            <li>
+Return an object with `mandatoryPointers` set to |mandatoryPointers|,
+`mandatory` set to |mandatory|, `nonMandatory` set to |nonMandatory|,
+and `hmacKey` set to |hmacKey|.
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h4>Base Proof Hashing (ecdsa-sd-2023)</h4>
+
+          <p>
+The following algorithm specifies how to cryptographically hash a
+<em>transformed data document</em> and <em>proof configuration</em>
+into cryptographic hash data that is ready to be provided as input to the
+algorithms in Section [[[#base-proof-serialization-ecdsa-sd-2023]]].
+          </p>
+
+          <p>
+The required inputs to this algorithm are a <em>transformed data document</em>
+(|transformedDocument|) and <em>canonical proof configuration</em>
+(|canonicalProofConfig|). A <em>hash data</em> value represented
+as an object is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |proofHash| to the result of calling the RDF Dataset Canonicalization
+algorithm [[RDF-CANON]] on |canonicalProofConfig| and then cryptographically
+hashing the result using the same hash that is used by the signature algorithm,
+i.e., SHA-256 for a P-256 curve. Note: This step can be performed in parallel;
+it only needs to be completed before this algorithm terminates as the result is
+part of the return value.
+            </li>
+            <li>
+Initialize |mandatoryHash| to the result of calling the the algorithm in Section
+[[[#hashmandatorynquads]]], passing
+|transformedDocument|.|mandatory|.
+            </li>
+            <li>
+Initialize |hashData| as a deep copy of |transformedDocument| and
+add |proofHash| as `proofHash` and |mandatoryHash| as `mandatoryHash` to that
+object.
+            </li>
+            <li>
+Return |hashData| as <em>hash data</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Base Proof Configuration (ecdsa-sd-2023)</h4>
+
+          <p>
+The following algorithm specifies how to generate a
+<em>proof configuration</em> from a set of <em>proof options</em>
+that is used as input to the
+<a href="#base-proof-hashing-ecdsa-sd-2023">base proof hashing algorithm</a>.
+          </p>
+
+          <p>
+The required inputs to this algorithm are <em>proof options</em>
+(|options|) and the
+<a data-cite="vc-data-integrity#dfn-unsecured-data-document">unsecured data
+document</a> (|unsecuredDocument|).
+The <em>proof options</em> MUST contain a type identifier
+for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and MUST contain a cryptosuite
+identifier (|cryptosuite|). A <em>proof configuration</em>
+object is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |proofConfig| be a clone of the |options| object.
+            </li>
+            <li>
+If |proofConfig|.|type| is not set to `DataIntegrityProof` and/or
+|proofConfig|.|cryptosuite| is not set to `ecdsa-sd-2023`,
+an error MUST be raised and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_GENERATION_ERROR">PROOF_GENERATION_ERROR</a>.
+            </li>
+            <li>
+If |proofConfig|.|created| is set and if the value is not a
+valid [[XMLSCHEMA11-2]] datetime, an error MUST be raised and SHOULD convey an
+error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_GENERATION_ERROR">PROOF_GENERATION_ERROR</a>.
+            </li>
+            <li>
+Set |proofConfig|.<var>@context</var> to
+|unsecuredDocument|.<var>@context</var>.
+            </li>
+            <li>
+Let |canonicalProofConfig| be the result of applying the
+[[[RDF-CANON]]] [[RDF-CANON]] to the |proofConfig|.
+            </li>
+            <li>
+Return |canonicalProofConfig|.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Base Proof Serialization (ecdsa-sd-2023)</h4>
+
+          <p>
+The following algorithm specifies how to create a base proof; called by an
+issuer of an ECDSA-SD-protected Verifiable Credential. The base proof is to be
+given only to the holder, who is responsible for generating a derived proof from
+it, exposing only selectively disclosed details in the proof to a verifier. This
+algorithm is designed to be used in conjunction with the algorithms defined
+in the Data Integrity [[VC-DATA-INTEGRITY]] specification,
+<a data-cite="vc-data-integrity#algorithms">
+Section 4: Algorithms</a>. Required inputs are
+cryptographic hash data (|hashData|) and
+<em>proof options</em> (|options|). The
+<em>proof options</em> MUST contain a type identifier for the
+<a data-cite="vc-data-integrity#dfn-cryptosuite">
+cryptographic suite</a> (|type|) and MAY contain a cryptosuite
+identifier (|cryptosuite|). A single <em>digital proof</em> value
+represented as series of bytes is produced as output.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Initialize |proofHash|, |mandatoryPointers|, |mandatoryHash|, |nonMandatory|,
+and |hmacKey| to the values associated with their property names
+|hashData|.
+            </li>
+            <li>
+Initialize |proofScopedKeyPair| to a locally generated P-256 ECDSA key pair.
+Note: This key pair is scoped to the specific proof; it is not used for anything
+else and the private key will be destroyed when this algorithm terminates.
+            </li>
+            <li>
+Initialize |signatures| to an array where each element holds the result of
+digitally signing the UTF-8 representation of each N-Quad string in
+|nonMandatory|, in order. The digital signature algorithm is ES256, i.e., uses a
+P-256 curve over a SHA-256 digest, and uses the private key from
+|proofScopedKeyPair|. Note: This step generates individual signatures for each
+statement that can be selectively disclosed using a local, proof-scoped key pair
+that binds them together; this key pair will be bound to the proof by a
+signature over its public key using the private key associated with the base
+proof verification method.
+            </li>
+            <li>
+Initialize |publicKey| to the multikey expression of the public key exported
+from |proofScopedKeyPair|. That is, an array of bytes starting with the bytes
+0x80 and 0x24 (which is the multikey p256-pub header (0x1200) expressed as a
+varint) followed by the compressed public key bytes (the compressed header with
+`2` for an even `y` coordinate and `3` for an odd one followed by the `x`
+coordinate of the public key).
+            </li>
+            <li>
+Initialize |toSign| to the result of calling the algorithm in Section
+[[[#serializesigndata]]], passing |proofHash|, |publicKey|, and
+|mandatoryHash| as parameters to the algorithm.
+            </li>
+            <li>
+Initialize |baseSignature| to the result of digitally signing |toSign| using the
+private key associated with the base proof verification method.
+            </li>
+            <li>
+Initialize |proofValue| to the result of calling the algorithm in Section
+[[[#serializebaseproofvalue]]], passing |baseSignature|,
+|publicKey|, |hmacKey|, |signatures|, and |mandatoryPointers| as parameters
+to the algorithm.
+            </li>
+            <li>
+Return |proofValue| as <em>digital proof</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Add Derived Proof (ecdsa-sd-2023)</h4>
+
+          <p>
+The following algorithm creates a selective disclosure derived proof; called by
+a holder of an `ecdsa-sd-2023`-protected [=verifiable credential=].
+The derived proof is to be given to the [=verifier=]. The inputs include a
+JSON-LD document (|document|), an ECDSA-SD base proof
+(|proof|), an array of JSON pointers to use to selectively disclose
+statements (|selectivePointers|), and any custom JSON-LD API options,
+such as a document loader. A single <em>selectively revealed document</em>
+value, represented as an object, is produced as output.
+          </p>
+
+          <ol>
+            <li>
+Initialize |baseSignature|, |publicKey|, |signatures|, |labelMap|,
+|mandatoryIndexes|, |revealDocument| to the values associated with their
+property names in the object returned when calling the algorithm in
+Section [[[#createdisclosuredata]]], passing the |document|, |proof|,
+|selectivePointers|, and any custom JSON-LD API options, such as a document
+loader.
+            </li>
+            <li>
+Initialize |newProof| to a shallow copy of |proof|.
+            </li>
+            <li>
+Replace |proofValue| in |newProof| with the result of calling the algorithm
+in Section [[[#serializederivedproofvalue]]], passing
+|baseSignature|, |publicKey|, |signatures|, |labelMap|, and |mandatoryIndexes|.
+            </li>
+            <li>
+Set the value of the "proof" property in |revealDocument| to |newProof|.
+            </li>
+            <li>
+Return |revealDocument| as the <em>selectively revealed document</em>.
+            </li>
+          </ol>
+
+        </section>
+
+        <section>
+          <h4>Verify Derived Proof (ecdsa-sd-2023)</h4>
+
+          <p>
+The following algorithm attempts verification of an `ecdsa-sd-2023` derived
+proof. This algorithm is called by a verifier of an ECDSA-SD-protected
+[=verifiable credential=]. The inputs include a JSON-LD document
+(|document|), an ECDSA-SD disclosure proof (|proof|), and any
+custom JSON-LD API options, such as a document loader. This algorithm returns
+a [=verification result=]:
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Let |unsecuredDocument| be a copy of |document| with the `proof` value removed.
+            </li>
+            <li>
+Initialize |baseSignature|, |proofHash|, |publicKey|, |signatures|,
+|nonMandatory|, and |mandatoryHash| to the values associated with their property
+names in the object returned when calling the algorithm in Section
+[[[#createverifydata]]], passing the |document|, |proof|, and any
+custom JSON-LD API options, such as a document loader.
+            </li>
+            <li>
+If the length of |signatures| does not match the length of |nonMandatory|,
+an error MUST be raised and SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_VERIFICATION_ERROR">PROOF_VERIFICATION_ERROR</a>,
+indicating that the signature count does not match
+the non-mandatory message count.
+            </li>
+            <li>
+Initialize |publicKeyBytes| to the public key bytes expressed in |publicKey|.
+Instructions on how to decode the public key value can be found in Section
+[[[#multikey]]].
+            </li>
+            <li>
+Initialize |toVerify| to the result of calling the algorithm in Setion
+[[[#serializesigndata]]], passing |proofHash|, |publicKey|, and
+|mandatoryHash|.
+            </li>
+            <li>
+Initialize |verified| to true.
+            </li>
+            <li>
+Initialize |verificationCheck| be the result of applying the verification
+algorithm of the Elliptic Curve Digital Signature Algorithm (ECDSA) [FIPS-186-5],
+with |toVerify| as the data to be verified against the |baseSignature| using
+the public key specified by |publicKeyBytes|. If |verificationCheck| is
+`false`, set |verified| to false.
+            </li>
+            <li>
+For every entry (|index|, |signature|) in |signatures|, verify every signature
+for every selectively disclosed (non-mandatory) statement:
+              <ol class="algorithm">
+                <li>
+Initialize |verificationCheck| to the result of applying the verification
+algorithm Elliptic Curve Digital Signature Algorithm (ECDSA) [FIPS-186-5], with
+the UTF-8 representation of the value at |index| of |nonMandatory| as the data
+to be verified against |signature| using the public key specified by
+|publicKeyBytes|.
+                </li>
+                <li>
+If |verificationCheck| is `false`, set |verified| to false.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return a [=verification result=] with [=struct/items=]:
+              <dl data-link-for="verification result">
+                <dt>[=verified=]</dt>
+                <dd>The value of |verified|</dd>
+                <dt>[=verifiedDocument=]</dt>
+                <dd>
+|unsecuredDocument| if |verified| is `true`, otherwise <a
+data-cite="INFRA#nulls">Null</a>
+                </dd>
+              </dl>
+            </li>
+          </ol>
+
+        </section>
+
+      </section>
+
+    </section>
+    <section class="informative">
+      <h2>Security Considerations</h2>
+
+      <p class="advisement">
+Before reading this section, readers are urged to familiarize themselves
+with general security advice provided in the
+<a href="https://www.w3.org/TR/vc-data-integrity/#security-considerations">
+Security Considerations section of the Data Integrity specification</a>.
+      </p>
+
+      <p>
+The integrity and authenticity of a secured document that is protected by
+this cryptographic suite is dependent on a number of factors including
+the following:
+      </p>
+
+      <ul>
+        <li>
+correct application of a digital signature to the document
+        </li>
+        <li>
+choice of an appropriate signature algorithm (ECDSA) and its parameters
+(P-256, P-384)
+        </li>
+        <li>
+correct implementation and usage of the digital signature algorithm,
+particularly with respect to well-known problem areas
+        </li>
+        <li>
+proper management of the private and public keys used for
+signing and verification
+        </li>
+      </ul>
+
+      <p>
+In the following sections, we review these important points and direct
+the reader to additional information.
+      </p>
+
+      <section class="informative">
+        <h3>Choice of ECDSA and Parameters</h3>
+        <p>
+The ECDSA signature scheme has the <strong>EUF-CMA</strong>
+(<em>existential unforgeability under chosen message attacks</em>) security
+property. This property guarantees that any efficient adversary who has the
+public key <em>pk</em> of the signer and received an arbitrary number of
+signatures on messages of its choice (in an adaptive manner) cannot output a
+valid signature for a new message (except with negligible probability).
+        </p>
+        <p>
+<strong>SUF-CMA</strong> (<em>strong unforgeability under chosen
+message attacks</em>) is a stronger notion than <em>EUF-CMA</em>. It guarantees
+that for any efficient adversary who has the public key <em>pk</em> of the
+signer and received an arbitrary number of signatures on messages of its
+choice, it cannot output a new valid signature pair for a new message
+nor a new signature for an old message (except with negligible probability).
+ ECDSA signature scheme does <strong>not</strong> have the SUF-CMA property,
+ while other schemes such as EdDSA [[FIPS-186-5]] do.
+        </p>
+        <p>
+Per [[NIST-SP-800-57-Part-1]] in the absence of large scale quantum
+computers a <em>security strength</em> level of 128 bits requires a key size
+of approximately 256 bits while a security strength level of 192 bits requires
+a key size of 384 bits. [[NIST-SP-800-186]] recommendations includes curves
+P-256 and P-384 at these respective security strength levels.
+        </p>
+      </section>
+      <section class="informative">
+        <h3>Implementation Considerations for ECDSA Algorithms</h3>
+        <p>
+The ECDSA algorithm as detailed in [[FIPS-186-5]] states: &quot;A
+new secret random number <em>k</em>, 0 < <em>k</em> < <em>n</em>,
+<strong>shall</strong> be generated prior to the generation
+of each digital signature for use during the signature generation process.&quot;
+The failure to properly generate this <em>k</em> value has lead to some highly
+publicized integrity breaches in widely deployed systems. To counter this problem,
+a hash-based method of determining the secret number <em>k</em>, called
+<em>deterministic ECDSA</em>, is given in [[FIPS-186-5]] and [[RFC6979]].
+        </p>
+        <p>
+Verification of a ECDSA signature is independent of the method of generating
+<em>k</em>. Hence it is generally recommended to use <em>deterministic
+ECDSA</em> unless other requirements dictate otherwise. For example, using
+different <em>k</em> values results in different signature values for the same
+document which might be a desirable property in some privacy enhancing situations.
+        </p>
+      </section>
+      <section class="informative">
+        <h3>Key Management</h3>
+        <p>
+The security of the ECDSA algorithm is dependent on the quality and
+protection of its <em>private signing key</em>. Guidance in the management of
+cryptographic keys is a large subject and the reader is referred to
+[[NIST-SP-800-57-Part-1]] for more extensive recommendations and discussion.
+As strongly recommended in both [[FIPS-186-5]] and [[NIST-SP-800-57-Part-1]], an ECDSA
+private signing key is not to be used for any other purpose
+than ECDSA signatures.
+        </p>
+        <p>
+ECDSA private signing keys and <em>public verification keys</em> are strongly
+advised to have limited <em>cryptoperiods</em> [[NIST-SP-800-57-Part-1]], where
+a <em>cryptoperiod</em> is &quot;the time span during which a specific key is
+authorized for use by legitimate entities or the keys for a given system will
+remain in effect.&quot; [[NIST-SP-800-57-Part-1]] gives extensive
+guidance on cryptoperiods for different key types under different situations
+and generally recommends a 1-3 year cryptoperiod for a private signing key.
+        </p>
+        <p>
+To deal with potential private key compromises, [[NIST-SP-800-57-Part-1]]
+gives recommendations for protective measures, harm reduction, and revocation.
+Although we have been emphasizing the security of the private signing key,
+assurance of public key validity is highly recommended on all public keys
+before using them, per [[NIST-SP-800-57-Part-1]].
+        </p>
+      </section>
+    </section>
+
+    <section>
+      <h2>Privacy Considerations</h2>
+
+      <p class="advisement">
+Before reading this section, readers are urged to familiarize themselves
+with general privacy advice provided in the
+<a href="https://www.w3.org/TR/vc-data-integrity/#privacy-considerations">
+Privacy Considerations section of the Data Integrity specification</a>.
+      </p>
+
+      <p>
+The following section describes privacy considerations that developers
+implementing this specification should be aware of in order to avoid violating
+privacy assumptions.
+      </p>
+
+      <section>
+        <h3>Unlinkable Disclosure</h3>
+
+        <p>
+The cryptographic suites described in this specification do not support
+[=unlinkable disclosure=]. If [=unlinkable disclosure=] is of interest, the
+[[[?VC-DI-BBS]]] specification provides an unlinkable digital signature
+mechanism.
+        </p>
+
+      </section>
+
+    </section>
+
+    </section>
+    <section class="appendix informative">
+      <h2>Test Vectors</h2>
+      <p class="note">
+All test vectors are produced using <em>deterministic ECDSA</em>. The
+implementation was validated against the test vectors in [[RFC6979]].
+      </p>
+      <section>
+        <h3>Representation: ecdsa-rdfc-2019, with curve P-256</h3>
+        <p>
+The signer needs to generate a private/public key pair with the private key used
+for signing and the public key made available for verification. The
+representation of the public key,
+and the representation of the private key, are shown below.
+        </p>
+        <pre class="example nohighlight" title="Private and Public keys for Signature"
+        data-include="TestVectors/p256KeyPair.json"
+        data-include-format="text">
+        </pre>
+
+        <p>
+Signing begins with a credential without an attached proof, which is converted
+to canonical form, which is then hashed, as shown in the following three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Credential without Proof" data-include="TestVectors/unsigned.json"
+        data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Credential without Proof" data-include="TestVectors/ecdsa-rdfc-2019-p256/canonDocECDSAP256.txt"
+        data-include-format="text"></pre>
+
+
+        <pre class="example nohighlight" title="Hash of Canonical Credential without Proof (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/docHashECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>
+The next step is to take the proof options document, convert it to canonical form,
+and obtain its hash, as shown in the next three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/proofConfigECDSAP256.json" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/proofCanonECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Hash of Canonical Proof Options Document (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/proofHashECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>
+Finally, we concatenate the hash of the proof options followed by the hash of the credential without proof, use the private key with the combined hash to
+compute the ECDSA signature, and then base-58-btc encode the signature.
+        </p>
+
+        <pre class="example nohighlight" title="Combine hashes of Proof Options and Credential (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/combinedHashECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/sigHexECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes base-58-btc"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/sigBTC58ECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>Assemble the signed credential with the following two steps:</p>
+        <ol>
+          <li>
+Add the <code>proofValue</code> field with the previously computed base-58-btc
+value to the proof options document.
+          </li>
+          <li>
+Set the <code>proof</code> field of the credential to the augmented proof
+option document.
+          </li>
+        </ol>
+
+        <pre class="example nohighlight" title="Signed Credential"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/signedECDSAP256.json" data-include-format="text"></pre>
+      </section>
+
+      <section>
+        <h3>Enhanced Example for Representation: ecdsa-rdfc-2019, with curve P-256</h3>
+        <p>
+Here we again go through the steps of creating an `ecdsa-rdfc-2019` with curve
+P-256 signed credential but with a more complicated input document. The
+representation of the public key,
+and the representation of the private key, are shown below.
+        </p>
+        <pre class="example nohighlight" title="Private and Public keys for Signature"
+        data-include="TestVectors/p256KeyPair.json"
+        data-include-format="text">
+        </pre>
+
+        <p>
+Signing begins with a credential without an attached proof, which is converted
+to canonical form, which is then hashed, as shown in the following three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Employment Authorization Credential without Proof" data-include="TestVectors/employmentAuth.json"
+        data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Employment Authorization Credential without Proof" data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/canonDocECDSAP256.txt"
+        data-include-format="text"></pre>
+
+
+        <pre class="example nohighlight" title="Hash of Canonical Credential without Proof (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/docHashECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>
+The next step is to take the proof options document, convert it to canonical form,
+and obtain its hash, as shown in the next three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/proofConfigECDSAP256.json" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/proofCanonECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Hash of Canonical Proof Options Document (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/proofHashECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>
+Finally, we concatenate the hash of the proof options followed by the hash of the credential without proof, use the private key with the combined hash to
+compute the ECDSA signature, and then base-58-btc encode the signature.
+        </p>
+
+        <pre class="example nohighlight" title="Combine hashes of Proof Options and Credential (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/combinedHashECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/sigHexECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes base-58-btc"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/sigBTC58ECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>Assemble the signed credential with the following two steps:</p>
+        <ol>
+          <li>
+Add the <code>proofValue</code> field with the previously computed base-58-btc
+value to the proof options document.
+          </li>
+          <li>
+Set the <code>proof</code> field of the credential to the augmented proof
+option document.
+          </li>
+        </ol>
+
+        <pre class="example nohighlight" title="Signed Employment Authorization Credential"
+        data-include="TestVectors/ecdsa-rdfc-2019-p256/employ/signedECDSAP256.json" data-include-format="text"></pre>
+      </section>
+
+      <section>
+        <h3>Representation: ecdsa-rdfc-2019, with curve P-384</h3>
+        <p>
+The signer needs to generate a private/public key pair with the private key used
+for signing and the public key made available for verification. The
+representation of the public key,
+and the representation of the private key, are shown below.
+        </p>
+        <pre class="example nohighlight" title="Private and Public keys for Signature"
+        data-include="TestVectors/p384KeyPair.json"
+        data-include-format="text">
+        </pre>
+
+        <p>
+Signing begins with a credential without an attached proof, which is converted
+to canonical form, and then hashed, as shown in the following three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Credential without Proof" data-include="TestVectors/unsigned.json"
+        data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Credential without Proof" data-include="TestVectors/ecdsa-rdfc-2019-p384/canonDocECDSAP384.txt"
+        data-include-format="text"></pre>
+
+
+        <pre class="example nohighlight" title="Hash of Canonical Credential without Proof (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/docHashECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>
+The next step is to take the proof options document, convert it to canonical form,
+and obtain its hash, as shown in the next three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/proofConfigECDSAP384.json" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/proofCanonECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Hash of Canonical Proof Options Document (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/proofHashECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>
+Finally, we concatenate the hash of the proof options followed by the hash of the credential without proof, use the private key with the combined hash to
+compute the ECDSA signature, and then base-58-btc encode the signature.
+        </p>
+
+        <pre class="example nohighlight" title="Combine hashes of Proof Options and Credential (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/combinedHashECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/sigHexECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes base-58-btc"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/sigBTC58ECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>Assemble the signed credential with the following two steps:</p>
+        <ol>
+          <li>
+Add the <code>proofValue</code> field with the previously computed base-58-btc
+value to the proof options document.
+          </li>
+          <li>
+Set the <code>proof</code> field of the credential to the augmented proof
+option document.
+          </li>
+        </ol>
+
+        <pre class="example nohighlight" title="Signed Credential"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/signedECDSAP384.json" data-include-format="text"></pre>
+      </section>
+
+      <section>
+        <h3>Enhanced Example for Representation: ecdsa-rdfc-2019, with curve P-384</h3>
+        <p>
+Here we again go through the steps of creating an `ecdsa-rdfc-2019` with curve
+P-384 signed credential but with a more complicated input document. The
+representation of the public key,
+and the representation of the private key, are shown below.
+        </p>
+        <pre class="example nohighlight" title="Private and Public keys for Signature"
+        data-include="TestVectors/p384KeyPair.json"
+        data-include-format="text">
+        </pre>
+
+        <p>
+Signing begins with a credential without an attached proof, which is converted
+to canonical form, and then hashed, as shown in the following three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Employment Authorization Credential without Proof" data-include="TestVectors/employmentAuth.json"
+        data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Employment Authorization Credential without Proof" data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/canonDocECDSAP384.txt"
+        data-include-format="text"></pre>
+
+
+        <pre class="example nohighlight" title="Hash of Canonical Credential without Proof (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/docHashECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>
+The next step is to take the proof options document, convert it to canonical form,
+and obtain its hash, as shown in the next three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/proofConfigECDSAP384.json" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Proof Options Document"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/proofCanonECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Hash of Canonical Proof Options Document (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/proofHashECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>
+Finally, we concatenate the hash of the proof options followed by the hash of the credential without proof, use the private key with the combined hash to
+compute the ECDSA signature, and then base-58-btc encode the signature.
+        </p>
+
+        <pre class="example nohighlight" title="Combine hashes of Proof Options and Credential (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/combinedHashECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes (hex)"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/sigHexECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes base-58-btc"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/sigBTC58ECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>Assemble the signed credential with the following two steps:</p>
+        <ol>
+          <li>
+Add the <code>proofValue</code> field with the previously computed base-58-btc
+value to the proof options document.
+          </li>
+          <li>
+Set the <code>proof</code> field of the credential to the augmented proof
+option document.
+          </li>
+        </ol>
+
+        <pre class="example nohighlight" title="Signed Employment Authorization Credential"
+        data-include="TestVectors/ecdsa-rdfc-2019-p384/employ/signedECDSAP384.json" data-include-format="text"></pre>
+      </section>
+
+      <section>
+        <h3>Representation: ecdsa-jcs-2019 with curve P-256</h3>
+        <p>
+The signer needs to generate a private/public key pair with the private key used
+for signing and the public key made available for verification. The
+representation of the public key,
+and the representation of the private key, are shown below.
+        </p>
+        <pre class="example nohighlight" title="Private and Public keys for Signature"
+        data-include="TestVectors/p256KeyPair.json"
+        data-include-format="text">
+        </pre>
+
+        <p>
+Signing begins with a credential without an attached proof, which is converted
+to canonical form, which is then hashed, as shown in the following three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Credential without Proof" data-include="TestVectors/unsigned.json"
+        data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Credential without Proof" data-include="TestVectors/ecdsa-jcs-2019-p256/canonDocJCSECDSAP256.txt"
+        data-include-format="text"></pre>
+
+
+        <pre class="example nohighlight" title="Hash of Canonical Credential without Proof (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/docHashJCSECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>
+The next step is to take the proof options document, convert it to canonical form,
+and obtain its hash, as shown in the next three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Proof Options Document"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/proofConfigJCSECDSAP256.json" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Proof Options Document"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/proofCanonJCSECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Hash of Canonical Proof Options Document (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/proofHashJCSECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>
+Finally, we concatenate the hash of the proof options followed by the hash of the credential without proof, use the private key with the combined hash to
+compute the ECDSA signature, and then base-58-btc encode the signature.
+        </p>
+
+        <pre class="example nohighlight" title="Combine hashes of Proof Options and Credential (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/combinedHashJCSECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/sigHexJCSECDSAP256.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes base-58-btc"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/sigBTC58JCSECDSAP256.txt" data-include-format="text"></pre>
+
+        <p>Assemble the signed credential with the following three steps:</p>
+        <ol>
+          <li>
+Add the <code>proofValue</code> field with the previously computed base-58-btc
+value to the proof options document.
+          </li>
+          <li>
+Set the proof options <code>@context</code> field to the value of the
+<var>unsecuredDocument.@context</var>.
+          </li>
+          <li>
+Set the <code>proof</code> field of the credential to the augmented proof
+option document.
+          </li>
+        </ol>
+
+        <pre class="example nohighlight" title="Signed Credential"
+        data-include="TestVectors/ecdsa-jcs-2019-p256/signedJCSECDSAP256.json" data-include-format="text"></pre>
+      </section>
+      <section>
+        <h3>Representation: ecdsa-jcs-2019 with curve P-384</h3>
+        <p>
+The signer needs to generate a private/public key pair with the private key used
+for signing and the public key made available for verification. The
+representation of the public key,
+and the representation of the private key, are shown below.
+        </p>
+        <pre class="example nohighlight" title="Private and Public keys for Signature"
+        data-include="TestVectors/p384KeyPair.json"
+        data-include-format="text">
+        </pre>
+
+        <p>
+Signing begins with a credential without an attached proof, which is converted
+to canonical form, which is then hashed, as shown in the following three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Credential without Proof" data-include="TestVectors/unsigned.json"
+        data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Credential without Proof" data-include="TestVectors/ecdsa-jcs-2019-p384/canonDocJCSECDSAP384.txt"
+        data-include-format="text"></pre>
+
+
+        <pre class="example nohighlight" title="Hash of Canonical Credential without Proof (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/docHashJCSECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>
+The next step is to take the proof options document, convert it to canonical form,
+and obtain its hash, as shown in the next three examples.
+        </p>
+
+        <pre class="example nohighlight" title="Proof Options Document"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/proofConfigJCSECDSAP384.json" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Canonical Proof Options Document"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/proofCanonJCSECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Hash of Canonical Proof Options Document (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/proofHashJCSECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>
+Finally, we concatenate the hash of the proof options followed by the hash of the credential without proof, use the private key with the combined hash to
+compute the ECDSA signature, and then base-58-btc encode the signature.
+        </p>
+
+        <pre class="example nohighlight" title="Combine hashes of Proof Options and Credential (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/combinedHashJCSECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes (hex)"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/sigHexJCSECDSAP384.txt" data-include-format="text"></pre>
+
+        <pre class="example nohighlight" title="Signature of Combined Hashes base-58-btc"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/sigBTC58JCSECDSAP384.txt" data-include-format="text"></pre>
+
+        <p>Assemble the signed credential with the following three steps:</p>
+        <ol>
+          <li>
+Add the <code>proofValue</code> field with the previously computed base-58-btc
+value to the proof options document.
+          </li>
+          <li>
+Set the proof options <code>@context</code> field to the value of the
+<var>unsecuredDocument.@context</var>.
+          </li>
+          <li>
+Set the <code>proof</code> field of the credential to the augmented proof
+option document.
+          </li>
+        </ol>
+
+        <pre class="example nohighlight" title="Signed Credential"
+        data-include="TestVectors/ecdsa-jcs-2019-p384/signedJCSECDSAP384.json" data-include-format="text"></pre>
+      </section>
+      <section>
+        <h3>Representation: ecdsa-sd-2023</h3>
+        <p>
+To demonstrate selective disclosure features we break the test vectors into two
+groups based on those that would be generated by the issuer (base proof) and
+those that would be generated by the holder (derived proof).
+        </p>
+        <section>
+          <h4>Base Proof</h4>
+          <p>
+In order to add a selective disclosure base proof to a document the issuer needs
+the following cryptographic key material:
+          </p>
+          <ol>
+            <li>
+The issuers private/public key pair, i.e., the key pair corresponding to the
+verification method that will be part of the proof.
+            </li>
+            <li>
+A per proof private/public key pair created by the issuer just for this proof.
+This is an ephemeral, single use key pair where the private key is not kept
+after the proof has been generated.
+            </li>
+            <li>
+An HMAC key. This used to randomize the order of the blank node ids to avoid
+potential information leakage from the blank node id ordering. This is used only
+once and is shared between issuer and holder. The HMAC in this case is
+functioning as a pseudorandom function (PRF).
+            </li>
+          </ol>
+          <p>
+The key material used for generating the add base proof test vectors is shown
+below. Multibase representation is use for the P-256 key pairs and the HMAC key
+is given as a hexadecimal string.
+          </p>
+          <pre class="example nohighlight" title="Private and Public keys for Signature"
+          data-include="TestVectors/ecdsa-sd-2023/SDKeyMaterial.json"
+          data-include-format="text">
+          </pre>
+          <p>
+In our scenario a person will be issued an employment authorization document as
+shown below.
+          </p>
+          <pre class="example nohighlight" title="Credential without Proof" data-include="TestVectors/employmentAuth.json"
+          data-include-format="text"></pre>
+          <p>
+The mandatory information as specified by the issuer is specified via an array
+of JSON pointers as shown below.
+          </p>
+          <pre class="example nohighlight" title="Mandatory Pointers" data-include="TestVectors/employMandatory.json"
+          data-include-format="text"></pre>
+          <p>
+The result of applying the above JSON pointers to the employment authorization
+document is shown below.
+          </p>
+          <pre class="example nohighlight" title="JSON Pointers and Values" data-include="TestVectors/ecdsa-sd-2023/employ/addPointerValues.json"
+          data-include-format="text"></pre>
+          <p>
+Transformation of the unsigned document begins with canonicalizing the document
+as shown below.
+          </p>
+          <pre class="example nohighlight" title="Canonical Document" data-include="TestVectors/ecdsa-sd-2023/employ/addBaseDocCanon.json"
+          data-include-format="text"></pre>
+          <p>
+To prevent possible information leakage from the ordering of the blank node ids
+these are processed through a PRF, i.e., the HMAC to give the canonized HMAC
+document shown below. This represents an ordered list of statements that will be
+subject to mandatory and selective disclosure, i.e., it is from this list that
+statements are grouped.
+          </p>
+          <pre class="example nohighlight" title="Canonical HMAC Document" data-include="TestVectors/ecdsa-sd-2023/employ/addBaseDocHMACCanon.json"
+          data-include-format="text"></pre>
+          <p>
+The above canonical document gets grouped in to mandatory and non-mandatory
+statements. The final output of the selective disclosure transformation process
+is shown below. Each statement is now grouped as mandatory and non-mandatory and
+its index in the previous list of statements is remembered.
+          </p>
+          <pre class="example nohighlight" title="Add Base Transformation" data-include="TestVectors/ecdsa-sd-2023/employ/addBaseTransform.json"
+          data-include-format="text"></pre>
+          <p>
+The next step is to create the base proof configuration and canonicalize it.
+This is shown in the following two examples.
+          </p>
+          <pre class="example nohighlight" title="Base Proof Configuration" data-include="TestVectors/ecdsa-sd-2023/employ/addProofConfig.json"
+          data-include-format="text"></pre>
+          <pre class="example nohighlight" title="Canonical Base Proof Configuration" data-include="TestVectors/ecdsa-sd-2023/employ/addProofConfigCanon.txt"
+          data-include-format="text"></pre>
+          <p>
+In the hashing step we compute the SHA-256 hash of the canonicalized proof
+options to produce the `proofHash` and we compute the SHA-256 hash of the join of
+all the mandatory nquads to produce the `mandatoryHash`. These are shown below
+in hexadecimal format.
+          </p>
+          <pre class="example nohighlight" title="Add Base Hashes" data-include="TestVectors/ecdsa-sd-2023/employ/addHashData.json"
+          data-include-format="text"></pre>
+          <p>
+We compute the `baseSignature` over the concatenation of the `proofHash`,
+`proofPublicKey`, and `mandatoryHash` using the issuers long term `privateKey`.
+We compute the `signatures` array by signing each non-mandatory nquad using the
+per `proofPrivateKey`. These signatures, the `proofPublicKey`, and
+`mandatoryPointers` which are fed to the final serialization step are
+shown below.
+          </p>
+          <pre class="example nohighlight" title="Add Base Signing" data-include="TestVectors/ecdsa-sd-2023/employ/addRawBaseSignatureInfo.json"
+          data-include-format="text"></pre>
+          <p>
+Finally, the values above are run through the algorithm of Section
+[[[#serializebaseproofvalue]]] to produce the `proofValue` which is
+used in the signed based document shown below.
+          </p>
+          <pre class="example nohighlight" title="Signed Base Document" data-include="TestVectors/ecdsa-sd-2023/employ/addSignedSDBase.json"
+          data-include-format="text"></pre>
+        </section>
+        <section>
+          <h4>Derived Proof</h4>
+          <p>
+In order to create a derived proof a holder starts with a signed document
+containing a base proof. The base document we will use for these test vectors is
+the final example from Section [[[#base-proof]]] above. The first
+step is to run the algorithm of Section [[[#parsebaseproofvalue]]] to
+recover `baseSignature`, `publicKey`, `hmacKey`, `signatures`, and
+`mandatoryPointers` as shown below.
+          </p>
+          <pre class="example nohighlight" title="Recovered Base Signature Data" data-include="TestVectors/ecdsa-sd-2023/employ/derivedRecoveredBaseData.json"
+          data-include-format="text"></pre>
+          <p>
+Next, the holder needs to indicate what, if anything else, they wish to reveal
+to the verifiers by specifying JSON pointers for selective disclosure.
+          </p>
+          <pre class="example nohighlight" title="Selective Disclosure Pointers" data-include="TestVectors/employSelective.json"
+          data-include-format="text"></pre>
+          <p>
+To produce the `revealDocument`, i.e., the unsigned document that will
+eventually be signed and sent to the verifier, we append the selective pointers
+to the mandatory pointers and input these combined pointers along with the
+document without proof to the algorithm of Section [[[#selectjsonld]]]
+to give the result shown below.
+          </p>
+          <pre class="example nohighlight" title="Unsigned Reveal Document" data-include="TestVectors/ecdsa-sd-2023/employ/derivedUnsignedReveal.json"
+          data-include-format="text"></pre>
+          <p>
+Now that we know what the revealed document looks like, we need to furnish
+appropriately updated information to the verifier on which statements are
+mandatory, the signatures for the selected non-mandatory statements, and the
+mapping between canonical blank node ids for the reveal document and a subset of
+the HMAC blank node ids. Running step 6 of the
+[[[#createdisclosuredata]]] yields an abundance of information about
+various statement groups relative to the original document. Below we show a
+portion of the indexes for those groups.
+          </p>
+          <pre class="example nohighlight" title="Derived Group Indexes" data-include="TestVectors/ecdsa-sd-2023/employ/derivedGroupIndexes.json"
+          data-include-format="text"></pre>
+          <p>
+The verifier needs to be able to aggregate and hash the mandatory statements. To
+enable this we furnish them with a list of indexes of the mandatory statements
+adjusted to their positions in the reveal document. In the previous example the
+`combinedIndexes` show the indexes of all the original nquads (statements) that
+make up the reveal document, in order. To come up with the adjusted mandatory
+indexes shown below we obtain the index of each of original mandatory indexes
+relative to the `combinedIndexes` as shown below.
+          </p>
+          <pre class="example nohighlight" title="Adjusted Mandatory Indexes" data-include="TestVectors/ecdsa-sd-2023/employ/derivedAdjMandatoryIndexes.json"
+          data-include-format="text"></pre>
+          <p>
+We have to furnish the verifier with a list of signatures for those selective
+statements (nquads) that are not mandatory. The original list of signatures
+corresponds to every non-mandatory statement and the indexes of these in the
+original document are given above. We now compute a list of adjusted signature
+indexes by computing the index of each selective index in the non-mandatory
+index list, ignoring any selective index not present in the list. We then use
+the adjusted signature indexes to obtain the filtered signature list. These
+lists are shown below.
+          </p>
+          <pre class="example nohighlight" title="Filtered Signatures" data-include="TestVectors/ecdsa-sd-2023/employ/derivedAdjSignatures.json"
+          data-include-format="text"></pre>
+          <p>
+The last important piece of disclosure data is a mapping of canonical blank node
+ids to HMAC based ids, the `labelMap`, computed according to Section
+[[[#createdisclosuredata]]] steps 12-14. This is shown below along with
+the rest of the disclosure data minus the reveal document.
+          </p>
+          <pre class="example nohighlight" title="Disclosure Data" data-include="TestVectors/ecdsa-sd-2023/employ/derivedDisclosureData.json"
+          data-include-format="text"></pre>
+          <p>
+Finally using the disclosure data above with the algorithm of Section
+[[[#serializederivedproofvalue]]] we obtain the signed derived (reveal)
+document shown below.
+          </p>
+          <pre class="example nohighlight" title="Signed Derived Document" data-include="TestVectors/ecdsa-sd-2023/employ/derivedRevealDocument.json"
+          data-include-format="text"></pre>
+        </section>
+      </section>
+      <section>
+        <h3>Additional Example for Representation: ecdsa-sd-2023</h3>
+        <p>
+Here we provide an additional example of basic `ecdsa-sd-2023` processing.
+To demonstrate selective disclosure features we break the test vectors into two
+groups based on those that would be generated by the issuer (base proof) and
+those that would be generated by the holder (derived proof).
+        </p>
+        <section>
+          <h4>Base Proof</h4>
+          <p>
+In order to add a selective disclosure base proof to a document the issuer needs
+the following cryptographic key material:
+          </p>
+          <ol>
+            <li>
+The issuers private/public key pair, i.e., the key pair corresponding to the
+verification method that will be part of the proof.
+            </li>
+            <li>
+A per proof private/public key pair created by the issuer just for this proof.
+This is an ephemeral, single use key pair where the private key is not kept
+after the proof has been generated.
+            </li>
+            <li>
+An HMAC key. This used to randomize the order of the blank node ids to avoid
+potential information leakage from the blank node id ordering. This is used only
+once and is shared between issuer and holder. The HMAC in this case is
+functioning as a pseudorandom function (PRF).
+            </li>
+          </ol>
+          <p>
+The key material used for generating the add base proof test vectors is shown
+below. Multibase representation is use for the P-256 key pairs and the HMAC key
+is given as a hexadecimal string.
+          </p>
+          <pre class="example nohighlight" title="Private and Public keys for Signature"
+      data-include="TestVectors/ecdsa-sd-2023/SDKeyMaterial.json"
+      data-include-format="text">
+          </pre>
+          <p>
+In our scenario a person will be issued an permanent resident credential as
+shown below.
+          </p>
+          <pre class="example nohighlight" title="Credential without Proof" data-include="TestVectors/prCredUnsigned.json"
+      data-include-format="text"></pre>
+          <p>
+The mandatory information as specified by the issuer is specified via an array
+of JSON pointers as shown below.
+          </p>
+          <pre class="example nohighlight" title="Mandatory Pointers" data-include="TestVectors/prCredMandatory.json"
+      data-include-format="text"></pre>
+          <p>
+The result of applying the above JSON pointers to the permanent resident
+credential is shown below.
+          </p>
+          <pre class="example nohighlight" title="JSON Pointers and Values" data-include="TestVectors/ecdsa-sd-2023/prc/addPointerValues.json"
+      data-include-format="text"></pre>
+          <p>
+Transformation of the unsigned document begins with canonicalizing the document
+as shown below.
+          </p>
+          <pre class="example nohighlight" title="Canonical Document" data-include="TestVectors/ecdsa-sd-2023/prc/addBaseDocCanon.json"
+      data-include-format="text"></pre>
+          <p>
+To prevent possible information leakage from the ordering of the blank node ids
+these are processed through a PRF, i.e., the HMAC to give the canonized HMAC
+document shown below. This represents an ordered list of statements that will be
+subject to mandatory and selective disclosure, i.e., it is from this list that
+statements are grouped.
+          </p>
+          <pre class="example nohighlight" title="Canonical HMAC Document" data-include="TestVectors/ecdsa-sd-2023/prc/addBaseDocHMACCanon.json"
+      data-include-format="text"></pre>
+          <p>
+The above canonical document gets grouped in to mandatory and non-mandatory
+statements. The final output of the selective disclosure transformation process
+is shown below. Each statement is now grouped as mandatory and non-mandatory and
+its index in the previous list of statements is remembered.
+          </p>
+          <pre class="example nohighlight" title="Add Base Transformation" data-include="TestVectors/ecdsa-sd-2023/prc/addBaseTransform.json"
+      data-include-format="text"></pre>
+          <p>
+The next step is to create the base proof configuration and canonicalize it.
+This is shown in the following two examples.
+          </p>
+          <pre class="example nohighlight" title="Base Proof Configuration" data-include="TestVectors/ecdsa-sd-2023/prc/addProofConfig.json"
+      data-include-format="text"></pre>
+          <pre class="example nohighlight" title="Canonical Base Proof Configuration" data-include="TestVectors/ecdsa-sd-2023/prc/addProofConfigCanon.txt"
+      data-include-format="text"></pre>
+          <p>
+In the hashing step we compute the SHA-256 hash of the canonicalized proof
+options to produce the `proofHash` and we compute the SHA-256 hash of the join of
+all the mandatory nquads to produce the `mandatoryHash`. These are shown below
+in hexadecimal format.
+          </p>
+          <pre class="example nohighlight" title="Add Base Hashes" data-include="TestVectors/ecdsa-sd-2023/prc/addHashData.json"
+      data-include-format="text"></pre>
+          <p>
+We compute the `baseSignature` over the concatenation of the `proofHash`,
+`proofPublicKey`, and `mandatoryHash` using the issuers long term `privateKey`.
+We compute the `signatures` array by signing each non-mandatory nquad using the
+per `proofPrivateKey`. These signatures, the `proofPublicKey`, and
+`mandatoryPointers` which are fed to the final serialization step are
+shown below.
+          </p>
+          <pre class="example nohighlight" title="Add Base Signing" data-include="TestVectors/ecdsa-sd-2023/prc/addRawBaseSignatureInfo.json"
+      data-include-format="text"></pre>
+          <p>
+Finally, the values above are run through the algorithm of Section
+[[[#serializebaseproofvalue]]] to produce the `proofValue` which is
+used in the signed based document shown below.
+          </p>
+          <pre class="example nohighlight" title="Signed Base Document" data-include="TestVectors/ecdsa-sd-2023/prc/addSignedSDBase.json"
+      data-include-format="text"></pre>
+        </section>
+        <section>
+          <h4>Derived Proof</h4>
+          <p>
+In order to create a derived proof a holder starts with a signed document
+containing a base proof. The base document we will use for these test vectors is
+the final example from Section [[[#base-proof]]] above. The first
+step is to run the algorithm of Section [[[#parsebaseproofvalue]]] to
+recover `baseSignature`, `publicKey`, `hmacKey`, `signatures`, and
+`mandatoryPointers` as shown below.
+          </p>
+          <pre class="example nohighlight" title="Recovered Base Signature Data" data-include="TestVectors/ecdsa-sd-2023/prc/derivedRecoveredBaseData.json"
+      data-include-format="text"></pre>
+          <p>
+Next, the holder needs to indicate what, if anything else, they wish to reveal
+to the verifiers by specifying JSON pointers for selective disclosure.
+          </p>
+          <pre class="example nohighlight" title="Selective Disclosure Pointers" data-include="TestVectors/prCredSelective.json"
+      data-include-format="text"></pre>
+          <p>
+To produce the `revealDocument`, i.e., the unsigned document that will
+eventually be signed and sent to the verifier, we append the selective pointers
+to the mandatory pointers and input these combined pointers along with the
+document without proof to the algorithm of Section [[[#selectjsonld]]]
+to give the result shown below.
+          </p>
+          <pre class="example nohighlight" title="Unsigned Reveal Document" data-include="TestVectors/ecdsa-sd-2023/prc/derivedUnsignedReveal.json"
+      data-include-format="text"></pre>
+          <p>
+Now that we know what the revealed document looks like, we need to furnish
+appropriately updated information to the verifier on which statements are
+mandatory, the signatures for the selected non-mandatory statements, and the
+mapping between canonical blank node ids for the reveal document and a subset of
+the HMAC blank node ids. Running step 6 of the
+[[[#createdisclosuredata]]] yields an abundance of information about
+various statement groups relative to the original document. Below we show a
+portion of the indexes for those groups.
+          </p>
+          <pre class="example nohighlight" title="Derived Group Indexes" data-include="TestVectors/ecdsa-sd-2023/prc/derivedGroupIndexes.json"
+      data-include-format="text"></pre>
+          <p>
+The verifier needs to be able to aggregate and hash the mandatory statements. To
+enable this we furnish them with a list of indexes of the mandatory statements
+adjusted to their positions in the reveal document. In the previous example the
+`combinedIndexes` show the indexes of all the original nquads (statements) that
+make up the reveal document, in order. To come up with the adjusted mandatory
+indexes shown below we obtain the index of each of original mandatory indexes
+relative to the `combinedIndexes` as shown below.
+          </p>
+          <pre class="example nohighlight" title="Adjusted Mandatory Indexes" data-include="TestVectors/ecdsa-sd-2023/prc/derivedAdjMandatoryIndexes.json"
+      data-include-format="text"></pre>
+          <p>
+We have to furnish the verifier with a list of signatures for those selective
+statements (nquads) that are not mandatory. The original list of signatures
+corresponds to every non-mandatory statement and the indexes of these in the
+original document are given above. We now compute a list of adjusted signature
+indexes by computing the index of each selective index in the non-mandatory
+index list, ignoring any selective index not present in the list. We then use
+the adjusted signature indexes to obtain the filtered signature list. These
+lists are shown below.
+          </p>
+          <pre class="example nohighlight" title="Filtered Signatures" data-include="TestVectors/ecdsa-sd-2023/prc/derivedAdjSignatures.json"
+      data-include-format="text"></pre>
+          <p>
+The last important piece of disclosure data is a mapping of canonical blank node
+ids to HMAC based ids, the `labelMap`, computed according to Section
+[[[#createdisclosuredata]]] steps 12-14. This is shown below along with
+the rest of the disclosure data minus the reveal document.
+          </p>
+          <pre class="example nohighlight" title="Disclosure Data" data-include="TestVectors/ecdsa-sd-2023/prc/derivedDisclosureData.json"
+      data-include-format="text"></pre>
+          <p>
+Finally using the disclosure data above with the algorithm of Section
+[[[#serializederivedproofvalue]]] we obtain the signed derived (reveal)
+document shown below.
+          </p>
+          <pre class="example nohighlight" title="Signed Derived Document" data-include="TestVectors/ecdsa-sd-2023/prc/derivedRevealDocument.json"
+      data-include-format="text"></pre>
+        </section>
+      </section>
+    </section>
+
+    <section class="informative">
+      <h2>Revision History</h2>
+
+      <p>
+This section contains the substantive changes that have been made to this
+specification over time.
+      </p>
+
+      <p>
+Changes since the
+<a href="https://www.w3.org/TR/2024/CR-vc-di-ecdsa-20241219/">
+Second Candidate Recommendation</a>:
+      </p>
+
+      <ul>
+        <li>
+Various editorial changes in algorithms and descriptions to improve readability.
+        </li>
+        <li>
+Update to use newly published [[[CID]]] specification references.
+        </li>
+      </ul>
+
+      <p>
+Changes since the
+<a href="https://www.w3.org/TR/2023/CR-vc-di-ecdsa-20231121/">
+First Candidate Recommendation</a>:
+      </p>
+
+      <ul>
+        <li>
+Various editorial changes in algorithms and descriptions to improve readability.
+        </li>
+        <li>
+Moved Multikey definitions to Controller Document.
+        </li>
+        <li>
+Update examples to align with updates in Data Integrity.
+        </li>
+        <li>
+Specify HMAC reference and key sizes for selective disclosure blank node mixing.
+        </li>
+        <li>
+Unify error handling between all Data Integrity cryptosuites.
+        </li>
+        <li>
+Ensure that the `created` proof option is not required and additional proof
+options are included in the generated proof.
+        </li>
+        <li>
+Move language related to context injection to Data Integrity.
+        </li>
+        <li>
+Align proof serialization format and algorithm arguments with interfaces
+defined in Data Integrity.
+        </li>
+      </ul>
+
+      <p>
+Changes since the
+<a href="https://www.w3.org/TR/2023/WD-vc-di-ecdsa-20230418/">
+First Public Working Draft</a>:
+      </p>
+
+      <ul>
+        <li>
+Added cryptography suite that uses JSON Canonicalization Scheme.
+        </li>
+        <li>
+Added test vectors for ECDSA (rdfc and jcs).
+        </li>
+        <li>
+Moved normative definition of Multikey to Data Integrity specification.
+        </li>
+        <li>
+Added selective disclosure functions.
+        </li>
+        <li>
+Added cryptography suite for ecdsa-sd-2023.
+        </li>
+        <li>
+Mitigated poison datasets in ECDSA when canonicalizing.
+        </li>
+        <li>
+Renamed cryptosuite names to align across all cryptosuites.
+        </li>
+        <li>
+Ensured that strong guidance to use Deterministic ECDSA is used, if available.
+        </li>
+        <li>
+Specify how to send cryptographic hash function to [[?RDF-CANON]] if used.
+        </li>
+        <li>
+Add `secretKeymultibase` representation.
+        </li>
+      </ul>
+    </section>
+
+    <section class="informative">
+      <h2>Acknowledgements</h2>
+
+      <p>
+Work on this specification has been supported by the Rebooting the Web of Trust
+community facilitated by Christopher Allen, Shannon Appelcline, Kiara Robles,
+Brian Weller, Betty Dhamers, Kaliya Young, Manu Sporny, Drummond Reed, Joe
+Andrieu, Heather Vescent, Kim Hamilton Duffy, Samantha Chase, Andrew Hughes,
+Erica Connell, Shigeya Suzuki, Zaïda Rivai, Will Abramson, and Eric Schuh. The
+participants in the Internet Identity Workshop, facilitated by Phil Windley,
+Kaliya Young, Doc Searls, and Heidi Nobantu Saul, also supported the refinement
+of this work through numerous working sessions designed to educate about, debate
+on, and improve this specification.
+      </p>
+
+      <p>
+The Working Group also thanks our Working Group Chair Brent Zundel, and ex-chair
+Kristina Yasuda, as well as our W3C Staff Contact, Ivan Herman, for their expert
+management and steady guidance of the group through the W3C standardization
+cycle. We also thank the Chairs of the W3C Credentials Community Group,
+Christopher Allen, Joe Andrieu, Kim Hamilton Duffy, Heather Vescent, Wayne
+Chang, Mike Prorock, Harrison Tang, Kimberly Wilson Linson, and Will Abramson,
+who oversaw the incubation of this work.
+      </p>
+
+      <p>
+Portions of the work on this specification have been funded by the United States
+Department of Homeland Security's Science and Technology Directorate under
+contracts 70RSAT20T00000029, 70RSAT21T00000016, 70RSAT23T00000005,
+70RSAT20T00000010/P00001, 70RSAT20T00000029, 70RSAT21T00000016/P00001,
+70RSAT23T00000005, 70RSAT23C00000030, 70RSAT23R00000006, 70RSAT24T00000011, and
+the National Science Foundation through NSF 22-572. The content of this
+specification does not necessarily reflect the position or the policy of the
+U.S. Government and no official endorsement should be inferred.
+      </p>
+
+      <p>
+The Working Group would like to thank the following individuals for reviewing
+and providing feedback on and implementations of the specification
+(in alphabetical order by last name):
+      </p>
+
+      <p>
+Greg Bernstein,
+Simon Bihel,
+Sebastian Crane,
+Stas Dmytryshyn,
+Tashi D. Gyeltshen,
+Ivan Herman,
+Andrew Jones,
+Filip Kolarik,
+Helge Krueger,
+Dominik Kuziński,
+Charles E. Lehner,
+Dave Longley,
+Tomislav Markovski,
+Tyler Minard,
+Bryan Newbold,
+Marty Reed,
+Brian Richter,
+Eugeniu Rusu,
+Markus Sabadello,
+Pritam Singh,
+Patrick St-Louis,
+Manu Sporny,
+Orie Steele,
+Ted Thibodeau Jr.,
+Benjamin Young, and
+Dmitri Zagidulin.
+      </p>
+
+    </section>
+
+  </body>
+</html>

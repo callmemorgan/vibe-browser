@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Media Source Extensions Byte Stream Format Registry</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class="remove">
+      var respecConfig = {
+      // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+      specStatus: "ED",
+
+      // the specification's short name, as in https://www.w3.org/TR/short-name/
+      shortName: "mse-byte-stream-format-registry",
+
+      // if there a publicly available Editor's Draft, this is the link
+      edDraftURI: "https://w3c.github.io/mse-byte-stream-format-registry/",
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors:  [
+        {
+          name: "Chris Needham",
+          company: "British Broadcasting Corporation",
+          companyURL: "https://www.bbc.co.uk/",
+          w3cid: "67414"
+        }
+      ],
+
+      formerEditors: [
+        {
+          name: "Matthew Wolenetz",
+          mailto: "matt.wolenetz@gmail.com",
+          note: "Until February 2024",
+          company: "W3C Invited Expert",
+          w3cid: "148095"
+        },
+        {
+          name: "Jerry Smith",
+          note: "Until September 2017",
+          company: "Microsoft Corporation",
+          companyURL: "https://www.microsoft.com/"
+        },
+        {
+          name: "Aaron Colwell",
+          note: "Until April 2015",
+          company: "Google Inc.",
+          companyURL: "https://www.google.com/"
+        }
+      ],
+
+      group: "media",
+      github: "w3c/mse-byte-stream-format-registry",
+      wgPublicList: "public-media-wg"
+      };
+    </script>
+
+    <style type="text/css">
+      #registry table { border-collapse: collapse; border-style: hidden hidden none hidden; }
+      #registry table thead, table tbody { border-bottom: solid; }
+      #registry table tbody th:first-child { border-left: solid; }
+      #registry table tbody th { text-align: left; }
+      #registry table td, table th { border-left: solid; border-right: solid; border-bottom: solid thin; vertical-align: top; padding: 0.2em; }
+    </style>
+  </head>
+  <body data-cite="media-source">
+
+    <section id="abstract">
+      <p>This registry defines the byte stream formats for use with the [[[MEDIA-SOURCE]]] specification [[MEDIA-SOURCE]].</p>
+      <p>This registry is non-normative.</p>
+    </section>
+
+    <section id="sotd">
+      <p>The working group maintains <a href="https://github.com/w3c/mse-byte-stream-format-registry/issues">a list of all bug reports that the editors have not yet tried to address</a>;
+      there may also be related open bugs in the <a href="https://github.com/w3c/media-source">GitHub repository</a> of the [[[MEDIA-SOURCE]]] specification.</p>
+    </section>
+
+    <section id="purpose">
+      <h2>Purpose</h2>
+      <p>This registry is intended to enhance interoperability among implementations and users of {{SourceBuffer}} objects described in the
+        [[[MEDIA-SOURCE]]] specification. In particular, this registry provides the means (1) to identify
+        and avoid MIME-type collisions among byte stream formats, and (2) to disclose information about byte stream formats accepted by MSE
+        implementations to promote interoperability.</p>
+    </section>
+
+    <section id="organization">
+      <h2>Organization</h2>
+      <p>The registry maintains a mapping between MIME-type/subtype pairs and byte stream format specifications. The byte stream format specifications describe the
+        structure and semantics of byte streams accepted by {{SourceBuffer}} objects
+        created with the associated MIME-type/subtype pair.</p>
+      <p>This registry is not intended to include any information on whether a byte stream format is encumbered by intellectual property claims. Implementors and users
+        are advised to seek appropriate legal counsel in this matter if they intend to implement or use a specific byte stream format.</p>
+    </section>
+
+    <section id="entry-requirements">
+      <h2>Registration Entry Requirements</h2>
+      <ol>
+        <li>Each entry must include a unique MIME-type/subtype pair. If the byte stream format is derived-from an existing file format, then it should use the
+          MIME-type/subtype pairs typically used for the file format.</li>
+        <li>Each entry must include a {{SourceBuffer/[[generate timestamps flag]]}} value that must be used by
+            {{SourceBuffer}} when handling the byte stream format.</li>
+        <li>Each entry must include a link that references a publically available specification. It is recommended that such a specification be made available
+          without cost (other than reasonable shipping and handling if not available by online means).</li>
+        <li>The referenced specification for each entry must comply with all requirements outlined in the <a data-cite="media-source#byte-stream-formats">Byte Stream Formats section</a> of the [[[MEDIA-SOURCE]]] specification [[MEDIA-SOURCE]].</li>
+        <li>Candidate entries must be announced by filing an issue in the
+          <a href="https://github.com/w3c/mse-byte-stream-format-registry/issues/">Media Source Extensions Byte Stream Format Registry GitHub issue tracker</a>
+          so they can be discussed and evaluated for compliance before being added to the registry.
+          The Media Working Group may seek expertise from outside the Working Group as part of its evaluation,
+          e.g., from the codec specification editors or relevant standards group.
+          If the Media Working Group reaches consensus to accept the candidate,
+          a pull request should be drafted (either by editors or by the party requesting
+          the candidate registration) to register the candidate.
+          The registry editors will review and merge the pull request.</li>
+        <li>If a registration fails to satisfy a mandatory requirement specified above, then it may be removed from the registry (without prejudice). Existing entries cannot be deleted or deprecated otherwise.</li>
+        <li>Existing entries may be changed after being published through the same process as candidate entries. Possible changes include modification of the link to the publically available specification.</li>
+      </ol>
+    </section>
+
+    <section id="registry">
+      <h2>Registry</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>MIME type/subtype</th>
+            <th>Public Specification(s)</th>
+            <th>Generate Timestamps Flag</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              audio/webm<br>
+              video/webm
+            </td>
+            <td>
+              [[[MSE-BYTE-STREAM-FORMAT-WEBM]]]
+               [[MSE-BYTE-STREAM-FORMAT-WEBM]]
+            </td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td>
+              audio/mp4<br>
+              video/mp4
+            </td>
+            <td>
+              [[[MSE-BYTE-STREAM-FORMAT-ISOBMFF]]]
+               [[MSE-BYTE-STREAM-FORMAT-ISOBMFF]]
+            </td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td>
+              audio/mp2t<br>
+              video/mp2t
+            </td>
+            <td>
+              [[[MSE-BYTE-STREAM-FORMAT-MP2T]]]
+               [[MSE-BYTE-STREAM-FORMAT-MP2T]]
+             </td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td>
+              audio/mpeg<br>
+              audio/aac
+            </td>
+            <td>
+              [[[MSE-BYTE-STREAM-FORMAT-MPEG-AUDIO]]]
+               [[MSE-BYTE-STREAM-FORMAT-MPEG-AUDIO]]
+            </td>
+            <td>true</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </body>
+</html>

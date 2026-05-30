@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>Trace Context Protocols Registry</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" async="" class="remove"></script>
+    <script class="remove">
+      var respecConfig = {
+          // specification status (e.g. WD, LCWD, WG-NOTE, etc.). If in doubt use ED.
+          specStatus:           "ED",
+          // specStatus:           "WG-NOTE",
+
+          // the specification's short name, as in http://www.w3.org/TR/short-name/
+          shortName:            "trace-context-protocols-registry",
+
+          format: "markdown",
+
+          noRecTrack: true,
+          // if there a publicly available Editor's Draft, this is the link
+          edDraftURI:  "https://w3c.github.io/trace-context-protocols-registry/",
+
+          // editors, add as many as you like
+          // only "name" is required
+          editors:  [{
+                 name: "Sergey Kanzhelev",
+                 company: "Google",
+                 companyURL: "https://google.com",
+                 w3cid: "103966"
+              },
+              {
+                 name:    "Philippe Le Hegaret"
+              ,  company: "W3C"
+              ,  w3cid:   "6457"
+              }
+          ],
+
+          // name of the WG
+          wg: "Distributed Tracing Working Group",
+          wgPublicList: "public-trace-context",
+          wgURI: "https://www.w3.org/2018/distributed-tracing/",
+
+          wgPatentURI:  "https://www.w3.org/2004/01/pp-impl/108594/status",
+
+          github: {
+            repoURL: "https://github.com/w3c/trace-context-protocols-registry/",
+            branch: "master",
+          },
+          otherLinks: [{
+            key: 'Discussions',
+            data: [{
+              value: 'We are on Slack.',
+              href: 'https://w3ccommunity.slack.com/archives/C06KAH5S5RN'
+            }]
+          }],
+
+          localBiblio: {
+            "AMQP": {
+              title: "OASIS Advanced Message Queuing Protocol (AMQP) Version 1.0",
+              href: "http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0.html",
+              publisher: "OASIS",
+              status: 'OASIS Standard',
+              date: "29 October 2012"
+            },
+            'MQTT': {
+               title: 'MQTT protocol',
+               publisher: 'MQTT.org',
+               href: 'https://mqtt.org/',
+               date: '7 March 2019'
+            }
+        }
+          // !!!! IMPORTANT !!!! MAKE THE ABOVE BLINK IN YOUR HEAD
+      };
+    </script>
+    <style>
+      /*
+         This is a copy of "simple" class of a table from ReSpec
+         https://github.com/w3c/respec/blob/4e9f304f522fe03c21e36c52f732a2abf2908c5c/assets/respec2.css#L80-L108
+       */
+      table {
+        border-spacing: 0;
+        border-collapse: collapse;
+        border-bottom: 3px solid #005a9c;
+      }
+
+      table th {
+        background: #005a9c;
+        color: #fff;
+        padding: 3px 5px;
+        text-align: left;
+      }
+
+      table th[scope="row"] {
+        background: inherit;
+        color: inherit;
+        border-top: 1px solid #ddd;
+      }
+
+      table td {
+        padding: 3px 10px;
+        border-top: 1px solid #ddd;
+      }
+
+      table tr:nth-child(even) {
+        background: #f0f6ff;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="abstract" data-include="content/abstract.md" data-include-format='markdown'></section>
+    <section id="sotd" data-include="content/sotd.md" data-include-format='markdown'></section>
+    <section class='informative' data-include="content/purpose.md" data-include-format='markdown'></section>
+    <section data-include="content/registration.md" data-include-format='markdown' class='normative'></section>
+    <section data-include="content/registry.md" data-include-format='markdown' class='normative'></section>
+  </body>
+</html>

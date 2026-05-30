@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>WebM Byte Stream Format</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+
+    <script class="remove">
+      var respecConfig = {
+      // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+      specStatus: "ED",
+
+      // the specification's short name, as in https://www.w3.org/TR/short-name/
+      shortName: "mse-byte-stream-format-webm",
+
+      // if there a publicly available Editor's Draft, this is the link
+      edDraftURI: "https://w3c.github.io/mse-byte-stream-format-webm/",
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors: [
+        {
+          name: "Chris Needham",
+          company: "British Broadcasting Corporation",
+          companyURL: "https://www.bbc.co.uk/",
+          w3cid: "67414",
+        }
+      ],
+
+      formerEditors: [
+        {
+          name: "Matthew Wolenetz",
+          mailto: "matt.wolenetz@gmail.com",
+          note: "Until February 2024",
+          company: "W3C Invited Expert",
+          w3cid: "148095"
+        },
+        {
+          name: "Jerry Smith",
+          note: "Until September 2017",
+          company: "Microsoft Corporation",
+          companyURL: "https://www.microsoft.com/"
+        },
+        {
+          name: "Aaron Colwell",
+          note: "Until April 2015",
+          company: "Google Inc.",
+          companyURL: "https://www.google.com/"
+        }
+      ],
+
+      // name of the WG
+      group: "media",
+
+      github: "w3c/mse-byte-stream-format-webm",
+      wgPublicList: "public-media-wg",
+
+      localBiblio: {
+          "VP09CODECSPARAMETERSTRING": {
+              title: "VP Codec ISO Media File Format Binding",
+              href: "https://www.webmproject.org/vp9/mp4/#codecs-parameter-string",
+              authors: ["Frank Galligan", "Kilroy Hughes", "Thomás Inskip", "David Ronca"],
+              publisher: "WebM Project",
+          },
+      },
+
+      xref: ["html", "media-source"]
+      };
+    </script>
+
+    <style>
+      table.old-table { border-collapse: collapse; border-style: hidden hidden none hidden; }
+      table.old-table thead, table tbody { border-bottom: solid; }
+      table.old-table tbody th:first-child { border-left: solid; }
+      table.old-table tbody th { text-align: left; }
+      table.old-table td, table th { border-left: solid; border-right: solid; border-bottom: solid thin; vertical-align: top; padding: 0.2em; }
+    </style>
+  </head>
+  <body>
+    <section id="abstract">
+      This specification defines a [[[MEDIA-SOURCE]]] [[MEDIA-SOURCE]] byte stream format specification based on the WebM container format [[WEBM]].
+    </section>
+
+    <section id="sotd">
+      <p>The working group maintains <a href="https://github.com/w3c/mse-byte-stream-format-webm/issues">a list of all bug reports that the editors have not yet tried to address</a>;
+      there may also be related open bugs in the <a href="https://github.com/w3c/media-source">GitHub repository</a> of the [[[MEDIA-SOURCE]]] specification.</p>
+    </section>
+
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>This specification describes a byte stream format based on the WebM container format [[WEBM]].</p>
+      <p>It defines the MIME-type parameters used to signal codecs, and provides
+      the necessary format specific definitions for [=initialization segments=], [=media segments=], and [=random access points=] required by
+      the <a data-cite="media-source#byte-stream-formats">Byte Stream Formats section</a> of the [[[MEDIA-SOURCE]]] specification.</p>
+    </section>
+
+    <section id="webm-mime-parameters">
+      <h2>MIME-type parameters</h2>
+      <p>This section specifies the parameters that can be used in the MIME-type passed to {{MediaSource/isTypeSupported()}} or {{MediaSource/addSourceBuffer()}}.</p>
+      <dl>
+        <dt>codecs</dt>
+        <dd>
+          A comma separated list of codec IDs used to specify what codecs will be used in the byte stream.
+          <table class="old-table">
+            <thead>
+              <tr>
+                <th>Codec ID</th>
+                <th>Valid with "audio/webm"</th>
+                <th>Valid with "video/webm"</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>vorbis</td>
+                <td>true</td>
+                <td>true</td>
+              </tr>
+              <tr>
+                <td>opus</td>
+                <td>true</td>
+                <td>true</td>
+              </tr>
+              <tr>
+                <td>vp8</td>
+                <td>false</td>
+                <td>true</td>
+              </tr>
+              <tr>
+                <td>vp9</td>
+                <td>false</td>
+                <td>true</td>
+              </tr>
+              <tr>
+                <td>vp09... as described in the VP Codec ISO Media File Format Binding document [[VP09CODECSPARAMETERSTRING]]</td>
+                <td>false</td>
+                <td>true</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="note">
+            Implementations SHOULD support all of the codec IDs mentioned in the table above.
+          </div>
+          <div class="note">
+            Implementations SHOULD encourage applications to prefer the "vp09..." codec ID over "vp9". The "vp09..." format provides detailed profile and color information, enabling implementations to give more accurate answers for codec support.
+          </div>
+
+          <p>Examples of valid MIME-types with a codecs parameter.</p>
+          <ul>
+            <li>audio/webm;codecs="vorbis"</li>
+            <li>video/webm;codecs="vorbis"</li>
+            <li>video/webm;codecs="vp8"</li>
+            <li>video/webm;codecs="vp8,vorbis"</li>
+            <li>video/webm;codecs="vp9,opus"</li>
+            <li>video/webm;codecs="vp09.00.10.08"</li>
+            <li>video/webm;codecs="vp09.02.10.10.01.09.16.09.01,opus"</li>
+          </ul>
+        </dd>
+      </dl>
+    </section>
+
+    <section id="webm-init-segments">
+      <h2>Initialization Segments</h2>
+      <p>A WebM [=initialization segment=] MUST contain a subset of the elements at the start of a typical WebM file.</p>
+
+      <p>The user agent MUST run the [=append error=] algorithm if any of the following conditions are not met:</p>
+      <ol>
+  <li>The [=initialization segment=] MUST start with an <a data-cite="WEBM#ebml-basics">EBML Header</a> element, followed by a <a data-cite="WEBM#segment">Segment</a> header.</li>
+  <li>The size value in the <a data-cite="WEBM#segment">Segment</a> header MUST signal an "unknown size" or contain a value large enough to include the <a data-cite="WEBM#segment-information">Segment Information</a> and <a data-cite="WEBM#track">Track</a> elements that follow.</li>
+  <li>A <a data-cite="WEBM#segment-information">Segment Information</a> element and a <a data-cite="WEBM#track">Track</a> element MUST appear, in that order, after the <a data-cite="WEBM#segment">Segment</a> header and before any further <a data-cite="WEBM#ebml-basics">EBML Header</a> or <a data-cite="WEBM#cluster">Cluster</a> elements.
+        </li>
+      </ol>
+      <p>The user agent MUST accept and ignore any elements other than an <a data-cite="WEBM#ebml-basics">EBML Header</a> or a <a data-cite="WEBM#cluster">Cluster</a> that occur before, in between, or after the <a data-cite="WEBM#segment-information">Segment Information</a> and
+      <a data-cite="WEBM#track">Track</a> elements.</p>
+
+      <p>The user agent MUST source attribute values for `id`, `kind`, `label` and `language` for {{AudioTrack}}, {{VideoTrack}} and
+        {{TextTrack}} objects as described for WebM in the in-band tracks spec [[INBANDTRACKS]].</p>
+    </section>
+
+    <section id="webm-media-segments">
+      <h2>Media Segments</h2>
+      <p>A WebM [=media segment=] is a single <a data-cite="WEBM#cluster">Cluster</a> element.</p>
+
+      <p>The user agent uses the following rules when interpreting content in a <a data-cite="WEBM#cluster">Cluster</a>:</p>
+      <ol>
+        <li>The TimecodeScale in the WebM [=initialization segment=] most recently appended applies to all timestamps in the <a data-cite="WEBM#cluster">Cluster</a></li>
+        <li>The Timecode element in the <a data-cite="WEBM#cluster">Cluster</a> contains a [=presentation timestamp=] in TimecodeScale units.</li>
+        <li>The Cluster header MAY contain an "unknown" size value. If it does then the end of the cluster is reached when another <a data-cite="WEBM#cluster">Cluster</a> header or an element header that indicates the start
+          of a WebM [=initialization segment=] is encountered.</li>
+      </ol>
+
+      <p>The user agent MUST run the [=append error=] algorithm if any of the following conditions are not met:</p>
+      <ol>
+        <li>The Timecode element MUST appear before any Block &amp; SimpleBlock elements in a <a data-cite="WEBM#cluster">Cluster</a>.</li>
+        <li>Block &amp; SimpleBlock elements are in time increasing order consistent with [[WEBM]].</li>
+        <li>If the most recent WebM [=initialization segment=] describes multiple tracks, then blocks from all the tracks MUST be interleaved in time increasing order. At least one block from all audio and video
+          tracks MUST be present.</li>
+      </ol>
+
+      <p>The user agent MUST accept and ignore <a data-cite="WEBM#cueing-data">Cues</a> or <a data-cite="WEBM#chapters">Chapters</a> elements that follow a <a data-cite="WEBM#cluster">Cluster</a> element.</p>
+    </section>
+
+    <section id="webm-random-access-points">
+      <h2>Random Access Points</h2>
+      <p>Either a SimpleBlock element with its Keyframe flag set, or a BlockGroup element having no ReferenceBlock elements, signals the location of a [=random access point=] for that track. The order of multiplexed blocks within a [=media segment=] MUST conform to the <a data-cite="WEBM#muxer-guidelines">WebM Muxer Guidelines</a>.</p>
+    </section>
+
+    <section id="conformance"></section>
+
+    <section id="acknowledgements">
+      <h2>Acknowledgments</h2>
+      The editors would like to thank
+
+      Chris Cunningham,
+      Frank Galligan,
+      and Philip Jägenstedt for their contributions to this specification.
+    </section>
+  </body>
+</html>

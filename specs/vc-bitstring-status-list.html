@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bitstring Status List v1.1</title>
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+    <!--
+      === NOTA BENE ===
+      For the three scripts below, if your spec resides on dev.w3 you can check them
+      out in the same tree and use relative links so that they'll work offline,
+     -->
+    <script src='https://www.w3.org/Tools/respec/respec-w3c' class='remove'></script>
+    <script class="remove"
+      src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.4.3/dist/main.js"></script>
+    <script class="remove">
+      var respecConfig = {
+        // specification status (e.g., WD, LCWD, NOTE, etc.). If in doubt use ED.
+        specStatus: "ED",
+        group: "vc",
+
+        // the specification's short name, as in http://www.w3.org/TR/short-name/
+        shortName: "vc-bitstring-status-list-1.1",
+
+        // subtitle for the spec
+        subtitle: "Privacy-preserving status information for Verifiable Credentials",
+
+        // if you wish the publication date to be other than today, set this
+        //publishDate: "2025-5-15",
+        //crEnd: "2024-06-21",
+        //prEnd: "2025-4-17",
+
+        //implementationReportURI: "https://w3c.github.io/vc-bitstring-status-list-test-suite/",
+        previousMaturity: "REC",
+        previousPublishDate: "2025-05-15",
+
+        // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+        // and its maturity status
+        // previousPublishDate:  "1977-03-15",
+        // previousMaturity:  "WD",
+
+        // extend the bibliography entries
+        localBiblio: {
+          ALLOSAUR: {
+            title: "ALLOSAUR: Accumulator with Low-Latency Oblivious Sublinear Anonymous credential Updates with Revocations",
+            href: "https://eprint.iacr.org/2022/1362.pdf",
+            date: "January 5th, 2024",
+            publisher: "Cryptology ePrint Archive"
+          }
+        },
+        doJsonLd: true,
+
+        github: "https://github.com/w3c/vc-bitstring-status-list",
+        includePermalinks: false,
+
+        // if there a publicly available Editor's Draft, this is the link
+        edDraftURI: "https://w3c.github.io/vc-bitstring-status-list/",
+
+        // editors, add as many as you like
+        // only "name" is required
+        editors: [{
+          name: "Manu Sporny",
+          url: "https://www.linkedin.com/in/manusporny/",
+          company: "Digital Bazaar",
+          companyURL: "https://www.digitalbazaar.com/",
+          w3cid: 41758
+        }, {
+          name: "Dave Longley",
+          url: "https://github.com/dlongley",
+          company: "Digital Bazaar",
+          companyURL: "https://www.digitalbazaar.com/",
+          w3cid: 48025
+        }, {
+          name: 'Mike Prorock',
+          url: 'https://www.mesur.io/',
+          company: 'mesur.io',
+          companyURL: 'https://www.mesur.io/',
+          w3cid: 130636
+        }, {
+          name: 'Mahmoud Alkhraishi',
+          url: 'https://github.com/mkhraisha',
+          company: 'Mavennet',
+          companyURL: 'https://www.mavennet.com/',
+          w3cid: 121911
+        }],
+        // authors, add as many as you like.
+        // This is optional, uncomment if you have authors as well as editors.
+        // only "name" is required. Same format as editors.
+        authors: [{
+          name: "Dave Longley",
+          url: "https://github.com/dlongley",
+          company: "Digital Bazaar",
+          companyURL: "https://www.digitalbazaar.com/",
+          w3cid: 48025
+        }, {
+          name: "Manu Sporny",
+          url: "https://www.linkedin.com/in/manusporny/",
+          company: "Digital Bazaar",
+          companyURL: "https://www.digitalbazaar.com/",
+          w3cid: 41758
+        }, {
+          name: 'Orie Steele',
+          url: 'https://github.com/OR13',
+          company: 'Transmute',
+          companyURL: 'https://transmute.industries/',
+          w3cid: 109171
+        }],
+        // turn off unused defns warning since we have restrictRefs
+        lint: {
+          "no-unused-dfns": false,
+          "informative-dfn": false
+        },
+
+        xref: ["INFRA", "I18N-GLOSSARY", "VC-DATA-MODEL-2.0"],
+
+        // post process
+        postProcess: [window.respecVc.createVcExamples],
+
+        errata: "https://w3c.github.io/vc-bitstring-status-list/errata.html",
+
+        // URI of the patent status for this WG, for Rec-track documents
+        // !!!! IMPORTANT !!!!
+        // This is important for Rec-track documents, do not copy a patent URI from a random
+        // document unless you know what you're doing. If in doubt ask your friendly neighborhood
+        // Team Contact.
+        //wgPatentURI:  "https://www.w3.org/2004/01/pp-impl/98922/status",
+        maxTocLevel: 2,
+        inlineCSS: true,
+        otherLinks: [{
+          key: "Related Documents",
+          data: [{
+            value: "Verifiable Credentials Data Model v2.1",
+            href: "https://www.w3.org/TR/vc-data-model-2.1/"
+          }]
+        }]
+      };
+    </script>
+    <style>
+code {
+  color: rgb(199, 73, 0);
+  font-weight: bold;
+}
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+pre .highlight {
+  font-weight: bold;
+  color: Green;
+}
+pre .subject {
+  font-weight: bold;
+  color: RoyalBlue;
+}
+pre .property {
+  font-weight: bold;
+  color: DarkGoldenrod;
+}
+pre .comment {
+  font-weight: bold;
+  color: SteelBlue;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.color-text {
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+ol.algorithm {
+  counter-reset: numsection;
+  list-style-type: none;
+}
+ol.algorithm li {
+  margin: 0.5em 0;
+}
+ol.algorithm li:before {
+  font-weight: bold;
+  counter-increment: numsection;
+  content: counters(numsection, ".") ") ";
+}
+.supported {
+  background-color: #93c47d;
+}
+.missing {
+  background-color: #e06666;
+}
+table.simple {
+    border-collapse: collapse;
+    margin: 25px 0;
+    min-width: 400px;
+    border: 1px solid #dddddd;
+}
+table.simple thead tr {
+    background-color: #005a9c;
+    color: #ffffff;
+    text-align: left;
+}
+table.simple th,
+table.simple td {
+    padding: 12px 15px;
+    vertical-align: top;
+    text-align: left;
+}
+table.simple tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+table.simple tbody tr:nth-of-type(even) {
+    background-color: #00000008;
+}
+table.simple tbody tr:last-of-type {
+    border-bottom: 2px solid #005a9c;
+}
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+This specification describes a privacy-preserving, space-efficient, and
+high-performance mechanism for publishing status information such as
+suspension or revocation of Verifiable Credentials through use of bitstrings.
+      </p>
+    </section>
+
+    <section id='sotd'>
+      <p>
+Comments regarding this specification are welcome at any time.
+Please file issues directly on
+<a href="https://github.com/w3c/vc-bitstring-status-list/issues/">GitHub</a>,
+or send them to
+<a href="mailto:public-vc-comments@w3.org">public-vc-comments@w3.org</a>
+if that is not possible.
+(<a href="mailto:public-vc-comments-request@w3.org?subject=subscribe">subscribe</a>,
+<a href="https://lists.w3.org/Archives/Public/public-vc-comments/">archives</a>).
+      </p>
+    </section>
+
+    <section class="informative">
+      <h2>Introduction</h2>
+      <p>
+It is often useful for an [=issuer=] of [=verifiable credentials=]
+[[VC-DATA-MODEL-2.0]] to link to a location where a [=verifier=] can check to see
+if a credential has been suspended or revoked. There are a variety of privacy
+and performance considerations that are made when designing, publishing, and
+processing status lists.
+      </p>
+      <p>
+One such privacy consideration happens when there is a one-to-one mapping
+between a [=verifiable credential=] and a URL where the status is
+published. This type of mapping enables the website that publishes the URL to
+correlate the [=holder=], time, and [=verifier=] when the status is
+checked. This could enable the [=issuer=] to discover the type of interaction
+the [=holder=] is having with the [=verifier=], such as providing an age
+verification credential when entering a bar. Being tracked by the [=issuer=]
+of a driver's license when entering an establishment violates a privacy
+expectation that many people have today.
+      </p>
+      <p>
+Similarly, there are performance considerations that are explored when designing
+status lists. One such consideration is where the list is published and the
+burden it places from a bandwidth and processing perspective, both on the server
+and the client fetching the information. In order to meet privacy expectations,
+it is useful to bundle the status of large sets of credentials into a single
+list to help with group privacy. However, doing so can place an impossible
+burden on both the server and client if the status information is as much as a
+few hundred bytes in size per credential across a population of
+hundreds of millions of [=holders=].
+      </p>
+      <p>
+The rest of this document proposes a highly compressible, bitstring-based
+status list mechanism with strong privacy-preserving characteristics,
+that is compatible with the architecture of the Web, is highly space-efficient,
+and lends itself well to content distribution networks. As an example of
+using this specification to achieve a number of beneficial privacy and
+performance goals, it is possible to create a status list that can be
+constructed for 100,000 [=verifiable credentials=] that is roughly
+12,500 bytes in size in the worst case. In a case where a few hundred
+credentials have been revoked, the size of the list is less than a
+few hundred bytes while providing privacy in a group of 100,000 individuals.
+      </p>
+
+      <section class="informative">
+        <h3>Conceptual Framework</h3>
+
+        <p>
+This section outlines the core concept utilized by the status list
+mechanism described in this specification. At the most basic level, status
+information for all [=verifiable credentials=] issued by an [=issuer=]
+is expressed as items in a list. Each [=issuer=] manages a list
+of all [=verifiable credentials=] that it has issued. Each
+[=verifiable credential=] is associated with an item in its list.
+When a single bit specifies a status, such as "revoked" or "suspended",
+then that status is expected to be true when the bit is set (`1`) and
+false when unset (`0`).
+        </p>
+
+        <p>
+One of the benefits of using a bitstring is that it is a highly compressible
+data format since, in the average case, large numbers of credentials will
+remain unrevoked. This will ensure long sections of bits that are the same
+value and thus highly compressible using run-length compression techniques
+such as GZIP [[RFC1952]]. The default status list size is 131,072 entries,
+equivalent to 16&nbsp;KB of single bit values. When only a handful of
+[=verifiable credentials=] are revoked, GZIP compresses the bitstring
+to a few hundred bytes.
+        </p>
+
+        <p>
+Another benefit of using a bitstring is that it enables large numbers of
+[=verifiable credential=] statuses to be placed in the same list.
+This specification uses a minimum list length of 131,072. This
+size ensures an adequate amount of group privacy in the average case.
+If better group privacy is required, the bitstring can be made larger.
+        </p>
+
+        <figure id="bitstring">
+          <img style="margin: auto; display: block; width: 75%;"
+            src="diagrams/BitstringStatusListConcept.svg" alt="
+          diagram showing a list of boxes at the top of the image with two of
+          them in red depicting revoked credentials. Text beside the boxes to
+          the right reads 16 kilobytes. An depiction of the boxes being GZIP
+          compressed into a cylinder on the bottom of the page shows that
+          compression has resulted in a final size of 135 bytes.">
+          <figcaption style="text-align: center;">
+            A visual depiction of the concepts outlined in this section.
+          </figcaption>
+        </figure>
+
+        <p class="note"
+           title="Status information is about the verifiable credential">
+The status information associated with a particular [=verifiable credential=]
+is about the [=verifiable credential=] itself and might not apply to any
+underlying or backing [=credential=], such as an educational degree. For
+example, in the case of such an educational degree, it is possible for a
+[=verifiable credential=] to be revoked because the mechanism used to
+create its digital signature has been compromised, while the backing educational
+degree remains valid.
+        </p>
+
+      </section>
+
+      <section class="informative">
+        <h3>Terminology</h3>
+
+        <p>
+Terminology used throughout this document is defined in the
+<a data-cite="VC-DATA-MODEL-2.0#terminology">Terminology</a> section of the
+[[[VC-DATA-MODEL-2.0]]] specification.
+        </p>
+      </section>
+
+      <section id="conformance" class="normative">
+
+        <p>
+A <dfn>conforming document</dfn> is any concrete expression of the
+data model that follows the relevant normative requirements in Section
+<a href="#data-model"></a>.
+        </p>
+
+        <p>
+A <dfn>conforming processor</dfn> is any algorithm realized
+as software and/or hardware that generates and/or consumes a
+[=conforming document=] according to the relevant normative statements in
+Section <a href="#algorithms"></a>. Conforming processors MAY choose to only
+support bitstring entry sizes of 1. Conforming processors MUST produce errors
+when non-conforming documents are consumed.
+        </p>
+
+      </section>
+
+    </section>
+
+    <section class="normative">
+      <h2>Data Model</h2>
+
+      <p>
+There are numerous ways to express status information associated with digital
+credentials. Some of these mechanisms include Certificate Revocation Lists (CRL)
+[[?RFC5280]], the Online Certificate Status Protocol (OCSP) [[?RFC2560]], Bloom
+Filters [[?RFC8932]], and cryptographic accumulators [[?ALLOSAUR]]. This
+specification optimizes for a variety of requirements that are different from
+other mechanisms. These requirements include:
+      </p>
+
+      <table class="simple" id="#pfatable">
+        <thead>
+          <tr>
+            <th style="text-align: center;background-color: #000000;"
+                colspan="6">Comparison of Status Technologies</th>
+          </tr>
+          <tr>
+              <th style="text-align: center;">Feature</th>
+              <th style="text-align: center;">CRL</th>
+              <th style="text-align: center;">OCSP</th>
+              <th style="text-align: center;">Bloom</th>
+              <th style="text-align: center;">Accumulator</th>
+              <th style="text-align: center;">Bitstring</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+Provides tunable group privacy
+            </td>
+            <td class="supported">✓</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Does not require signed assertion for each credential
+            </td>
+            <td class="supported">✓</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Resistant to [=issuer=] tracking when fetched by [=verifier=]
+            </td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Caching is space efficient with many revocations
+            </td>
+            <td class="missing">✗</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Highly compressible (>90% average compression)
+            </td>
+            <td class="missing">✗</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Updates are efficient (fast and entire population does not need to update)
+            </td>
+            <td class="supported">✓</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Uses cryptographic primitives approved by IETF
+            </td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+No false positives
+            </td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Can be delivered by [=holder=] (stapling)
+            </td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+            <td class="supported">✓</td>
+          </tr>
+          <tr>
+            <td>
+Easily profiled for usage with [=verifiable credentials=]
+            </td>
+            <td class="missing">✗</td>
+            <td class="missing">✗</td>
+            <td class="missing">✗</td>
+            <td class="missing">✗</td>
+            <td class="supported">✓</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <section>
+        <h3>BitstringStatusListEntry</h3>
+
+        <p>
+When an [=issuer=] desires to enable status information for a
+[=verifiable credential=], they MAY add a `credentialStatus`
+property that uses the data model described in this section. Any
+expression of the data model in this section MUST be expressed in a
+conforming [=verifiable credential=] as defined in [[VC-DATA-MODEL-2.0]].
+        </p>
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th style="white-space: nowrap">Property</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>id</td>
+              <td>
+An optional identifier for the status list entry. The constraints on the `id`
+property are listed in the Verifiable Credentials Data Model specification
+[[VC-DATA-MODEL-2.0]]. If present, the value is expected to be a URL that
+identifies the status information associated with the <a>verifiable
+credential</a>. It MUST NOT be the URL for the status list. The value is not
+used during the verification or validation process, and does not need to be
+related to the `statusListCredential` value. If necessary, the value can be used
+to uniquely identify the `BitstringStatusListEntry` object, such as when it is
+stored in a database.
+              </td>
+            </tr>
+            <tr>
+              <td>type</td>
+              <td>
+The `type` property MUST be `BitstringStatusListEntry`.
+              </td>
+            </tr>
+            <tr>
+              <td>statusPurpose</td>
+              <td>
+The purpose of the status entry MUST be a string. While the value of the
+string is arbitrary, the following values MUST be used for their intended
+purpose:
+                <table class="simple">
+                  <thead>
+                    <tr>
+                      <th style="white-space: nowrap">Value</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>`refresh`</td>
+                      <td>
+Used to signal that an updated [=verifiable credential=] is available via the
+credential's <a data-cite="VC-DATA-MODEL-2.0#refreshing">refresh service</a>
+feature. This status does not invalidate the [=verifiable credential=] and is
+not reversible.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>`revocation`</td>
+                      <td>
+Used to cancel the validity of a [=verifiable credential=]. This status is
+not reversible.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>`suspension`</td>
+                      <td>
+Used to temporarily prevent the acceptance of a [=verifiable credential=].
+This status is reversible.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>`message`</td>
+                      <td>
+Used to convey an arbitrary message related to the status of the
+[=verifiable credential=].
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>statusListIndex</td>
+              <td>
+The `statusListIndex` property MUST be an arbitrary size integer
+greater than or equal to 0, expressed as a string in base 10. The value identifies the
+position of the status of the [=verifiable credential=]. Implementations
+SHOULD assign indexes randomly, such that inferences — such as the recency
+of the assignment or the size of the group — cannot be easily drawn from
+that position.
+              </td>
+            </tr>
+            <tr>
+              <td>statusListCredential</td>
+              <td>
+The `statusListCredential` property MUST be a URL to a
+[=verifiable credential=]. When the URL is dereferenced, the resulting
+[=verifiable credential=] MUST have `type` property that
+includes the `BitstringStatusListCredential` value.
+              </td>
+            </tr>
+            <tr>
+              <td id="statusSize">statusSize</td>
+              <td>
+The `statusSize` indicates the size of the status entry in bits. `statusSize`
+MAY be provided. If `statusSize` is not present as a property of the
+`credentialStatus`, then `statusSize` MUST be processed as `1`.  If present,
+`statusSize` MUST be an integer greater than zero. If `statusSize` is provided
+and is greater than `1`, then the property `credentialStatus.statusMessage`
+MUST be present, and the number of status messages MUST equal the
+number of possible values.
+              </td>
+            </tr>
+            <tr>
+              <td id="statusMessage">statusMessage</td>
+              <td>
+If present, the `statusMessage` property MUST be an array, the length
+of which MUST equal the number of possible status messages indicated
+by `statusSize` (e.g., `statusMessage` array MUST have 2 elements if
+`statusSize` has 1 bit, 4 elements if `statusSize` has 2 bits, 8
+elements if `statusSize` has 3 bits, etc.). `statusMessage` MAY be
+present if `statusSize` is `1`, and MUST be present if `statusSize` is
+greater than `1`.  If the `statusMessage` array is not present, the
+message values associated with the `status` bit values of `1` and `0`
+are "set" and "unset", respectively. If the `statusMessage` array is
+present, each element MUST contain the two properties described below,
+and MAY contain additional properties.
+                <ul>
+                  <li id="status">
+`status`, a string representing the hexadecimal value of the status prefixed
+with `0x`
+                  </li>
+                  <li id="message">
+`message`, a string used by software developers to assist with debugging
+which SHOULD NOT be displayed to end users.
+                  </li>
+                </ul>
+Implementers MAY add additional values to objects in the `statusMessage` array.
+Implementers MAY use the string value of `undefined` in the value to indicate
+that a corresponding status is not defined for the associated status value, but
+that it may be defined in the future. Rules for how to handle various status
+messages are outside the scope of normative requirements in this document, but
+it is assumed that implementers will document rules for processing various
+status codes.
+              </td>
+            </tr>
+            <tr>
+              <td id="statusReference">statusReference</td>
+              <td>
+An implementer MAY include the `statusReference` property. If present, its
+value MUST be a URL or an array of URLs [[URL]] which dereference to material
+related to the status. Implementers using a `statusPurpose` of `message` are
+strongly encouraged to provide a `statusReference`.
+                <p class="note" title="Details around reference">
+`statusReference` is especially important when interpretation of the status for
+a credential may involve some understanding of the business case involved.
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <p>
+Status list entries can be used to express the purpose of a
+status associated with a [=verifiable credential=] by using the
+`statusPurpose` property.
+        </p>
+        <p>
+The use of `revocation` or `suspension` as the status purpose
+includes the semantics of the status, with `revocation`
+indicating that a status bit expresses whether a
+[=verifiable credential=] has been revoked and `suspension`
+indicating that a status bit expresses whether a
+[=verifiable credential=] has been suspended. The example below
+demonstrates the use of these status purposes:
+        </p>
+
+        <pre class="example nohighlight"
+             title="Example StatusListCredential using simple entries">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "id": "https://example.com/credentials/23894672394",
+  "type": ["VerifiableCredential", "EmployeeIdCredential"],
+  "issuer": "did:example:12345",
+  "validFrom": "2024-04-05T14:27:42Z",
+  <span class="highlight">"credentialStatus": [{
+    "id": "https://example.com/credentials/status/3#94567",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "94567",
+    "statusListCredential": "https://example.com/credentials/status/3"
+  }, {
+    "id": "https://example.com/credentials/status/4#23452",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "suspension",
+    "statusListIndex": "23452",
+    "statusListCredential": "https://example.com/credentials/status/4"
+  }]</span>,
+  "credentialSubject": {
+    "id": "did:example:6789",
+    "type": "Person",
+    "employeeId": "A-123456"
+  }
+}
+        </pre>
+
+        <p>
+The use of `message` as the status purpose enables an issuer to
+define an arbitrary number of custom, descriptive messages about
+the status of the [=verifiable credential=]. The [=issuer=] commits to
+the set of messages that may be associated with a particular entry
+(i.e., with a particular [=verifiable credential=]) through the
+`statusSize`, `statusMessage`, and optional `statusReference` properties,
+at the time of [=verifiable credential=] issuance. This is to ensure that
+the [=holder=] knows what sort of information might be associated with a
+particular [=verifiable credential=] they keep in their possession, that
+could then be discoverable by a [=verifier=] that later receives that
+credential.
+        </p>
+
+        <p class="note">
+It is important to note that `statusListIndex` is the only link between
+the [=verifiable credential=] and its status in the list. Other
+properties such as `credentialSubject.id` are not used for
+this purpose.
+        </p>
+
+        <pre class="example nohighlight"
+             title="Example StatusListCredential using more complex entries">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "id": "https://example.com/credentials/2947478373",
+  "type": ["VerifiableCredential", "BillOfLadingExampleCredential"],
+  "issuer": "did:example:12345",
+  "validFrom": "2024-04-05T03:52:31Z",
+  <span class="highlight">"credentialStatus": {
+    "id": "https://example.com/credentials/status/8#492847",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "message",
+    "statusListIndex": "492847",
+    "statusSize": 2,
+    "statusListCredential": "https://example.com/credentials/status/8",
+    "statusMessage": [
+        {"status":"0x0", "message":"pending_review"},
+        {"status":"0x1", "message":"accepted"},
+        {"status":"0x2", "message":"rejected"},
+        ...
+    ],
+    "statusReference": "https://example.org/status-dictionary/"
+  }</span>,
+  "credentialSubject": {
+    "id": "did:example:6789",
+    "type": "BillOfLading",
+    ...
+  }
+}
+        </pre>
+
+      </section>
+
+      <section>
+        <h3>BitstringStatusListCredential</h3>
+
+        <p>
+When a status list [=verifiable credential=] is published, it MUST be a
+conforming document, as defined in [[VC-DATA-MODEL-2.0]], that expresses the
+data model in this section. The following section describes the format of
+the [=verifiable credential=] that encapsulates the status list.
+        </p>
+
+        <p>
+The status list is expressed inside a [=verifiable credential=] in order to
+enable a [=holder=] to provide it directly to a [=verifier=]. This mechanism,
+sometimes called "certificate stapling", increases privacy for the [=holder=] by
+ensuring that the [=verifier=] does not need to contact the [=issuer=] to
+retrieve the status list. Still, a [=verifier=] might choose to ignore the
+[=holder=]-provided status list, even when its authenticity is verifiable,
+if it desires a more recent version of a status list, for instance.
+        </p>
+
+        <p>
+[=Issuers=] and [=verifiers=] are advised that the [=issuer=] of a
+[=verifiable credential=] and the [=issuer=] of an associated
+`BitstringStatusListCredential` might not be the same. There are technical,
+legal, institutional, political, and other reasons that might make it
+appropriate to separate the authority over the original credential from the
+authority to revoke, or otherwise change the status of, such a credential.
+Therefore, the `issuer` value of a [=verifiable credential=] containing a
+`BitstringStatusListEntry` MAY be different from the `issuer` value of a
+`BitstringStatusListCredential`.
+        </p>
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th style="white-space: nowrap">Property</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>id</td>
+              <td>
+The [=verifiable credential=] that contains the status list MAY
+express an `id` property that matches the value specified in
+`statusListCredential` for the corresponding
+`BitstringStatusListEntry` (see <a href="#bitstringstatuslistentry"></a>).
+              </td>
+            </tr>
+            <tr>
+              <td>type</td>
+              <td>
+The [=verifiable credential=] that contains the status list MUST
+express a `type` property that includes the
+`BitstringStatusListCredential` value.
+              </td>
+            </tr>
+            <tr>
+              <td>validFrom</td>
+              <td>
+The earliest point in time at which the status list is valid. This property is
+defined in the Verifiable Credentials Data Model specification in
+<a href="https://www.w3.org/TR/vc-data-model-2.0/#validity-period">
+Section 4.6: Validity Period</a>.
+              </td>
+            </tr>
+            <tr>
+              <td>validUntil</td>
+              <td>
+The latest point in time at which the status list is valid. This property is
+defined in the Verifiable Credentials Data Model specification in
+<a href="https://www.w3.org/TR/vc-data-model-2.0/#validity-period">
+Section 4.6: Validity Period</a>.
+              </td>
+            </tr>
+            <tr>
+              <td>credentialSubject.type</td>
+              <td id="BitstringStatusList">
+The `type` of the credential [=subject=], which is the
+status list, MUST be `BitstringStatusList`.
+              </td>
+            </tr>
+            <tr>
+              <td id="statusPurpose">credentialSubject.statusPurpose</td>
+              <td>
+The value of the purpose property of the status entry, `statusPurpose`, MUST be
+one or more strings. While the value of each string is arbitrary, the following
+values MUST be used for their intended purpose:
+                <table class="simple">
+                  <thead>
+                    <tr>
+                      <th style="white-space: nowrap">Value</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>`refresh`</td>
+                      <td>
+Used to signal that an updated [=verifiable credential=] is available via the
+credential's <a data-cite="VC-DATA-MODEL-2.0#refreshing">refresh service</a>
+feature. This status does not invalidate the [=verifiable credential=] and is not reversible.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>`revocation`</td>
+                      <td>
+Used to cancel the validity of a [=verifiable credential=]. This status is
+not reversible.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>`suspension`</td>
+                      <td>
+Used to temporarily prevent the acceptance of a [=verifiable credential=].
+This status is reversible.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>`message`</td>
+                      <td>
+Used to indicate a status message associated with a <a>verifiable
+credential</a>. The status message descriptions MUST be defined in
+`credentialSubject.statusMessages`. `credentialSubject.statusSize` MUST be
+specified when this `statusPurpose` value is used.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td id="encodedList">credentialSubject.encodedList</td>
+              <td>
+The `encodedList` property of the credential [=subject=] MUST be a
+<a data-cite="VC-DATA-INTEGRITY#multibase-0">Multibase-encoded base64url (with
+no padding)</a> [[RFC4648]] representation of the GZIP-compressed [[RFC1952]]
+bitstring values for the associated range of [=verifiable credential=]
+status values. The uncompressed bitstring MUST be at least 16KB in size. The
+bitstring MUST be encoded such that the first index, with a value of zero (`0`),
+is located at the left-most bit in the bitstring and the last index, with a
+value of one less than the length of the bitstring (`bitstring_length - 1`), is
+located at the right-most bit in the bitstring. Further information on bitstring
+encoding can be found in Section <a href="#bitstring-encoding"></a>.
+              </td>
+            </tr>
+            <tr>
+              <td id="ttl">credentialSubject.ttl</td>
+              <td>
+The `ttl` is an OPTIONAL property that indicates the "time to live" in
+milliseconds before a refresh SHOULD be attempted. If not present, no default
+value is assumed. The value does not override or replace the
+<a data-cite="VC-DATA-MODEL-2.0#validity-period">validity period</a>
+of the `BitstringStatusList`. Implementations that publish the status list
+SHOULD align any protocol-specific caching information, such as the HTTP
+`Cache-Control` header, with the value in this field.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+The example below demonstrates how the `BitstringStatusListEntry` is used
+with a `BitstringStatusListCredential` to provide the [=verifier=] with
+the information necessary to determine the status of a particular
+[=verifiable credential=].
+        </p>
+
+        <pre class="example nohighlight" title="Example BitstringStatusListCredential">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "id": "<span class="highlight">https://example.com/credentials/status/3</span>",
+  "type": ["VerifiableCredential", "<span class="highlight">BitstringStatusListCredential</span>"],
+  "issuer": "did:example:12345",
+  "validFrom": "2021-04-05T14:27:40Z",
+  "credentialSubject": {
+    "id": "https://example.com/status/3#list",
+    "type": "<span class="highlight">BitstringStatusList</span>",
+    "statusPurpose": "<span class="highlight">revocation</span>",
+    "encodedList": "<span class="highlight">uH4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA</span>"
+  }
+}
+        </pre>
+
+      </section>
+    </section>
+  </section>
+
+  <section class="normative">
+    <h2>Algorithms</h2>
+
+    <p>
+The following section outlines the algorithms that are used to generate
+and validate status lists as described by this document.
+    </p>
+
+    <p>
+If an implementation of any of the algorithms in this section processes a property
+defined in Section <a href="#data-model"></a> whose value is malformed due to
+not complying with associated "MUST" statements, a
+<a data-cite="VC-DATA-MODEL-2.0#MALFORMED_VALUE_ERROR">MALFORMED_VALUE_ERROR</a>
+MUST be raised.
+    </p>
+
+    <section class="normative">
+      <h3>Generate Algorithm</h3>
+
+      <p>
+The following process, or one generating the exact output, MUST be followed
+when producing a
+<a href="#bitstringstatuslistcredential">BitstringStatusListCredential</a>.
+The algorithm takes a list of |issued credentials| as input and either throws
+an error or returns a status list credential as output.
+      </p>
+
+      <ol class="algorithm">
+        <li>
+Let |issued credentials| be a list of all issued
+[=verifiable credentials=].
+        </li>
+        <li>
+Let |statusListCredential| be an unsigned
+<a href="#bitstringstatuslistcredential">BitstringStatusListCredential</a>
+without the `encodedList` property set.
+        </li>
+        <li>
+Generate a |compressed bitstring| by passing
+|issued credentials| to the
+<a href="#bitstring-generation-algorithm">Bitstring Generation Algorithm</a>.
+        </li>
+        <li>
+Set the `encodedList` to |compressed bitstring|.
+        </li>
+        <li>
+Generate a proof for the |statusListCredential| and publish it to the
+endpoint listed in the [=verifiable credential=].
+        </li>
+      </ol>
+
+      <p>
+[=Issuers=] SHOULD publish status list credentials in a way that can be cached
+and that does not track who retrieves the status list credential, such as
+through [[[RFC9458]]], a content distribution network that is not operated by
+the [=issuer=], or business processes for which the access logs are not
+accessible by data analysts or systems administrators.
+      </p>
+
+    </section>
+
+    <section class="normative">
+      <h3>Validate Algorithm</h3>
+
+      <p>
+The following process, or one generating the exact output, MUST be followed
+when validating a [=verifiable credential=] that is contained in a
+<a href="#bitstringstatuslistcredential">BitstringStatusListCredential</a>.
+The algorithm takes a status list [=verifiable credential=] as input
+and either throws an error or returns a status list credential as output.
+      </p>
+
+      <ol class="algorithm">
+        <li>
+Let |credentialToValidate| be a [=verifiable credential=]
+containing a `credentialStatus` entry that is a
+<a href="#bitstringstatuslistentry">BitstringStatusListEntry</a>.
+        </li>
+        <li>
+Let |minimumNumberOfEntries| be 131,072 unless a different lower bound is
+established by a specific ecosystem specification.
+        </li>
+        <li>
+Let |status purpose| be the value of `statusPurpose`
+in the `credentialStatus` entry in the
+|credentialToValidate|.
+        </li>
+        <li>
+Dereference the `statusListCredential` URL, and ensure that all
+proofs verify successfully. If the dereference fails, raise a
+<a href="#STATUS_RETRIEVAL_ERROR">STATUS_RETRIEVAL_ERROR</a>. If any of the
+proof verifications fail, raise a
+<a href="#STATUS_VERIFICATION_ERROR">STATUS_VERIFICATION_ERROR</a>.
+        </li>
+        <li>
+Verify that the |status purpose| is equal to a `statusPurpose` value in the
+|statusListCredential|. Note: The |statusListCredential| might contain multiple
+status purposes in a single list. If the values are not
+equal, raise a
+<a href="#STATUS_VERIFICATION_ERROR">STATUS_VERIFICATION_ERROR</a>.
+        </li>
+        <li>
+Let |compressed bitstring| be the value of the
+`encodedList` property of the
+<a href="#bitstringstatuslistcredential">BitstringStatusListCredential</a>.
+        </li>
+        <li>
+Let |credentialIndex| be the value of the
+`statusListIndex` property of the
+<a href="#bitstringstatuslistentry">BitstringStatusListEntry</a>.
+        </li>
+        <li>
+Generate a |revocation bitstring| by passing
+|compressed bitstring| to the
+<a href="#bitstring-expansion-algorithm">Bitstring Expansion Algorithm</a>.
+        </li>
+        <li>
+If the length of the |revocation bitstring| divided by
+<a href="#statusSize">`statusSize`</a> is less than |minimumNumberOfEntries|,
+raise a <a href="#STATUS_LIST_LENGTH_ERROR">STATUS_LIST_LENGTH_ERROR</a>.
+        </li>
+        <li>
+Let |status| be the value in the |bitstring| at the position indicated
+by the |credentialIndex| multiplied by the |size|. If the |credentialIndex|
+multiplied by the |size| is a value outside of the range of the |bitstring|, a
+<a data-cite="VC-DATA-MODEL-2.0#RANGE_ERROR">RANGE_ERROR</a> MUST be
+raised.
+        </li>
+        <li>
+Let |result| be an empty [=map=].
+        </li>
+        <li>
+Set the `status` key in |result| to |status|, and set the `purpose` key in
+|result| to the value of `statusPurpose`.
+        </li>
+        <li>
+If |status| is `0`, set the `valid` key in |result| to `true`; otherwise, set it
+to `false`.
+        </li>
+        <li>
+If the `statusPurpose` is `message`, set the `message` key in |result| to the
+corresponding `message` of the `value` as indicated in the `statusMessages`
+array.
+        </li>
+        <li>
+Return |result|.
+        </li>
+      </ol>
+
+      <p>
+When a `statusListCredential` URL is dereferenced, server implementations MAY
+provide a mechanism to dereference the status list as of a particular point in
+time. When an [=issuer=] provides such a mechanism, it enables a
+[=verifier=] to determine changes in status to a precision chosen by the
+issuer, such as hourly, daily, or weekly. If such a feature is supported, and if
+query parameters are supported by the URL scheme, then the name of the query
+parameter MUST be `timestamp` and the value MUST be a valid URL-encoded
+[[XMLSCHEMA11-2]] dateTimeStamp string value. The result of dereferencing such a
+timestamp-parameterized URL MUST be either a status list credential containing
+the status list as it existed at the given point in time, or a
+<a href="#STATUS_RETRIEVAL_ERROR">STATUS_RETRIEVAL_ERROR</a>. If the result is
+an error, implementations MAY attempt the retrieval again with a different
+timestamp value, or without a timestamp value, as long as the [=verifier=]'s
+validation rules permit such an action.
+      </p>
+
+      <p>
+[=Verifiers=] SHOULD cache the retrieved status list and SHOULD use proxies
+or other mechanisms, such as [[[RFC9458]]], that hide retrieval behavior from
+the [=issuer=].
+      </p>
+
+      <p class="note" title="Issuer validation is use case dependent">
+It is expected that a [=verifier=] will ensure that it trusts the issuer
+of a [=verifiable credential=], as well as the issuer of the associated
+<a href="#bitstringstatuslistcredential">BitstringStatusListCredential</a>,
+before using the information contained in either credential for further
+decision making purposes. Implementers are advised that the issuers of these
+credential might differ, such as when the original issuer of the
+[=verifiable credential=] does not maintain a record of its validity.
+      </p>
+
+    </section>
+
+    <section class="normative">
+      <h3>Bitstring Generation Algorithm</h3>
+      <p>
+The following process, or one generating the exact output, MUST be followed
+when generating a status list bitstring. The algorithm takes an
+|issuedCredentials| list as input and either throws an error or returns a
+|compressed bitstring| as output.
+      </p>
+
+      <ol class="algorithm">
+        <li>
+Let |bitstring| be a list of bits with a minimum size of 16KB,
+where each bit is initialized to 0 (zero).
+        </li>
+        <li>
+For each value in `bitstring`, if there is a
+corresponding `statusListIndex` value in
+a credential in `issuedCredentials`, set the value to the
+appropriate status. The position of the value is computed as `statusListIndex`
+times the `statusSize`.
+        </li>
+        <li>
+Generate a |compressed bitstring| by using the GZIP
+compression algorithm [[RFC1952]] on the |bitstring|
+and then <a data-cite="?CID#multibase-0">Multibase-encode</a> the result using base64url (with no padding).
+        </li>
+        <li>
+Return the |compressed bitstring|.
+        </li>
+      </ol>
+    </section>
+
+    <section class="normative">
+      <h3>Bitstring Expansion Algorithm</h3>
+
+      <p>
+The following process, or one generating the exact output, MUST be followed
+when expanding a compressed status list bitstring. The algorithm takes a
+|compressed bitstring| as input and either throws an error or returns a
+|uncompressed bitstring| as output.
+      </p>
+
+      <ol class="algorithm">
+        <li>
+Let |compressed bitstring| be a compressed status list
+bitstring.
+        </li>
+        <li>
+Generate an |uncompressed bitstring| by using the
+<a data-cite="?CID#multibase-0">Multibase-decode</a> algorithm on the
+|compressed bitstring| and then expanding the output using
+the GZIP decompression algorithm [[RFC1952]].
+        </li>
+        <li>
+Return the |uncompressed bitstring|.
+        </li>
+      </ol>
+    </section>
+
+    <section class="normative">
+      <h3>Processing Errors</h3>
+
+      <p>
+The algorithms described in this specification throw specific types of errors.
+Implementers might find it useful to convey these errors to other libraries or
+software systems. This section provides specific URLs, descriptions, and error
+codes for the errors, such that an ecosystem implementing technologies described
+by this specification might interoperate more effectively when errors occur.
+      </p>
+
+      <p>
+When exposing these errors through an HTTP interface, implementers SHOULD use
+[[[RFC9457]]] [[RFC9457]] to encode the error data structure. If [[RFC9457]] is
+used:
+      </p>
+
+      <ul>
+        <li>
+The `type` value of the error object MUST be a URL that starts with the value
+`https://www.w3.org/ns/credentials/status-list#` and ends with the value in the
+section listed below.
+        </li>
+        <li>
+The `title` value SHOULD provide a short but specific human-readable string for
+the error.
+        </li>
+        <li>
+The `detail` value SHOULD provide a longer human-readable string for the error.
+        </li>
+        <li>
+All human-readable strings SHOULD be localized as described in Section 1 of
+[[[RFC9457]]], using [=language negotiation=] through the `Accept-Language`
+HTTP header field to select the most appropriate resources.
+        </li>
+      </ul>
+
+      <dl>
+        <dt id="STATUS_RETRIEVAL_ERROR">
+STATUS_RETRIEVAL_ERROR
+        </dt>
+        <dd>
+Retrieval of the status list failed. See Section
+<a href="#validate-algorithm"></a>.
+        </dd>
+        <dt id="STATUS_VERIFICATION_ERROR">STATUS_VERIFICATION_ERROR</dt>
+        <dd>
+Validation of the status entry failed. See Section
+<a href="#validate-algorithm"></a>.
+        </dd>
+        <dt id="STATUS_LIST_LENGTH_ERROR">
+STATUS_LIST_LENGTH_ERROR
+        </dt>
+        <dd>
+The status list length does not satisfy the minimum length required for
+herd privacy. See Section <a href="#validate-algorithm"></a>.
+        </dd>
+      </dl>
+    </section>
+    <section class="normative">
+      <h3>Securing Algorithms</h3>
+      <p>
+There are multiple ways that the information in Section
+<a href="#data-model"></a> can be secured. These mechanisms are elaborated
+upon in the
+<a data-cite="VC-DATA-MODEL-2.0#securing-mechanisms">Securing Mechanisms</a>
+section of the [[[VC-DATA-MODEL-2.0]]].
+      </p>
+      <p>
+When securing a [=verifiable credential=] that contains a reference to
+a <a href="#bitstringstatuslistcredential">BitstringStatusListCredential</a>,
+implementers SHOULD use the same securing mechanism with the same
+cryptographic parameters and the same media type for both
+[=verifiable credentials=].
+      </p>
+    </section>
+
+  </section>
+
+  <section class="normative">
+    <h2>Media Types</h2>
+
+    <p>
+When dereferencing `statusListCredential`, the content of the returned
+`statusListCredential` might be any media type registered for the purpose of
+expressing a verifiable credential with one or more proofs.
+    </p>
+    <p>
+For example, a verifiable credential secured with Data Integrity Proofs might
+have media type `application/vc`, while a verifiable credential
+secured with SD-JWT might have media type `application/sd-jwt`.
+    </p>
+    <p>
+Some implementations might choose to support less specific media types such as
+`application/ld+json` or `application/json`.
+    </p>
+    <p>
+When dereferencing over HTTP, the use of the
+<a data-cite="?RFC7231#rfc.section.5.3.2">accept</a> and
+<a data-cite="?RFC7231#rfc.section.3.1.1.5">content-type</a> headers, might
+allow some implementations to negotiate for the proof format used to secure the
+`statusListCredential`.
+    </p>
+    <p>
+Some implementations might use the
+<a data-cite="?RFC7231#rfc.section.6.5.13">415 Unsupported Media Type</a> status
+code to signal that they do not support the requested media type.
+    </p>
+  </section>
+
+  <section>
+    <h2>Contexts and Vocabularies</h2>
+
+    <section>
+      <h2>Vocabulary</h2>
+      <p>
+The terms defined in this specification are also part of the RDF <a
+data-cite="RDF-CONCEPTS#vocabularies">vocabulary namespace</a>
+<a href="https://www.w3.org/ns/credentials/status">https://www.w3.org/ns/credentials/status#</a>. For any
+`TERM`, the relevant URL is of the form `https://www.w3.org/ns/credentials/status#TERM`.
+Implementations that use RDF processing and rely on this specification MUST use
+these URLs.
+      </p>
+
+      <p>
+When dereferencing the
+<a href="https://www.w3.org/ns/credentials/status">https://www.w3.org/ns/credentials/status#</a> URL, the
+media type of the data that is returned depends on HTTP content negotiation.
+These are as follows:
+      </p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Media Type</th>
+            <th>Description and Hash</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+application/ld+json
+            </td>
+            <td>
+The vocabulary in JSON-LD format [[?JSON-LD11]].<br>
+
+<strong>SHA2-256 Digest:</strong>
+<code><span class="vc-hash"
+  data-hash-url="https://w3c.github.io/vc-bitstring-status-list/vocab/vocabulary.jsonld"
+  data-hash-format="openssl dgst -sha256" /></code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+text/turtle
+            </td>
+            <td>
+The vocabulary in Turtle format [[?TURTLE]].<br>
+
+<strong>SHA2-256 Digest:</strong>
+<code><span class="vc-hash"
+  data-hash-url="https://w3c.github.io/vc-bitstring-status-list/vocab/vocabulary.ttl"
+  data-hash-format="openssl dgst -sha256" /></code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+text/html
+            </td>
+            <td>
+The vocabulary in HTML+RDFa Format [[?HTML-RDFA]].<br>
+
+
+<strong>SHA2-256 Digest:</strong>
+<code><span class="vc-hash"
+  data-hash-url="https://w3c.github.io/vc-bitstring-status-list/vocab/vocabulary.html"
+  data-hash-format="openssl dgst -sha256" /></code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+It is possible to confirm the cryptographic digests above by running a command
+like the following (replacing `&lt;MEDIA_TYPE>` and `&lt;DOCUMENT_URL>` with the
+appropriate values) through a modern UNIX-like OS command line interface:
+`curl -sL -H "Accept: &lt;MEDIA_TYPE>" &lt;DOCUMENT_URL> | openssl dgst -sha256`
+      </p>
+    </section>
+
+    <section>
+      <h3>JSON-LD context</h3>
+      <p>
+Implementations that perform JSON-LD processing MUST treat the following JSON-LD
+context URL as already resolved, where the resolved document matches the
+corresponding hash value below:
+      </p>
+
+      <table class="simple">
+        <thead>
+          <th>Context URL and Hash</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="white-space: nowrap;">
+<strong>URL:</strong> https://www.w3.org/ns/credentials/status/v1<br>
+<strong>SHA2-256 Digest:</strong><br>
+<code><span class="vc-hash"
+  data-hash-url="https://w3c.github.io/vc-bitstring-status-list/contexts/v1.jsonld"
+  data-hash-format="openssl dgst -sha256" /></code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+It is possible to confirm the cryptographic digests listed above by running a
+command like the following through a modern UNIX-like OS command line interface:
+`curl -sL -H "Accept: application/ld+json" https://www.w3.org/ns/credentials/status/v1 | openssl dgst -sha256`
+      </p>
+
+      <p>
+The vocabulary terms that the JSON-LD contexts resolve to
+are in the <a href="https://www.w3.org/ns/credentials/status">https://www.w3.org/ns/credentials/status#</a>
+namespace. See Section [[[#vocabulary]]] for further details.
+      </p>
+
+      <p class="note">
+Applications or specifications may define mappings to the vocabulary URLs using
+their own JSON-LD contexts. For example, the JSON-LD context definitions
+referred to in this section are also a part of the
+`https://www.w3.org/ns/credentials/v2` context, defined by the
+[[[?VC-DATA-MODEL-2.0]]] specification.
+      </p>
+    </section>
+  </section>
+
+  <section class="informative">
+    <h2>Privacy Considerations</h2>
+
+    <p>
+This section details the general privacy considerations and specific privacy
+implications of deploying this specification into production environments.
+    </p>
+
+    <p>
+Readers are urged to familiarize themselves with the general
+privacy advice provided in the
+<a href="https://www.w3.org/TR/vc-data-model-2.0/#privacy-considerations">
+Privacy Considerations section of the Verifiable Credentials
+specification</a> before reading this section.
+    </p>
+
+    <section class="informative">
+      <h3>Revocation Bitstring Length</h3>
+
+      <p>
+This document specifies a minimum revocation bitstring length of 131,072, or
+16KB uncompressed. This is enough to give [=holders=] an adequate amount of
+group privacy if the number of verifiable credentials issued is large enough.
+However, if the number of issued verifiable credentials is a small population,
+the ability to correlate an individual increases because the number of allocated
+slots in the bitstring is small. Correlating this information with, for example,
+where the geographic request came from can also help to correlate individuals
+that have received a credential from the same geographic region.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h3>Unnecessary Correlation</h3>
+
+      <p>
+There are a number of global identifiers used in a status list entry, defined in
+Section [[[#bitstringstatuslistentry]]], that can be used across [=verifiers=]
+to correlate [=subjects=]. Some of the properties that can
+express these values are `id`, `statusListIndex`, and
+`statusListCredential`.
+      </p>
+
+      <p>
+In some cases, such as when [=presentations|presenting=] a [=verifiable
+credential=] that contains a global identifier (such as a driver's license
+identification number), adding one or more global identifier(s) for status list
+information does not increase correlation harm, since a single globally unique
+identifier is all that is required for correlation.
+      </p>
+
+      <p>
+When global identifiers are used in [=presentations=] that use
+[=selective disclosure=] or [=unlinkable disclosure=], they can violate privacy
+expectations. [=Issuers=] are urged to enable status information to be
+selectively disclosable/concealable when a particular [=verifiable credential=]
+is expected to be disclosed in a way that does not need correlation, such as when
+proving that an individual is above a certain age. [=Verifiers=] can require
+that status information be revealed in situations that require them to know the
+current status of a credential, and the holder might then consent or refuse to
+reveal that information for a given transaction. In all cases, both [=issuers=]
+and [=verifiers=] are urged to avoid the use of global identifiers in order to
+prevent correlation, unless it is required for or by a particular exchange.
+      </p>
+
+      <p>
+For information on other types of potential correlation,
+readers are urged to study the Privacy Considerations section of the
+[[[VC-DATA-MODEL-2.0]]] specification, particularly the subsections on
+<a data-cite="VC-DATA-MODEL-2.0#identifier-based-correlation">
+Identifier-Based Correlation</a>,
+<a data-cite="VC-DATA-MODEL-2.0#signature-based-correlation">
+Signature-Based Correlation</a>,
+<a data-cite="VC-DATA-MODEL-2.0#identifier-based-correlation">
+Long-Lived-Identifier-Based Correlation</a>, and
+<a data-cite="VC-DATA-MODEL-2.0#metadata-based-correlation">
+Metadata-Based Correlation</a>.
+      </p>
+
+    </section>
+
+    <section class="informative">
+      <h3>Verifier Caching</h3>
+
+      <p>
+It is possible for [=verifiers=] to increase the privacy of the
+[=holder=] whose [=verifiable credential=] is being checked by caching
+status lists that have been fetched from remote servers. By caching the
+content locally, less correlatable information can be inferred from
+[=verifier=]-based access patterns on the status list.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h3>Content Distribution Networks</h3>
+
+      <p>
+The use of content distribution networks by [=issuers=] can increase the
+privacy of [=holders=] by reducing or eliminating requests for the
+status lists from the [=issuer=]. Often, a request for a revocation
+list will be served by an edge device and thus be faster and reduce the load
+on the server as well as cloaking [=verifiers=] and [=holders=]
+from [=issuers=].
+      </p>
+    </section>
+
+    <section class="informative">
+      <h3>Decoy Values</h3>
+
+      <p>
+[=Issuer=] use of decoy values in status lists has been explored as a mechanism
+to increase the privacy of [=subjects=]. While algorithms for employing decoy
+values are out of scope for this specification, implementers are advised that
+the use of decoy values can harm privacy if the decoy values do not accurately
+simulate the population associated with the status list. If decoy values can
+be distinguished from real values, the anonymity provided in the set will be
+reduced by the number of decoy values that are detectable as such. The most
+privacy-preserving status list is one that never changes, since the behavior
+of the population cannot be determined if no observable events occur.
+      </p>
+      <p>
+Given how difficult it is to statistically simulate status entries for
+a population, and that general advice cannot be given since
+[=verifiable credentials=] serve a broad set of use cases, implementers
+are advised to allocate status list entry indexes randomly, and to minimize —
+optimally to never — the rate at which status entries are changed. Allocation
+of status list entries preserves privacy best when it does not trigger any
+observable change of a status list.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h3>Malicious Issuers and Verifiers</h3>
+      <p>
+In general, the group privacy protections offered by this specification can be
+circumvented by malicious [=issuers=] and [=verifiers=]. Its privacy
+benefits can only be realized when issuers and verifiers intend to avoid
+tracking or sharing the presentation of particular credentials.
+      </p>
+      <p>
+A malicious [=verifier=] might intentionally attack group privacy by sharing
+information from presented credentials with a malicious [=issuer=]. This
+sort of collusion is difficult to detect as it is typically performed via a
+secure communication channel between the [=issuer=] and the [=verifier=].
+      </p>
+      <p>
+A malicious [=issuer=] might intentionally attack group privacy by creating a
+unique status list for each issued credential, in order to establish a one-to-one
+mapping to track when a [=verifier=] processes each mapped credential. Similarly,
+they could establish a one-to-one mapping by using a different
+cryptographic key for each issued credential that is tracked by a given status list.
+      </p>
+      <p>
+This sort of collusion can be detected by [=holder=] software that serves
+multiple [=holders=] (e.g., a [=holder=] app that runs on a server) if it
+has, for example, an opt-in process that finds that some global identifier(s)
+used within a [=verifiable credential=] are not adequately shared by other
+credentials.
+[=Holders=] could then be warned when presenting a [=verifiable credential=]
+that contains some global identifier(s) that are unique to that credential.
+Such an opt-in service could represent some additional privacy concerns;
+whether this potential exposure via the [=holder=] software is justified by
+the awareness of possible global identifier correlation can only be evaluated
+by the users of such a system.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h3>Monitoring Status Lists</h3>
+
+      <p>
+Once a [=verifier=] knows of a status list and entry index that is
+associated with a specific [=holder=] or [=subject=], it becomes possible for that
+[=verifier=] to see updates to that status entry as long as the
+status list continues to be updated. This is useful to a [=verifier=] that
+needs to understand when a particular [=verifiable credential=] has changed
+status without asking the [=issuer=] directly for status information on
+the specific [=verifiable credential=] or when interacting with the [=holder=] to get
+the latest status information is not possible. The feature can also cause a
+privacy violation for the [=holder=] and/or [=subject=] if the
+[=verifier=] is able to perform near-real-time checks on the status of the
+[=verifiable credential=].
+      </p>
+
+      <p>
+[=Issuers=] can provide a level of reprieve from this privacy concern for
+[=holders=] by revoking and reissuing effectively the same
+[=verifiable credential=] on a relatively brief timeline.
+For example, an [=issuer=] could automatically reissue a
+[=verifiable credential=] every three months and assign a new status entry
+index when the reissuance occurs to break any sort of long-term monitoring
+of a [=verifiable credential=] as it changes status.
+      </p>
+
+    </section>
+
+    <section class="informative">
+      <h3>Correlation of Status Messages</h3>
+      <p>
+This specification provides a means by which multiple status messages can be
+provided for a particular entry in a status list. While this mechanism can
+provide more detailed information for a particular entry in the status list,
+that information can provide further correlation data.
+      </p>
+      <p>
+For example, if each status message is associated with a step in a particular
+process, or more detailed information as to why a credential was revoked or
+suspended, then an attacker that observes the changes in the list might be
+able to correlate information about the population of entities in the list
+that could lead to privacy violations. Understanding how a population
+progresses through a business process, or what percentage of the population
+is likely to be associated with a certain status, provides additional
+information to an attacker. Given such information, a phishing operation could
+predict what the next step of a business process is and then preemptively
+contact an entity whose current status is known. Then, based on that
+information, they could attempt to phish more lucrative information from
+the target using data gleaned from the status list over time.
+      </p>
+      <p>
+For these reasons, issuers are urged to evaluate the potential ramifications of
+publishing detailed status information about a particular entity, or a
+population, in a public manner.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h3>Alteration of Status Messages</h3>
+
+      <p>
+When a status list uses the status messages feature, it becomes possible for
+the [=issuer=] to increase the types of messages that are associated with
+the [=verifiable credentials=] it issues over time.
+      </p>
+
+      <p>
+This feature creates a potential privacy violation where the
+[=subject=] or [=holder=] of the [=verifiable credential=] might be
+associated with additional status information that was not present when the
+original [=verifiable credential=] was issued. For example, initial status
+messages might convey "delayed" and "canceled", but additional status messages
+might be added by the [=issuer=] to convey "delayed due to non-payment" and
+"canceled due to illegal activity". This change would not be apparent to the
+[=subject=] or [=holder=] unless there was monitoring software operating
+on their behalf that would warn them that the [=issuer=] intends to expose
+additional information about their activity.
+      </p>
+
+      <p>
+Holder software can provide features to [=holders=] that warn them about the
+level of [=holder=] and/or [=subject=] information exposure when using
+[=verifiable credentials=] that are associated with status messages, and warn
+them when the level of information exposure changes.
+      </p>
+    </section>
+
+  </section>
+
+  <section class="informative">
+    <h2>Security Considerations</h2>
+
+    <p>
+There are a number of security considerations that implementers should be
+aware of when processing data described by this specification. Ignoring or
+not understanding the implications of this section can result in
+security vulnerabilities.
+    </p>
+
+    <p>
+Readers are urged to familiarize themselves with the general
+security advice provided in the
+<a href="https://www.w3.org/TR/vc-data-model-2.0/#security-considerations">
+Security Considerations section of the Verifiable Credentials
+specification</a> before reading this section.
+    </p>
+
+    <p>
+While this section attempts to highlight a broad set of security
+considerations, it is not a complete list. Implementers are urged to seek the
+advice of security and cryptography professionals when implementing mission
+critical systems using the technology outlined in this specification.
+    </p>
+
+    <section class="informative">
+      <h3>Bitstring Encoding</h3>
+
+      <p>
+It is critical that implementers pay particular attention to the way that they
+encode and decode bitstrings. Failure to do so can result in checking the
+wrong bitstring index for a given credential, leading to a misinterpretation
+of its present state (e.g., mistaking a revoked status for an unrevoked
+status). As stated in Section <a href="#bitstringstatuslistcredential"></a>,
+bitstrings are encoded such that the first (zeroth) index refers to the
+left-most bit of the bitstring array. The diagram below demonstrates the
+proper layout for an uncompressed bitstring.
+      </p>
+
+      <figure id="bitstring-layout">
+        <img style="margin: auto; display: block; width: 75%;"
+             src="diagrams/bitstring-layout.svg" alt="a diagram showing two
+             wide rectangles shown side-by-side. Each rectangle is partitioned
+             into eight boxes to represent the 8 bits in a byte. The left
+             rectangle is labeled 'First byte' and the right rectangle is
+             labeled 'Last byte'. The left rectangle's left-most bit box is
+             pointed to by an arrow labeled 'index: 0'. The right rectangle's
+             right-most bit box is pointed to by an arrow labeled
+             'index: length - 1'.">
+        <figcaption style="text-align: center;">
+          A visual depiction of the bitstring layout.
+        </figcaption>
+      </figure>
+
+      <p>
+For example, if a bitstring is 131,072 bits in size (16KB), the first index will
+be 0, and the last index will be 131,071.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h3>Validity Periods</h3>
+
+      <p>
+The <a data-cite="?VC-DATA-MODEL-2.0#validity-period">validity period</a> that
+an issuer might choose to express in a status list is dependent on a variety of
+factors including:
+      </p>
+      <ul>
+        <li>
+How often do status values change? In real-time? Daily? Weekly? Monthly? Other?
+        </li>
+        <li>
+Is there a regulatory requirement that compels an [=issuer=] to notify a
+[=verifier=] that the status of a [=verifiable credential=] has changed?
+        </li>
+        <li>
+Is there a period of time after which an [=issuer=] would incur reputational
+damage by not notifying a [=verifier=] of a status change?
+        </li>
+        <li>
+Is there any expectation that a [=verifier=] will not accept a
+[=verifiable credential=] with a status list that does not expire for a
+period of time it deems excessive?
+        </li>
+        <li>
+Will a short validity period for a status list cause a significant network
+bandwidth or computing burden for an [=issuer=] or a [=verifier=]? Might
+this burden be mitigated by a longer validity period?
+        </li>
+      </ul>
+
+      <p>
+Since these factors vary with the ecosystem and credential type, there is no
+minimum or maximum validity period that is suggested for all status lists.
+[=Issuers=] will need to consider various factors that are specific to their
+[=verifiable credential=] types and choose validity periods that will strike
+the right balance in their ecosystem.
+      </p>
+    </section>
+
+  </section>
+
+  <section class="informative">
+    <h2>Accessibility Considerations</h2>
+
+    <p>
+Readers are urged to familiarize themselves with the general
+accessibility advice provided in the
+<a href="https://www.w3.org/TR/vc-data-model-2.0/#accessibility-considerations">
+Accessibility Considerations section of the Verifiable Credentials
+specification</a>. No further advice is provided in this specification beyond
+the general advice for all [=verifiable credentials=].
+    </p>
+
+  </section>
+
+  <section class="informative">
+    <h2>Internationalization Considerations</h2>
+
+    <p>
+Readers are urged to familiarize themselves with the general
+internationalization advice provided in the
+<a href="https://www.w3.org/TR/vc-data-model-2.0/#internationalization-considerations">
+Internationalization Considerations section of the Verifiable Credentials
+specification</a>. No further advice is provided in this specification beyond
+the general advice for all [=verifiable credentials=].
+    </p>
+
+  </section>
+
+  <section class="appendix informative">
+      <h2>Examples</h2>
+
+      <section>
+        <h2>Revocable Verifiable Credential</h2>
+<pre class="example nohighlight vc" title="A Revocable Verifiable Credential"
+data-vc-vm="https://example.edu/issuers/565049/keys/1"
+data-vc-tabs="ecdsa-rdfc-2019 eddsa-rdfc-2022 jose cose">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "id": "https://example.com/credentials/23894672394",
+  "type": ["VerifiableCredential"],
+  "issuer": "did:example:12345",
+  "validFrom": "2021-04-05T14:27:42Z",
+  <span class="highlight">"credentialStatus": {
+    "id": "https://example.com/credentials/status/3#94567",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "94567",
+    "statusListCredential": "https://example.com/credentials/status/3"
+  }</span>,
+  "credentialSubject": {
+    "id": "did:example:6789",
+    "type": "Person"
+  }
+}
+</pre>
+
+      </section>
+
+      <section>
+        <h2>Status List Verifiable Credential</h2>
+<pre class="example nohighlight vc" title="A Status List Verifiable Credential"
+data-vc-vm="https://example.edu/issuers/565049/keys/1"
+data-vc-tabs="ecdsa-rdfc-2019 eddsa-rdfc-2022 jose cose">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "id": "<span class="highlight">https://example.com/credentials/status/3</span>",
+  "type": ["VerifiableCredential", "<span class="highlight">BitstringStatusListCredential</span>"],
+  "issuer": "did:example:12345",
+  "validFrom": "2021-04-05T14:27:40Z",
+  "credentialSubject": {
+    "id": "https://example.com/status/3#list",
+    "type": "<span class="highlight">BitstringStatusList</span>",
+    "statusPurpose": "<span class="highlight">revocation</span>",
+    "encodedList": "<span class="highlight">uH4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA</span>"
+  }
+}
+</pre>
+      </section>
+
+      <section>
+        <h2>Multiple Status Lists in One Verifiable Credential</h2>
+
+        <p>
+This specification enables an [=issuer=] to associate multiple status lists
+with a single [=verifiable credential=].
+        </p>
+
+        <pre class="example nohighlight"
+             title="Associating multiple status lists with a single Verifiable Credential"
+             data-vc-vm='https://example.edu/issuers/565049/keys/1'
+             data-vc-tabs="ecdsa-rdfc-2019 eddsa-rdfc-2022 jose cose">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "id": "https://example.com/credentials/23894672394",
+  "type": ["VerifiableCredential"],
+  "issuer": "did:example:12345",
+  "issuanceDate": "2021-04-05T14:27:42Z",
+  <span class="comment">// note the use of an array to represent the set of
+  // status entries</span>
+  "credentialStatus": <span class="highlight">[{
+    "id": "https://example.com/credentials/status/3#94567",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "94567",
+    "statusListCredential": "https://example.com/credentials/status/3"
+  }, {
+    "id": "https://example.com/credentials/status/4#12345",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "suspension",
+    "statusListIndex": "12345",
+    "statusListCredential": "https://example.com/credentials/status/4"
+  }]</span>,
+  "credentialSubject": {
+    "id": "did:example:6789",
+    "type": "Person"
+  }
+}
+        </pre>
+      </section>
+
+      <section>
+        <h2>Multiple Status Entries in a Single List</h2>
+
+        <p>
+It is possible for a single status list to contain multiple types of status
+purposes. Doing so can make the retrieval of a list slightly more efficient
+than fetching multiple status lists.
+        </p>
+
+        <pre class="example nohighlight"
+             title="Associating multiple status entries in a single status list"
+             data-vc-vm='https://example.edu/issuers/565049/keys/1'
+             data-vc-tabs="ecdsa-rdfc-2019 eddsa-rdfc-2022 jose cose">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "id": "https://example.com/credentials/23894672394",
+  "type": ["VerifiableCredential"],
+  "issuer": "did:example:12345",
+  "issuanceDate": "2021-04-05T14:27:42Z",
+  <span class="comment">// note the use of a single list to store multiple
+  // status entries</span>
+  "credentialStatus": [{
+    "id": "<span class="highlight">https://example.com/credentials/status/5#94567</span>",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "94567",
+    "statusListCredential": "<span class="highlight">https://example.com/credentials/status/5</span>"
+  }, {
+    "id": "<span class="highlight">https://example.com/credentials/status/5#12345</span>",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "suspension",
+    "statusListIndex": "12345",
+    "statusListCredential": "<span class="highlight">https://example.com/credentials/status/5</span>"
+  }],
+  "credentialSubject": {
+    "id": "did:example:6789",
+    "type": "Person"
+  }
+}
+        </pre>
+    </section>
+  </section>
+
+  <section>
+    <h2>Revision History</h2>
+
+    <p>
+This section contains the substantive changes that have been made to this
+specification over time.
+    </p>
+
+    <p>
+Changes since the
+<a href="https://www.w3.org/TR/2024/CR-vc-bitstring-status-list-20240521/">
+v1.0 First Candidate Recommendation</a>:
+    </p>
+    <ul>
+      <li>
+Many editorial updates to clarify grammar, flow, and understanding of the
+specification contents.
+      </li>
+      <li>
+Provided final guidance on using decoy values and validity periods for status
+lists.
+      </li>
+      <li>
+Add a context and vocabulary section.
+      </li>
+      <li>
+Clarify that the `ttl` property doesn't override validity
+      </li>
+      <li>
+Add a `refresh` status purpose.
+      </li>
+      <li>
+Remove integer error codes from problem details
+      </li>
+    </ul>
+  </section>
+
+  </body>
+</html>

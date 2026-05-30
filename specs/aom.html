@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Accessibility Object Model
+    </title>
+    <meta charset='utf-8'>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common' async
+    class='remove'>
+    </script>
+    <script class='remove'>
+    /*Make tidy happy*/
+    var respecConfig = {
+          // specification status (e.g. WD, LCWD, WG-NOTE, etc.). If in doubt use ED.
+          specStatus:           "unofficial",
+          // the specification's short name, as in http://www.w3.org/TR/short-name/
+          shortName:            "aom",
+          // the specification's repo
+          github: {
+              branch: "gh-pages"
+          ,   repoURL: "WICG/aom"
+          },
+
+          // if your specification has a subtitle that goes below the main
+          // formal title, define it here
+          // subtitle   :  "an excellent document",
+
+          // if you wish the publication date to be other than the last modification, set this
+          // publishDate:  "2009-08-06",
+
+          // if the specification's copyright date is a range of years, specify
+          // the start date here:
+          // copyrightStart: "2005"
+
+          // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+          // and its maturity status
+          // previousPublishDate:  "1977-03-15",
+          // previousMaturity:  "WD",
+
+          // if there a publicly available Editor's Draft, this is the link
+          // edDraftURI:           "http://berjon.com/",
+
+          // if this is a LCWD, uncomment and set the end of its review period
+          // lcEnd: "2009-08-05",
+
+          // editors, add as many as you like
+          // only "name" is required
+          editors:  [
+              {
+                  name:       "Alice Boxhall"
+              ,   url:        "http://google.com"
+              ,   mailto:     "aboxhall@google.com"
+              ,   company:    "Google"
+              ,   companyURL: "http://google.com/"
+              },
+              {
+                  name:       "James Craig"
+              ,   url:        "http://apple.com"
+              ,   mailto:     "jcraig@apple.com"
+              ,   company:    "Apple"
+              ,   companyURL: "http://apple.com/"
+              },
+              {
+                  name:       "Dominic Mazzoni"
+              ,   url:        "http://google.com"
+              ,   mailto:     "dmazzoni@google.com"
+              ,   company:    "Google"
+              ,   companyURL: "http://google.com/"
+              },
+              {
+                  name:       "Alexander Surkov"
+              ,   url:        "http://mozilla.org/"
+              ,   mailto:     "surkov.alexander@gmail.com"
+              ,   company:    "Mozilla"
+              ,   companyURL: "http://mozilla.org/"
+              },
+          ],
+          // name of the WG
+          //         wg:           "None",
+
+          // URI of the public WG page
+          //         wgURI:        "http://example.org/really-cool-wg",
+
+          // name (without the @w3c.org) of the public mailing to which comments are due
+          //          wgPublicList: "spec-writers-anonymous",
+
+          // URI of the patent status for this WG, for Rec-track documents
+          // !!!! IMPORTANT !!!!
+          // This is important for Rec-track documents, do not copy a patent URI from a random
+          // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+          // Team Contact.
+          //        wgPatentURI:  "",
+          // !!!! IMPORTANT !!!! MAKE THE ABOVE BLINK IN YOUR HEAD
+      };
+    </script>
+    <style>
+      table{
+        border:solid 2px #999;
+        border-width:1px 0 0 1px;
+        margin:0.1em 0 1em;
+        padding:0;
+        border-spacing:0;
+        border-collapse:collapse;
+      }
+      th, td{
+        border:solid 2px #999;
+        border-width:0 1px 1px 0;
+        padding:0.15em 0.3em 0.1em;
+        /*min-width:20em;*/
+        vertical-align:top;
+        text-align:left;
+      }
+      th+th, td+td{
+        width:auto;
+      }
+      th{
+        background-color:#eee;
+      }
+      caption{
+        text-align:left;
+        color:#555;
+        font-style:normal;
+        margin:1em 0 0.1em;
+        padding:0 0 0 0.3em;
+      }
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+        The Accessibility Object Model project aims to improve
+        certain aspects of the user and developer experiences
+        concerning the interaction between web pages and
+        <a href="https://www.w3.org/TR/core-aam-1.1/#dfn-assistive-technology">assistive technology</a>.
+      </p>
+      <p>
+        In particular, this project is concerned with improving the developer experience around:
+        <ul>
+          <li>building <a href="https://www.webcomponents.org/introduction">Web Components</a>
+            which are as accessible as a
+            <a href="https://html.spec.whatwg.org/#semantics">built-in element</a>;
+          </li>
+          <li>expressing and modifying the
+            <a href="https://www.w3.org/TR/core-aam-1.1/#dfn-semantics">semantics</a>
+            of any <code>Element</code> using DOM APIs;
+          </li>
+          <li>expressing
+            <a href="https://www.w3.org/TR/core-aam-1.1/#dfn-relationship">semantic relationships</a>
+            between <code>Element</code>s;
+          </li>
+          <li>expressing <a href="https://www.w3.org/TR/core-aam-1.1/#dfn-semantics">semantics</a>
+            for visual user interfaces which are not composed of <code>Element</code>s,
+            such as <a href="https://html.spec.whatwg.org/multipage/canvas.html#the-canvas-element"><code>canvas</code></a>-based user interfaces;
+          </li>
+          <li>understanding and testing the process by which
+            <a href="https://w3c.github.io/html-aam/#mapping-html-to-accessibility-apis">HTML</a>
+            and
+            <a href="https://www.w3.org/TR/core-aam-1.1/#mapping_conflicts">ARIA</a>
+            contribute to the computation of the
+            <a href="https://www.w3.org/TR/core-aam-1.1/#dfn-accessibility-tree">accessibility tree</a>.
+          </li>
+        </ul>
+      </p>
+      <p>
+        By reducing the friction experienced by developers in creating accessible web pages,
+        and filling in gaps in what semantics may be expressed via DOM APIs,
+        the APIs proposed in the Accessibility Object Model aim to improve
+        the user experience of users interacting with web pages via assistive technology.
+      </p>
+    </section>
+    <section id="introduction" class="informative">
+      <h1>Introduction</h1>
+      <section id="explainer">
+        <h2>Explainer</h2>
+        <p>
+          Please refer to the
+          <a href="https://github.com/WICG/aom/blob/gh-pages/explainer.md">
+            Accessibility Object Model Explainer</a> for the background and
+          motivation.
+        </p>
+        <p>If you have questions, comments, or other feedback, please
+          <a href="https://github.com/WICG/aom/issues">file an issue</a> on GitHub.
+        </p>
+      </section>
+      <section id="structure">
+        <h2>Structure of Accessibility Object Model Specs</h2>
+        <p>
+          The specifications which comprise the Accessibility Object Model
+          are split into loose "phases",
+          each of which may take the form of a modification to an existing spec,
+          or a new API.
+        </p>
+        <p>
+          While the term "phases" indicates a rough ordering,
+          based on expected time to completion
+          and relative urgency of work,
+          it should not be expected that one phase must be complete
+          before work begins on the next,
+          nor that phases will be completed in strict order.
+        </p>
+        <p>
+          See the <a href="#phases">project phases</a> section for links to each phase.
+        </p>
+      </section>
+      <section id="scope">
+        <h2>Document Scope</h2>
+        <p>The Accessibility Object Model specs are narrowly focused on the goals described in the Abstract.
+          They are intended to complement existing web accessibility APIs
+          such as [[!WAI-ARIA]],
+          not replace them.
+          In particular, this spec attempts to avoid proposing
+          new roles, states, and properties of accessible objects except where necessary.</p>
+      </section>
+      <section id="inclusion">
+        <h2>Criteria for Inclusion</h2>
+        <p>This specification is not intended to solve all accessibility problems on the Web.
+          It is currently impossible to make some web features accessible,
+          so the primary goal is to resolve immediate needs quickly for existing,
+          inaccessible web interfaces.
+          The specification editors are intentionally deferring many useful ideas
+          in order to maintain a realistic timeline for highest priority features.</p>
+        <p>
+          We have defined <a href="criteria.html">Inclusion/Exclusion Criteria</a>
+          in order to clarify exactly what will be considered in-scope.
+        </p>
+      </section>
+    </section>
+    <section id="phases">
+      <h2>Phases</h2>
+      <section id="aria-reflection">
+        <h2>Phase 1a: ARIA Reflection</h2>
+        <p>See the <a href="aria-reflection.html">ARIA Reflection</a> document.</p>
+      </section>
+      <section id="custom-element-semantics">
+        <h2>Phase 1b: Custom Element Semantics</h2>
+        <p>See the <a href="custom-element-semantics.html">Custom Element Semantics</a> document.</p>
+      </section>
+      <section id="user-action-events">
+        <h2>Phase 2: User Action Events</h2>
+        <p>See the <a href="input-events.html">Input Events</a> document.</p>
+      </section>
+      <section id="virtual-accessibility-nodes">
+        <h2>Phase 3: Virtual Accessibility Nodes</h2>
+        <p>See the <a href="virtual-accessibility-nodes.html">Virtual Accessibility Nodes</a> document.</p>
+      </section>
+      <section id="computed-accessibility-tree">
+        <h2>Phase 4: Computed Accessibility Tree</h2>
+        <p>See the <a href="computed-accessibility-tree.html">Computed Accessibility Tree</a> document.</p>
+      </section>
+    </section>
+    <section class="appendix">
+      <h2>
+        Acknowledgements
+      </h2>
+      <p>
+        Many thanks for valuable feedback, advice, and tools from:
+        Alex Russell, Bogdan Brinza, Chris Fleizach, Cynthia Shelley, David Bolter, Domenic Denicola, Ian Hickson, Joanmarie Diggs, Marcos Caceres, Nan Wang, Robin Berjon, and Tess O'Connor.
+      </p>
+      <p>
+        Bogdan Brinza and Cynthia Shelley of Microsoft contributed to the first draft of this spec but are no longer actively participating.
+      </p>
+    </section>
+  </body>
+</html>

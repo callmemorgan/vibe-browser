@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      Badging API
+    </title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class=
+    "remove"></script>
+    <script class='remove'>
+       var respecConfig = {
+        specStatus: "ED",
+        previousPublishDate: "2023-04-06",
+        shortName: "badging",
+        prevVersion: "FPWD",
+        previousMaturity: "WD",
+        github: {
+          repoURL: "w3c/badging",
+          branch: "main"
+        },
+        group: "webapps",
+        editors: [{
+          name: "Jay Harris",
+          company: "Brave Software, Inc.",
+          companyURL: "https://brave.com",
+          w3cid: 111473
+        },
+        {
+          name: "Marcos Cáceres",
+          company: "Apple Inc.",
+          companyURL: "https://apple.com",
+          w3cid: 39125,
+        },
+        {
+          name: "Matt Giuca",
+          company: "Google Inc.",
+          companyURL: "https://google.com",
+          retiredDate: "2022-12-21",
+        },
+        {
+          name: "Diego González",
+          url: "https://twitter.com/diekus",
+          company: "Microsoft",
+          companyURL: "https://microsoft.com",
+          w3cid: 66757,
+          retiredDate: "2026-04-24",
+        }],
+        mdn: true,
+        xref: "web-platform",
+      };
+    </script>
+  </head>
+  <body data-cite="appmanifest">
+    <section id="abstract">
+      <p>
+        This specification defines an API that allows [=installed web
+        applications=] to set an application badge, which is usually shown
+        alongside the application's icon on the device's home screen or
+        application dock.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>
+        This is a work in progress.
+      </p>
+    </section>
+    <h2 class="informative">
+      Responsible badge usage
+    </h2>
+    <p>
+      Badges can contribute to notification fatigue for some users. As such,
+      authors need to reserve badges for states that truly merit user attention
+      or action; avoid using them for marketing or engagement gimmicks.
+    </p>
+    <p>
+      Avoid rapidly changing values that increase distraction or cognitive
+      load.
+    </p>
+    <p>
+      To support users who do not perceive badges, or have disabled them at the
+      system level, authors are encouraged to present the same state within
+      application UI using accessible patterns (e.g., clearly labeled in-app
+      status indicators).
+    </p>
+    <section class="informative">
+      <h2>
+        Usage examples
+      </h2>
+      <pre class="example javascript" title=
+      "Showing unread count on the app icon">
+        async function updateMailBadge() {
+          // Check if the API is supported.
+          if (!navigator.setAppBadge) return;
+
+          const unreadCount = await getUnreadMailCount();
+
+          // Try to set the app badge.
+          try {
+            await navigator.setAppBadge(unreadCount);
+          } catch (e) {
+            // The badge is not supported, or the user has prevented the app
+            // from setting a badge.
+          }
+        }
+      </pre>
+      <p>
+        The badge might show up on the application's icon in the operating
+        system. If multiple API calls within the same application [=badge/set=]
+        or [=badge/clear=] a badge, the most recent one takes effect, and may
+        continue being seen even after an application is closed.
+      </p>
+      <pre class="example javascript" title=
+      "Showing ready status on the app icon">
+        async function showPlayerTurn(playerTurnId) {
+          if (playerTurnId === localPlayerId)
+            await navigator.setAppBadge();
+          else
+            await navigator.clearAppBadge();
+        }
+      </pre>
+      <p data-cite="notifications">
+        On some operating systems [=badge/setting=] a badge can require
+        permission from the user. In this case, a developer need to query the
+        "[=notifications=]" permissions status before [=badge/setting=] a
+        badge. If the permission is not granted, the developer will need to
+        prompt for permission via the
+        {{Notification}}.{{Notification/requestPermission()}}.
+      </p>
+      <pre class="example javascript" title="Checking for permission">
+        async function checkPermission() {
+          permission = await navigator.permissions.query({
+            name: "notifications",
+          });
+          const button = document.getElementById("permission-button");
+          if (permission.state === "prompt") {
+            // Prompt the user to grant permission.
+            button.hidden = false;
+            button.addEventListener("click", async () =&gt; {
+              await Notification.requestPermission();
+              checkPermission();
+            }, { once: true });
+            return;
+          }
+          button.hidden = true;
+        }
+      </pre>
+    </section>
+    <section>
+      <h2>
+        Model
+      </h2>
+      <p>
+        A <dfn>badge</dfn> is intended as a mechanism for [=installed web
+        applications=] to notify the user that there is some new activity that
+        might require their attention, or as a way of indicating a small amount
+        of information, such as an unread count.
+      </p>
+      <p>
+        A [=badge=] can have one of the following <dfn class="export"
+        data-dfn-for="badge">values</dfn>:
+      </p>
+      <dl>
+        <dt>
+          The special value <dfn class="export" data-dfn-for=
+          "badge">"nothing"</dfn>:
+        </dt>
+        <dd>
+          Indicates that there is no badge currently [=badge/set=]. When a
+          [=badge=] has this value, no visual indicator should be displayed to
+          the user.
+        </dd>
+        <dt>
+          The special value <dfn class="export" data-dfn-for=
+          "badge">"flag"</dfn>:
+        </dt>
+        <dd>
+          Indicates that the badge is [=badge/set=] and should be displayed to
+          the user, but contains no specific numerical value. This is distinct
+          from [=badge/"nothing"=] in that a visual indicator should be shown
+          to the user to indicate the presence of the badge.
+        </dd>
+        <dt>
+          A <dfn class="export" data-dfn-for="badge">number</dfn> value:
+        </dt>
+        <dd>
+          Indicates that the badge is [=badge/set=] to a numerical value
+          greater than `0`.
+        </dd>
+      </dl>
+      <p>
+        An [=installed web application=] has an associated [=badge=], which is
+        initialized to [=badge/"nothing"=]. The operating system stores and
+        manages the badge value, with the [=user agent=] acting as an
+        intermediary to communicate badge changes to the OS.
+      </p>
+      <p>
+        The user agent MAY (re)[=set=] an application's badge to
+        [=badge/"nothing"=] at its discretion (for example, following system
+        conventions).
+      </p>
+    </section>
+    <section id="presentation">
+      <h2 id="displaying-a-badge">
+        Displaying a badge
+      </h2>
+      <p>
+        When the application's badge is <dfn data-dfn-for="badge" data-lt=
+        "setting">set</dfn>, the [=user agent=] or operating system SHOULD
+        display the application's [=badge=] alongside the primary iconic
+        representation of the application in the user's operating system (for
+        example, as a small overlay on top of the application's icon on the
+        home screen on a device).
+      </p>
+      <p data-cite="permissions notifications">
+        A user agent MAY require [=express permission=] from the user to
+        [=badge/set=] the badge. When a user agent requires such
+        [=permission=], it SHOULD tie the permission grant to the
+        "[=notifications=]" permission.
+      </p>
+      <p>
+        When the [=badge=] is [=badge/set=] to [=badge/"flag"=], the [=user
+        agent=] or operating system SHOULD display an indicator with a
+        non-specific symbol (for example, a colored circle). If the platform
+        does not support displaying a [=badge/"flag"=] badge, the [=user
+        agent=] SHOULD display the badge using the closest available
+        representation that indicates the presence of a badge (e.g., the value
+        "1"), rather than [=badge/clearing=] the badge entirely.
+      </p>
+      <p>
+        When a [=badge=]'s value is [=badge/set=] to [=badge/"nothing"=], the
+        [=user agent=] or operating system SHOULD <dfn data-dfn-for="badge"
+        data-local-lt="clearing|cleared">clear</dfn> the [=badge=] by no longer
+        displaying it.
+      </p>
+      <p>
+        When the [=badge=] is [=badge/set=] to a [=badge/number=], the [=user
+        agent=] or operating system:
+      </p>
+      <ul>
+        <li>SHOULD format and display the number according to the user's font
+        and formatting preferences. For example, as a number in a circle on top
+        of the application's icon on the home screen on a device.
+        </li>
+        <li>MAY simplify or degrade a badge's [=badge/number=] [=badge/value=]
+        in any way that matches the platform's conventions for representing
+        numbers in a badge. For example, a platform might choose to display a
+        badge with a value of '100' as '99+'.
+        </li>
+        <li>SHOULD localize the number according to the user's locale
+        preferences. For example, the [=badge/value=] '7' should be displayed
+        as '7' in the locale 'en' (English) but as '٧' in 'ar' (Arabic).
+        </li>
+        <li>MAY treat a [=badge/number=] [=badge/value=] as [=badge/"flag"=],
+        or whatever representation is most appropriate for the platform, if the
+        platform does not support displaying [=badge/"number"|numbers=] in a
+        [=badge=]. Similarly, if the platform does not support [=badge/"flag"=]
+        badges, it MAY represent [=badge/"flag"=] using a [=badge/number=] or
+        other appropriate visual indicator, but MUST NOT [=badge/clear=] the
+        badge when [=badge/"flag"=] is requested.
+        </li>
+      </ul>
+      <h3>
+        Implementation considerations for platform limitations
+      </h3>
+      <p>
+        Different operating systems have varying capabilities for displaying
+        badges. The ultimate display behavior is controlled by the operating
+        system and might be further modified by user settings or system
+        conventions. When communicating badge information to the operating
+        system, [=user agents=] SHOULD preserve the semantic intent of the
+        badge request:
+      </p>
+      <ul>
+        <li>When the operating system does not support [=badge/"flag"=] badges,
+        the [=user agent=] SHOULD communicate to the OS using the closest
+        available representation that conveys the presence of a badge (such as
+        the number "1" or generic symbol) rather than communicating a request
+        to [=badge/clear=] the badge.
+        </li>
+        <li>When the operating system does not support [=badge/number=] badges,
+        the [=user agent=] MAY communicate the badge to the OS as a
+        [=badge/"flag"=] representation.
+        </li>
+        <li>The [=user agent=] MUST NOT interpret a request to set a
+        [=badge/"flag"=] as equivalent to [=badge/clearing=] the badge when
+        communicating with the operating system.
+        </li>
+      </ul>
+    </section>
+    <section data-dfn-for="NavigatorBadge">
+      <h2>
+        Extensions to the `Navigator` and `WorkerNavigator` interfaces
+      </h2>
+      <pre class="idl">
+        [SecureContext]
+        interface mixin NavigatorBadge {
+          Promise&lt;undefined&gt; setAppBadge(
+            optional [EnforceRange] unsigned long long contents
+          );
+          Promise&lt;undefined&gt; clearAppBadge();
+        };
+
+        Navigator includes NavigatorBadge;
+        WorkerNavigator includes NavigatorBadge;
+      </pre>
+      <p>
+        User agents that never display application badges SHOULD NOT
+        [=interface/include=] {{NavigatorBadge}}.
+      </p>
+      <h3>
+        <dfn>setAppBadge()</dfn> method
+      </h3>
+      <p>
+        When the {{NavigatorBadge/setAppBadge()}} method is called, the user
+        agent MUST [=set the application badge=] of [=this=] to value of the
+        |contents:unsigned long long| argument.
+      </p>
+      <h3>
+        <dfn>clearAppBadge()</dfn> method
+      </h3>
+      <p>
+        When the {{NavigatorBadge/clearAppBadge()}} method is called, the user
+        agent MUST [=set the application badge=] of [=this=] to 0.
+      </p>
+    </section>
+    <section data-cite="permissions notifications">
+      <h2>
+        Setting the application badge
+      </h2>
+      <p>
+        To <dfn>set the application badge</dfn> of platform object
+        |context:platform object| to an optional {{unsigned long long}}
+        |contents:unsigned long long| value:
+      </p>
+      <ol class="algorithm">
+        <li>Let |global| be |context|'s [=relevant global object=].
+        </li>
+        <li>If |global| is a {{Window}} object, then:
+          <ol>
+            <li>Let |document| be |global|'s [=associated `Document`=].
+            </li>
+            <li>If |document| is not [=Document/fully active=], return [=a
+            promise rejected with=] a {{"InvalidStateError"}} {{DOMException}}.
+            </li>
+            <li>If |document|'s [=relevant settings object=]'s [=origin=] is
+            not [=same origin-domain=] with [=this=]'s [=relevant settings
+            object=]'s [=environment/top-level origin=], return [=a promise
+            rejected with=] a {{"SecurityError"}} {{DOMException}}.
+            </li>
+          </ol>
+        </li>
+        <li>Let |promise| be [=a new promise=].
+        </li>
+        <li>[=In parallel=]:
+          <ol>
+            <li>If the [=user agent=] requires [=express permission=] to
+            [=badge/set=] the application badge, then:
+              <ol>
+                <li>Let |permissionState| be the result of [=getting the
+                current permission state=] with "[=notifications=]".
+                </li>
+                <li>If |permissionState| is not {{PermissionState/"granted"}},
+                [=queue a global task=] on the [=user interaction task source=]
+                given |global| to [=reject=] |promise| with a
+                {{NotAllowedError}} and terminate this algorithm.
+                </li>
+              </ol>
+            </li>
+            <li>Switching on |contents|, if it happens to be the case that:
+              <dl class="switch">
+                <dt>
+                  |contents| was not passed:
+                </dt>
+                <dd>
+                  [=badge/Set=] |badge| to [=badge/"flag"=].
+                </dd>
+                <dt>
+                  |contents| is 0:
+                </dt>
+                <dd>
+                  [=badge/Set=] |badge| to [=badge/"nothing"=].
+                </dd>
+                <dt>
+                  |contents|:
+                </dt>
+                <dd>
+                  [=badge/Set=] |badge| to |contents|.
+                </dd>
+              </dl>
+            </li>
+            <li>[=Queue a global task=] on the [=DOM manipulation task source=]
+            given |global| to [=resolve=] |promise| with `undefined`.
+            </li>
+          </ol>
+        </li>
+        <li>Return |promise|.
+        </li>
+      </ol>
+    </section>
+    <section>
+      <h2>
+        Privacy considerations
+      </h2>
+      <p>
+        The API is write-only by design. There is no way for a site to read
+        back the value of a badge that was previously set, to ensure that the
+        application badge cannot be used as a storage or fingerprinting
+        mechanism.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Security considerations
+      </h2>
+      <p>
+        The [=user agent=] or operating system MAY [=badge/clear=] a [=badge=]
+        at its discretion, and to follow any system conventions (for example,
+        when the system is reset).
+      </p>
+      <p>
+        User agents MAY rate-limit badge [=set the application badge|setting=]
+        or [=badge/clear|clearing=] the application badge to prevent
+        distracting animations and reduce resource usage. However, user agents
+        SHOULD generally leave rate limiting to the operating system, as it is
+        in a better position to determine appropriate throttling based on
+        system load, user preferences, and accessibility considerations.
+      </p>
+    </section>
+    <h2>
+      Accessibility considerations
+    </h2>
+    <p>
+      Application badges convey status that can require the user's attention.
+      Because badges are often presented outside the web content area (for
+      example, on an app icon in the dock), user agents need to ensure that the
+      information remains accessible and controllable through platform
+      accessibility features and user preferences.
+    </p>
+    <h3>
+      Screen reader compatibility
+    </h3>
+    <p>
+      User agents SHOULD expose the current [=badge/value=] (including
+      [=badge/"flag"=] vs. [=badge/number=]) through platform accessibility
+      APIs so that assistive technologies can present it on demand (for
+      example, when the user focuses the application icon).
+    </p>
+    <p>
+      User agents <em>SHOULD NOT</em> automatically announce badge changes;
+      instead, they SHOULD follow platform conventions that avoid unsolicited
+      interruptions.
+    </p>
+    <h3 class="informative">
+      Visual accessibility
+    </h3>
+    <p>
+      As badges are typically drawn by the underlying platform, visual
+      affordances are typically handled there. Nevertheless, user agents and
+      platforms need to consider:
+    </p>
+    <ul>
+      <li>Do not rely on color alone to convey meaning (provide text or an
+      accessible name).
+      </li>
+      <li>Ensure sufficient non-text contrast between badge glyph and
+      background.
+      </li>
+      <li>Use sizing that remains legible across system font/scale settings.
+      </li>
+      <li>Honor high-contrast / forced-colors and dark mode preferences where
+      applicable.
+      </li>
+      <li>If animating badge changes, honor reduced-motion preferences and
+      avoid flashing effects.
+      </li>
+    </ul>
+    <h3>
+      Platform integration and user preferences
+    </h3>
+    <p>
+      User agents SHOULD integrate with platform accessibility settings and
+      themes.
+    </p>
+    <p>
+      User agents SHOULD reflect OS-level per-application badge preferences
+      (for example, when the operating system disables badges for an app).
+    </p>
+    <section id="conformance"></section>
+  </body>
+</html>

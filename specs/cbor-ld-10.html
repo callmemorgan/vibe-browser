@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CBOR-LD 1.0</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove" defer></script>
+<script src="common/common.js" class="remove" defer></script>
+<script src="common/jsonld.js" class="remove"></script>
+<script class="remove">
+  var respecConfig = {
+      // extend the bibliography entries
+      localBiblio:            jsonld.localBiblio,
+
+      // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+      specStatus:             "ED",
+      // if you wish the publication date to be other than today, set this
+      //publishDate:          "2018-09-11",
+      copyrightStart:         "2020",
+
+      // the specification's short name, as in http://www.w3.org/TR/short-name/
+      shortName:              "cbor-ld-10",
+      subtitle:               "A CBOR-based Serialization for Linked Data",
+
+      // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+      // and its maturity status
+      // prevVersion:          "https://www.w3.org/TR/2020/PR-json-ld11-20200507/",
+      // previousPublishDate:  "2020-05-07",
+      // previousMaturity:     "PR",
+      // prevRecURI:            "https://www.w3.org/TR/2014/REC-json-ld-20140116/",
+      // errata:               "https://w3c.github.io/json-ld-syntax/errata/",
+      github:               {
+        repoURL:"https://github.com/w3c/cbor-ld/",
+        branch: "main"
+      },
+
+      // if there a publicly available Editor's Draft, this is the link
+      edDraftURI:             "https://w3c.github.io/cbor-ld/",
+      // testSuiteURI:           "https://digitalbazaar.github.io/json-ld-api/tests/",
+      // implementationReportURI:"https://digitalbazaar.github.io/json-ld-api/reports/",
+      // crEnd:                  "2020-04-03",
+      // prEnd:                  "2020-06-18",
+
+      includePermalinks:      true,
+      doJsonLd:               true,
+      pluralize:              true,
+
+      // Cross-reference definitions
+      xref: ["json-ld11", "json-ld11-api", "json-ld11-framing"],
+
+      // if you want to have extra CSS, append them to this list
+      // it is recommended that the respec.css stylesheet be kept
+      // extraCSS:             [],
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors:  [
+        { name:       "Manu Sporny",
+          url:        "http://manu.sporny.org/",
+          w3cid:      "41758",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"},
+        { name:       "Dave Longley",
+          url:        "https://digitalbazaar.com/author/dlongley/",
+          w3cid:      "48025",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"},
+        { name:       "Wesley Smith",
+          w3cid:      "152091",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"}
+      ],
+
+      // authors, add as many as you like.
+      // This is optional, uncomment if you have authors as well as editors.
+      // only "name" is required. Same format as editors.
+      authors:  [
+        { name:       "Manu Sporny",
+          url:        "http://manu.sporny.org/",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"},
+        { name:       "Dave Longley",
+          url:        "https://digitalbazaar.com/author/dlongley/",
+          w3cid:      "48025",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"}
+      ],
+
+      // name of the WG
+      //wg:           "JSON-LD Community Group",
+      group: "wg/json-ld",
+
+      // URI of the public WG page
+      //wgURI:        "https://www.w3.org/2018/json-ld-wg/",
+
+      // name (with the @w3c.org) of the public mailing to which comments are due
+      //wgPublicList: "public-linked-json",
+
+      // URI of the patent status for this WG, for Rec-track documents
+      // !!!! IMPORTANT !!!!
+      // This is important for Rec-track documents, do not copy a patent URI from a random
+      // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+      // Team Contact.
+      wgPatentURI:  "https://www.w3.org/2004/01/pp-impl/107714/status",
+      processVersion: 2018,
+      maxTocLevel: 4,
+      //alternateFormats: [ {uri: "json-ld11.epub", label: "EPUB"} ]
+  };
+</script>
+<style>
+  .hl-bold {
+    font-weight: bold; color: #0a3;
+  }
+  .comment {
+    color: #999;
+  }
+  table, thead, tr, td, th {
+    padding: 5px;
+    border-width: 1px;
+    border-spacing: 0px;
+    border-style: solid;
+    border-collapse: collapse;
+  }
+  table.example {
+    width: 100%;
+  }
+  .example > pre.context:before {
+    content: "Context";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.frame:before {
+    content: "Frame";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.input:before {
+    content: "Input";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.result:before {
+    content: "Result";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.turtle:before {
+    content: "Turtle";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .highlight.changed, .show-changes {
+    background-color: lime;
+  }
+  .show-changes.selected:before {
+    content: "de-highlight";
+  }
+  .show-changes:before {
+    content: "highlight";
+  }
+  aside.example {
+    overflow-y: hidden;
+  }
+  /* example tab selection */
+  .ds-selector-tabs {
+    padding-bottom: 2em;
+  }
+  .ds-selector-tabs .selectors {
+    padding: 0;
+    border-bottom: 1px solid #ccc;
+    height: 28px;
+  }
+  .ds-selector-tabs .selectors button {
+    display: inline-block;
+    min-width: 54px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    height: 27px;
+    padding: 0 8px;
+    line-height: 27px;
+    transition: all,0.218s;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+    color: #666;
+    border: 1px solid transparent;
+  }
+  .ds-selector-tabs .selectors button:first-child {
+    margin-left: 2px;
+  }
+  .ds-selector-tabs .selectors button.selected {
+    color: #202020 !important;
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #fff !important;
+  }
+  .ds-selector-tabs .selectors button:hover {
+    background-color: transparent;
+    color: #202020;
+    cursor: pointer;
+  }
+  .ds-selector-tabs pre:not(.preserve), .ds-selector-tabs table:not(.preserve) {
+    display: none;
+  }
+  .ds-selector-tabs pre.selected, .ds-selector-tabs table.selected {
+    display: block;
+  }
+  a.playground {
+    display: inline-block;
+    width: 150px;
+    border: 1px solid transparent;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+    background-color: rgb(192, 192, 192);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  a[href].playground {
+    padding: 4px 0 3px 8px;
+    border-bottom: none;
+    text-decoration: none;
+    color: #666;
+  }
+</style>
+</head>
+
+<body>
+<section id="abstract">
+  <p>
+CBOR is a compact binary data serialization and messaging format. This
+specification defines CBOR-LD 1.0, a CBOR-based format to serialize Linked Data.
+The encoding is designed to leverage the existing JSON-LD ecosystem, which is
+deployed on hundreds of millions of systems today, to provide a compact
+serialization format for those seeking efficient encoding schemes for Linked
+Data. By utilizing semantic compression schemes, compression ratios in excess of
+60% better than generalized compression schemes are possible. This format is
+primarily intended to be a way to use Linked Data in storage and bandwidth
+constrained programming environments, to build interoperable semantic wire-level
+protocols, and to efficiently store Linked Data in CBOR-based storage engines.
+  </p>
+</section>
+
+<section id="sotd">
+  <p>This document is experimental.</p>
+
+  <p>There is a
+<a href="https://github.com/digitalbazaar/cborld/">reference implementation</a> that is
+capable of demonstrating the features described in this document.
+  </p>
+</section>
+
+<section class="informative">
+  <h1>Introduction</h1>
+  <p>
+CBOR is a compact binary data serialization and messaging format. This
+specification defines CBOR-LD 1.0, a CBOR-based format to serialize Linked Data.
+The encoding is designed to leverage the existing JSON-LD ecosystem, which is
+deployed on hundreds of millions of systems today, to provide a compact
+serialization format for those seeking efficient encoding schemes for Linked
+Data. By utilizing semantic compression schemes, compression ratios in excess of
+60% better than generalized compression schemes are possible. This format is
+primarily intended to be a way to use Linked Data in storage and bandwidth
+constrained programming environments, to build interoperable semantic wire-level
+protocols, and to efficiently store Linked Data in CBOR-based storage engines.
+  </p>
+
+  <section class="informative">
+    <h2>How to Read this Document</h2>
+
+    <p>This document is a detailed specification for a serialization of Linked
+      Data in CBOR. The document is primarily intended for the following audiences:</p>
+
+    <ul>
+      <li>Software developers who want to encode Linked Data in a variety of
+        programming languages that can use CBOR</li>
+      <li>Software developers who want to convert existing JSON-LD to CBOR-LD</li>
+      <li>Software developers who want to understand the design decisions and
+        language syntax for CBOR-LD</li>
+      <li>Software developers who want to implement processors and APIs for
+        CBOR-LD</li>
+      <li>Software developers who want to generate or consume Linked Data,
+        an RDF graph, or an RDF Dataset in a CBOR syntax</li>
+    </ul>
+
+    <section id="conformance"></section>
+
+  </section>
+
+  <section class="informative">
+    <h2>Contributing</h2>
+
+    <p>There are a number of ways that one may participate in the development of
+      this specification:</p>
+
+    <ul>
+      <li>Technical discussion typically occurs on the working group mailing list:
+        <a href="https://lists.w3.org/Archives/Public/public-linked-json/">public-linked-json@w3.org</a></li>
+
+      <li>The working group uses <a href="http://irc.w3.org/?channels=json-ld">#json-ld</a>
+        IRC channel is available for real-time discussion on <a href="http://irc.w3.org">irc.w3.org</a>.</li>
+
+      <li>The <a href="https://webchat.freenode.net/?channels=json-ld">#json-ld</a>
+        IRC channel is also available for real-time discussion on irc.freenode.net.</li>
+    </ul>
+  </section>
+
+  <!--section class="informative">
+    <h2>Typographical conventions</h2>
+    <div data-include="common/typographical-conventions.html"></div>
+  </section>
+
+  <section class="informative">
+    <h2>Terminology</h2>
+
+    <p>This document uses the following terms as defined in external specifications
+      and defines terms specific to JSON-LD.</p>
+
+    <div data-include="common/terms.html"
+         data-oninclude="restrictReferences">
+    </div>
+  </section-->
+
+  <section class="informative">
+    <h2>Design Goals and Rationale</h2>
+
+    <p>CBOR-LD satisfies the following design goals:</p>
+
+    <dl>
+      <dt>Simplicity</dt>
+      <dd>
+Implementations should be simple to implement given an existing JSON-LD
+implementation.
+      </dd>
+      <dt>Efficient Storage</dt>
+      <dd>
+The encoding process should generate an aggressively compact Linked Data binary
+format.
+      </dd>
+      <dt>Generalized Algorithm</dt>
+      <dd>
+The encoding algorithm must be generalized.
+      </dd>
+      <dt>Semantic Compression</dt>
+      <dd>
+The encoding format should maximize compression of Linked Data URLs (terms and
+values). Focusing here ensures that the algorithms can achieve compression
+ratios better than generalized compression algorithms.
+      </dd>
+      <dt>Raw Binary</dt>
+      <dd>
+Base-encoded binary values, and other compressible data types, should be
+translated to their raw binary forms from base-encoded formats when possible
+without sacrificing generality.
+      </dd>
+    </dl>
+
+    <p>
+Similarly, the following are non-goals.
+    </p>
+
+    <ul>
+      <li>
+Theoretical purity.
+      </li>
+      <li>
+Creating new compaction/expansion algorithms specifically for CBOR-LD.
+      </li>
+      <li>
+Large centralized registries for every term on the planet.
+      </li>
+      <li>
+Data formats that require large spec changes or complex implementations to
+roundtrip from JSON-LD to CBOR-LD and back.
+      </li>
+    </ul>
+
+    <p>
+The following minefields have been identified while working on this
+specification:
+    </p>
+
+    <ul>
+      <li>
+While it is widely believed that hashing is fast, it's slower than string
+comparison over a small set of strings. This is true because in order to hash,
+you must consume the entire string. If you are performing string comparisons,
+you can abort the second the byte-for-byte comparison fails. That is, when
+processing two values, string comparison can abort processing and hashing
+cannot. While most globally collision-resistant hashes are 256-bits, 32 byte
+values are large and we can do better in many cases without sacrificing
+collision resistance (which hashing algorithms like blake2b-8 cannot do).
+      </li>
+      <li>
+Anything that requires you to pre-process the JSON-LD data is a non-starter --
+it's expensive, and that means that you are encoding semantics in the data.
+While this can lead to better compression in some cases, it increases the
+complexity of the processors without providing an acceptable return on
+investment.
+      </li>
+      <li>
+Scoped contexts are the most challenging aspect of a more generalized solution.
+The deeper the algorithm has to understand scoping, the more combinatorial the
+problem becomes and thus the more possible compression values there are, which
+harms compression size. The trick is to leverage the determinism in the existing
+JSON-LD Processing algorithms and take shortcuts only when it won't affect
+JSON-LD processing.
+      </li>
+    </ul>
+
+  </section>
+</section>
+
+  <section class="informative">
+    <h1>Basic Concept</h1>
+    <p>
+At a high level, CBOR-LD is a compact, binary serialization for JSON-LD that allows
+the following mechanisms for additional compression:
+      <ul>
+        <li>
+<b>Semantic compression</b>: Dynamically creates a mapping from JSON-LD terms to integers,
+by parsing JSON-LD contexts used by a JSON-LD document. These mappings are created
+in an invertible way.
+        </li>
+        <li>
+<b>Typed-value compression (codec)</b>: Dynamically compresses typed values in an invertible
+way, based on an <i>a priori</i> understanding of the data type (e.g., removes scheme
+strings from URLs).
+        </li>
+        <li>
+<b>Typed-value compression (registry dictionary)</b>: Creates static dictionaries, listed in
+a CBOR-LD Registry Entry, for use-case-specific, typed-value compression.
+        </li>
+      </ul>
+    </p>
+    <p>
+Codecs are the basic primitive for compressing typed values in a generic way. Semantic compression
+is for compressing JSON-LD terms. Registry dictionaries are for compressing typed values in a
+use-case-specific way. Each of these is optional — CBOR-LD can be used with any, all, or none of
+these compression strategies. Taken together, the set of these strategies that is used for
+a particular use case is known as a <i>processing model</i>.
+    </p>
+  </section>
+  <section class="informative">
+    <h1>Semantic Compression</h1>
+      <p>
+Semantic compression is a powerful tool for creating compact CBOR-LD payloads. The core idea is
+to use the information content of external JSON-LD context objects to compress JSON-LD terms.
+These external context objects are available to both the creator and the consumer of the
+payload, so this is done in an invertible way.
+    </p>
+    <p>
+The general semantic compression process is to take a JSON-LD Document and do
+the following:
+    </p>
+    <ol>
+      <li>
+Determine whether JSON-LD can be compressed (find `@context` values in JSON-LD document
+that reference contexts via URIs; embedded context values cannot be compressed).
+      </li>
+      <li>
+Process the JSON-LD contexts, building a CBOR-LD term-codec map — a list
+of all terms that can be compressed. Sort the list (into Unicode code point order).
+Associate byte values with each term, starting at 0 and counting up.
+      </li>
+      <li>
+Encode the JSON-LD Document into CBOR-LD. This consists of replacing every key with
+the byte value associated with the term from the term-codec map.
+      </li>
+      <li>
+If and when the original JSON-LD is required, decoding from CBOR-LD to JSON-LD consists
+of replacing every CBOR byte value with the associated key from the term-codec map.
+      </li>
+    </ol>
+  </section>
+
+  <section class="normative">
+    <h1>CBOR Tags for CBOR-LD</h1>
+    <p>
+CBOR-LD payloads need to be identifiable as such at the binary level. CBOR natively supports
+this via its "tag" feature — a header value in the binary data that describes the rest of the
+payload via a global registry.
+    </p>
+    <p>
+The CBOR tag `0xCB1D` (tag value `51997`) has been registered
+in <a href="https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml">the
+IANA CBOR tag registry</a> to be used for CBOR-LD. The data that immediately
+follows this tag value identifies the registry entry that was used to create
+the compressed payload.
+    </p>
+    <p>
+CBOR-LD payloads MUST be structured such that the item tagged with tag `0xCB1D` is
+a two-element array, and the first element MUST be a
+<a href=https://datatracker.ietf.org/doc/html/rfc8949#name-major-types>major type 0 integer</a>.
+This integer is a CBOR-LD Registry Entry ID. The binary structure is `tag([registryEntryId, payload])`.
+      </p>
+      <p>
+The value of the CBOR-LD Registry Entry ID is then used to look up a <b>CBOR-LD Registry Entry</b>
+in the <b>CBOR-LD Registry</b>.
+      </p>
+    <section>
+      <h2>CBOR-LD Registry</h2>
+      <p>
+To enable unbounded extension of possible use cases for CBOR-LD that require different
+compression table material for consumption while working with a single
+CBOR tag value, we define the following.
+      </p>
+      <p>
+The <dfn>CBOR-LD Registry</dfn> is a global list that provides consumers of
+CBOR-LD payloads the information they need to reconstruct the term-codec map required
+for decompression. A <dfn>CBOR-LD Registry Entry</dfn> contains the following:
+      </p>
+        <ul>
+          <li>
+`Registry Entry ID`: A positive integer.
+          </li>
+          <li>
+`Use Case`: The type of CBOR-LD payload this entry is to be used for.
+          </li>
+          <li>
+`typeTables`: An array containing the registry dictionaries that are to be used with this
+registry entry.
+          </li>
+          <li>
+`processingModel`: what processing model is used for this registry entry. A processing model
+specifies the following:
+            <ul>
+              <li>
+Whether or not semantic compression is used for dynamic JSON-LD term compression,
+              </li>
+              <li>
+The codecs used for dynamic typed-value compression.
+              </li>
+            </ul>
+The `default` processing model uses semantic compression and includes the codecs specified in this document.
+          </li>
+          <li>
+`provisional`: a boolean indicating whether the entry is provisional. Provisional entries
+may change or be removed.
+          </li>
+        </ul>
+      <p>
+The string "callerProvidedTable", may appear in `typeTables`, denoting that for this use case, a
+`Type Table` is required which is not globally defined.
+      </p>
+      <section>
+        <h3>Registry</h3>
+      </section>
+      <p>
+The current CBOR-LD Registry can be found <a href="https://json-ld.github.io/cborld-registry/">here</a>.
+      </p>
+      <p>
+To register an entry, follow the instructions in <a href="https://github.com/json-ld/cborld-registry">the README</a>. The registry is owned by the W3C JSON-LD Community Group.
+      </p>
+
+    </section>
+  </section>
+  <section class="normative">
+    <h1>Algorithms</h1>
+In this section, we specify the algorithms required to convert JSON-LD to CBOR-LD
+and vice versa. The majority of the algorithms in this section relate to the semantic
+compression feature and are not used in conversions between CBOR-LD and JSON-LD where
+the CBOR-LD payload does not use semantic compression.
+      <h2>Encoding and Decoding</h2>
+      <section>
+        <h3>JSON-LD to CBOR-LD Encoding Algorithm</h3>
+        <p>
+This algorithm takes a map `typeTable`, an integer `registryEntryId`, and a JSON-LD
+document `jsonldDocument` as inputs, and returns a hexadecimal string `cborldBytes`.
+        </p>
+        <ol>
+          <li>
+Set `prefix` to the result of passing `registryEntryId` to
+<a href="#get-cbor-tag-structure-algorithm"></a>.
+          </li>
+          <li>
+Set `state` to an empty map.
+          </li>
+          <li>
+If the registry entry associated with `registryEntryId` requires semantic compression:
+          <ol>
+            <li>
+Set `state.strategy` to "compression".
+            </li>
+            <li>
+Set `state.typeTable` to `typeTable`.
+            </li>
+            <li>
+Set `state.registryEntryId` to `registryEntryId`.
+            </li>
+            <li>
+Set `state` to the result of passing `state` to
+<a href="#initialize-conversion-algorithm"></a>.
+            </li>
+            <li>
+Set `output` to the result of passing `state` and `jsonldDocument`
+as `inputDocument` to <a href="#convert-document-algorithm"></a>.
+            </li>
+            <li>
+Set `suffix` to the CBOR encoding of `output`.
+            </li>
+          </ol>
+          </li>
+          <li>
+Otherwise, set `suffix` to the CBOR encoding of `jsonldDocument`.
+          </li>
+          <li>
+Set `cborldBytes` to a hexidecimal encoding of `prefix` prepended to `suffix`.
+          </li>
+          <li>
+Return `cborldBytes`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>CBOR-LD to JSON-LD Decoding Algorithm</h3>
+        <p>
+This algorithm takes a CBOR-LD payload `cborldBytes`, and returns a JSON-LD document `jsonldDocument`.
+        </p>
+        <ol>
+          <li>
+Set `result` to the result of passing `cborldBytes` to
+<a href="#get-registry-entry-id-algorithm"></a>.
+          </li>
+          <li>
+Set `state`.`registryEntryId` to `result`.`registryEntryId` and `suffix` to `result`.`suffix`.
+          </li>
+          <li>
+Set `state` to an empty map.
+          </li>
+          <li>
+If the registry entry associated with `state`.`registryEntryId` uses semantic compression:
+          <ol>
+            <li>
+Set `state.strategy` to "decompression".
+            </li>
+            <li>
+For each entry <em>`type`: `map`</em> in the `typeTables` array in the CBOR-LD Varint Registry Entry
+associated with `registryEntryId`, add that entry to `state`.`typeTable`, and set the value of `type`
+in `state`.`reverseTypeTable` to `inverseMap`, where `inverseMap` is `map` with the mapping inverted.
+            </li>
+            <li>
+Set `state` to the result of passing `state` to
+<a href="#initialize-conversion-algorithm"></a>.
+            </li>
+            <li>
+Set `input` to the result of decoding `suffix` from bytes to a map.
+            </li>
+            <li>
+Set `jsonldDocument` to the result of passing `state` and `input` as `inputDocuments`
+to <a href="#convert-document-algorithm"></a>.
+            </li>
+          </ol>
+          </li>
+          <li>
+Otherwise, set `jsonldDocument` to the result of parsing `cborldBytes`.
+          </li>
+          <li>
+Return `jsonldDocument`.
+          </li>
+        </ol>
+      </section>
+    <section>
+      <h2>Conversion Algorithms</h2>
+      <p>
+The algorithms in this section describe the behavior of a "converter" for abstractly
+converting inputs between data forms. When used in conjunction with a "strategy",
+such as the "compression" and "decompression" strategies defined later in this section,
+these algorithms can be instantiated to convert between concrete data forms. The
+"compression" strategy converts from JSON-LD to CBOR-LD, while the "decompression"
+strategy converts from CBOR-LD to JSON-LD.
+      </p>
+      <section>
+        <h3>Initialize Conversion Algorithm</h3>
+        <p>
+This algorithm takes and returns a map `state`.
+        </p>
+        <ol>
+          <li>
+Set `state` to the result of passing `state` to
+<a href="#initialize-context-loader-algorithm"></a>.
+          </li>
+          <li>
+Set `state.initialActiveContext` to the result of passing empty maps `termMap` and
+`previousActiveContext` to <a href="#initialize-active-context-algorithm"></a>.
+          </li>
+          <li>
+Set `state.typesEncodedAsBytes` to an empty set.
+          </li>
+          <li>
+Add "none", "http://www.w3.org/2001/XMLSchema#date", "http://www.w3.org/2001/XMLSchema#dateTime",
+and "url" to `state.typesEncodedAsBytes`.
+          </li>
+          <li>
+Return `state`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Convert Document Algorithm</h3>
+        <p>
+This algorithm takes a map `state` and a map or array of
+maps `inputDocuments`, and returns a map containing a map `state` and a map or
+array of maps `outputMaps`.
+        </p>
+        <ol>
+          <li>
+If `inputDocuments` is  an array, set `inputs` to `inputDocuments`. Otherwise, set `inputs`
+to `[inputDocuments]`.
+          </li>
+          <li>
+Set `outputMaps` to an empty array.
+          </li>
+          <li>
+For `input` in `inputs`:
+            <ol>
+              <li>
+Set `output` to an empty map.
+              </li>
+              <li>
+Set `result` to the result of passing `state`, `input`, `output`, and
+`state.initialActiveContext` as `activeContext` to
+<a href="#general-conversion-algorithm"></a>.
+              </li>
+              <li>
+Add `result.output` to `outputMaps`.
+              </li>
+              <li>
+Set `state` to `result.state`.
+              </li>
+            </ol>
+          </li>
+          <li>
+If `inputDocuments` is an array, return `outputMaps`. Otherwise, return the
+first element of `outputMaps`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>General Conversion Algorithm</h3>
+        <p>
+This algorithm takes maps `input`, `output`, `state`, and `activeContext`
+as inputs, and returns a map containing maps `state` and `output`.
+        </p>
+        <ol>
+          <li>
+If `state.strategy` is set to "compression":
+            <ol>
+              <li>
+Set `contextConversionResult` to the result of
+<a href="#convert-contexts-for-compression-algorithm"></a>, passing
+`state`, `activeContext`, `input`, and `output`.
+              </li>
+              <li>
+Set `activeContext` to `contextConversionResult.activeContext`, `output`
+to `contextConversionResult.output`, and `state` to `contextConversionResult.state`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Otherwise, set `activeContext` to
+`result.activeContext` and `state` to `result.state` of `result` resulting from
+<a href="#convert-contexts-for-decompression-algorithm"></a>, passing `state`,
+`activeContext`, `input`, and `output`.
+          </li>
+          <li>
+If `state.strategy` is set to "compression", set `state` to `result.state` and
+`objectTypes` to `result.objectTypes` for `result` resulting from
+<a href="#get-object-types-for-compression-algorithm"></a>, passing `state`,
+`activeContext`, `input`, and `output`.
+          </li>
+          <li>
+Otherwise, set `state` to `result.state` and `objectTypes` to `result.objectTypes`
+for `result` resulting from <a href="#get-object-types-for-decompression-algorithm"></a>,
+passing `state`, `activeContext`, `input`, and `output`.
+          </li>
+          <li>
+Set `activeContext` to the result of passing `activeContext` and `objectTypes` to
+<a href="#apply-type-scoped-contexts-algorithm"></a>.
+          </li>
+          <li>
+If `state.strategy` is set to "compression", set `state` to `result.state` and
+`termEntries` to `result.termEntries` for `result` resulting from
+<a href="#get-input-entries-for-compression-algorithm"></a>, passing `state`,
+`input`, and `activeContext`.
+          </li>
+          <li>
+Otherwise, set `state` to `result.state`, `output` to `result.output`,
+and `termEntries` to `result.termEntries` for `result` resulting from
+<a href="#get-input-entries-for-decompression-algorithm"></a>,
+passing `state`, `input`, output, and `activeContext`.
+          </li>
+          <li>
+For `[termInfo, value]` in `termEntries`:
+            <ol>
+              <li>
+Set `term` to `termInfo.term`.
+              </li>
+              <li>
+Set `valueActiveContext` to the result of passing `activeContext` and `term` to
+<a href="#apply-property-scoped-contexts-algorithm"></a>.
+              </li>
+              <li>
+Set `plural` to the value of `termInfo.plural` and `termType` to the value of `@type`
+in `termInfo.def`.
+              </li>
+              <li>
+If `plural` is set to `true`, set `values` to the value of `value`. Otherwise, set `values` to
+an array containing the value of `value` as a single element.
+              </li>
+              <li>
+Set `outputs` to an empty array.
+              </li>
+              <li>
+For `unconvertedValue` in `values`:
+                <ol>
+                  <li>
+Set `result` to the result of <a href="#convert-value-algorithm"></a>,
+passing `state`, `termType`, `unconvertedValue` as `value`, and `valueActiveContext`
+as `activeContext`.
+                  </li>
+                  <li>
+Set `state` to `result.state` and add `result.output` to `outputs`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+If `plural` is set to `true`, set `outputValues` to `outputs`. Otherwise, set `outputValues`
+to the first element of `outputs`.
+              </li>
+              <li>
+If `state.strategy` is set to "compression", set the value of `termInfo.termId` to map to
+`outputValues` in `output`. Otherwise, set the value of `termInfo.term` to map to `outputValues`
+in `output`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Set `result` to be an empty map.
+          </li>
+          <li>
+Set `result.state` to `state` and `result.output` to `output`.
+          </li>
+          <li>
+Return `result`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Convert Value Algorithm</h3>
+        <p>
+This algorithm takes maps `state`, `activeContext`, `termInfo`, and values `value` and `termType`.
+It returns a `result` object containing maps `state` and `output`.
+        </p>
+        <ol>
+          <li>
+If `value` is `null`, return `null`.
+          </li>
+          <li>
+If `state`.`strategy` is set to "compression", set `output` to the result of passing `state`, `termType`,
+`termInfo`, and `value` to <a href="#convert-value-for-compression-algorithm"></a>.
+          </li>
+          <li>
+Otherwise, set `output` to the result of passing `state`, `termType`,
+`termInfo`, and `value` to <a href="#convert-value-for-decompression-algorithm"></a>.
+          </li>
+          <li>
+If `output` is defined, return `result`, a map contatining `state` and `output`.
+          </li>
+          <li>
+If `value` is an array:
+            <ol>
+              <li>
+Set `outputs` to be an empty array.
+              </li>
+              <li>
+For `element` of `value`:
+                <ol>
+                  <li>
+Let `result` be the result of <a href="#convert-value-algorithm"></a>, passing `activeContext`, `state`,
+`termInfo`, `termType`, and `element` as `value`. Set `state` to `result`.`state` and add `result`.`output`
+to `outputs`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+Set `result` to be an empty map. Set `result`.`state` to `state` and `result`.`output` to `outputs`.
+              </li>
+              <li>
+                Return `result`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Set `output` to an empty map.
+          </li>
+          <li>
+Set `result` to the result of <a href="#general-conversion-algorithm"></a>, passing `state`,
+`activeContext`, `value` as `input`, and `output`.
+          </li>
+          <li>
+Return `result`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Compression Strategy Algorithms</h3>
+        <p>
+The algorithms in this section define the "compression" strategy
+to be used with the "conversion" algorithms defined previously to
+convert JSON-LD to CBOR-LD.
+        </p>
+        <section>
+          <h4>Convert Contexts for Compression Algorithm</h4>
+          <p>
+This algorithm takes maps `state`, `activeContext`, `input`, and `output`,
+and returns a map `result` containing maps `output`, `state`, and `activeContext`.
+          </p>
+          <ol>
+            <li>
+Set `applyEmbeddedResult` to the result of <a href="#apply-embedded-contexts-algorithm"></a>,
+passing `state`, `activeContext`, and `input`.
+            </li>
+            <li>
+Set `activeContext` to `applyEmbeddedResult.activeContext` and `state` to
+`applyEmbeddedResult.state`.
+            </li>
+            <li>
+If "@context" does not have an entry in `input`:
+              <ol>
+                <li>
+Set `result` to an empty map.
+                </li>
+                <li>
+Set `result.state` to `state` and `result.activeContext` to `activeContext`.
+                </li>
+                <li>
+Return `result`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set `context` to the value of "@context" in `input`.
+            </li>
+            <li>
+Set `encodedContexts` to an empty array.
+            </li>
+            <li>
+If `context` is an array, set `isArray` to `true` and `contexts` to `context`.
+Otherwise, set `isArray` to `false` and `contexts` to `[context]`.
+            </li>
+            <li>
+For `contextValue` in `contexts`:
+              <ol>
+                <li>
+Set `encoderData` to the result of <a href="#create-context-encoder"></a>, passing
+`state.typeTable` and `contextValue`.
+                </li>
+                <li>
+If `encoderData` is an empty map, add `contextValue` to `encodedContexts`.
+                </li>
+                <li>
+Otherwise, add the value of `encoderData` to `encodedContexts`.
+                </li>
+              </ol>
+            </li>
+            <li>
+If `isArray` is `true`, set `id` to the value of "@context" in `state.keywordsMap` plus 1
+and set the value of `id` in `output` to `encodedContexts`.
+            </li>
+            <li>
+Otherwise, set `id` to the value of "@context" in `state.keywordMap` and set the value of
+`id` in `output` to the first element of `encodedContexts`.
+            </li>
+            <li>
+Set `result.output` to `output`, `result.state` to `state`, and `result.activeContext`
+to `activeContext`.
+            </li>
+            <li>
+Return `result`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Convert Value for Compression Algorithm</h4>
+          <p>
+This algorithm takes maps `state` and `termInfo`, and values `valueToEncode` and `termType`,
+and returns a map `encoderData`.
+          </p>
+          <ol>
+            <li>
+If `valueToEncode` is an object, return.
+            </li>
+            <li>
+Otherwise, set `result` to the result of <a href="#create-value-encoder"></a>, passing
+`state`, `termInfo`, `valueToToEncode`, and `termType`.
+            </li>
+            <li>
+Return `result`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Get Input Entries for Compression Algorithm</h4>
+          <p>
+This algorithm takes maps `state`, `activeContext`, and `input`, and returns a map `state` and an array `entries`.
+          </p>
+          <ol>
+            <li>
+Initialize `entries` as an empty array.
+            </li>
+            <li>
+Set an array `keys` to the keys of `input`, sorted lexicographically.
+            </li>
+            <li>
+For `key` in `keys`:
+              <ol>
+                <li>
+If `key` is "@context", continue.
+                </li>
+                <li>
+Set `value` to the value of `key` in `input`.
+               </li>
+                <li>
+If `value` is an array, set `plural` to `true`. Otherwise, set `plural` to `false`.
+                </li>
+                <li>
+If `key` does not have an entry in `state`.`termToId`, set `termId` to `key`.
+                </li>
+                <li>
+Otherwise, if `plural` is `true`, set `termId` to the value of `key` in `state`.`termToId` plus 1.
+                </li>
+                <li>
+Otherwise, set `termId` to the value of `key` in `state`.`termToId`.
+                </li>
+                <li>
+If `activeContext`.`termMap` has an entry for `key`, set `definition` to the value of `key` in
+`activeContext`.`termMap`. Otherwise, set `definition` to an empty map.
+                </li>
+                <li>
+Set `entryTerm` to be a new map.
+                </li>
+                <li>
+Set the value of "term" in `entryTerm` to be the value of `key`. Add `termId`, `plural`, and `definition`
+to `entryTerm`.
+                </li>
+                <li>
+Create an array `entry` with two elements, `entryTerm` and `value`.
+                </li>
+                <li>
+Add `entry` to `entries`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return a map `result` containing `entries` and `state`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Get Object Types for Compression Algorithm</h4>
+          <p>
+This algorithm takes maps `activeContext` and `input`, and returns a set
+`objectTypes`.
+          </p>
+          <ol>
+            <li>
+Set `objectTypes` to be an empty set.
+            </li>
+            <li>
+For `term` in `activeContext`.`typeTerms`:
+              <ol>
+                <li>
+If `term` has an entry in `input`:
+                  <ol>
+                    <li>
+Set `types` to the value of `term` in `input`.
+                    </li>
+                    <li>
+Add each value in `types` to `objectTypes`.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `objectTypes`.
+            </li>
+          </ol>
+        </section>
+      </section>
+      <section>
+        <h3>Decompression Strategy Algorithms</h3>
+        <p>
+The algorithms in this section define the "decompression" strategy
+to be used with the "conversion" algorithms defined previously to
+convert CBOR-LD to JSON-LD.
+        </p>
+        <section>
+          <h4>Convert Contexts for Decompression Algorithm</h4>
+          <p>
+This algorithm takes maps `state`, `activeContext`, `input`, and `output`, and returns a map
+`result` containing maps `output`, `state`, and `activeContext`.
+          </p>
+          <ol>
+            <li>
+Set `decoderData` to the result of <a href="#create-context-decoder"></a>, passing `state`.`reverseTypeTable`.
+            </li>
+            <li>
+Set `contextTermId` to the value of "@context" in `state`.`keywordsMap`.
+            </li>
+            <li>
+If `contextTermId` has an entry in `input`, set the value of
+"@context" in `output` to the result of <a href="#decode-context"></a>, passing `decoderData` and
+the value of `contextTermId` in `input` as `value`.
+            </li>
+            <li>
+Set `contextTermIdPlural` to the value of `contextTermId` plus 1.
+            </li>
+            <li>
+If `contextTermIdPlural` has an entry in `input`:
+              <ol>
+                <li>
+If `contextTermId` also had an entry in `input` during the previous check, throw an
+`ERR_INVALID_ENCODED_CONTEXT` error.
+                </li>
+                <li>
+Set `encodedContexts` to be the value of `contextTermIdPlural` in `input`. If `encodedContexts` is
+not an array, throw an `ERR_INVALID_ENCODED_CONTEXT` error.
+                </li>
+                <li>
+Set `contexts` to be an empty array.
+                </li>
+                <li>
+For each `valueToDecode` in `encodedContexts`, add the result of passing `decoderData` and `valueToDecode`
+as `value` to <a href="#decode-context"></a> to `contexts`.
+                </li>
+                <li>
+Set the value of "@context" in `output` to `contexts`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set `embeddedContextResult` to the result of <a href="#apply-embedded-contexts-algorithm"></a>, passing
+`activeContext`, `output` as `input`, and `state`.
+            </li>
+            <li>
+Set `result` to an empty map.
+            </li>
+            <li>
+Set `result`.`state` to `embeddedContextResult`.`state` and `result.activeContext` to
+`embeddedContextResult`.`activeContext`.
+            </li>
+            <li>
+Return `result`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Convert Value for Decompression Algorithm</h4>
+          <p>
+This algorithm takes maps `state` and `termInfo`, and values `termType` and `valueToDecode`, and returns a value
+`decodedValue`.
+          </p>
+          <ol>
+            <li>
+If `value` is a map, return.
+            </li>
+            <li>
+Set `decoderData` to the result of <a href="#create-value-decoder"></a>, passing `valueToDecode`,
+`state`, `termInfo`, and `termType`.
+            </li>
+            <li>
+Set `decodedValue` to the result of <a href="#decode-value"></a>, passing `decoderData`.
+            </li>
+            <li>
+Return `decodedValue`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Get Input Entries for Decompression Algorithm</h4>
+          <p>
+This algorithm takes maps `state`, `activeContext`, and `input`, and returns a map `state` and an array
+`entries`.
+          </p>
+          <ol>
+            <li>
+Initialize `entries` to an empty array.
+            </li>
+            <li>
+For key-value pair `key` and `value` in `input`:
+              <ol>
+                <li>
+If `key` is the value of "@context" in `state`.`keywordsMap` or that value plus 1, continue.
+                </li>
+                <li>
+Otherwise, if `key` is a string, set `plural` to false and `term` to `key`.
+                </li>
+                <li>
+Otherwise:
+                  <ol>
+                    <li>
+If `key` is odd, set `plural` to true. Otherwise, set `plural` to false.
+                    </li>
+                    <li>
+If `plural` is `true`, set `term` to the value of `id` minus 1 in `state`.`idToTerm`.
+If that value does not have an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                    <li>
+Otherwise, set `term` to the value of `id` in `state`.`idToTerm`. If that value does not have
+an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set `definition` to the value of `term` in `activeContext`.`termMap`.
+                </li>
+                <li>
+Set `entryTerm` to be a new map.
+                </li>
+                <li>
+Set the value of "termId" in `entryTerm` to be the value of `key`. Add `term`, `plural`, and `definition`
+to `entryTerm`.
+                </li>
+                <li>
+Create an array `entry` with two elements, `entryTerm` and `value`.
+                </li>
+                <li>
+Add `entry` to `entries`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Sort `entries` by the value of `term` in each element of `entries`.
+            </li>
+            <li>
+Return a map `result` containing `entries` and `state`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Get Object Types for Decompression Algorithm</h4>
+          <p>
+This algorithm takes maps `state`, `activeContext`, `input` as inputs, and
+returns a map `state` and a set `objectTypes`.
+          </p>
+          <ol>
+            <li>
+Set `objectTypes` to be an empty set.
+            </li>
+            <li>
+For `term` in `activeContext`.`typeTerms`:
+              <ol>
+                <li>
+If `term` does not have an entry in `state`.`termToId`, set `termId` to `term`.
+                </li>
+                <li>
+Otherwise, set `termId` to the value of `term` in `state`.`termToId`.
+                </li>
+                <li>
+If neither `termId` nor `termId` plus 1 are present in `input`, continue.
+                </li>
+                <li>
+Otherwise, if `termId` is present in `input`, set `value` to the value of `termId` in `input`.
+                </li>
+                <li>
+Otherwise, set `value` to the value of `termId` plus 1 in `input`.
+                </li>
+                <li>
+If `key` is a string, set `plural` to false and `term` to `key`.
+                </li>
+                <li>
+Otherwise:
+                  <ol>
+                    <li>
+If `key` is odd, set `plural` to true. Otherwise, set `plural` to false.
+                    </li>
+                    <li>
+If `plural` is `true`, set `term` to the value of `id` minus 1 in `state`.`idToTerm`.
+If that value does not have an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                    <li>
+Otherwise, set `term` to the value of `id` in `state`.`idToTerm`. If that value does not have
+an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set `definition` to the value of `term` in `activeContext`.`termMap`.
+                </li>
+                <li>
+Set `termInfo` to be a new map.
+                </li>
+                <li>
+Add `term`, `termId`, `plural`, and `definition` to `termInfo`.
+                </li>
+                <li>
+If `value` is not an array, set `values` to be an array containing as a single element `value`.
+Otherwise, set `values` to the value of `value`.
+                </li>
+                <li>
+For each `value` in `values`:
+                  <ol>
+                    <li>
+Set `decoderData` to the result of <a href="#create-value-decoder"></a>, passing `value`,
+`termInfo`, `state`, and "@vocab" as `termType`.
+                    </li>
+                    <li>
+If `decoderData` exists, add the result of <a href="#decode-value"></a>, passing `decoderData`, to `objectTypes.
+                    </li>
+                    <li>
+Otherwise, add `value` to `objectTypes`.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `objectTypes`.
+            </li>
+          </ol>
+        </section>
+      </section>
+    </section>
+
+    <section>
+      <h2>Active Context Processing</h2>
+        <p>
+The algorithms in this section describe how to determine
+what components of the context documents associated with a JSON-LD
+document are in use at any point during compression or decompression.
+These algorithms include how to apply embedded, type-scoped, and
+property-scoped contexts with CBOR-LD. This is in contrast to the Context
+Loading algorithms defined later in this specification, which describe how
+to construct the mappings from terms to integers that are the core CBOR-LD
+compression technique. Together, the Active Context Processing and Context
+Loading algorithms specify how JSON-LD context documents should be processed
+when converting to and from CBOR-LD.
+        </p>
+        <section>
+          <h3>Initialize Active Context Algorithm</h3>
+          <p>
+This algorithm takes maps `previousActiveContext` and `termMap`,
+and returns a map `activeContext`. It updates the active context
+in use and finds all aliases for `'@type'`.
+          </p>
+          <ol>
+            <li>
+Set `activeContext` to a new map.
+            </li>
+            <li>
+Set `activeContext.previousActiveContext` to `previousActiveContext`.
+            </li>
+            <li>
+Set `activeContext.termMap` to `termMap`.
+            </li>
+            <li>
+Set `activeContext.typeTerms` to the array `['@type']`.
+            </li>
+            <li>
+For `[term, def]` in `termMap`:
+              <ol>
+                <li>
+If the value of "@id" in `def` is "@type", add `term` to `activeContext.typeTerms`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `activeContext`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h3>Apply Embedded Contexts Algorithm</h3>
+            <p>
+This algorithm takes maps `state`, `activeContext`, and `input` as inputs, and
+returns a map `result` containing maps `state` and `activeContext`.
+            </p>
+            <ol>
+              <li>
+Set `termMapUpdateResult` to the result of passing `state`, `activeContext.termMap` as
+`activeTermMap`, and the value of '@context' in `input` as `contexts` to
+<a href="#update-term-map-algorithm"></a>.
+              </li>
+              <li>
+Set `state` to `termMapUpdateResult.state`.
+              </li>
+              <li>
+Set `termMap` to `termMapUpdateResult.activeTermMap`.
+              </li>
+              <li>
+Set `newActiveContext` to the result of <a href="#initialize-active-context-algorithm"></a>,
+passing `termMap` and `activeContext` as `previousActiveContext`.
+              </li>
+              <li>
+Set `result` to be a new map, and set `result.activeContext` to `newActiveContext` and
+`result.state` to `state`.
+              </li>
+              <li>
+Return `result`.
+              </li>
+            </ol>
+        </section>
+        <section>
+          <h3>Apply Property Scoped Contexts Algorithm</h3>
+          <p>
+This algorithm takes maps `state`, `activeContext`, and a string `term` as inputs and
+returns a map `result` containing maps `state` and `activeContext`.
+          </p>
+          <ol>
+            <li>
+Set `revertedTermMap` to the result of <a href="#revert-term-map-algorithm"></a>,
+passing `activeContext`.
+            </li>
+            <li>
+Set `termDef` to the value of `term` in `activeContext.termMap`. Set `contexts` to the value of
+"@context" in `termDef`.
+            </li>
+            <li>
+Set `termMapUpdateResult` to the result of passing `state`, `revertedTermMap` as
+`activeTermMap`, `true` as `propertyScope`, and `contexts` to
+<a href="#update-term-map-algorithm"></a>.
+            </li>
+            <li>
+Set `state` to `termMapUpdateResult.state`.
+            </li>
+            <li>
+Set `termMap` to `termMapUpdateResult.activeTermMap`.
+            </li>
+            <li>
+Set `newActiveContext` to the result of <a href="#initialize-active-context-algorithm"></a>,
+passing `termMap` and `activeContext` as `previousActiveContext`.
+            </li>
+            <li>
+Set `result` to be a new map, and set `result.activeContext` to `newActiveContext` and
+`result.state` to `state`.
+            </li>
+            <li>
+Return `result`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h3>Apply Type Scoped Contexts Algorithm</h3>
+          <p>
+This algorithm takes maps `state`, `activeContext` ,and a set `objectTypes` as inputs, and
+returns a map `result` containing maps `state` and `activeContext`.
+          </p>
+          <ol>
+            <li>
+Set `objectTypesSorted` to an empty array.
+            </li>
+            <li>
+Lexicographically sort the elements of `objectTypes` and add the elements to
+`objectTypesSorted` in order.
+            </li>
+            <li>
+Set `newTermMap` to `activeContext.termMap`.
+            </li>
+            <li>
+For `type` in `objectTypesSorted`:
+              <ol>
+                <li>
+Set `typeDef` to the value of `type` in `newTermMap`. Set `contexts` to the value of
+"@context" in `typeDef`.
+                </li>
+                <li>
+Set `termMapUpdateResult` to the result of passing `state`, `newTermMap` as
+`activeTermMap`, `contexts`, and `true` as `typeScope` to
+<a href="#update-term-map-algorithm"></a>.
+                </li>
+                <li>
+Set `state` to `termMapUpdateResult.state` and `newTermMap` to
+`termMapUpdateResult.activeTermMap`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set `newActiveContext` to the result of <a href="#initialize-active-context-algorithm"></a>,
+passing `newTermMap` as `termMap` and `activeContext` as `previousActiveContext`.
+            </li>
+            <li>
+Set `result` to be a new map, and set `result.activeContext` to `newActiveContext` and
+`result.state` to `state`.
+              </li>
+              <li>
+Return `result`.
+              </li>
+          </ol>
+        </section>
+        <section>
+          <h3>Update Term Map Algorithm</h3>
+          <p>
+This algorithm takes maps `state`, `activeTermMap`, and map or array `contexts` as well as booleans `typeScope`
+and `propertyScope`, both of which default to `false` if not provided, as inputs. It returns maps `state`
+and `activeTermMap`.
+          </p>
+          <ol>
+            <li>
+If `contexts` is not an array, set `contexts` to be an array with the previous value of `contexts`
+as its sole element.
+            </li>
+            <li>
+Set `allowProtectedOverride` to the value of `propertyScope`.
+            </li>
+            <li>
+Set `propagateDefault` to the negation of the value of `typeScope`.
+            </li>
+            <li>
+For `contextIdentifier` in `contexts`:
+              <ol>
+                <li>
+Set `loadResult` to the result of <a href="#load-context-algorithm"></a>, passing `state` and
+`contextIdentifier`.
+                </li>
+                <li>
+Set `entry` to `loadResult`.`entry`, `context` to `entry`.`context`, and `state` to `loadResult`.`state`.
+                </li>
+                <li>
+If `@propagate` appears in `context`, set `propagate` to the value of `@propagate` in `context`.
+Otherwise, set `propagate` to the value of `propagateDefault`.
+                </li>
+                <li>
+Set `newTermMap` to be an empty map. For [`key`, `value`] in `entry`.`termMap`:
+                  <ol>
+                    <li>
+Shallow copy the contents of `value` into a new map `newValue` and add `propagate`
+to `newValue`.
+                    </li>
+                    <li>
+Set the value of `key` in `newTermMap` to `newValue`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+For [`term`, `activeDef`] in `activeTermMap`:
+                  <ol>
+                    <li>
+Let `def` be the value of `term` in `newTermMap`.
+                    </li>
+                    <li>
+If `def` is defined:
+                      <ol>
+                        <li>
+If the value of `protected` in `activeDef` is `true`:
+                          <ol>
+                            <li>
+If `allowProtectedOverride` is set to `false` and `def` is not identical to `activeDef`,
+throw an error ERR_PROTECTED_TERM_REDEFINITION.
+                            </li>
+                            <li>
+Otherwise, set the value of `term` in `newTermMap` to a map containing the values from `activeDef`
+and `propagate` set to the value of `def`.`propagate`.
+                            </li>
+                          </ol>
+                        </li>
+                      </ol>
+                    </li>
+                    <li>
+Otherwise, if `term` appears in `context`, set the value of `term` in `newTermMap` to
+a map containing all values from `activeDef`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set the value of `activeTermMap` to the value of `newTermMap`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set `result` to be an empty map.
+            </li>
+            <li>
+Set `result`.`state` to `state` and `result`.`activeTermMap` to `activeTermMap`.
+            </li>
+            <li>
+Return `result`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h3>Revert Term Map Algorithm</h3>
+          <p>
+This algorithm takes as input a map `activeContext`, and returns a map
+`newTermMap`.
+          </p>
+          <ol>
+            <li>
+Set `newTermMap` to an empty map.
+            </li>
+            <li>
+Set `nonPropagatingTerms` to an empty array.
+            </li>
+            <li>
+For `[term, def]` in `activeContext`:
+              <ol>
+                <li>
+If `def.propagate` is set to `false`, add `term` to `nonPropagatingTerms`
+and proceed to the next iteration of this loop.
+                </li>
+                <li>
+Otherwise, set the value of `term` in `newTermMap` to `def`.
+                </li>
+              </ol>
+            </li>
+            <li>
+For `term` in `nonPropagatingTerms`:
+              <ol>
+                <li>
+Set `currentContext` to `activeContext.previousActiveContext`.
+                </li>
+                <li>
+Set `def` to the value of `term` in `currentContext.termMap`.
+                </li>
+                <li>
+While `def` is not undefined and `def.propagate` is set to `false`:
+                  <ol>
+                    <li>
+Set `currentContext` to `activeContext.previousActiveContext`.
+                    </li>
+                    <li>
+Set `def` to the value of `term` in `currentContext.termMap`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+If `def` is not undefined, set the value of `term` in `newTermMap` to `def`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `newTermMap`.
+            </li>
+          </ol>
+        </section>
+    </section>
+
+    <section>
+      <h2>Context Loading</h2>
+      <p>
+The algorithms in this section define how to construct the mappings between
+terms and integers that are used as the core CBOR-LD compression technique.
+      </p>
+      <section>
+        <h3>Initialize Context Loader Algorithm</h3>
+        <p>
+This algorithm takes and returns a map `state`.
+        </p>
+        <ol>
+          <li>
+Set `state.contextMap` to a new map.
+          </li>
+          <li>
+Set `state.nextTermId` to 100.
+          </li>
+          <li>
+Set `state.keywordsMap` to the following map of JSON-LD keywords to their associated
+integer values:
+            <pre class="nohighlight">
+{
+  '@context' => 0,
+  '@type' => 2,
+  '@id' => 4,
+  '@value' => 6,
+  '@direction' => 8,
+  '@graph' => 10,
+  '@included' => 12,
+  '@index' => 14,
+  '@json' => 16,
+  '@language' => 18,
+  '@list' => 20,
+  '@nest' => 22,
+  '@reverse' => 24,
+  '@base' => 26,
+  '@container' => 28,
+  '@default' => 30,
+  '@embed' => 32,
+  '@explicit' => 34,
+  '@none' => 36,
+  '@omitDefault' => 38,
+  '@prefix' => 40,
+  '@preserve' => 42,
+  '@protected' => 44,
+  '@requireAll' => 46,
+  '@set' => 48,
+  '@version' => 50,
+  '@vocab' => 52,
+  '@propagate' => 54
+}
+            </pre>
+          </li>
+          <li>
+Add each entry in `state.keywordsMap` to `state.termToId`.
+          </li>
+          <li>
+If `state.strategy` is set to "decompression", set `state.idToTerm` to the reverse map
+of `state.termToId` (i.e., a map from integers to JSON-LD keywords).
+          </li>
+          <li>
+Return `state`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Load Context Algorithm</h3>
+        <p>
+This algorithm takes a map `state` and a context map or URL `contextIdentifier`, and returns
+`result`, a map containing maps `state` and `entry`.
+        </p>
+        <ol>
+          <li>
+If `state.contextMap` has an entry for `contextIdentifier`:
+            <ol>
+              <li>
+Initialize `result` to an empty map.
+              </li>
+              <li>
+Set `result.state` to `state`.
+              </li>
+              <li>
+Set `result.entry` to the value of `contextIdentifier` in `state.contextMap`.
+              </li>
+              <li>
+Return `result`.
+              </li>
+            </ol>
+          </li>
+          <li>
+If `context` is a string:
+            <ol>
+              <li>
+Fetch the associated context object and set `context` to the value
+of "@context" in that object.
+              </li>
+              <li>
+Set `contextUrl` to the value of `contextIdentifier`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Otherwise, set `context` to `contextIdentifier`.
+          </li>
+          <li>
+Set `result` to the result of <a href="#add-context-algorithm"></a>, passing
+`state`, `context`, and `contextUrl` if set.
+          </li>
+          <li>
+Return `result`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Add Context Algorithm</h3>
+        <p>
+This algorithm takes a map `state`, a context object `context`, and a context URL `contextUrl`,
+and returns `result`, a map containing maps `state` and `entry`.
+        </p>
+        <ol>
+          <li>
+If `context` has an entry "@import":
+            <ol>
+              <li>
+Set `importUrl` to the value of "@import" in `context.
+              </li>
+              <li>
+If `state.contextMap` does not have an entry for `importUrl`:
+                <ol>
+                  <li>
+Fetch the context object associated with `importUrl` and set `importContext` to the value of
+"@context" in that object.
+                  </li>
+                  <li>
+Set `importedContextAdditionResult` to the result of <a href="#add-context-algorithm"></a>,
+passing `state`, `importContext` as `context`, and `importUrl` as `contextUrl`.
+                  </li>
+                  <li>
+Set `state` to `importedContextAdditionResult.state` and `importEntry` to
+`importedContextAdditionResult.entry`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+Otherwise, set `importEntry` to the value of `importUrl` in `state.contextMap`.
+              </li>
+              <li>
+Set `context` to a map containing all entries from `context` as well as `importEntry.context`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Set `termMap` to an empty map.
+          </li>
+          <li>
+Set `entry` to be an object containing `context` and `termMap`.
+          </li>
+          <li>
+Set `sortedTerms` to the result of sorting the keys in `context` in lexicographic order.
+          </li>
+          <li>
+Set `isProtected` to `true` if "@protected" has an entry in `context` and `false` otherwise.
+          </li>
+          <li>
+For `term` in `sortedTerms`:
+            <ol>
+              <li>
+If `term` has an entry in `state.keywordsMap`, proceed to the next iteration of this loop.
+              </li>
+              <li>
+Set `definition` to the value of `term` in `context`.
+              </li>
+              <li>
+If `definition` is `null`, proceed to the next iteration of this loop.
+              </li>
+              <li>
+If `definition` is a string:
+                <ol>
+                  <li>
+Set `newDefinition` to an empty map.
+                  </li>
+                  <li>
+Set the value of "@id" in `newDefinition` to `definition`.
+                  </li>
+                  <li>
+Set the value of `definition` to `newDefinition`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+Set the value of `protected` in `definition` to `isProtected`.
+              </li>
+              <li>
+Set the value of `term` in `termMap` to `definition`.
+              </li>
+              <li>
+If `term` does not have an entry in `state.termToId`:
+                <ol>
+                  <li>
+Set `termId` to `state.nextTermId`.
+                  </li>
+                  <li>
+Increment `state.nextTermId` by 2.
+                  </li>
+                  <li>
+Set the value of `term` in `state.termToId` to `termId`.
+                  </li>
+                  <li>
+Set the value of `termId` in `state.idToTerm` to `term`.
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li>
+If `contextUrl` is defined, set the value of `contextUrl` in
+`state.contextMap` to `entry`.
+          </li>
+          <li>
+Otherwise, set the value of `context` in `state.contextMap`
+to `entry`.
+          </li>
+          <li>
+Set `result` to be an empty map.
+          </li>
+          <li>
+Set `result.state` to `state` and `result.entry` to `entry`.
+          </li>
+          <li>
+Return `result`.
+          </li>
+        </ol>
+      </section>
+    </section>
+
+    <section>
+      <h2>Codecs</h2>
+      <p>
+The codecs in this section specify exactly how individual values in JSON-LD should be converted to CBOR
+and vice versa. They are used by the algorithms in the previous section, and allow CBOR-LD to efficiently
+encode both primitive and non-primitive types as CBOR.
+      </p>
+      <section>
+        <h3>Context Codec</h3>
+        <section>
+          <h4>Create Context Encoder</h4>
+          <p>
+This algorithm takes a map `typeTable` and a value `contextValue` and
+returns a map `encoderData`.
+          </p>
+          <ol>
+            <li>
+Initialize `encoderData` to an empty map.
+            </li>
+            <li>
+If `contextValue` is not a string, return.
+            </li>
+            <li>
+Otherwise, set `contextTable` to the value of "context" in `typeTable`.
+            </li>
+            <li>
+Set `encoderData.context` to `contextValue` and `encoderData.contextTable` to
+`contextTable`.
+            </li>
+            <li>
+Return `encoderData`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Encode Context</h4>
+          <p>
+This algorithm takes a map `encoderData`, and returns CBOR binary data.
+          </p>
+          <ol>
+            <li>
+If `encoderData`.`context` has an entry in `encoderData`.`contextTable`, return a CBOR encoding
+of the value of `encoderData`.`context` in `encoderData` as a Major Type 0 (unsigned integer) object.
+            </li>
+            <li>
+Otherwise, return a CBOR encoding of the value of `encoderData`.`context` as a Major Type 3
+(text string) object.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Create Context Decoder</h4>
+          <p>
+This algorithm takes a map `reverseTypeTable`, and
+returns a map `encoderData`.
+          </p>
+          <ol>
+            <li>
+Set `reverseContextTable` to the value of "context" in `reverseTypeTable`.
+            </li>
+            <li>
+Initialize `decoderData` to an empty map.
+            </li>
+            <li>
+Set `decoderData`.`reverseContextTable` to the value of `reverseContextTable` and
+return `decoderData`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Decode Context</h4>
+          <p>
+This algorithm takes a map `decoderData` and a value `value`, and returns a value.
+          </p>
+          <ol>
+            <li>
+If `value` is not a number, return `value`.
+            </li>
+            <li>
+Otherwise, if `decoderData`.`reverseContextTable` has an entry for `value`, return
+the value of that entry.
+            </li>
+            <li>
+Otherwise, throw an error ERR_UNDEFINED_COMPRESSED_CONTEXT.
+            </li>
+          </ol>
+        </section>
+      </section>
+      <section>
+        <h3>Value Codec</h3>
+        <section>
+          <h4>Create Value Encoder</h4>
+          <p>
+This algorithm takes maps `state` and `termInfo`, and values
+`termType` and `valueToEncode`, and returns a map `encoderData` or `valueToEncode`.
+          </p>
+          <ol>
+            <li>
+Set `isUrl` to `false`.
+            </li>
+            <li>
+If `termInfo.term` is "@id" or "@type", set `isUrl` to `true`.
+            </li>
+            <li>
+If the value of "@id" in `termInfo.def` is "@id" or "@type", set
+`isUrl` to true.
+            </li>
+            <li>
+If `termType` is "@id" or "@vocab", set `isUrl` to `true`.
+            </li>
+            <li>
+If `isUrl` is `true`, set `tableType` to "url".
+            </li>
+            <li>
+Otherwise, if `termType` is defined, set `tableType` to `termType`.
+            </li>
+            <li>
+Otherwise, set `tableType` to "none".
+            </li>
+            <li>
+If `state.typeTable` has an entry for `tableType`:
+              <ol>
+                <li>
+Set `subTable` to the value of `tableType` in `state.typeTable`.
+                </li>
+                <li>
+If `subTable` has an entry for `valueToEncode`:
+                  <ol>
+                    <li>
+Set `intValue` to the value of `valueToEncode` in `subTable`. Set `includeSign` to `false`.
+                    </li>
+                    <li>
+If `state`.`typesEncodedAsBytes` has an entry for `tableType`, set `convertToBytes` to `true`.
+Otherwise, set `convertToBytes` to `false`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Otherwise, if `tableType` is not "none" and `valueToEncode` is an integer:
+                  <ol>
+                    <li>
+Set `intValue` to the value of `valueToEncode`.
+                    </li>
+                    <li>
+Set `convertToBytes` and `includeSign` to `true`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+If `intValue` is defined:
+                  <ol>
+                    <li>
+Initialize `encoderData` to an empty map.
+                    </li>
+                    <li>
+Set `encoderData`.`intValue` to the value of `intValue`, `encoderData`.`convertToBytes` to
+the value of `convertToBytes`, and `encoderData`.`includeSign` to the value of `includeSign`.
+                    </li>
+                    <li>
+Return `encoderData`.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+If `tableType` has an entry in `state.processingModeTypeEncoders`, set `encoderData` to the result of
+calling the `Create Encoder` algorithm associated with that entry's codec.
+            </li>
+            <li>
+If `encoderData` is defined, return `encoderData`.
+            </li>
+            <li>
+Return `valueToEncode`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Encode Value</h4>
+          <p>
+This algorithm takes a map `encoderData`, and returns CBOR binary data.
+          </p>
+          <ol>
+            <li>
+If `encoderData`.`convertToBytes` is `true`:
+              <ol>
+                <li>
+Set `bytes` to the result of converting `intValue` to bytes, using the value of `includeSign` to
+determine whether the binary representation of the integer should be signed or unsigned.
+                </li>
+                <li>
+Return a CBOR encoding of `bytes` as a Major Type 2 (byte string) object.
+                </li>
+              </ol>
+            </li>
+            <li>
+Otherwise, return a CBOR encoding of `intValue` as a Major Type 0 (unsigned integer) object.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Create Value Decoder</h4>
+          <p>
+This algorithm takes maps `state` and `termInfo`, and values
+`termType` and `valueToDecode`, and returns a map `decoderData`.
+          </p>
+          <ol>
+            <li>
+Set `isUrl` to `false`.
+            </li>
+            <li>
+If `termInfo.term` is "@id" or "@type", set `isUrl` to `true`.
+            </li>
+            <li>
+If the value of "@id" in `termInfo.def` is "@id" or "@type", set
+`isUrl` to `true`.
+            </li>
+            <li>
+If `termType` is "@id" or "@vocab", set `isUrl` to `true`.
+            </li>
+            <li>
+If `isUrl` is `true`, set `tableType` to "url".
+            </li>
+            <li>
+Otherwise, if `termType` is defined, set `tableType` to `termType`.
+            </li>
+            <li>
+Otherwise, set `tableType` to "none".
+            </li>
+            <li>
+If `state.reverseTypeTable` has an entry for `tableType`:
+              <ol>
+                <li>
+Set `subTable` to the value of `tableType` in `state.reverseTypeTable`.
+                </li>
+                <li>
+Set `useTable` to `false`.
+                </li>
+                <li>
+If `valueToDecode` is a byte array and `state`.`typesEncodedAsBytes` has an entry
+for `tableType`:
+                  <ol>
+                    <li>
+Set `useTable` to `true`.
+                    </li>
+                    <li>
+Set `intValue` to the unsigned integer conversion of the `valueToDecode` bytes.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Otherwise, if `valueToDecode` is an integer and `state`.`typesEncodedAsBytes` does not
+have an entry for `tableType`:
+                  <ol>
+                    <li>
+Set `useTable` to `true`.
+                    </li>
+                    <li>
+Set `intValue` to `valueToDecode`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+If `useTable` is `true`:
+                  <ol>
+                    <li>
+If `intValue` is not in `subTable`, throw an error ERR_UNKNOWN_COMPRESSED_VALUE.
+                    </li>
+                    <li>
+Otherwise, set `decoded` to the value of `intValue` in `subTable`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Otherwise, if `valueToDecode` is a byte array and `tableType` is not "none", set
+`decoded` to the integer conversion of `valueToDecode`.
+                </li>
+                <li>
+If `decoded` is defined, initialize `decoderData` to an empty map, set `decoderData`.`decoded` to
+the value of `decoded`, and return `decoderData`.
+                </li>
+              </ol>
+            </li>
+            <li>
+If `tableType` has an entry in `state.processingModeTypeDecoders`, set `DecoderData` to the result of
+calling the `Create Decoder` algorithm associated with that entry's codec.
+            </li>
+            <li>
+If `decoderData` is defined, return `decoderData`.
+            </li>
+            <li>
+Otherwise, if `valueToDecode` is not an array, initialize `decoderData` to an empty map, set
+`decoderData`.`decoded` to `valueToDecode`, and return `decoderData`.
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Decode Value</h4>
+          <p>
+This algorithm takes a map `decoderData`, and returns a value.
+          </p>
+          <ol>
+            <li>
+Return `decoderData`.`decoded`.
+            </li>
+          </ol>
+        </section>
+      </section>
+    </section>
+
+    <section>
+      <h2>CBOR Tag Processing</h2>
+      <section>
+        <h3>Get CBOR Tag Structure Algorithm</h3>
+This algorithm takes as input an integer `registryEntryId`, and returns a byte string `prefix`.
+        <ol>
+          <li>
+Set `registryEntryBytes` to the CBOR encoding of `registryEntryID`
+          </li>
+          <li>
+Set `prefix` to the result of appending `registryEntryBytes` to the end
+of the bytestring `0xD9CB1D82`.
+          </li>
+          <li>
+Return `prefix`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h2>Get Registry Entry ID Algorithm</h2>
+        <p>
+This algorithm takes an encoded CBOR-LD payload `cborldBytes` as input, and returns
+`suffix`, the main data to be decoded, as well as the `registryEntryId` value that
+should be used to decompress `suffix`.
+        </p>
+        <ol>
+          <li>
+If the CBOR tag on `cborldbytes` is not `0xCB1D` (tag value 51997),
+throw an `ERR_NON_CBOR_LD_TAG` error.
+          </li>
+          <li>
+If the tagged item is not an array of two elements where the first is a CBOR integer,
+throw an `ERR_INVALID_PAYLOAD_STRUCTURE` error.
+          </li>
+          <li>
+Set the value of `registryEntryId` to the value of the integer at index 0 of the tagged
+array.
+          </li>
+          <li>
+Set the value of `suffix` to the value of the second element of the array.
+          </li>
+          <li>
+Set `result` to be an empty map.
+          </li>
+          <li>
+Set `result`.`suffix` to the value of `suffix` and `result`.`registryEntryId` to
+the value of `registryEntryId`.
+          </li>
+          <li>
+Return `result`.
+          </li>
+        </ol>
+      </section>
+    </section>
+  </section>
+  
+  <section class="informative">
+    <h1>Security Considerations</h1>
+  </section>
+
+  <section class="informative">
+    <h1>Privacy Considerations</h1>
+  </section>
+
+  <section class="informative">
+    <h1>IANA Considerations</h1>
+    <section>
+      <h2>CBOR Tag</h2>
+      <p>
+This specification registers a CBOR tag to allow consumers to identify CBOR-LD payloads.
+<b>The following is provisional, and has not yet been ratified by IANA.</b>
+      </p>
+      <p>
+<b>Tag</b>: 51997
+      </p>
+      <p>
+<b>Registry</b>:
+<a href='https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml'>
+  https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml
+</a>
+      </p>
+      <p>
+<b>Data item</b>: array
+      </p>
+      <p>
+<b>Semantics</b>: a tag value of 51997 indicates that the payload is CBOR-LD.
+      </p>
+      <p>
+<b>Description of semantics</b>:
+<a href='https://w3c.github.io/cbor-ld/#cbor-tags-for-cbor-ld'>
+  https://w3c.github.io/cbor-ld/#cbor-tags-for-cbor-ld
+</a>
+      </p>
+      <p>
+<b>Point of contact</b>: Wesley Smith (wsmith@digitalbazaar.com)
+      </p>
+    </section>
+  </section>
+
+</body>
+</html>

@@ -1,0 +1,2819 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>CSS Images Module Level 5</title>
+  <meta content="ED" name="w3c-status">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
+  <meta content="Bikeshed version 0a3d88311, updated Mon May 4 18:07:03 2026 +0000" name="generator">
+  <link href="https://www.w3.org/TR/css-images-5/" rel="canonical">
+  <link href="https://drafts.csswg.org/csslogo.ico" rel="icon">
+  <meta content="f1a3e991616c51cba874bd5f09011133c112bec7" name="revision">
+  <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue table;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example " counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+
+figure.table figcaption {
+    counter-increment: table;
+}
+figure.table figcaption:not(.no-marker)::before {
+    content: "Table " counter(table) " ";
+}
+</style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: 8px;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
+}
+
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-mdn-anno */
+:root {
+	--mdn-bg: #EEE;
+	--mdn-shadow: #999;
+	--mdn-nosupport-text: #ccc;
+	--mdn-pass: green;
+	--mdn-fail: red;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--mdn-bg: #222;
+		--mdn-shadow: #444;
+		--mdn-nosupport-text: #666;
+		--mdn-pass: #690;
+		--mdn-fail: #d22;
+	}
+}
+.mdn-anno {
+	background: var(--mdn-bg, #EEE);
+	border-radius: .25em;
+	box-shadow: 0 0 3px var(--mdn-shadow, #999);
+	color: var(--text, black);
+	font: 1em sans-serif;
+	hyphens: none;
+	max-width: min-content;
+	overflow: hidden;
+	padding: 0.2em;
+	position: absolute;
+	right: 0.3em;
+	top: auto;
+	white-space: nowrap;
+	word-wrap: normal;
+	z-index: 8;
+}
+.mdn-anno.unpositioned {
+	display: none;
+}
+.mdn-anno.overlapping-main {
+	opacity: .2;
+	transition: opacity .1s;
+}
+.mdn-anno[open] {
+	opacity: 1;
+	z-index: 9;
+	min-width: 9em;
+}
+.mdn-anno:hover {
+	opacity: 1;
+	outline: var(--text, black) 1px solid;
+}
+.mdn-anno > summary {
+	font-weight: normal;
+	text-align: right;
+	cursor: pointer;
+	display: block;
+}
+.mdn-anno > summary > .less-than-two-engines-flag {
+	color: var(--mdn-fail);
+	padding-right: 2px;
+}
+.mdn-anno > summary > .all-engines-flag {
+	color: var(--mdn-pass);
+	padding-right: 2px;
+}
+.mdn-anno > summary > span {
+	color: #fff;
+	background-color: #000;
+	font-weight: normal;
+	font-family: zillaslab, Palatino, "Palatino Linotype", serif;
+	padding: 2px 3px 0px 3px;
+	line-height: 1.3em;
+	vertical-align: top;
+}
+.mdn-anno > .feature {
+	margin-top: 20px;
+}
+.mdn-anno > .feature:not(:first-of-type) {
+	border-top: 1px solid #999;
+	margin-top: 6px;
+	padding-top: 2px;
+}
+.mdn-anno > .feature > .less-than-two-engines-text {
+	color: var(--mdn-fail);
+}
+.mdn-anno > .feature > .all-engines-text {
+	color: var(--mdn-pass);
+}
+.mdn-anno > .feature > p {
+	font-size: .75em;
+	margin-top: 6px;
+	margin-bottom: 0;
+}
+.mdn-anno > .feature > p + p {
+	margin-top: 3px;
+}
+.mdn-anno > .feature > .support {
+	display: block;
+	font-size: 0.6em;
+	margin: 0;
+	padding: 0;
+	margin-top: 2px;
+}
+.mdn-anno > .feature > .support + div {
+	padding-top: 0.5em;
+}
+.mdn-anno > .feature > .support > hr {
+	display: block;
+	border: none;
+	border-top: 1px dotted #999;
+	padding: 3px 0px 0px 0px;
+	margin: 2px 3px 0px 3px;
+}
+.mdn-anno > .feature > .support > hr::before {
+	content: "";
+}
+.mdn-anno > .feature > .support > span {
+	padding: 0.2em 0;
+	display: block;
+	display: table;
+}
+.mdn-anno > .feature > .support > span.no {
+	color: var(--mdn-nosupport-text);
+	filter: grayscale(100%);
+}
+.mdn-anno > .feature > .support > span.no::before {
+	opacity: 0.5;
+}
+.mdn-anno > .feature > .support > span:first-of-type {
+	padding-top: 0.5em;
+}
+.mdn-anno > .feature > .support > span > span {
+	padding: 0 0.5em;
+	display: table-cell;
+}
+.mdn-anno > .feature > .support > span > span:first-child {
+	width: 100%;
+}
+.mdn-anno > .feature > .support > span > span:last-child {
+	width: 100%;
+	white-space: pre;
+	padding: 0;
+}
+.mdn-anno > .feature > .support > span::before {
+	content: ' ';
+	display: table-cell;
+	min-width: 1.5em;
+	height: 1.5em;
+	background: no-repeat center center;
+	background-size: contain;
+	text-align: right;
+	font-size: 0.75em;
+	font-weight: bold;
+}
+.mdn-anno > .feature > .support > .chrome_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/chrome.svg);
+}
+.mdn-anno > .feature > .support > .firefox_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/firefox.png);
+}
+.mdn-anno > .feature > .support > .chrome::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/chrome.svg);
+}
+.mdn-anno > .feature > .support > .edge_blink::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/edge.svg);
+}
+.mdn-anno > .feature > .support > .edge::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/edge_legacy.svg);
+}
+.mdn-anno > .feature > .support > .firefox::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/firefox.png);
+}
+.mdn-anno > .feature > .support > .ie::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/ie.png);
+}
+.mdn-anno > .feature > .support > .safari_ios::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/safari-ios.svg);
+}
+.mdn-anno > .feature > .support > .nodejs::before {
+	background-image: url(https://nodejs.org/favicon.ico);
+}
+.mdn-anno > .feature > .support > .opera_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/opera.svg);
+}
+.mdn-anno > .feature > .support > .opera::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/opera.svg);
+}
+.mdn-anno > .feature > .support > .safari::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/safari.png);
+}
+.mdn-anno > .feature > .support > .samsunginternet_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/samsung.svg);
+}
+.mdn-anno > .feature > .support > .webview_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/android-webview.png);
+}
+.name-slug-mismatch {
+	color: red;
+}
+.caniuse-status:hover {
+	z-index: 9;
+}
+/* dt, li, .issue, .note, and .example are "position: relative", so to put annotation at right margin, must move to right of containing block */;
+.h-entry:not(.status-LS) dt > .mdn-anno, .h-entry:not(.status-LS) li > .mdn-anno, .h-entry:not(.status-LS) .issue > .mdn-anno, .h-entry:not(.status-LS) .note > .mdn-anno, .h-entry:not(.status-LS) .example > .mdn-anno {
+	right: -6.7em;
+}
+.h-entry p + .mdn-anno {
+	margin-top: 0;
+}
+ h2 + .mdn-anno.after {
+	margin: -48px 0 0 0;
+}
+ h3 + .mdn-anno.after {
+	margin: -46px 0 0 0;
+}
+ h4 + .mdn-anno.after {
+	margin: -42px 0 0 0;
+}
+ h5 + .mdn-anno.after {
+	margin: -40px 0 0 0;
+}
+ h6 + .mdn-anno.after {
+	margin: -40px 0 0 0;
+}
+</style>
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
+
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+<style>/* Boilerplate: style-syntax-highlighting */
+code.highlight { padding: .1em; border-radius: .3em; }
+pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
+
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
+}
+
+@media print {
+    /* Darken colors for print that would otherwise print too faintly */
+    c-[c]  { color: #555555 } /* Comment */
+    c-[d]  { color: #555555 } /* Comment.Multiline */
+    c-[cp] { color: #555555 } /* Comment.Preproc */
+    c-[c1] { color: #555555 } /* Comment.Single */
+    c-[cs] { color: #555555 } /* Comment.Special */
+    c-[o]  { color: #222222 } /* Operator */
+    c-[p]  { color: #222222 } /* Punctuation */
+    c-[ow] { color: #222222 } /* Operator.Word */
+    c-[s]  { color: #664400 } /* Literal.String */
+    c-[t]  { color: #664400 } /* Literal.String.Single */
+    c-[u]  { color: #664400 } /* Literal.String.Double */
+    c-[sb] { color: #664400 } /* Literal.String.Backtick */
+    c-[sc] { color: #664400 } /* Literal.String.Char */
+    c-[sd] { color: #664400 } /* Literal.String.Doc */
+    c-[se] { color: #664400 } /* Literal.String.Escape */
+    c-[sh] { color: #664400 } /* Literal.String.Heredoc */
+    c-[si] { color: #664400 } /* Literal.String.Interpol */
+    c-[sx] { color: #664400 } /* Literal.String.Other */
+    c-[sr] { color: #664400 } /* Literal.String.Regex */
+    c-[ss] { color: #664400 } /* Literal.String.Symbol */
+}
+</style>
+<style>/* Boilerplate: style-wpt */
+:root {
+    --wpt-border: hsl(0, 0%, 60%);
+    --wpt-bg: hsl(0, 0%, 95%);
+    --wpt-text: var(--text);
+    --wptheading-text: hsl(0, 0%, 30%);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --wpt-border: hsl(0, 0%, 30%);
+        --wpt-bg: var(--borderedblock-bg);
+        --wpt-text: var(--text);
+        --wptheading-text: hsl(0, 0%, 60%);
+    }
+}
+.wpt-tests-block {
+    list-style: none;
+    border-left: .5em solid var(--wpt-border);
+    background: var(--wpt-bg);
+    color: var(--wpt-text);
+    margin: 1em auto;
+    padding: .5em;
+}
+.wpt-tests-block summary {
+    color: var(--wptheading-text);
+    font-weight: normal;
+    text-transform: uppercase;
+}
+.wpt-tests-block summary::marker{
+    color: var(--wpt-border);
+}
+.wpt-tests-block summary:hover::marker{
+    color: var(--wpt-text);
+}
+/*
+   The only content  of a wpt test block in its closed state is the <summary>,
+   which contains the word TESTS,
+   and that is absolutely positioned.
+   In that closed state, wpt test blocks are styled
+   to have a top margin whose height is exactly equal
+   to the height of the absolutely positioned <summary>,
+   and no other background/padding/margin/border.
+   The wpt test block elements will therefore allow the maring
+   of the previous/next block elements
+   to collapse through them;
+   if this combined margin would be larger than its own top margin,
+   it stays as is,
+   and therefore the pre-existing vertical rhythm of the document is undisturbed.
+   If that combined margin would be smaller, it is grown to that size.
+   This means that the wpt test block ensures
+   that there's always enough vertical space to insert the summary,
+   without adding more than is needed.
+*/
+.wpt-tests-block:not([open]){
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 0.75em;
+    line-height: 1;
+    position: relative;
+    margin: 1em 0 0;
+}
+.wpt-tests-block:not([open]) summary {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+/*
+   It is possible that both the last child of a block element
+   and the block element itself
+   would be annotated with a <wpt> block each.
+   If the block element has a padding or a border,
+   that's fine, but otherwise
+   the bottom margin of the block and of its last child would collapse
+   and both <wpt> elements would overlap, being both placed there.
+   To avoid that, add 1px of padding to the <wpt> element annotating the last child
+   to prevent the bottom margin of the block and of its last child from collapsing
+   (and as much negative margin,
+   as wel only want to prevent margin collapsing,
+   but are not trying to actually take more space).
+*/
+.wpt-tests-block:not([open]):last-child {
+    padding-bottom: 1px;
+    margin-bottom: -1px;
+}
+/*
+   Exception to the previous rule:
+   don't do that in non-last list items,
+   because it's not necessary,
+   and would therefore consume more space than strictly needed.
+   Lists must have list items as children, not <wpt> elements,
+   so a <wpt> element cannot be a sibling of a list item,
+   and the collision that the previous rule avoids cannot happen.
+*/
+li:not(:last-child) > .wpt-tests-block:not([open]):last-child,
+dd:not(:last-child) > .wpt-tests-block:not([open]):last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+.wpt-tests-block:not([open]):not(:hover){
+    opacity: 0.5;
+}
+.wpt-tests-list {
+    list-style: none;
+    display: grid;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: 1fr max-content auto auto;
+    grid-column-gap: .5em;
+}
+.wpt-tests-block hr:last-child {
+    display: none;
+}
+.wpt-test {
+    display: contents;
+}
+.wpt-test > a {
+    text-decoration: underline;
+    border: none;
+}
+.wpt-test > .wpt-name { grid-column: 1; }
+.wpt-test > .wpt-results { grid-column: 2; }
+.wpt-test > .wpt-live { grid-column: 3; }
+.wpt-test > .wpt-source { grid-column: 4; }
+
+.wpt-test > .wpt-results {
+    display: flex;
+    gap: .1em;
+}
+.wpt-test .wpt-result {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    border-radius: 50%;
+    position: relative;
+}
+</style>
+ <body class="h-entry">
+  <div class="head">
+   <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/">
+    <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
+</a>
+</p>
+   <h1 class="no-ref p-name" id="title">CSS Images Module Level 5</h1>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#ED">Editor’s Draft</a>,
+    <time class="dt-updated" datetime="2026-05-07">7 May 2026</time></p>
+   <details open>
+    <summary>More details about this document</summary>
+    <div data-fill-with="spec-metadata">
+     <dl>
+      <dt>This version:
+      <dd><a class="u-url" href="https://drafts.csswg.org/css-images-5/">https://drafts.csswg.org/css-images-5/</a>
+      <dt>Latest published version:
+      <dd><a href="https://www.w3.org/TR/css-images-5/">https://www.w3.org/TR/css-images-5/</a>
+      <dt>Feedback:
+      <dd><a href="https://github.com/w3c/csswg-drafts/labels/css-images-5">CSSWG Issues Repository</a>
+      <dd><a href="#issues-index">Inline In Spec</a>
+      <dt class="editor">Editors:
+      <dd class="editor h-card p-author vcard" data-editor-id="42199"><a class="fn p-name u-url url" href="http://xanthir.com/contact/">Tab Atkins Jr.</a> (<span class="org p-org">Google</span>)
+      <dd class="editor h-card p-author vcard" data-editor-id="35400"><a class="fn p-name u-url url" href="http://fantasai.inkedblade.net/contact">Elika J. Etemad / fantasai</a> (<span class="org p-org">Apple</span>)
+      <dd class="editor h-card p-author vcard" data-editor-id="52258"><a class="fn p-name u-url url" href="http://lea.verou.me/about">Lea Verou</a> (<span class="org p-org">Invited Expert</span>)
+      <dt>Suggest an Edit for this Spec:
+      <dd><a href="https://github.com/w3c/csswg-drafts/blob/main/css-images-5/Overview.bs">GitHub Editor</a>
+     </dl>
+    </div>
+   </details>
+   <div data-fill-with="warning"></div>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2026 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply.
+</p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="heading no-num no-ref no-toc settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>This module contains the features of CSS level 4 relating to the <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-images-3/#typedef-image" id="ref-for-typedef-image">&lt;image></a> type and replaced elements.
+It includes and extends the functionality of CSS level 2 <a data-link-type="biblio" href="#biblio-css2" title="Cascading Style Sheets Level 2 Revision 1 (CSS 2.1) Specification">[CSS2]</a> and in the previous level of this specification <a data-link-type="biblio" href="#biblio-css-images-4" title="CSS Images Module Level 4">[css-images-4]</a>.</p>
+   
+
+
+<a href="https://www.w3.org/TR/CSS/">CSS</a> is a language for describing the rendering of structured documents
+(such as HTML and XML)
+on screen, on paper, etc.
+
+
+<script></script>
+  </div>
+  <h2 class="heading no-num no-ref no-toc settled" id="sotd"><span class="content">Status of this document</span></h2>
+  <div data-fill-with="status">
+   <p>
+	This is a public copy of the editors’ draft.
+	It is provided for discussion only and may change at any moment.
+	Its publication here does not imply endorsement of its contents by W3C.
+	Don’t cite this document other than as work in progress.
+
+</p>
+   <p>Please send feedback
+	by <a href="https://github.com/w3c/csswg-drafts/issues">filing issues in GitHub</a> (preferred),
+	including the spec code “css-images” in the title, like this:
+	“[css-images] <i>…summary of comment…</i>”.
+	All issues and comments are <a href="https://lists.w3.org/Archives/Public/public-css-archive/">archived</a>.
+	Alternately, feedback can be sent to the (<a href="https://lists.w3.org/Archives/Public/www-style/">archived</a>) public mailing list
+	<a href="mailto:www-style@w3.org?Subject=%5Bcss-images%5D%20PUT%20SUBJECT%20HERE">www-style@w3.org</a>.
+
+</p>
+   <p>This document is governed by the
+	<a href="https://www.w3.org/policies/process/20250818/" id="w3c_process_revision">18 August 2025 W3C Process Document</a>.
+
+</p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-ref no-toc" id="contents">Table of Contents</h2>
+   <ol class="toc">
+    <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
+    <li>
+     <a href="#image-values"><span class="secno">2</span> <span class="content">2D Image Values: the <span class="production">&lt;image></span> type</span></a>
+     <ol class="toc">
+      <li>
+       <a href="#image-notation"><span class="secno">2.1</span> <span class="content">Image Fallbacks and Annotations: the <span class="css">image()</span> notation</span></a>
+       <ol class="toc">
+        <li><a href="#image-fallbacks"><span class="secno">2.1.1</span> <span class="content">Image Fallbacks</span></a>
+        <li><a href="#image-fragments"><span class="secno">2.1.2</span> <span class="content">Image Fragments</span></a>
+        <li><a href="#color-images"><span class="secno">2.1.3</span> <span class="content">Solid-color Images</span></a>
+        <li><a href="#bidi-images"><span class="secno">2.1.4</span> <span class="content">Bidi-sensitive Images</span></a>
+       </ol>
+     </ol>
+    <li>
+     <a href="#sizing"><span class="secno">3</span> <span class="content">Sizing Images and Objects in CSS</span></a>
+     <ol class="toc">
+      <li><a href="#the-object-view-box"><span class="secno">3.1</span> <span class="content">Setting The Viewbox: the <span class="property">object-view-box</span> property</span></a>
+     </ol>
+    <li><a href="#privacy"><span class="secno">4</span> <span class="content">Privacy Considerations</span></a>
+    <li><a href="#security"><span class="secno">5</span> <span class="content">Security Considerations</span></a>
+    <li>
+     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">
+Conformance</span></a>
+     <ol class="toc">
+      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">
+Document conventions</span></a>
+      <li><a href="#w3c-conformance-classes"><span class="secno"></span> <span class="content">
+Conformance classes</span></a>
+      <li>
+       <a href="#w3c-partial"><span class="secno"></span> <span class="content">
+Partial implementations</span></a>
+       <ol class="toc">
+        <li><a href="#w3c-conform-future-proofing"><span class="secno"></span> <span class="content">
+Implementations of Unstable and Proprietary Features</span></a>
+       </ol>
+      <li><a href="#w3c-testing"><span class="secno"></span> <span class="content">
+Non-experimental implementations</span></a>
+     </ol>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Non-Normative References</span></a>
+     </ol>
+    <li><a href="#property-index"><span class="secno"></span> <span class="content">Property Index</span></a>
+    <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
+   <p>This is a diff spec over <a data-link-type="biblio" href="#biblio-css-images-4" title="CSS Images Module Level 4">[css-images-4]</a>.</p>
+   <h2 class="heading settled" data-level="2" id="image-values"><span class="secno">2. </span><span class="content">2D Image Values: the <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-images-3/#typedef-image" id="ref-for-typedef-image①">&lt;image></a> type</span><a class="self-link" href="#image-values"></a></h2>
+   <p>...</p>
+   <h3 class="heading settled" data-level="2.1" id="image-notation"><span class="secno">2.1. </span><span class="content">Image Fallbacks and Annotations: the <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image">image()</a> notation</span><a class="self-link" href="#image-notation"></a></h3>
+   <p><a data-link-type="biblio" href="#biblio-css-images-4" title="CSS Images Module Level 4">[css-images-4]</a> defines a simple form of the <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image①">image()</a> function,
+	which generates a solid-color dimensionless image.
+	This level introduces a number of additional functions.</p>
+   <p>The <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image②">image()</a> function allows an author to:</p>
+   <ul>
+    <li data-md>
+     <p>use <a href="https://www.w3.org/TR/media-frags/">media fragments</a> to clip out a portion of an image</p>
+    <li data-md>
+     <p>use a solid color as an image</p>
+    <li data-md>
+     <p>fallback to a solid-color image, when the image at the specified url can’t be downloaded or decoded</p>
+    <li data-md>
+     <p>automatically respect the image orientation specified in the image’s metadata</p>
+   </ul>
+   <p>The <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image③">image()</a> notation is defined as:</p>
+<pre class="highlight prod"><dfn class="dfn-paneled" data-dfn-type="function" data-export id="funcdef-image"><c- nf>image</c-><c- p>()</c-></dfn> = <c- nf>image</c-><c- p>(</c-> <a class="production" data-link-type="type" href="#typedef-image-tags" id="ref-for-typedef-image-tags">&lt;image-tags></a><a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#mult-opt" id="ref-for-mult-opt">?</a> <c- p>[</c-> <a class="production" data-link-type="type" href="#typedef-image-src" id="ref-for-typedef-image-src">&lt;image-src></a><a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#mult-opt" id="ref-for-mult-opt①">?</a> <a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#comb-comma" id="ref-for-comb-comma"><c- p>,</c-></a> <a class="production" data-link-type="type" href="https://drafts.csswg.org/css-color-5/#typedef-color" id="ref-for-typedef-color">&lt;color></a><a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#mult-opt" id="ref-for-mult-opt②">?</a> <c- p>]</c-><a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#mult-req" id="ref-for-mult-req">!</a> <c- p>)</c->
+<dfn class="dfn-paneled" data-dfn-type="type" data-export id="typedef-image-tags">&lt;image-tags></dfn> = <c- p>[</c-> ltr <a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#comb-one" id="ref-for-comb-one">|</a> rtl <c- p>]</c->
+<dfn class="dfn-paneled" data-dfn-type="type" data-export id="typedef-image-src">&lt;image-src></dfn> = <c- p>[</c-> <a class="production" data-link-type="type" href="https://drafts.csswg.org/css-values-4/#url-value" id="ref-for-url-value">&lt;url></a> <a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#comb-one" id="ref-for-comb-one①">|</a> <a class="production" data-link-type="type" href="https://drafts.csswg.org/css-values-4/#string-value" id="ref-for-string-value">&lt;string></a> <c- p>]</c->
+</pre>
+   <p>A <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-values-4/#string-value" id="ref-for-string-value①">&lt;string></a> used in <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image④">image()</a> represents a <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-values-4/#url-value" id="ref-for-url-value①">&lt;url></a>.
+	As usual for URLs in CSS,
+	relative URLs are resolved to an absolute URL
+	(as described in Values &amp; Units <a data-link-type="biblio" href="#biblio-css-values-3" title="CSS Values and Units Module Level 3">[CSS-VALUES-3]</a>)
+	when a specified <span class="css" id="ref-for-funcdef-image⑤">image()</span> value is computed.</p>
+   <p>If the image has an orientation specified in its metadata,
+	such as EXIF,
+	the UA must rotate or flip the image to correctly orient it
+	as the metadata specifies.</p>
+   <h4 class="heading settled" data-level="2.1.1" id="image-fallbacks"><span class="secno">2.1.1. </span><span class="content">Image Fallbacks</span><a class="self-link" href="#image-fallbacks"></a></h4>
+   <p>If both a URL and a <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-color-5/#typedef-color" id="ref-for-typedef-color①">&lt;color></a> are specified in <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image⑥">image()</a>,
+	then whenever the URL represents an <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-4/#invalid-image" id="ref-for-invalid-image">invalid image</a> or <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-4/#loading-image" id="ref-for-loading-image">loading image</a>,
+	the <span class="css" id="ref-for-funcdef-image⑦">image()</span> function renders as if the URL were not specified at all;
+	it generates a solid-color image as specified in <a href="#color-images">§ 2.1.3 Solid-color Images</a>.</p>
+   <p>If just a URL is specified (no <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-color-5/#typedef-color" id="ref-for-typedef-color②">&lt;color></a>)
+	and it represents an <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-4/#invalid-image" id="ref-for-invalid-image①">invalid image</a> or <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-4/#loading-image" id="ref-for-loading-image①">loading image</a>,
+	the <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image⑧">image()</a> function represents the same.</p>
+   <details class="wpt-tests-block" dir="ltr" lang="en">
+    <summary>Tests</summary>
+    <ul class="wpt-tests-list"></ul>
+   </details>
+   <div class="example" id="ex-fallback">
+    <a class="self-link" href="#ex-fallback"></a>
+		The fallback color can be used to ensure that text is still readable
+		even when the image fails to load.
+		For example, the following legacy code works fine if the image is rectangular and has no transparency:
+
+		
+<pre class="highlight lang-css">body      <c- p>{</c-> <c- k>color</c-><c- p>:</c-> black<c- p>;</c-> <c- k>background</c-><c- p>:</c-> white<c- p>;</c-> <c- p>}</c->
+p.special <c- p>{</c-> <c- k>color</c-><c- p>:</c-> white<c- p>;</c-> <c- k>background</c-><c- p>:</c-> <c- nf>url</c-><c- p>(</c-><c- s>"dark.png"</c-><c- p>)</c-> black<c- p>;</c-> <c- p>}</c->
+</pre>
+    <p>When the image doesn’t load,
+		the background color is still there to ensure that the white text is readable.
+		However, if the image has some transparency,
+		the black will be visible behind it,
+		which is probably not desired.
+		The <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image⑨">image()</a> function addresses this:</p>
+<pre class="highlight lang-css">body      <c- p>{</c-> <c- k>color</c-><c- p>:</c-> black<c- p>;</c-> <c- k>background</c-><c- p>:</c-> white<c- p>;</c-> <c- p>}</c->
+p.special <c- p>{</c-> <c- k>color</c-><c- p>:</c-> white<c- p>;</c-> <c- k>background</c-><c- p>:</c-> <c- nf>image</c-><c- p>(</c-><c- s>"dark.png"</c-><c- p>,</c-> black<c- p>);</c-> <c- p>}</c->
+</pre>
+    <p>Now, the black won’t show at all if the image loads,
+		but if for whatever reason the image fails,
+		it’ll pop in and prevent the white text from being set against a white background.</p>
+   </div>
+   <h4 class="heading settled" data-level="2.1.2" id="image-fragments"><span class="secno">2.1.2. </span><span class="content">Image Fragments</span><a class="self-link" href="#image-fragments"></a></h4>
+   <p>When a URL specified in <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image①⓪">image()</a> represents a portion of a resource
+	(e.g. by the use of <a href="https://www.w3.org/TR/media-frags/#naming-space">media fragment identifiers</a>)
+	that portion is clipped out of its context and used as a standalone image.</p>
+   <div class="example" id="ex-image-fragment">
+    <a class="self-link" href="#ex-image-fragment"></a>
+		For example, given the following image and CSS:
+
+
+    <p><a href="images/sprites.svg">
+			<img alt="[9 circles, with 0 to 8 eighths filled in]" height="20" src="images/sprites.svg" width="180">
+		</a></p>
+<pre class="highlight lang-css"><c- k>background-image</c-><c- p>:</c-> <c- nf>image</c-><c- p>(</c-><c- s>'sprites.svg#xywh=40,0,20,20'</c-><c- p>)</c-></pre>
+    <p>...the background of the element will be the portion of the image that starts at (40px,0px) and is 20px wide and tall,
+		which is just the circle with a quarter filled in.</p>
+   </div>
+   <p>So that authors can take advantage of CSS’s forwards-compatible parsing rules to provide a fallback for image slices,
+	implementations that support the <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image①①">image()</a> notation
+	<em>must</em> support the <code class="highlight">xywh=#<c- p>,</c->#<c- p>,</c->#<c- p>,</c->#</code> form of media fragment identifiers
+	for images specified via <span class="css" id="ref-for-funcdef-image①②">image()</span>. <a data-link-type="biblio" href="#biblio-media-frags" title="Media Fragments URI 1.0 (basic)">[MEDIA-FRAGS]</a></p>
+   <div class="example" id="ex-image-fragment-fallback">
+    <a class="self-link" href="#ex-image-fragment-fallback"></a>
+		Note that image fragments can also be used with the <a class="css" data-link-type="maybe" href="https://drafts.csswg.org/css-values-4/#funcdef-url" id="ref-for-funcdef-url">url()</a> notation.
+		However, a legacy UA that doesn’t understand the media fragments notation
+		will ignore the fragment and simply display the entirety of the image.
+
+
+    <p>Since the <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image①③">image()</a> notation requires UAs to support media fragments,
+		authors can take advantage of CSS’s forward-compatible parsing rules
+		to provide a fallback when using an image fragment URL:</p>
+<pre class="highlight lang-css"><c- k>background-image</c-><c- p>:</c-> <c- nf>url</c-><c- p>(</c-><c- s>'swirl.png'</c-><c- p>);</c-> <c- c>/* old UAs */</c->
+background-image: <c- nf>image</c-><c- p>(</c-><c- s>'sprites.png#xywh=10,30,60,20'</c-><c- p>);</c-> <c- c>/* new UAs */</c->
+</pre>
+   </div>
+   <p>If a URL uses a fragment identifier syntax that the implementation does not understand,
+	or does not consider valid for that type of image,
+	the URL must be treated as representing an <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-4/#invalid-image" id="ref-for-invalid-image②">invalid image</a>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> This error-handling is limited to <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image①④">image()</a>,
+	and not in the definition of URL,
+	for legacy compat reasons.</p>
+   <h4 class="heading settled" data-level="2.1.3" id="color-images"><span class="secno">2.1.3. </span><span class="content">Solid-color Images</span><a class="self-link" href="#color-images"></a></h4>
+   <p>If the <a class="css" data-link-type="maybe" href="#funcdef-image" id="ref-for-funcdef-image①⑤">image()</a> function is specified with only a <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-color-5/#typedef-color" id="ref-for-typedef-color③">&lt;color></a> argument (no URL),
+	it represents a solid-color image of the specified color with no <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-3/#natural-dimensions" id="ref-for-natural-dimensions">natural dimensions</a>.</p>
+   <div class="example" id="ex-solid-color">
+    <a class="self-link" href="#ex-solid-color"></a>
+		For example,
+		one can use this as a simple way to "tint" a background image,
+		by overlaying a partially-transparent color over the top of the other image:
+
+		
+<pre class="highlight lang-css"><c- k>background-image</c-><c- p>:</c-> <c- nf>image</c-><c- p>(</c-><c- nf>rgba</c-><c- p>(</c-><c- m>0</c-><c- p>,</c-> <c- m>0</c-><c- p>,</c-> <c- m>255</c-><c- p>,</c-> <c- m>.5</c-><c- p>)),</c-> <c- nf>url</c-><c- p>(</c-><c- s>"bg-image.png"</c-><c- p>);</c-></pre>
+    <p>This is equivalent to a single color stop gradient:</p>
+<pre class="highlight lang-css"><c- k>background-image</c-><c- p>:</c-> <c- nf>linear-gradient</c-><c- p>(</c-><c- nf>rgba</c-><c- p>(</c-><c- m>0</c-><c- p>,</c-> <c- m>0</c-><c- p>,</c-> <c- m>255</c-><c- p>,</c-> <c- m>.5</c-><c- p>)),</c-> <c- nf>url</c-><c- p>(</c-><c- s>"bg-image.png"</c-><c- p>);</c-></pre>
+    <p><a class="css property" data-link-type="property" href="https://drafts.csswg.org/css-backgrounds-3/#propdef-background-color" id="ref-for-propdef-background-color">background-color</a> does not work for this,
+		as the solid color it generates always lies <em>beneath</em> all the background images.</p>
+   </div>
+   <h4 class="heading settled" data-level="2.1.4" id="bidi-images"><span class="secno">2.1.4. </span><span class="content">Bidi-sensitive Images</span><a class="self-link" href="#bidi-images"></a></h4>
+   <p>Before listing any <code class="highlight">&lt;image-src>s</code>,
+	the author may specify a directionality for the image,
+	similar to adding a <code class="highlight">dir</code> attribute to an element in HTML.
+	If a directional image is used on or in an element with opposite <a href="https://www.w3.org/TR/CSS21/visuren.html#propdef-direction">direction</a>,
+	the image must be flipped in the inline direction
+	(as if it was transformed by, e.g., <code class="highlight"><c- nf>scaleX</c-><c- p>(</c-><c- m>-1</c-><c- p>)</c-></code>, if the inline direction is the X axis).</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Absent this declaration,
+	images default to no directionality at all,
+	and thus don’t care about the directionality of the surrounding element.</p>
+   <div class="example" id="ex-image-directionality">
+    <a class="self-link" href="#ex-image-directionality"></a>
+		A list may use an arrow for a bullet that points into the content.
+		If the list can contain both LTR and RTL text,
+		though, the bullet may be on the left or the right,
+		and an image designed to point into the text on one side will point out of the text on the other side.
+		This can be fixed with code like:
+
+		
+<pre class="highlight lang-html"><c- p>&lt;</c-><c- f>ul</c-> <c- e>style</c-><c- o>=</c-><c- s>"list-style-image: image(ltr 'arrow.png');"</c-><c- p>></c->
+  <c- p>&lt;</c-><c- f>li</c-> <c- e>dir</c-><c- o>=</c-><c- s>'ltr'</c-><c- p>></c->My bullet is on the left!<c- p>&lt;/</c-><c- f>li</c-><c- p>></c->
+  <c- p>&lt;</c-><c- f>li</c-> <c- e>dir</c-><c- o>=</c-><c- s>'rtl'</c-><c- p>></c->MY BULLET IS ON THE RIGHT!<c- p>&lt;/</c-><c- f>li</c-><c- p>></c->
+<c- p>&lt;/</c-><c- f>ul</c-><c- p>></c->
+</pre>
+    <p>This should render something like:</p>
+<pre class="highlight lang-html">⇒ My bullet is on the left!
+  !THGIR EHT NO SI TELLUB YM ⇐
+</pre>
+    <p>In LTR list items, the image will be used as-is.
+		In the RTL list items, however,
+		it will be flipped in the inline direction,
+		so it still points into the content.</p>
+   </div>
+   <h2 class="heading settled" data-level="3" id="sizing"><span class="secno">3. </span><span class="content">Sizing Images and Objects in CSS</span><a class="self-link" href="#sizing"></a></h2>
+   <h3 class="heading settled" data-level="3.1" id="the-object-view-box"><span class="secno">3.1. </span><span class="content">Setting The Viewbox: the <a class="css property" data-link-type="property" href="#propdef-object-view-box" id="ref-for-propdef-object-view-box">object-view-box</a> property</span><a class="self-link" href="#the-object-view-box"></a></h3>
+   <table class="def propdef" data-link-for-hint="object-view-box">
+    <tbody>
+     <tr>
+      <th>Name:
+      <td><dfn class="css dfn-paneled" data-dfn-type="property" data-export id="propdef-object-view-box">object-view-box</dfn>
+     <tr class="value">
+      <th><a href="https://www.w3.org/TR/css-values/#value-defs">Value:</a>
+      <td class="prod">none <a data-link-type="grammar" href="https://drafts.csswg.org/css-values-4/#comb-one" id="ref-for-comb-one②">|</a> <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect" id="ref-for-typedef-basic-shape-rect">&lt;basic-shape-rect></a>
+     <tr>
+      <th><a href="https://www.w3.org/TR/css-cascade/#initial-values">Initial:</a>
+      <td>none
+     <tr>
+      <th><a href="https://www.w3.org/TR/css-cascade/#applies-to">Applies to:</a>
+      <td><a data-link-type="dfn" href="https://drafts.csswg.org/css-display-4/#replaced-element" id="ref-for-replaced-element">replaced elements</a>
+     <tr>
+      <th><a href="https://www.w3.org/TR/css-cascade/#inherited-property">Inherited:</a>
+      <td>no
+     <tr>
+      <th><a href="https://www.w3.org/TR/css-values/#percentages">Percentages:</a>
+      <td>n/a
+     <tr>
+      <th><a href="https://www.w3.org/TR/css-cascade/#computed">Computed value:</a>
+      <td>specified keyword, or computed <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape" id="ref-for-typedef-basic-shape">&lt;basic-shape></a> function
+     <tr>
+      <th><a href="https://www.w3.org/TR/cssom/#serializing-css-values">Canonical order:</a>
+      <td>per grammar
+     <tr>
+      <th><a href="https://www.w3.org/TR/web-animations/#animation-type">Animation type:</a>
+      <td>as <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape" id="ref-for-typedef-basic-shape①">&lt;basic-shape></a> if possible, otherwise discrete
+   </table>
+   <p>The <a class="css property" data-link-type="property" href="#propdef-object-view-box" id="ref-for-propdef-object-view-box①">object-view-box</a> property
+	specifies a "view box" over an element,
+	which allows zooming or panning over the element’s contents.
+	It maps to the <code><a data-link-type="element-sub" href="https://w3c.github.io/svgwg/svg2-draft/coords.html#TermViewBox" id="ref-for-TermViewBox">&lt;svg viewBox></a></code> attribute in SVG. <a data-link-type="biblio" href="#biblio-svg2" title="Scalable Vector Graphics (SVG) 2">[SVG2]</a></p>
+   <p class="issue" id="issue-345354d4"><a class="self-link" href="#issue-345354d4"></a> Make sure behavior is <a href="https://github.com/w3c/csswg-drafts/issues/7058#issuecomment-1057553833">properly consistent for SVG</a>.</p>
+   <dl>
+    <dt data-md><dfn class="css dfn-paneled" data-dfn-for="object-view-box" data-dfn-type="value" data-export id="valdef-object-view-box-none">none</dfn>
+    <dd data-md>
+     <p>The element does not have a view box.</p>
+    <dt data-md><dfn class="css dfn-paneled" data-dfn-for="object-view-box" data-dfn-type="value" data-export id="valdef-object-view-box-basic-shape-rect"><a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect" id="ref-for-typedef-basic-shape-rect①">&lt;basic-shape-rect></a></dfn>
+    <dd data-md>
+     <p>If the element does not have both a <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-3/#natural-width" id="ref-for-natural-width">natural width</a>
+and a <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-3/#natural-height" id="ref-for-natural-height">natural height</a>,
+this value has no effect,
+similar to <a class="css" data-link-type="maybe" href="#valdef-object-view-box-none" id="ref-for-valdef-object-view-box-none">none</a>.</p>
+     <p>Otherwise, specifies a view box for the element.</p>
+     <p>First, resolve the <a class="css production" data-link-type="type" href="https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect" id="ref-for-typedef-basic-shape-rect②">&lt;basic-shape-rect></a>
+against a <a data-link-type="dfn" href="https://drafts.csswg.org/css-shapes-1/#basic-shape-reference-box" id="ref-for-basic-shape-reference-box">reference box</a> formed by the element’s
+<a data-link-type="dfn" href="https://drafts.csswg.org/css-images-3/#natural-size" id="ref-for-natural-size">natural sizes</a>
+to obtain the element’s view box.</p>
+     <p>For all purposes,
+the element is now treated as having <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-3/#natural-size" id="ref-for-natural-size①">natural sizes</a>
+equal to the view box’s width and height.
+If the element had a <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-3/#natural-aspect-ratio" id="ref-for-natural-aspect-ratio">natural aspect ratio</a>,
+it’s now treated as instead having the same ratio as the view box.
+Further adjustments to the size/position of the element’s contents,
+such as <a class="css property" data-link-type="property" href="https://drafts.csswg.org/css-images-3/#propdef-object-position" id="ref-for-propdef-object-position">object-position</a> or <a class="css property" data-link-type="property" href="https://drafts.csswg.org/css-images-4/#propdef-object-fit" id="ref-for-propdef-object-fit">object-fit</a>,
+are similarly performed on the view box instead.</p>
+     <p>When the element is painted,
+its contents are scaled and translated
+such that the element’s contents
+retain the same position and size,
+relative to the view box’s final size and position,
+that they had when the view box was determined (above).</p>
+     <p class="issue" id="issue-61524b01"><a class="self-link" href="#issue-61524b01"></a> Have not yet defined what happens if the view box is zero-area.
+It’s an error case,
+so precise behavior isn’t important;
+just need to see what impls want to do about it.</p>
+   </dl>
+   <p class="note" role="note"><span class="marker">Note:</span> Some replaced elements might have a built-in notion of a "view box",
+	such as the <code><a data-link-type="element" href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-svg" id="ref-for-elementdef-svg">svg</a></code> element.
+	Unless otherwise specified,
+	this property does not interact with such notions;
+	the built-in notion has its effect as normal,
+	producing a replaced element with <a data-link-type="dfn" href="https://drafts.csswg.org/css-images-3/#natural-size" id="ref-for-natural-size②">natural sizes</a>,
+	then this property applies on top of that.</p>
+   <div class="example" id="example-f39e984a"><a class="self-link" href="#example-f39e984a"></a>
+		Issue: example here. Need a basic one showing off zooming in, one showing off zooming out, and one showing off interaction with object-fit to display how the parts outside the viewbox can still be painted.
+	</div>
+   <h2 class="heading settled" data-level="4" id="privacy"><span class="secno">4. </span><span class="content">Privacy Considerations</span><a class="self-link" href="#privacy"></a></h2>
+   <p>No new privacy considerations have been reported on this specification.</p>
+   <h2 class="heading settled" data-level="5" id="security"><span class="secno">5. </span><span class="content">Security Considerations</span><a class="self-link" href="#security"></a></h2>
+   <p>No new security considerations have been reported on this specification.</p>
+  </main>
+  <h2 class="heading no-num no-ref settled" id="w3c-conformance"><span class="content">
+Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+  <h3 class="heading no-ref settled" id="w3c-conventions"><span class="content">
+Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+  <p>Conformance requirements are expressed with a combination of
+    descriptive assertions and RFC 2119 terminology. The key words “MUST”,
+    “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
+    “RECOMMENDED”, “MAY”, and “OPTIONAL” in the normative parts of this
+    document are to be interpreted as described in RFC 2119.
+    However, for readability, these words do not appear in all uppercase
+    letters in this specification.
+
+    </p>
+  <p>All of the text of this specification is normative except sections
+    explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a></p>
+  <p>Examples in this specification are introduced with the words “for example”
+    or are set apart from the normative text with <code class="highlight">class=<c- s>"example"</c-></code>,
+    like this:
+
+    </p>
+  <div class="example" id="w3c-example">
+   <a class="self-link" href="#w3c-example"></a>
+        
+   <p>This is an example of an informative example.</p>
+  </div>
+  <p>Informative notes begin with the word “Note” and are set apart from the
+    normative text with <code class="highlight">class=<c- s>"note"</c-></code>, like this:
+
+    </p>
+  <p class="note" role="note">Note, this is an informative note.</p>
+  <p>Advisements are normative sections styled to evoke special attention and are
+    set apart from other normative text with <code class="highlight">&lt;strong class=<c- s>"advisement"</c->></code>, like
+    this:
+
+    <strong class="advisement">
+        UAs MUST provide an accessible alternative.
+    </strong></p>
+  <details class="wpt-tests-block" dir="ltr" lang="en" open>
+   <summary>Tests</summary>
+   <p>Tests relating to the content of this specification
+                     may be documented in “Tests” blocks like this one.
+                     Any such block is non-normative.</p>
+   <ul class="wpt-tests-list"></ul>
+   <hr>
+  </details>
+  <h3 class="heading no-ref settled" id="w3c-conformance-classes"><span class="content">
+Conformance classes</span><a class="self-link" href="#w3c-conformance-classes"></a></h3>
+  <p>Conformance to this specification
+    is defined for three conformance classes:
+    </p>
+  <dl>
+   <dt>style sheet
+            
+   <dd>A <a href="http://www.w3.org/TR/CSS21/conform.html#style-sheet">CSS
+            style sheet</a>.
+        
+   <dt>renderer
+            
+   <dd>A <a href="http://www.w3.org/TR/CSS21/conform.html#user-agent">UA</a>
+            that interprets the semantics of a style sheet and renders
+            documents that use them.
+        
+   <dt>authoring tool
+            
+   <dd>A <a href="http://www.w3.org/TR/CSS21/conform.html#user-agent">UA</a>
+            that writes a style sheet.
+    
+  </dl>
+  <p>A style sheet is conformant to this specification
+    if all of its statements that use syntax defined in this module are valid
+    according to the generic CSS grammar and the individual grammars of each
+    feature defined in this module.
+
+    </p>
+  <p>A renderer is conformant to this specification
+    if, in addition to interpreting the style sheet as defined by the
+    appropriate specifications, it supports all the features defined
+    by this specification by parsing them correctly
+    and rendering the document accordingly. However, the inability of a
+    UA to correctly render a document due to limitations of the device
+    does not make the UA non-conformant. (For example, a UA is not
+    required to render color on a monochrome monitor.)
+
+    </p>
+  <p>An authoring tool is conformant to this specification
+    if it writes style sheets that are syntactically correct according to the
+    generic CSS grammar and the individual grammars of each feature in
+    this module, and meet all other conformance requirements of style sheets
+    as described in this module.
+
+</p>
+  <h3 class="heading no-ref settled" id="w3c-partial"><span class="content">
+Partial implementations</span><a class="self-link" href="#w3c-partial"></a></h3>
+  <p>So that authors can exploit the forward-compatible parsing rules to
+    assign fallback values, CSS renderers <strong>must</strong>
+    treat as invalid (and <a href="http://www.w3.org/TR/CSS21/conform.html#ignore">ignore
+    as appropriate</a>) any at-rules, properties, property values, keywords,
+    and other syntactic constructs for which they have no usable level of
+    support. In particular, user agents <strong>must not</strong> selectively
+    ignore unsupported component values and honor supported values in a single
+    multi-value property declaration: if any value is considered invalid
+    (as unsupported values must be), CSS requires that the entire declaration
+    be ignored.</p>
+  <h4 class="heading settled" id="w3c-conform-future-proofing"><span class="content">
+Implementations of Unstable and Proprietary Features</span><a class="self-link" href="#w3c-conform-future-proofing"></a></h4>
+  <p>To avoid clashes with future stable CSS features,
+        the CSSWG recommends <a href="http://www.w3.org/TR/CSS/#future-proofing">following best practices</a> for the implementation of <a href="http://www.w3.org/TR/CSS/#unstable">unstable</a> features and <a href="http://www.w3.org/TR/CSS/#proprietary-extension">proprietary extensions</a> to CSS.
+
+</p>
+  <h3 class="heading no-ref settled" id="w3c-testing"><span class="content">
+Non-experimental implementations</span><a class="self-link" href="#w3c-testing"></a></h3>
+  <p>Once a specification reaches the Candidate Recommendation stage,
+    non-experimental implementations are possible, and implementors should
+    release an unprefixed implementation of any CR-level feature they
+    can demonstrate to be correctly implemented according to spec.
+
+    </p>
+  <p>To establish and maintain the interoperability of CSS across
+    implementations, the CSS Working Group requests that non-experimental
+    CSS renderers submit an implementation report (and, if necessary, the
+    testcases used for that implementation report) to the W3C before
+    releasing an unprefixed implementation of any CSS features. Testcases
+    submitted to W3C are subject to review and correction by the CSS
+    Working Group.
+
+    </p>
+  <p>Further information on submitting testcases and implementation reports
+    can be found from on the CSS Working Group’s website at
+    <a href="http://www.w3.org/Style/CSS/Test/">http://www.w3.org/Style/CSS/Test/</a>.
+    Questions should be directed to the
+    <a href="http://lists.w3.org/Archives/Public/public-css-testsuite">public-css-testsuite@w3.org</a>
+    mailing list.</p>
+  <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <h2 class="heading no-num no-ref settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#valdef-object-view-box-basic-shape-rect">&lt;basic-shape-rect></a><span>, in § 3.1</span>
+   <li><a href="#funcdef-image">image()</a><span>, in § 2.1</span>
+   <li><a href="#typedef-image-src">&lt;image-src></a><span>, in § 2.1</span>
+   <li><a href="#typedef-image-tags">&lt;image-tags></a><span>, in § 2.1</span>
+   <li><a href="#valdef-object-view-box-none">none</a><span>, in § 3.1</span>
+   <li><a href="#propdef-object-view-box">object-view-box</a><span>, in § 3.1</span>
+  </ul>
+  <h3 class="heading no-num no-ref settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="index">
+   <li>
+    <a data-link-type="biblio">[CSS-BACKGROUNDS-3]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="11fb4d5b">background-color</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CSS-COLOR-5]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="1548047a">&lt;color></span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CSS-DISPLAY-4]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="a8485ff4">replaced element</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CSS-IMAGES-3]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="998b9e6e">&lt;image></span>
+     <li><span class="dfn-paneled" id="23012643">natural aspect ratio</span>
+     <li><span class="dfn-paneled" id="d3936525">natural dimension</span>
+     <li><span class="dfn-paneled" id="75563977">natural height</span>
+     <li><span class="dfn-paneled" id="ed3eb665">natural size</span>
+     <li><span class="dfn-paneled" id="917fcd3c">natural width</span>
+     <li><span class="dfn-paneled" id="157236b0">object-position</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CSS-IMAGES-4]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="e1b8b09d">invalid image</span>
+     <li><span class="dfn-paneled" id="3cec537a">loading image</span>
+     <li><span class="dfn-paneled" id="3d5243d5">object-fit</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CSS-SHAPES-1]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="36bd6f6d">&lt;basic-shape-rect></span>
+     <li><span class="dfn-paneled" id="bce13de7">&lt;basic-shape></span>
+     <li><span class="dfn-paneled" id="175a39e9">reference box</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CSS-VALUES-4]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="08eba280">!</span>
+     <li><span class="dfn-paneled" id="9f9120ff">,</span>
+     <li><span class="dfn-paneled" id="977d3003">&lt;string></span>
+     <li><span class="dfn-paneled" id="fa293cdd">&lt;url></span>
+     <li><span class="dfn-paneled" id="537cf076">?</span>
+     <li><span class="dfn-paneled" id="5a2f7ea1">url()</span>
+     <li><span class="dfn-paneled" id="6ec67710">|</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[SVG2]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="6d50fd63">svg</span>
+     <li><span class="dfn-paneled" id="de640053">viewBox</span>
+    </ul>
+  </ul>
+  <h2 class="heading no-num no-ref settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-css-color-5">[CSS-COLOR-5]
+   <dd>Chris Lilley; Una Kravets; Lea Verou. <a href="https://drafts.csswg.org/css-color-5/"><cite>CSS Color Module Level 5</cite></a>. URL: <a href="https://drafts.csswg.org/css-color-5/">https://drafts.csswg.org/css-color-5/</a>
+   <dt id="biblio-css-display-4">[CSS-DISPLAY-4]
+   <dd>Elika Etemad; Tab Atkins Jr.. <a href="https://drafts.csswg.org/css-display-4/"><cite>CSS Display Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-display-4/">https://drafts.csswg.org/css-display-4/</a>
+   <dt id="biblio-css-images-3">[CSS-IMAGES-3]
+   <dd>Tab Atkins Jr.; Elika Etemad; Lea Verou. <a href="https://drafts.csswg.org/css-images-3/"><cite>CSS Images Module Level 3</cite></a>. URL: <a href="https://drafts.csswg.org/css-images-3/">https://drafts.csswg.org/css-images-3/</a>
+   <dt id="biblio-css-images-4">[CSS-IMAGES-4]
+   <dd>Elika Etemad; Tab Atkins Jr.; Lea Verou. <a href="https://drafts.csswg.org/css-images-4/"><cite>CSS Images Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-images-4/">https://drafts.csswg.org/css-images-4/</a>
+   <dt id="biblio-css-shapes-1">[CSS-SHAPES-1]
+   <dd>Alan Stearns; Rossen Atanassov; Noam Rosenthal. <a href="https://drafts.csswg.org/css-shapes/"><cite>CSS Shapes Module Level 1</cite></a>. URL: <a href="https://drafts.csswg.org/css-shapes/">https://drafts.csswg.org/css-shapes/</a>
+   <dt id="biblio-css-values-3">[CSS-VALUES-3]
+   <dd>Tab Atkins Jr.; Elika Etemad. <a href="https://drafts.csswg.org/css-values-3/"><cite>CSS Values and Units Module Level 3</cite></a>. URL: <a href="https://drafts.csswg.org/css-values-3/">https://drafts.csswg.org/css-values-3/</a>
+   <dt id="biblio-css-values-4">[CSS-VALUES-4]
+   <dd>Tab Atkins Jr.; Elika Etemad. <a href="https://drafts.csswg.org/css-values-4/"><cite>CSS Values and Units Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-values-4/">https://drafts.csswg.org/css-values-4/</a>
+   <dt id="biblio-media-frags">[MEDIA-FRAGS]
+   <dd>Raphaël Troncy; et al. <a href="https://www.w3.org/TR/media-frags/"><cite>Media Fragments URI 1.0 (basic)</cite></a>. 25 September 2012. REC. URL: <a href="https://www.w3.org/TR/media-frags/">https://www.w3.org/TR/media-frags/</a>
+   <dt id="biblio-rfc2119">[RFC2119]
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-svg2">[SVG2]
+   <dd>Amelia Bellamy-Royds; et al. <a href="https://w3c.github.io/svgwg/svg2-draft/"><cite>Scalable Vector Graphics (SVG) 2</cite></a>. URL: <a href="https://w3c.github.io/svgwg/svg2-draft/">https://w3c.github.io/svgwg/svg2-draft/</a>
+  </dl>
+  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Non-Normative References</span><a class="self-link" href="#informative"></a></h3>
+  <dl>
+   <dt id="biblio-css-backgrounds-3">[CSS-BACKGROUNDS-3]
+   <dd>Elika Etemad; Brad Kemper. <a href="https://drafts.csswg.org/css-backgrounds/"><cite>CSS Backgrounds and Borders Module Level 3</cite></a>. URL: <a href="https://drafts.csswg.org/css-backgrounds/">https://drafts.csswg.org/css-backgrounds/</a>
+   <dt id="biblio-css2">[CSS2]
+   <dd>Bert Bos; et al. <a href="https://drafts.csswg.org/css2/"><cite>Cascading Style Sheets Level 2 Revision 1 (CSS 2.1) Specification</cite></a>. URL: <a href="https://drafts.csswg.org/css2/">https://drafts.csswg.org/css2/</a>
+  </dl>
+  <h2 class="heading no-num no-ref settled" id="property-index"><span class="content">Property Index</span><a class="self-link" href="#property-index"></a></h2>
+  <div class="big-element-wrapper">
+   <table class="index">
+    <thead>
+     <tr>
+      <th scope="col">Name
+      <th scope="col">Value
+      <th scope="col">Initial
+      <th scope="col">Applies to
+      <th scope="col">Inh.
+      <th scope="col">%ages
+      <th scope="col">Anim­ation type
+      <th scope="col">Canonical order
+      <th scope="col">Com­puted value
+    <tbody>
+     <tr>
+      <th scope="row"><a class="css" data-link-type="property" href="#propdef-object-view-box" id="ref-for-propdef-object-view-box②">object-view-box</a>
+      <td>none | &lt;basic-shape-rect>
+      <td>none
+      <td>replaced elements
+      <td>no
+      <td>n/a
+      <td>as &lt;basic-shape> if possible, otherwise discrete
+      <td>per grammar
+      <td>specified keyword, or computed &lt;basic-shape> function
+   </table>
+  </div>
+  <h2 class="heading no-num no-ref settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
+  <div style="counter-reset:issue">
+   <div class="issue"> Make sure behavior is <a href="https://github.com/w3c/csswg-drafts/issues/7058#issuecomment-1057553833">properly consistent for SVG</a>. <a class="issue-return" href="#issue-345354d4" title="Jump to section">↵</a></div>
+   <div class="issue"> Have not yet defined what happens if the view box is zero-area.
+It’s an error case,
+so precise behavior isn’t important;
+just need to see what impls want to do about it. <a class="issue-return" href="#issue-61524b01" title="Jump to section">↵</a></div>
+  </div>
+  <details class="mdn-anno unpositioned" data-anno-for="the-image-orientation">
+   <summary><b class="all-engines-flag" title="This feature is in all current engines.">✔</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/image-orientation" title="The image-orientation CSS property specifies a layout-independent correction to the orientation of an image.">image-orientation</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>26+</span></span><span class="safari yes"><span>Safari</span><span>13.1+</span></span><span class="chrome yes"><span>Chrome</span><span>81+</span></span>
+     <hr>
+     <span class="opera yes"><span>Opera</span><span>67+</span></span><span class="edge_blink yes"><span>Edge</span><span>81+</span></span>
+     <hr>
+     <span class="edge no"><span>Edge (Legacy)</span><span>?</span></span><span class="ie no"><span>IE</span><span>None</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="no opera_android"><span>Opera Mobile</span><span>?</span></span>
+    </div>
+   </div>
+  </details>
+  <details class="mdn-anno unpositioned" data-anno-for="the-image-rendering">
+   <summary><b class="less-than-two-engines-flag" title="This feature is in less than two current engines.">⚠</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/image-rendering" title="The image-rendering CSS property sets an image scaling algorithm. The property applies to an element itself, to any images set in its other properties, and to its descendants.">image-rendering</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>3.6+</span></span><span class="safari yes"><span>Safari</span><span>6+</span></span><span class="chrome yes"><span>Chrome</span><span>13+</span></span>
+     <hr>
+     <span class="no opera"><span>Opera</span><span>?</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge no"><span>Edge (Legacy)</span><span>?</span></span><span class="ie no"><span>IE</span><span>None</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="webview_android yes"><span>Android WebView</span><span>3+</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="no opera_android"><span>Opera Mobile</span><span>?</span></span>
+    </div>
+   </div>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/image-rendering" title="The image-rendering attribute provides a hint to the browser about how to make speed vs. quality tradeoffs as it performs image processing.">Attribute/image-rendering</a></p>
+    <p class="less-than-two-engines-text">In no current engines.</p>
+    <div class="support">
+     <span class="firefox no"><span>Firefox</span><span>?</span></span><span class="no safari"><span>Safari</span><span>?</span></span><span class="chrome no"><span>Chrome</span><span>?</span></span>
+     <hr>
+     <span class="no opera"><span>Opera</span><span>?</span></span><span class="edge_blink no"><span>Edge</span><span>?</span></span>
+     <hr>
+     <span class="edge no"><span>Edge (Legacy)</span><span>?</span></span><span class="ie no"><span>IE</span><span>?</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="no opera_android"><span>Opera Mobile</span><span>?</span></span>
+    </div>
+   </div>
+  </details>
+  <details class="mdn-anno unpositioned" data-anno-for="the-object-fit">
+   <summary><b class="all-engines-flag" title="This feature is in all current engines.">✔</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit" title="The object-fit CSS property sets how the content of a replaced element, such as an <img> or <video>, should be resized to fit its container.">object-fit</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>36+</span></span><span class="safari yes"><span>Safari</span><span>10+</span></span><span class="chrome yes"><span>Chrome</span><span>32+</span></span>
+     <hr>
+     <span class="opera yes"><span>Opera</span><span>19+</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge no"><span>Edge (Legacy)</span><span>None</span></span><span class="ie no"><span>IE</span><span>None</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="opera_android yes"><span>Opera Mobile</span><span>19+</span></span>
+    </div>
+   </div>
+  </details>
+  <details class="mdn-anno unpositioned" data-anno-for="the-object-position">
+   <summary><b class="all-engines-flag" title="This feature is in all current engines.">✔</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/object-position" title="The object-position CSS property specifies the alignment of the selected replaced element&apos;s contents within the element&apos;s box. Areas of the box which aren&apos;t covered by the replaced element&apos;s object will show the element&apos;s background.">object-position</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>36+</span></span><span class="safari yes"><span>Safari</span><span>10+</span></span><span class="chrome yes"><span>Chrome</span><span>32+</span></span>
+     <hr>
+     <span class="opera yes"><span>Opera</span><span>19+</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge no"><span>Edge (Legacy)</span><span>None</span></span><span class="ie no"><span>IE</span><span>None</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="opera_android yes"><span>Opera Mobile</span><span>19+</span></span>
+    </div>
+   </div>
+  </details>
+  <details class="mdn-anno unpositioned" data-anno-for="gradients">
+   <summary><b class="all-engines-flag" title="This feature is in all current engines.">✔</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/gradient" title="The <gradient> CSS data type is a special type of <image> that consists of a progressive transition between two or more colors.">gradient</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>62+</span></span><span class="safari yes"><span>Safari</span><span>10.1+</span></span><span class="chrome yes"><span>Chrome</span><span>37+</span></span>
+     <hr>
+     <span class="no opera"><span>Opera</span><span>?</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge no"><span>Edge (Legacy)</span><span>?</span></span><span class="ie no"><span>IE</span><span>None</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="no opera_android"><span>Opera Mobile</span><span>?</span></span>
+    </div>
+   </div>
+  </details>
+  <details class="mdn-anno unpositioned" data-anno-for="image-values">
+   <summary><b class="all-engines-flag" title="This feature is in all current engines.">✔</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/image" title="The <image> CSS data type represents a two-dimensional image.">image</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>62+</span></span><span class="safari yes"><span>Safari</span><span>10.1+</span></span><span class="chrome yes"><span>Chrome</span><span>37+</span></span>
+     <hr>
+     <span class="no opera"><span>Opera</span><span>?</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge no"><span>Edge (Legacy)</span><span>?</span></span><span class="ie no"><span>IE</span><span>None</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="no opera_android"><span>Opera Mobile</span><span>?</span></span>
+    </div>
+   </div>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/image" title="The <image> CSS data type represents a two-dimensional image.">image</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>1+</span></span><span class="safari yes"><span>Safari</span><span>1+</span></span><span class="chrome yes"><span>Chrome</span><span>1+</span></span>
+     <hr>
+     <span class="opera yes"><span>Opera</span><span>2+</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge yes"><span>Edge (Legacy)</span><span>12+</span></span><span class="ie yes"><span>IE</span><span>10+</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="opera_android yes"><span>Opera Mobile</span><span>11+</span></span>
+    </div>
+   </div>
+  </details>
+  <details class="mdn-anno unpositioned" data-anno-for="radial-gradients">
+   <summary><b class="all-engines-flag" title="This feature is in all current engines.">✔</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/radial-gradient" title="The radial-gradient() CSS function creates an image consisting of a progressive transition between two or more colors that radiate from an origin. Its shape may be a circle or an ellipse. The function&apos;s result is an object of the <gradient> data type, which is a special kind of <image>.">gradient/radial-gradient</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>16+</span></span><span class="safari yes"><span>Safari</span><span>7+</span></span><span class="chrome yes"><span>Chrome</span><span>26+</span></span>
+     <hr>
+     <span class="opera yes"><span>Opera</span><span>12.1+</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge yes"><span>Edge (Legacy)</span><span>12+</span></span><span class="ie yes"><span>IE</span><span>10+</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="webview_android yes"><span>Android WebView</span><span>37+</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="opera_android yes"><span>Opera Mobile</span><span>12.1+</span></span>
+    </div>
+   </div>
+  </details>
+  <details class="mdn-anno unpositioned" data-anno-for="repeating-gradients">
+   <summary><b class="all-engines-flag" title="This feature is in all current engines.">✔</b><span>MDN</span></summary>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/repeating-linear-gradient" title="The repeating-linear-gradient() CSS function creates an image consisting of repeating linear gradients. It is similar to linear-gradient() and takes the same arguments, but it repeats the color stops infinitely in all directions so as to cover its entire container. The function&apos;s result is an object of the <gradient> data type, which is a special kind of <image>.">gradient/repeating-linear-gradient</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>16+</span></span><span class="safari yes"><span>Safari</span><span>7+</span></span><span class="chrome yes"><span>Chrome</span><span>26+</span></span>
+     <hr>
+     <span class="opera yes"><span>Opera</span><span>12.1+</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge yes"><span>Edge (Legacy)</span><span>12+</span></span><span class="ie yes"><span>IE</span><span>10+</span></span>
+     <hr>
+     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="webview_android yes"><span>Android WebView</span><span>37+</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="opera_android yes"><span>Opera Mobile</span><span>12.1+</span></span>
+    </div>
+   </div>
+   <div class="feature">
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/repeating-radial-gradient" title="The repeating-radial-gradient() CSS function creates an image consisting of repeating gradients that radiate from an origin. It is similar to radial-gradient() and takes the same arguments, but it repeats the color stops infinitely in all directions so as to cover its entire container, similar to repeating-linear-gradient(). The function&apos;s result is an object of the <gradient> data type, which is a special kind of <image>.">gradient/repeating-radial-gradient</a></p>
+    <p class="all-engines-text">In all current engines.</p>
+    <div class="support">
+     <span class="firefox yes"><span>Firefox</span><span>16+</span></span><span class="safari yes"><span>Safari</span><span>7+</span></span><span class="chrome yes"><span>Chrome</span><span>26+</span></span>
+     <hr>
+     <span class="opera yes"><span>Opera</span><span>12.1+</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
+     <hr>
+     <span class="edge yes"><span>Edge (Legacy)</span><span>12+</span></span><span class="ie yes"><span>IE</span><span>10+</span></span>
+     <hr>
+     <span class="firefox_android yes"><span>Firefox for Android</span><span>16+</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="webview_android yes"><span>Android WebView</span><span>4.4+</span></span><span class="no samsunginternet_android"><span>Samsung Internet</span><span>?</span></span><span class="opera_android yes"><span>Opera Mobile</span><span>12.1+</span></span>
+    </div>
+   </div>
+  </details>
+<script>/* Boilerplate: script-dom-helper */
+"use strict";
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"08eba280": {"dfnID":"08eba280","dfnText":"!","external":true,"refSections":[{"refs":[{"id":"ref-for-mult-req"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"}],"url":"https://drafts.csswg.org/css-values-4/#mult-req"},
+"11fb4d5b": {"dfnID":"11fb4d5b","dfnText":"background-color","external":true,"refSections":[{"refs":[{"id":"ref-for-propdef-background-color"}],"title":"2.1.3. Solid-color Images"}],"url":"https://drafts.csswg.org/css-backgrounds-3/#propdef-background-color"},
+"1548047a": {"dfnID":"1548047a","dfnText":"<color>","external":true,"refSections":[{"refs":[{"id":"ref-for-typedef-color"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"},{"refs":[{"id":"ref-for-typedef-color\u2460"},{"id":"ref-for-typedef-color\u2461"}],"title":"2.1.1. Image Fallbacks"},{"refs":[{"id":"ref-for-typedef-color\u2462"}],"title":"2.1.3. Solid-color Images"}],"url":"https://drafts.csswg.org/css-color-5/#typedef-color"},
+"157236b0": {"dfnID":"157236b0","dfnText":"object-position","external":true,"refSections":[{"refs":[{"id":"ref-for-propdef-object-position"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-images-3/#propdef-object-position"},
+"175a39e9": {"dfnID":"175a39e9","dfnText":"reference box","external":true,"refSections":[{"refs":[{"id":"ref-for-basic-shape-reference-box"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-shapes-1/#basic-shape-reference-box"},
+"23012643": {"dfnID":"23012643","dfnText":"natural aspect ratio","external":true,"refSections":[{"refs":[{"id":"ref-for-natural-aspect-ratio"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-images-3/#natural-aspect-ratio"},
+"36bd6f6d": {"dfnID":"36bd6f6d","dfnText":"<basic-shape-rect>","external":true,"refSections":[{"refs":[{"id":"ref-for-typedef-basic-shape-rect"},{"id":"ref-for-typedef-basic-shape-rect\u2460"},{"id":"ref-for-typedef-basic-shape-rect\u2461"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect"},
+"3cec537a": {"dfnID":"3cec537a","dfnText":"loading image","external":true,"refSections":[{"refs":[{"id":"ref-for-loading-image"},{"id":"ref-for-loading-image\u2460"}],"title":"2.1.1. Image Fallbacks"}],"url":"https://drafts.csswg.org/css-images-4/#loading-image"},
+"3d5243d5": {"dfnID":"3d5243d5","dfnText":"object-fit","external":true,"refSections":[{"refs":[{"id":"ref-for-propdef-object-fit"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-images-4/#propdef-object-fit"},
+"537cf076": {"dfnID":"537cf076","dfnText":"?","external":true,"refSections":[{"refs":[{"id":"ref-for-mult-opt"},{"id":"ref-for-mult-opt\u2460"},{"id":"ref-for-mult-opt\u2461"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"}],"url":"https://drafts.csswg.org/css-values-4/#mult-opt"},
+"5a2f7ea1": {"dfnID":"5a2f7ea1","dfnText":"url()","external":true,"refSections":[{"refs":[{"id":"ref-for-funcdef-url"}],"title":"2.1.2. Image Fragments"}],"url":"https://drafts.csswg.org/css-values-4/#funcdef-url"},
+"6d50fd63": {"dfnID":"6d50fd63","dfnText":"svg","external":true,"refSections":[{"refs":[{"id":"ref-for-elementdef-svg"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-svg"},
+"6ec67710": {"dfnID":"6ec67710","dfnText":"|","external":true,"refSections":[{"refs":[{"id":"ref-for-comb-one"},{"id":"ref-for-comb-one\u2460"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"},{"refs":[{"id":"ref-for-comb-one\u2461"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-values-4/#comb-one"},
+"75563977": {"dfnID":"75563977","dfnText":"natural height","external":true,"refSections":[{"refs":[{"id":"ref-for-natural-height"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-images-3/#natural-height"},
+"917fcd3c": {"dfnID":"917fcd3c","dfnText":"natural width","external":true,"refSections":[{"refs":[{"id":"ref-for-natural-width"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-images-3/#natural-width"},
+"977d3003": {"dfnID":"977d3003","dfnText":"<string>","external":true,"refSections":[{"refs":[{"id":"ref-for-string-value"},{"id":"ref-for-string-value\u2460"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"}],"url":"https://drafts.csswg.org/css-values-4/#string-value"},
+"998b9e6e": {"dfnID":"998b9e6e","dfnText":"<image>","external":true,"refSections":[{"refs":[{"id":"ref-for-typedef-image"}],"title":"Unnumbered Section"},{"refs":[{"id":"ref-for-typedef-image\u2460"}],"title":"2. 2D Image Values: the <image> type"}],"url":"https://drafts.csswg.org/css-images-3/#typedef-image"},
+"9f9120ff": {"dfnID":"9f9120ff","dfnText":",","external":true,"refSections":[{"refs":[{"id":"ref-for-comb-comma"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"}],"url":"https://drafts.csswg.org/css-values-4/#comb-comma"},
+"a8485ff4": {"dfnID":"a8485ff4","dfnText":"replaced element","external":true,"refSections":[{"refs":[{"id":"ref-for-replaced-element"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-display-4/#replaced-element"},
+"bce13de7": {"dfnID":"bce13de7","dfnText":"<basic-shape>","external":true,"refSections":[{"refs":[{"id":"ref-for-typedef-basic-shape"},{"id":"ref-for-typedef-basic-shape\u2460"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape"},
+"d3936525": {"dfnID":"d3936525","dfnText":"natural dimension","external":true,"refSections":[{"refs":[{"id":"ref-for-natural-dimensions"}],"title":"2.1.3. Solid-color Images"}],"url":"https://drafts.csswg.org/css-images-3/#natural-dimensions"},
+"de640053": {"dfnID":"de640053","dfnText":"viewBox","external":true,"refSections":[{"refs":[{"id":"ref-for-TermViewBox"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://w3c.github.io/svgwg/svg2-draft/coords.html#TermViewBox"},
+"e1b8b09d": {"dfnID":"e1b8b09d","dfnText":"invalid image","external":true,"refSections":[{"refs":[{"id":"ref-for-invalid-image"},{"id":"ref-for-invalid-image\u2460"}],"title":"2.1.1. Image Fallbacks"},{"refs":[{"id":"ref-for-invalid-image\u2461"}],"title":"2.1.2. Image Fragments"}],"url":"https://drafts.csswg.org/css-images-4/#invalid-image"},
+"ed3eb665": {"dfnID":"ed3eb665","dfnText":"natural size","external":true,"refSections":[{"refs":[{"id":"ref-for-natural-size"},{"id":"ref-for-natural-size\u2460"},{"id":"ref-for-natural-size\u2461"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"https://drafts.csswg.org/css-images-3/#natural-size"},
+"fa293cdd": {"dfnID":"fa293cdd","dfnText":"<url>","external":true,"refSections":[{"refs":[{"id":"ref-for-url-value"},{"id":"ref-for-url-value\u2460"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"}],"url":"https://drafts.csswg.org/css-values-4/#url-value"},
+"funcdef-image": {"dfnID":"funcdef-image","dfnText":"image()","external":false,"refSections":[{"refs":[{"id":"ref-for-funcdef-image"},{"id":"ref-for-funcdef-image\u2460"},{"id":"ref-for-funcdef-image\u2461"},{"id":"ref-for-funcdef-image\u2462"},{"id":"ref-for-funcdef-image\u2463"},{"id":"ref-for-funcdef-image\u2464"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"},{"refs":[{"id":"ref-for-funcdef-image\u2465"},{"id":"ref-for-funcdef-image\u2466"},{"id":"ref-for-funcdef-image\u2467"},{"id":"ref-for-funcdef-image\u2468"}],"title":"2.1.1. Image Fallbacks"},{"refs":[{"id":"ref-for-funcdef-image\u2460\u24ea"},{"id":"ref-for-funcdef-image\u2460\u2460"},{"id":"ref-for-funcdef-image\u2460\u2461"},{"id":"ref-for-funcdef-image\u2460\u2462"},{"id":"ref-for-funcdef-image\u2460\u2463"}],"title":"2.1.2. Image Fragments"},{"refs":[{"id":"ref-for-funcdef-image\u2460\u2464"}],"title":"2.1.3. Solid-color Images"}],"url":"#funcdef-image"},
+"propdef-object-view-box": {"dfnID":"propdef-object-view-box","dfnText":"object-view-box","external":false,"refSections":[{"refs":[{"id":"ref-for-propdef-object-view-box"},{"id":"ref-for-propdef-object-view-box\u2460"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"#propdef-object-view-box"},
+"typedef-image-src": {"dfnID":"typedef-image-src","dfnText":"<image-src>","external":false,"refSections":[{"refs":[{"id":"ref-for-typedef-image-src"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"}],"url":"#typedef-image-src"},
+"typedef-image-tags": {"dfnID":"typedef-image-tags","dfnText":"<image-tags>","external":false,"refSections":[{"refs":[{"id":"ref-for-typedef-image-tags"}],"title":"2.1. Image Fallbacks and Annotations: the image() notation"}],"url":"#typedef-image-tags"},
+"valdef-object-view-box-basic-shape-rect": {"dfnID":"valdef-object-view-box-basic-shape-rect","dfnText":"<basic-shape-rect>","external":false,"refSections":[],"url":"#valdef-object-view-box-basic-shape-rect"},
+"valdef-object-view-box-none": {"dfnID":"valdef-object-view-box-none","dfnText":"none","external":false,"refSections":[{"refs":[{"id":"ref-for-valdef-object-view-box-none"}],"title":"3.1. Setting The Viewbox: the object-view-box property"}],"url":"#valdef-object-view-box-none"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-link-titles */
+"use strict";
+{
+let linkTitleData = {
+"https://drafts.csswg.org/css-color-5/#typedef-color": "Expands to: <alpha-value> | aliceblue | antiquewhite | aqua | aquamarine | azure | beige | bisque | black | blanchedalmond | blue | blueviolet | brown | burlywood | cadetblue | chartreuse | chocolate | coral | cornflowerblue | cornsilk | crimson | currentcolor | cyan | darkblue | darkcyan | darkgoldenrod | darkgray | darkgreen | darkgrey | darkkhaki | darkmagenta | darkolivegreen | darkorange | darkorchid | darkred | darksalmon | darkseagreen | darkslateblue | darkslategray | darkslategrey | darkturquoise | darkviolet | deeppink | deepskyblue | dimgray | dimgrey | dodgerblue | firebrick | floralwhite | forestgreen | fuchsia | gainsboro | ghostwhite | gold | goldenrod | gray | green | greenyellow | grey | honeydew | hotpink | indianred | indigo | ivory | khaki | lavender | lavenderblush | lawngreen | lemonchiffon | lightblue | lightcoral | lightcyan | lightgoldenrodyellow | lightgray | lightgreen | lightgrey | lightpink | lightsalmon | lightseagreen | lightskyblue | lightslategray | lightslategrey | lightsteelblue | lightyellow | lime | limegreen | linen | magenta | maroon | mediumaquamarine | mediumblue | mediumorchid | mediumpurple | mediumseagreen | mediumslateblue | mediumspringgreen | mediumturquoise | mediumvioletred | midnightblue | mintcream | mistyrose | moccasin | navajowhite | navy | none | oldlace | olive | olivedrab | orange | orangered | orchid | palegoldenrod | palegreen | paleturquoise | palevioletred | papayawhip | peachpuff | peru | pink | plum | powderblue | purple | rebeccapurple | red | rosybrown | royalblue | saddlebrown | salmon | sandybrown | seagreen | seashell | sienna | silver | skyblue | slateblue | slategray | slategrey | snow | springgreen | steelblue | tan | teal | thistle | tomato | transparent | turquoise | violet | wheat | white | whitesmoke | yellow | yellowgreen",
+"https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape": "Expands to: circle() | ellipse() | equivalent path | inset() | path() | polygon() | rect() | reference box | shape() | xywh()",
+"https://drafts.csswg.org/css-values-4/#url-value": "Expands to: local url flag",
+};
+
+function setTypeTitles() {
+	for(let el of document.querySelectorAll("a[href]")) {
+		if(el.href in linkTitleData && !el.hasAttribute("title")) {
+			el.setAttribute("title", linkTitleData[el.href]);
+		}
+	}
+}
+
+document.addEventListener("DOMContentLoaded", setTypeTitles);
+}
+</script>
+<script>/* Boilerplate: script-position-annos */
+"use strict";
+{
+function repositionAnnoPanels(){
+    const panels = [...document.querySelectorAll("[data-anno-for]")];
+    hydratePanels(panels);
+    let vSoFar = 0;
+    for(const panel of panels.sort(cmpTops)) {
+        if(panel.top < vSoFar) {
+            panel.top = vSoFar;
+            panel.style.top = vSoFar + "px";
+        }
+        vSoFar = panel.top + panel.height + 15;
+    }
+}
+function hydratePanels(panels) {
+    const main = document.querySelector("main");
+    let mainRect;
+    if(main) mainRect = main.getBoundingClientRect();
+    // First display them all, if they're not already visible.
+    for(const panel of panels) {
+        panel.classList.remove("unpositioned");
+    }
+    // Measure them all
+    for(const panel of panels) {
+        const dfn = document.getElementById(panel.getAttribute("data-anno-for"));
+        if(!dfn) {
+            console.log("Can't find the annotation panel target:", panel);
+            continue;
+        }
+        panel.dfn = dfn;
+        panel.top = window.scrollY + dfn.getBoundingClientRect().top;
+        let panelRect = panel.getBoundingClientRect();
+        panel.height = panelRect.height;
+        if(main) {
+            panel.overlappingMain = panelRect.left < mainRect.right;
+        } else {
+            panel.overlappingMain = false;
+        }
+    }
+    // And finally position them
+    for(const panel of panels) {
+        const dfn = panel.dfn;
+        if(!dfn) continue;
+        panel.style.top = panel.top + "px";
+        panel.classList.toggle("overlapping-main", panel.overlappingMain);
+    }
+}
+
+function cmpTops(a,b) {
+    return a.top - b.top;
+}
+
+window.addEventListener("load", repositionAnnoPanels);
+window.addEventListener("resize", repositionAnnoPanels);
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#funcdef-image": {"displayText":"image()","export":true,"for_":[],"level":"5","normative":true,"shortname":"css-images","spec":"css-images-5","status":"local","text":"image()","type":"function","url":"#funcdef-image"},
+"#propdef-object-view-box": {"displayText":"object-view-box","export":true,"for_":[],"level":"5","normative":true,"shortname":"css-images","spec":"css-images-5","status":"local","text":"object-view-box","type":"property","url":"#propdef-object-view-box"},
+"#typedef-image-src": {"displayText":"<image-src>","export":true,"for_":[],"level":"5","normative":true,"shortname":"css-images","spec":"css-images-5","status":"local","text":"<image-src>","type":"type","url":"#typedef-image-src"},
+"#typedef-image-tags": {"displayText":"<image-tags>","export":true,"for_":[],"level":"5","normative":true,"shortname":"css-images","spec":"css-images-5","status":"local","text":"<image-tags>","type":"type","url":"#typedef-image-tags"},
+"#valdef-object-view-box-none": {"displayText":"none","export":true,"for_":["object-view-box"],"level":"5","normative":true,"shortname":"css-images","spec":"css-images-5","status":"local","text":"none","type":"value","url":"#valdef-object-view-box-none"},
+"https://drafts.csswg.org/css-backgrounds-3/#propdef-background-color": {"displayText":"background-color","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-backgrounds","spec":"css-backgrounds-3","status":"current","text":"background-color","type":"property","url":"https://drafts.csswg.org/css-backgrounds-3/#propdef-background-color"},
+"https://drafts.csswg.org/css-color-5/#typedef-color": {"displayText":"<color>","export":true,"for_":[],"level":"5","normative":true,"shortname":"css-color","spec":"css-color-5","status":"current","text":"<color>","type":"type","url":"https://drafts.csswg.org/css-color-5/#typedef-color"},
+"https://drafts.csswg.org/css-display-4/#replaced-element": {"displayText":"replaced element","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-display","spec":"css-display-4","status":"current","text":"replaced element","type":"dfn","url":"https://drafts.csswg.org/css-display-4/#replaced-element"},
+"https://drafts.csswg.org/css-images-3/#natural-aspect-ratio": {"displayText":"natural aspect ratio","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-images","spec":"css-images-3","status":"current","text":"natural aspect ratio","type":"dfn","url":"https://drafts.csswg.org/css-images-3/#natural-aspect-ratio"},
+"https://drafts.csswg.org/css-images-3/#natural-dimensions": {"displayText":"natural dimension","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-images","spec":"css-images-3","status":"current","text":"natural dimension","type":"dfn","url":"https://drafts.csswg.org/css-images-3/#natural-dimensions"},
+"https://drafts.csswg.org/css-images-3/#natural-height": {"displayText":"natural height","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-images","spec":"css-images-3","status":"current","text":"natural height","type":"dfn","url":"https://drafts.csswg.org/css-images-3/#natural-height"},
+"https://drafts.csswg.org/css-images-3/#natural-size": {"displayText":"natural size","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-images","spec":"css-images-3","status":"current","text":"natural size","type":"dfn","url":"https://drafts.csswg.org/css-images-3/#natural-size"},
+"https://drafts.csswg.org/css-images-3/#natural-width": {"displayText":"natural width","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-images","spec":"css-images-3","status":"current","text":"natural width","type":"dfn","url":"https://drafts.csswg.org/css-images-3/#natural-width"},
+"https://drafts.csswg.org/css-images-3/#propdef-object-position": {"displayText":"object-position","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-images","spec":"css-images-3","status":"current","text":"object-position","type":"property","url":"https://drafts.csswg.org/css-images-3/#propdef-object-position"},
+"https://drafts.csswg.org/css-images-3/#typedef-image": {"displayText":"<image>","export":true,"for_":[],"level":"3","normative":true,"shortname":"css-images","spec":"css-images-3","status":"current","text":"<image>","type":"type","url":"https://drafts.csswg.org/css-images-3/#typedef-image"},
+"https://drafts.csswg.org/css-images-4/#invalid-image": {"displayText":"invalid image","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-images","spec":"css-images-4","status":"current","text":"invalid image","type":"dfn","url":"https://drafts.csswg.org/css-images-4/#invalid-image"},
+"https://drafts.csswg.org/css-images-4/#loading-image": {"displayText":"loading image","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-images","spec":"css-images-4","status":"current","text":"loading image","type":"dfn","url":"https://drafts.csswg.org/css-images-4/#loading-image"},
+"https://drafts.csswg.org/css-images-4/#propdef-object-fit": {"displayText":"object-fit","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-images","spec":"css-images-4","status":"current","text":"object-fit","type":"property","url":"https://drafts.csswg.org/css-images-4/#propdef-object-fit"},
+"https://drafts.csswg.org/css-shapes-1/#basic-shape-reference-box": {"displayText":"reference box","export":true,"for_":["<basic-shape>"],"level":"1","normative":true,"shortname":"css-shapes","spec":"css-shapes-1","status":"current","text":"reference box","type":"dfn","url":"https://drafts.csswg.org/css-shapes-1/#basic-shape-reference-box"},
+"https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape": {"displayText":"<basic-shape>","export":true,"for_":[],"level":"1","normative":true,"shortname":"css-shapes","spec":"css-shapes-1","status":"current","text":"<basic-shape>","type":"type","url":"https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape"},
+"https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect": {"displayText":"<basic-shape-rect>","export":true,"for_":[],"level":"1","normative":true,"shortname":"css-shapes","spec":"css-shapes-1","status":"current","text":"<basic-shape-rect>","type":"type","url":"https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect"},
+"https://drafts.csswg.org/css-values-4/#comb-comma": {"displayText":",","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-values","spec":"css-values-4","status":"current","text":",","type":"grammar","url":"https://drafts.csswg.org/css-values-4/#comb-comma"},
+"https://drafts.csswg.org/css-values-4/#comb-one": {"displayText":"|","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-values","spec":"css-values-4","status":"current","text":"|","type":"grammar","url":"https://drafts.csswg.org/css-values-4/#comb-one"},
+"https://drafts.csswg.org/css-values-4/#funcdef-url": {"displayText":"url()","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-values","spec":"css-values-4","status":"current","text":"url()","type":"function","url":"https://drafts.csswg.org/css-values-4/#funcdef-url"},
+"https://drafts.csswg.org/css-values-4/#mult-opt": {"displayText":"?","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-values","spec":"css-values-4","status":"current","text":"?","type":"grammar","url":"https://drafts.csswg.org/css-values-4/#mult-opt"},
+"https://drafts.csswg.org/css-values-4/#mult-req": {"displayText":"!","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-values","spec":"css-values-4","status":"current","text":"!","type":"grammar","url":"https://drafts.csswg.org/css-values-4/#mult-req"},
+"https://drafts.csswg.org/css-values-4/#string-value": {"displayText":"<string>","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-values","spec":"css-values-4","status":"current","text":"<string>","type":"type","url":"https://drafts.csswg.org/css-values-4/#string-value"},
+"https://drafts.csswg.org/css-values-4/#url-value": {"displayText":"<url>","export":true,"for_":[],"level":"4","normative":true,"shortname":"css-values","spec":"css-values-4","status":"current","text":"<url>","type":"type","url":"https://drafts.csswg.org/css-values-4/#url-value"},
+"https://w3c.github.io/svgwg/svg2-draft/coords.html#TermViewBox": {"displayText":"viewBox","export":true,"for_":["svg"],"level":"2","normative":true,"shortname":"svg","spec":"svg2","status":"current","text":"viewbox","type":"element-attr","url":"https://w3c.github.io/svgwg/svg2-draft/coords.html#TermViewBox"},
+"https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-svg": {"displayText":"svg","export":true,"for_":[],"level":"2","normative":true,"shortname":"svg","spec":"svg2","status":"current","text":"svg","type":"element","url":"https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-svg"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.displayText)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
+}
+</script>

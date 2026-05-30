@@ -1,0 +1,2169 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <title>W3C Patent Policy</title>
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <link href="https://www.w3.org/StyleSheets/TR/2016/base.css" rel="stylesheet" type="text/css">
+  <meta content="
+<p bs-line-number=-1>The W3C Patent Policy governs the handling of patents in the process of producing Web standards. The goal of this policy is to assure that Specifications produced under this policy can be implemented on a Royalty-Free (RF) basis.</p>
+
+" name="abstract">
+  <meta content="Bikeshed version b25686b9f, updated Fri Mar 14 14:15:20 2025 -0700" name="generator">
+  <link href="https://www.w3.org/policies/patent-policy/" rel="canonical">
+  <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
+  <meta content="b120861fd5cde5730750e7676ad2995999e0d24e" name="revision">
+  <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example" counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+</style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: 8px;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
+}
+
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
+
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+ <body class="h-entry">
+  <div class="head">
+   <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
+   <h1 class="p-name no-ref" id="title">W3C Patent Policy</h1>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content"><time class="dt-updated" datetime="2025-05-15">15 May 2025</time> </span></h2>
+   <div data-fill-with="spec-metadata">
+    <dl>
+     <dt>This version:
+     <dd><a class="u-url" href="https://www.w3.org/policies/patent-policy/20250515/">https://www.w3.org/policies/patent-policy/20250515/</a>
+     <dt>Latest published version:
+     <dd><a href="https://www.w3.org/policies/patent-policy/">https://www.w3.org/policies/patent-policy/</a>
+     <dt>Previous Versions:
+     <dd><a href="https://www.w3.org/policies/patent-policy/20200915/" rel="prev">https://www.w3.org/policies/patent-policy/20200915/</a>
+     <dt class="editor">Editor:
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="https://florian.rivoal.net/">Florian Rivoal</a> (<span class="p-org org">Invited Expert</span>)
+     <dt class="editor">Former Editors:
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:wseltzer@w3.org">Wendy Seltzer</a> (<span class="p-org org">W3C/MIT</span>)
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:djweitzner@w3.org">Daniel J. Weitzner</a> (<span class="p-org org">W3C/MIT</span>)
+    </dl>
+   </div>
+   <div data-fill-with="warning"></div>
+   <p class="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2025 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/document-license/">document use</a> rules apply.</p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="no-num no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>The W3C Patent Policy governs the handling of patents in the process of producing Web standards. The goal of this policy is to assure that Specifications produced under this policy can be implemented on a Royalty-Free (RF) basis.</p>
+  </div>
+  <h2 class="no-num no-ref heading settled" id="status"><span class="content"> Status of This Document</span></h2>
+  <div data-fill-with="status">
+    <p>This is the 15 May 2025 version of the W3C Patent Policy.</p>
+   <p>
+    This document has been reviewed by W3C Members and other interested parties and is endorsed by
+      <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. It is a stable document and may be used as reference material or
+    cited as a normative reference from another document. W3C's role in making this policy is to provide
+    a stable policy for handling patent claims in the context of W3C Recommendations and to enhance the
+    functionality and interoperability of the web. This policy was produced by the
+    W3C <a href="https://www.w3.org/groups/ig/psig/">Patents and Standards Interest Group</a>.
+    </p>
+    <p> Please report errors in this document
+	to the <a href="mailto:www-patentpolicy-comment@w3.org">www-patentpolicy-comment@w3.org</a> mailing list
+	(<a href="https://lists.w3.org/Archives/Public/www-patentpolicy-comment/">public archive</a>).
+	The <a href="errata.html">list of known errors</a> is public. </p>
+   <p> The English version of this policy is the only normative version. </p>
+  </div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
+   <ol class="toc" role="directory">
+    <li><a href="#abstract"><span class="secno"></span> <span class="content">Abstract</span></a>
+    <li><a href="#status"><span class="secno"></span> <span class="content"> Status of This Document</span></a>
+    <li><a href="#sec-Overview"><span class="secno">1</span> <span class="content"> Overview</span></a>
+    <li><a href="#sec-Licensing"><span class="secno">2</span> <span class="content"> Licensing Goals for W3C Specifications</span></a>
+    <li>
+     <a href="#sec-Obligations"><span class="secno">3</span> <span class="content"> Licensing Obligations of Working Group Participants</span></a>
+     <ol class="toc">
+      <li><a href="#sec-W3C-RF-license"><span class="secno">3.1</span> <span class="content"> W3C RF Licensing Requirements for All Working Group Participants</span></a>
+      <li><a href="#sec-non-participants"><span class="secno">3.2</span> <span class="content"> Limitation on Licensing Requirement for Non-Participating Members</span></a>
+      <li><a href="#sec-submissions"><span class="secno">3.3</span> <span class="content"> Licensing Commitments in W3C Submissions</span></a>
+      <li><a href="#sec-invited"><span class="secno">3.4</span> <span class="content"> Note on Licensing Commitments for Invited Experts</span></a>
+      <li><a href="##spec-licensing-commitments"><span class="secno">3.5</span> <span class="content"> Specification Licensing Commitments</span></a>
+      <li><a href="#commitment-persistence"><span class="secno">3.6</span> <span class="content"> Licensing Commitment Persistence</span></a>
+     </ol>
+    <li>
+     <a href="#sec-Exclusion"><span class="secno">4</span> <span class="content"> Exclusion From W3C RF Licensing Requirements</span></a>
+     <ol class="toc">
+      <li><a href="#sec-exclusion-with"><span class="secno">4.1</span> <span class="content"> Exclusion With Continued Participation</span></a>
+      <li><a href="#sec-exclusion-resign"><span class="secno">4.2</span> <span class="content"> Exclusion and Resignation From the Working Group</span></a>
+      <li><a href="#sec-join"><span class="secno">4.3</span> <span class="content"> Joining an Already Established Working Group</span></a>
+      <li><a href="#sec-exclude-app"><span class="secno">4.4</span> <span class="content"> Exclusion Procedures for Pending, Unpublished Patent Applications</span></a>
+      <li><a href="#sec-exclude-mech"><span class="secno">4.5</span> <span class="content"> Exclusion Mechanics</span></a>
+     </ol>
+    <li><a href="#sec-Requirements"><span class="secno">5</span> <span class="content"> W3C Royalty-Free (RF) Licensing Requirements</span></a>
+    <li>
+     <a href="#sec-Disclosure"><span class="secno">6</span> <span class="content"> Disclosure</span></a>
+     <ol class="toc">
+      <li><a href="#sec-disclosure-requirements"><span class="secno">6.1</span> <span class="content"> Disclosure Requirements</span></a>
+      <li><a href="#sec-disclosure-exemption"><span class="secno">6.2</span> <span class="content"> Disclosure Exemption</span></a>
+      <li><a href="#sec-disclosure-requests"><span class="secno">6.3</span> <span class="content"> Disclosure Requests</span></a>
+      <li><a href="#sec-disclosure-contents"><span class="secno">6.4</span> <span class="content"> Disclosure Contents</span></a>
+      <li><a href="#sec-published"><span class="secno">6.5</span> <span class="content"> Disclosure of Laid-Open or Published Applications</span></a>
+      <li><a href="#sec-pending"><span class="secno">6.6</span> <span class="content"> Disclosure of Pending, Unpublished Applications</span></a>
+      <li><a href="#sec-good-faith"><span class="secno">6.7</span> <span class="content"> Good Faith Disclosure Standards</span></a>
+      <li><a href="#sec-disclosure-timing"><span class="secno">6.8</span> <span class="content"> Timing of Disclosure Obligations</span></a>
+      <li><a href="#sec-disclosure-termination"><span class="secno">6.9</span> <span class="content"> Termination of Disclosure Obligations</span></a>
+      <li><a href="#sec-disclosure-invite"><span class="secno">6.10</span> <span class="content"> Disclosure Obligations of Invited Experts</span></a>
+      <li><a href="#sec-disclosure-public"><span class="secno">6.11</span> <span class="content"> Disclosures to Be Publicly Available on Recommendation Track</span></a>
+     </ol>
+    <li>
+     <a href="#sec-Exception"><span class="secno">7</span> <span class="content"> Exception Handling</span></a>
+     <ol class="toc">
+      <li><a href="#sec-PAG-formation"><span class="secno">7.1</span> <span class="content"> PAG Formation</span></a>
+      <li><a href="#sec-PAG-post-Recommendation"><span class="secno">7.2</span> <span class="content"> PAG Formation After a Recommendation Is Issued</span></a>
+      <li><a href="#sec-PAG-composition"><span class="secno">7.3</span> <span class="content"> PAG Composition</span></a>
+      <li>
+       <a href="#sec-PAG-procedures"><span class="secno">7.4</span> <span class="content"> PAG Procedures</span></a>
+       <ol class="toc">
+        <li><a href="#sec-PAG-procedures-timing"><span class="secno">7.4.1</span> <span class="content"> PAG Formation Timing</span></a>
+        <li><a href="#sec-PAG-procedures-charter"><span class="secno">7.4.2</span> <span class="content"> PAG Charter Requirements</span></a>
+       </ol>
+      <li>
+       <a href="#sec-PAG-conclude"><span class="secno">7.5</span> <span class="content"> PAG Conclusion</span></a>
+       <ol class="toc">
+        <li><a href="#sec-PAG-conclude-possible"><span class="secno">7.5.1</span> <span class="content"> Possible PAG Conclusions</span></a>
+        <li><a href="#sec-PAG-conclude-outcome"><span class="secno">7.5.2</span> <span class="content"> PAG Outcome</span></a>
+        <li><a href="#sec-PAG-conclude-alternate"><span class="secno">7.5.3</span> <span class="content"> Procedure for Considering Alternate Licensing Terms</span></a>
+       </ol>
+     </ol>
+    <li>
+     <a href="#def-essential"><span class="secno">8</span> <span class="content"> Definition of <span>Essential Claims</span></span></a>
+     <ol class="toc">
+      <li><a href="#def-essential-definition"><span class="secno">8.1</span> <span class="content"> Essential Claims</span></a>
+      <li><a href="#def-essential-exclusions"><span class="secno">8.2</span> <span class="content"> Limitations on the Scope of Definition of Essential Claims</span></a>
+      <li><a href="#def-essential-requirements"><span class="secno">8.3</span> <span class="content"> Definition of Normative, Optional and Informative</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+     </ol>
+    <li><a href="#sec-acknowledgments"><span class="secno"></span> <span class="content"> Acknowledgments</span></a>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ol>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="sec-Overview"><span class="secno">1. </span><span class="content"> Overview</span><a class="self-link" href="#sec-Overview"></a></h2>
+   <p>This patent policy describes:</p>
+   <ol>
+    <li> licensing goals for W3C <a data-link-type="dfn" href="#specification" id="ref-for-specification">Specifications</a> 
+    <li> licensing obligations
+			that <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG">Working Group</a> <a data-link-type="dfn" href="#participant" id="ref-for-participant">participants</a> will undertake
+			as a condition of <span id="ref-for-GroupsWG①">Working Group</span> participation,
+			along with means of excluding specific patents from those obligations 
+    <li> the definition of a <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF">W3C Royalty-Free license</a> 
+    <li> <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure">disclosure</a> rules for W3C Members 
+    <li> an <a href="#sec-Exception">exception handling process</a> for situations in which the Royalty-Free status of a <a data-link-type="dfn" href="#specification" id="ref-for-specification①">Specification</a> comes under question 
+    <li> definition of <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims">Essential Claims</a> 
+   </ol>
+   <p>All numbered sections of this document (1-8),
+	as well as hyperlinks to material within and outside of this document,
+	are normative.</p>
+   <h2 class="heading settled" data-level="2" id="sec-Licensing"><span class="secno">2. </span><span class="content"> Licensing Goals for W3C Specifications</span><a class="self-link" href="#sec-Licensing"></a></h2>
+   <p>In order to promote the widest adoption of web standards,
+	W3C seeks to develop <a data-link-type="dfn" href="#specification" id="ref-for-specification②">Specifications</a> that can be implemented on a <a href="#def-RF" id="ref-for-def-RF①②">Royalty-Free</a> (RF) basis.
+	Subject to the conditions of this policy,
+	W3C will not approve a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C">Recommendation</a> if it is aware that <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①">Essential Claims</a> exist
+	which are not available on Royalty-Free terms.</p>
+   <p>To this end, <a data-link-type="dfn" href="https://www.w3.org/policies/process/#WGCharter" id="ref-for-WGCharter">Working Group charters</a> will include a reference to this policy
+	and a requirement that <a data-link-type="dfn" href="#specification" id="ref-for-specification③">Specifications</a> produced by the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG②">Working Group</a> will be implementable on an RF basis,
+	to the best ability of the <span id="ref-for-GroupsWG③">Working Group</span> and the Consortium.</p>
+   <p>For the purpose of this policy,
+	“<dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="specification">Specification</dfn>” refers to
+	a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#technical-report" id="ref-for-technical-report">W3C technical report</a> published on the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#rec-track" id="ref-for-rec-track">Recommendation Track</a>,
+	see <a data-link-type="biblio" href="#biblio-process" title="World Wide Web Consortium Process Document">[PROCESS]</a>.
+	“<dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patent-review-draft">Patent Review Draft</dfn> refers to a version of a W3C <a data-link-type="dfn" href="#specification" id="ref-for-specification④">Specification</a> defined <a data-link-type="dfn" href="https://www.w3.org/policies/process/#patent-review-drafts" id="ref-for-patent-review-drafts">as such</a> by the W3C Process <span title="World Wide Web Consortium Process Document">[PROCESS]</span>,
+	that is published for patent review and exclusion.</p>
+   <h2 class="heading settled" data-level="3" id="sec-Obligations"><span class="secno">3. </span><span class="content"> Licensing Obligations of Working Group Participants</span><a class="self-link" href="#sec-Obligations"></a></h2>
+   <p>The following obligations shall apply to all <a data-link-type="dfn" href="#participant" id="ref-for-participant①">participants</a> in <a data-link-type="dfn" data-refhint-key="1475b567" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④">W3C Working Groups</a>.
+	These obligations will be referenced from each <a data-link-type="dfn" href="https://www.w3.org/policies/process/#WGCharter" id="ref-for-WGCharter①">Working Group charter</a> and <a data-link-type="dfn" href="https://www.w3.org/policies/process/#cfp" id="ref-for-cfp">Calls for Participation</a>.</p>
+   <h3 class="heading settled" data-level="3.1" id="sec-W3C-RF-license"><span class="secno">3.1. </span><span class="content"> W3C RF Licensing Requirements for All Working Group Participants</span><a class="self-link" href="#sec-W3C-RF-license"></a></h3>
+   <p>As a condition of participating in a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑤">Working Group</a>,
+	each <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="participant">participant</dfn> (W3C Members,
+	W3C Team members,
+	invited experts,
+	and members of the public)
+	shall agree to make Specification <a data-link-type="dfn" href="#licensing-commitment" id="ref-for-licensing-commitment">Licensing Commitments</a> under <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF①">W3C RF licensing requirements</a> for any <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②">Essential Claims</a> related to the work of that particular <span id="ref-for-GroupsWG⑥">Working Group</span> that are not excluded pursuant to <a href="#sec-Exclusion">section 4</a>.
+	This requirement includes <span id="ref-for-essential-claims③">Essential Claims</span> that the <a data-link-type="dfn" href="#participant" id="ref-for-participant②">participant</a> owns
+	and any that the <span id="ref-for-participant③">participant</span> has the right to license
+	without obligation of payment
+	or other consideration to an unrelated third party.
+	With the exception of the provisions of <a href="#sec-Exclusion">section 4</a> below,
+	W3C RF licensing obligations made concerning the work of the particular <span id="ref-for-GroupsWG⑦">Working Group</span> and described in this policy are binding on <span id="ref-for-participant④">participants</span> for the life of the patents in question
+	and encumber the patents containing <span id="ref-for-essential-claims④">Essential Claims</span>,
+	regardless of changes in participation status or W3C Membership.</p>
+   <h3 class="heading settled" data-level="3.2" id="sec-non-participants"><span class="secno">3.2. </span><span class="content"> Limitation on Licensing Requirement for Non-Participating Members</span><a class="self-link" href="#sec-non-participants"></a></h3>
+   <p>Only the affirmative act of joining a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑧">Working Group</a>,
+	or otherwise agreeing to the licensing terms described here,
+	will obligate a Member to the W3C RF licensing commitments.
+	Mere Membership in W3C alone,
+	without other factors,
+	does not give rise to the RF licensing obligation under this policy.</p>
+   <h3 class="heading settled" data-level="3.3" id="sec-submissions"><span class="secno">3.3. </span><span class="content"> Licensing Commitments in W3C Submissions</span><a class="self-link" href="#sec-submissions"></a></h3>
+   <p>At the time a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#MemberSubmission" id="ref-for-MemberSubmission">W3C Member Submission</a> <a href="https://www.w3.org/policies/process/#Submission">[PROCESS, section 10</a>] is made,
+	all Submitters
+	and any others who provide patent licenses associated with the submitted document
+	must indicate whether or not
+	each entity (Submitters and other licensors) will offer a license
+	according to the <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF②">W3C RF licensing requirements</a> for any portion of the <span data-refhint-key="732407e9" id="ref-for-MemberSubmission①">Member Submission</span> that is subsequently incorporated in a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①">Recommendation</a>.
+	The W3C Team may acknowledge the <span data-refhint-key="732407e9" id="ref-for-MemberSubmission②">Member Submission</span> if the answer to the licensing commitment is either affirmative or negative,
+	and shall not acknowledge the <span data-refhint-key="732407e9" id="ref-for-MemberSubmission③">Member Submission</span> if no response is provided.</p>
+   <h3 class="heading settled" data-level="3.4" id="sec-invited"><span class="secno">3.4. </span><span class="content"> Note on Licensing Commitments for Invited Experts</span><a class="self-link" href="#sec-invited"></a></h3>
+   <p><a data-link-type="dfn" href="https://www.w3.org/policies/process/#invited-expert-wg" id="ref-for-invited-expert-wg">Invited experts</a> participate in <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑨">Working Groups</a> in their individual capacity.
+	An <span id="ref-for-invited-expert-wg①">invited expert</span> is only obliged to license those claims
+	over which s/he exercises control.</p>
+   <h3 class="heading settled" data-level="3.5" id="#spec-licensing-commitments"><span class="secno">3.5. </span><span class="content"> Specification Licensing Commitments</span><a class="self-link" href="#%23spec-licensing-commitments"></a></h3>
+   <p><a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①⓪">Working Group</a> <a data-link-type="dfn" href="#participant" id="ref-for-participant⑤">participants</a> who forego the right
+	to exclude <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims⑤">Essential Claims</a> against a <a data-link-type="dfn" href="#specification" id="ref-for-specification⑤">Specification</a> when provided the opportunity to do so see <a href="#sec-Exclusion">section 4</a>,
+	commit to license those <span id="ref-for-essential-claims⑥">Essential Claims</span> under the <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF③">W3C Royalty-Free Licensing Requirements</a>.
+	This <span id="ref-for-specification⑥">Specification</span> <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="licensing-commitment">Licensing Commitment</dfn> is effective at the later of:</p>
+   <ol type="i">
+    <li> The first publication of the <a data-link-type="dfn" href="#specification" id="ref-for-specification⑦">Specification</a> (after <a data-link-type="dfn" href="#participant" id="ref-for-participant⑥">participant</a> joins the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①①">Working Group</a>)
+			as either a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft①">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C②">Recommendation</a> in which the claim is <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims⑦">essential</a>; 
+    <li> The end of the <a data-link-type="dfn" href="#participant" id="ref-for-participant⑦">participant</a>’s first <a data-link-type="dfn" href="#exclusion-opportunity" id="ref-for-exclusion-opportunity">Exclusion Opportunity</a> pertaining to that claim. 
+   </ol>
+   <h3 class="heading settled" data-level="3.6" id="commitment-persistence"><span class="secno">3.6. </span><span class="content"> Licensing Commitment Persistence</span><a class="self-link" href="#commitment-persistence"></a></h3>
+   <p>If a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①②">Working Group</a> <a data-link-type="dfn" href="#participant" id="ref-for-participant⑧">participant</a> makes <a data-link-type="dfn" href="#licensing-commitment" id="ref-for-licensing-commitment①">Licensing Commitments</a> on a <a data-link-type="dfn" href="#specification" id="ref-for-specification⑧">Specification</a> for an <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims⑧">Essential Claim</a>,
+	the <span id="ref-for-licensing-commitment②">Licensing Commitment</span> carries forward
+	to a subsequent <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft②">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C③">Recommendation</a> of the <span id="ref-for-specification⑨">Specification</span> if:</p>
+   <ol type="i">
+    <li> the subsequent <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft③">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C④">Recommendation</a> uses the <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims⑨">Essential Claim</a> in a substantially similar manner
+			and to a substantially similar extent
+			with a substantially similar result
+			as the <span id="ref-for-essential-claims①⓪">Essential Claim</span> was used
+			in the <a data-link-type="dfn" href="#specification" id="ref-for-specification①⓪">Specification</a> on which the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①③">Working Group</a> <a data-link-type="dfn" href="#participant" id="ref-for-participant⑨">participant</a> made the <a data-link-type="dfn" href="#licensing-commitment" id="ref-for-licensing-commitment③">Licensing Commitment</a>;
+			and 
+    <li> the subsequent <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft④">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C⑤">Recommendation</a> is within,
+			or only a minor expansion of,
+			the scope of the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#WGCharter" id="ref-for-WGCharter②">Working Group’s charter</a> as it existed at the time of the <a data-link-type="dfn" href="#participant" id="ref-for-participant①⓪">participant</a>’s <a data-link-type="dfn" href="#licensing-commitment" id="ref-for-licensing-commitment④">Licensing Commitment</a> to the <a data-link-type="dfn" href="#specification" id="ref-for-specification①①">Specification</a>. 
+   </ol>
+   <p>In addition,
+	even if the above requirements are not met,
+	if an implementation of a subsequent <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft⑤">Patent Review Draft</a> is also an implementation of a prior <span id="ref-for-patent-review-draft⑥">Patent Review Draft</span>,
+	then implementation of the subsequent <span id="ref-for-patent-review-draft⑦">Patent Review Draft</span> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C⑥">Recommendation</a> will also benefit from the license commitments made by <a data-link-type="dfn" href="#participant" id="ref-for-participant①①">participants</a> in the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①④">Working Group</a> that developed the prior <span id="ref-for-patent-review-draft⑧">Patent Review Draft</span> or <span id="ref-for-RecsW3C⑦">Recommendation</span>.</p>
+   <h2 class="heading settled" data-level="4" id="sec-Exclusion"><span class="secno">4. </span><span class="content"> Exclusion From W3C RF Licensing Requirements</span><a class="self-link" href="#sec-Exclusion"></a></h2>
+   <p>Under the following conditions, <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①⑤">Working Group</a> <a data-link-type="dfn" href="#participant" id="ref-for-participant①②">participants</a> may exclude
+	specifically identified and disclosed <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①①">Essential Claims</a> from the overall <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF④">W3C RF licensing requirements</a>:</p>
+   <h3 class="heading settled" data-level="4.1" id="sec-exclusion-with"><span class="secno">4.1. </span><span class="content"> Exclusion With Continued Participation</span><a class="self-link" href="#sec-exclusion-with"></a></h3>
+   <p>Specific <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①②">Essential Claims</a> may be excluded
+	from the <a href="#sec-W3C-RF-license">W3C RF licensing requirements</a> by a <a data-link-type="dfn" href="#participant" id="ref-for-participant①③">participant</a> who seeks to remain in the Working Group
+	but only if that <span id="ref-for-participant①④">participant</span> indicates its refusal to license specific <span id="ref-for-essential-claims①③">Essential Claims</span> by specifically disclosing them
+	as required in <a href="#sec-exclude-mech">§ 4.5 Exclusion Mechanics</a> during an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="exclusion-opportunity">Exclusion Opportunity</dfn>.
+	The <a data-link-type="dfn" href="#exclusion-opportunity" id="ref-for-exclusion-opportunity①">Exclusion Opportunity</a> and its duration,
+	as described herein,
+	are announced with a <a data-link-type="dfn" href="#call-for-exclusion" id="ref-for-call-for-exclusion">Call for Exclusions</a>.</p>
+   <p>A <a data-link-type="dfn" href="#participant" id="ref-for-participant①⑤">participant</a> may exclude
+	from the <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF⑤">W3C RF licensing requirements</a> any of their <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①④">Essential Claims</a> in a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#fpwd" id="ref-for-fpwd">First Public Working Draft</a> <a data-link-type="biblio" href="#biblio-process" title="World Wide Web Consortium Process Document">[PROCESS]</a>,
+	or if there is any update to the <a data-link-type="dfn" href="#specification" id="ref-for-specification①②">Specification</a> published within 90 days thereafter,
+	in that latest <span id="ref-for-specification①③">Specification</span>,
+	within a 150-day <a data-link-type="dfn" href="#exclusion-opportunity" id="ref-for-exclusion-opportunity②">Exclusion Opportunity</a> that begins upon publication of the <span id="ref-for-fpwd①">First Public Working Draft</span>.</p>
+   <p>Additionally, if any claims are made <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①⑤">essential</a> by a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft⑨">Patent Review Draft</a> as a result of subject matter not present or apparent
+	at a previous <a data-link-type="dfn" href="#exclusion-opportunity" id="ref-for-exclusion-opportunity③">Exclusion Opportunity</a>,
+	the <a data-link-type="dfn" href="#participant" id="ref-for-participant①⑥">participant</a> may exclude these new <span id="ref-for-essential-claims①⑥">Essential Claims</span>,
+	and only these claims,
+	by excluding them within a 60-day <span id="ref-for-exclusion-opportunity④">Exclusion Opportunity</span> that begins upon the publication of the <span id="ref-for-patent-review-draft①⓪">Patent Review Draft</span></p>
+   <p>A participant who excludes <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①⑦">Essential Claims</a> may continue to participate in the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①⑥">Working Group</a>.</p>
+   <h3 class="heading settled" data-level="4.2" id="sec-exclusion-resign"><span class="secno">4.2. </span><span class="content"> Exclusion and Resignation From the Working Group</span><a class="self-link" href="#sec-exclusion-resign"></a></h3>
+   <p>A <a data-link-type="dfn" href="#participant" id="ref-for-participant①⑦">participant</a> may resign from the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①⑦">Working Group</a> within 90 days after the publication of the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#fpwd" id="ref-for-fpwd②">First Public Working Draft</a> of a <a data-link-type="dfn" href="#specification" id="ref-for-specification①④">Specification</a> and be excused from all Specification <a data-link-type="dfn" href="#licensing-commitment" id="ref-for-licensing-commitment⑤">Licensing Commitments</a> arising out of <span id="ref-for-GroupsWG①⑧">Working Group</span> participation
+	with respect to that <span id="ref-for-specification①⑤">Specification</span>.</p>
+   <p>If a <a data-link-type="dfn" href="#participant" id="ref-for-participant①⑧">participant</a> leaves the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG①⑨">Working Group</a> later than 90 days after the publication of a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#fpwd" id="ref-for-fpwd③">First Public Working Draft</a>,
+	that <span id="ref-for-participant①⑨">participant</span> is bound to license <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①⑧">Essential Claims</a> pertaining to that <a data-link-type="dfn" href="#specification" id="ref-for-specification①⑥">Specification</a> based on subject matter contained in the latest <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsWD" id="ref-for-RecsWD">Working Draft</a> or <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft①①">Patent Review Draft</a> published before the <span id="ref-for-participant②⓪">participant</span> resigned from the <span id="ref-for-GroupsWG②⓪">Working Group</span>,
+	and in all previous <span id="ref-for-patent-review-draft①②">Patent Review Drafts</span> and <span id="ref-for-RecsWD①">Working Drafts</span> to which the <span id="ref-for-participant②①">participant</span> was committed,
+	subject to any exclusion made by the <span id="ref-for-participant②②">participant</span>.</p>
+   <p>In addition,
+	departing <a data-link-type="dfn" href="#participant" id="ref-for-participant②③">participants</a> have a 60-day <a data-link-type="dfn" href="#exclusion-opportunity" id="ref-for-exclusion-opportunity⑤">Exclusion Opportunity</a> after their actual resignation
+	to exclude <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims①⑨">Essential Claims</a> if:</p>
+   <ol>
+    <li> such claims are <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②⓪">essential</a> to subject matter
+			that is contained in the latest <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsWD" id="ref-for-RecsWD②">Working Draft</a> published before the <a data-link-type="dfn" href="#participant" id="ref-for-participant②④">participant</a> resigns,
+			and 
+    <li> such subject matter is not present or apparent
+			in a publication of that <a data-link-type="dfn" href="#specification" id="ref-for-specification①⑦">Specification</a> on which the departing <a data-link-type="dfn" href="#participant" id="ref-for-participant②⑤">participant</a> had an <a data-link-type="dfn" href="#exclusion-opportunity" id="ref-for-exclusion-opportunity⑥">Exclusion Opportunity</a>. 
+   </ol>
+   <p>The <a data-link-type="dfn" href="#participant" id="ref-for-participant②⑥">participant</a> follows the same procedures specified in this <a href="#sec-Exclusion">section 4</a> for excluding claims in issued patents,
+	published applications,
+	and unpublished applications. <span id="ref-for-participant②⑦">Participants</span> resigning from a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG②①">Working Group</a> are still subject to all <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure①">disclosure</a> obligations
+	described in <a href="#sec-Disclosure">section 6</a>.</p>
+   <h3 class="heading settled" data-level="4.3" id="sec-join"><span class="secno">4.3. </span><span class="content"> Joining an Already Established Working Group</span><a class="self-link" href="#sec-join"></a></h3>
+   <p><a data-link-type="dfn" href="#participant" id="ref-for-participant②⑧">Participants</a> who join a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG②②">Working Group</a> more than 90 days after the publication of a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#fpwd" id="ref-for-fpwd④">First Public Working Draft</a> of a <a data-link-type="dfn" href="#specification" id="ref-for-specification①⑧">Specification</a> that has not yet been published as a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft①③">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C⑧">Recommendation</a> must exclude <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②①">Essential Claims</a> covered in the latest <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsWD" id="ref-for-RecsWD③">Working Draft</a> published within 90 days
+	after the <span id="ref-for-fpwd⑤">First Public Working Draft</span> at the later of 150 days after the publication of the <span id="ref-for-fpwd⑥">First Public Working Draft</span> or upon joining the <span id="ref-for-GroupsWG②③">Working Group</span>.</p>
+   <p><a data-link-type="dfn" href="#participant" id="ref-for-participant②⑨">Participants</a> who join a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG②④">Working Group</a> after publication of a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft①④">Patent Review Draft</a> must exclude <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②②">Essential Claims</a> covered in the latest <span id="ref-for-patent-review-draft①⑤">Patent Review Draft</span> at the later of 60 days after the publication of that <span id="ref-for-patent-review-draft①⑥">Patent Review Draft</span> or upon joining the <span id="ref-for-GroupsWG②⑤">Working Group</span>.
+	Their <a data-link-type="dfn" href="#licensing-commitment" id="ref-for-licensing-commitment⑥">Licensing Commitment</a> becomes effective
+	at publication of the first <span id="ref-for-patent-review-draft①⑦">Patent Review Draft</span> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C⑨">Recommendation</a> after <span id="ref-for-participant③⓪">participant</span> joins the <span id="ref-for-GroupsWG②⑥">Working Group</span>.</p>
+   <h3 class="heading settled" data-level="4.4" id="sec-exclude-app"><span class="secno">4.4. </span><span class="content"> Exclusion Procedures for Pending, Unpublished Patent Applications</span><a class="self-link" href="#sec-exclude-app"></a></h3>
+   <p>Exclusion of <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②③">Essential Claims</a> in pending, unpublished applications
+	follows the procedures for exclusion of issued claims
+	and claims in published applications
+	in <a href="#sec-exclusion-with">section 4.1</a> through <a href="#sec-join">4.3</a>,
+	except that the final deadline
+	for exclusion of unpublished claims
+	is at <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft①⑧">Patent Review Draft</a> plus 60 days for any material,
+	regardless of whether or not it was contained
+	in the documents referenced in the <a data-link-type="dfn" href="#call-for-exclusion" id="ref-for-call-for-exclusion①">Call for Exclusion</a> document.
+	Nevertheless, <a data-link-type="dfn" href="#participant" id="ref-for-participant③①">participants</a> have a good faith obligation
+	to make such exclusions as soon as is practical
+	after the publication of the first <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsWD" id="ref-for-RecsWD④">Working Draft</a> that includes the relevant technology.</p>
+   <p>Any exclusion of an <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②④">Essential Claim</a> in an unpublished application must provide either:</p>
+   <ol>
+    <li> the text of the filed application;
+			or 
+    <li> identification of the subsection(s) of the <a data-link-type="dfn" href="#specification" id="ref-for-specification①⑨">Specification</a> whose implementation makes the excluded claim <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②⑤">essential</a>. 
+   </ol>
+   <p>If option 2 is chosen,
+	the effect of the exclusion will be limited
+	to the identified part(s) of the specification.</p>
+   <h3 class="heading settled" data-level="4.5" id="sec-exclude-mech"><span class="secno">4.5. </span><span class="content"> Exclusion Mechanics</span><a class="self-link" href="#sec-exclude-mech"></a></h3>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="call-for-exclusion">Call for Exclusion</dfn> will be issued
+	by the W3C
+	indicating the relevant documents
+	against which <a data-link-type="dfn" href="#participant" id="ref-for-participant③②">participants</a> must make exclusion statements
+	as well as precise dates and deadlines for making any exclusions.
+	In case there is any dispute about the dates for exclusion,
+	the dates indicated in the <a data-link-type="dfn" href="#call-for-exclusion" id="ref-for-call-for-exclusion②">Call for Exclusion</a> are controlling.
+	The <span id="ref-for-call-for-exclusion③">Call for Exclusion</span> will be sent
+	to the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG②⑦">Working Group</a> mailing list
+	and the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#AC" id="ref-for-AC">Advisory Committee</a> Representatives
+	of all organizations participating in the <span id="ref-for-GroupsWG②⑧">Working Group</span>.
+	In the event that a <span id="ref-for-GroupsWG②⑨">Working Group</span> issues more than one <a data-link-type="dfn" href="#specification" id="ref-for-specification②⓪">Specification</a> the exclusion procedure will be employed for each series of documents individually.</p>
+   <p>Any exclusion of an <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②⑥">Essential Claim</a> must disclose:</p>
+   <ol>
+    <li> the patent number
+			or the publication number assigned to the patent application for a published application;
+			and 
+    <li> identification of the subsection(s) of the <a data-link-type="dfn" href="#specification" id="ref-for-specification②①">Specification</a> whose implementation makes the excluded claim <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②⑦">essential</a>. 
+   </ol>
+   <h2 class="heading settled" data-level="5" id="sec-Requirements"><span class="secno">5. </span><span class="content"> W3C Royalty-Free (RF) Licensing Requirements</span><a class="self-link" href="#sec-Requirements"></a></h2>
+   <p>With respect to a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft①⑨">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①⓪">Recommendation</a> developed under this policy,
+	a <dfn class="dfn-paneled" data-dfn-type="dfn" data-local-lt="RF License" data-lt="W3C Royalty-Free license | W3C RF Licensing Requirements | W3C Royalty-Free Licensing Requirements" data-noexport id="def-RF">W3C Royalty-Free license</dfn> shall mean
+	a non-assignable,
+	non-sublicensable license to make,
+	have made,
+	use,
+	sell,
+	have sold,
+	offer to sell,
+	import,
+	and distribute
+	and dispose of
+	implementations of the <span id="ref-for-patent-review-draft②⓪">Patent Review Draft</span> or <span id="ref-for-RecsW3C①①">Recommendation</span> that:</p>
+   <blockquote>
+    <p>1. shall be available to all,
+		worldwide,
+		whether or not they are W3C Members; </p>
+    <p>2. shall extend to all <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②⑧">Essential Claims</a> owned or controlled by the licensor; </p>
+    <p>3. may be limited to implementations of the <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft②①">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①②">Recommendation</a>,
+		and to what is required by the <span id="ref-for-patent-review-draft②②">Patent Review Draft</span> or <span id="ref-for-RecsW3C①③">Recommendation</span>; </p>
+    <p>4. may be conditioned on a grant of a reciprocal <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF⑥">RF license</a> (as defined in this policy)
+		to all <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims②⑨">Essential Claims</a> owned or controlled by the licensee.
+		A reciprocal license may be required to be available to all,
+		and a reciprocal license may itself be conditioned
+		on a further reciprocal license from all. </p>
+    <p>5. may not be conditioned on payment of royalties,
+		fees or other consideration; </p>
+    <p>6. may be suspended with respect to any licensee
+		when licensor is sued by licensee
+		for infringement of claims <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③⓪">essential</a> to implement any <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft②③">Patent Review Draft</a> or <a data-link-type="dfn" data-refhint-key="eb8f5040" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①④">W3C Recommendation</a>; </p>
+    <p>7. may not impose any further conditions or restrictions
+		on the use of any technology,
+		intellectual property rights,
+		or other restrictions on behavior of the licensee,
+		but may include reasonable, customary terms
+		relating to operation or maintenance
+		of the license relationship
+		such as the following:
+		choice of law and dispute resolution; </p>
+    <p>8. shall not be considered accepted by an implementer
+		who manifests an intent <strong>not</strong> to accept
+		the terms of the W3C Royalty-Free license as offered by the licensor. </p>
+    <p>License term: </p>
+    <p>9. The <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF⑦">RF license</a> conforming to the requirements in this policy
+		shall be made available by the licensor
+		subject to the limitations of 5(10).
+		The term of such license shall be for the life of the patents in question, </p>
+    <p>10. If the <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft②④">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①⑤">Recommendation</a> is <a data-link-type="dfn" href="https://www.w3.org/policies/process/#rec-rescind" id="ref-for-rec-rescind">rescinded</a> <a href="https://www.w3.org/policies/process/#rec-rescind" id="912123160">[PROCESS, section 6.9</a>] by W3C,
+		then no new licenses need be granted
+		but any licenses granted before the <span id="ref-for-patent-review-draft②⑤">Patent Review Draft</span> or <span id="ref-for-RecsW3C①⑥">Recommendation</span> was <span id="ref-for-rec-rescind①">rescinded</span> shall remain in effect. </p>
+   </blockquote>
+   <p>All <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③⓪">Working Group</a> <a data-link-type="dfn" href="#participant" id="ref-for-participant③③">participants</a> are encouraged
+	to provide a contact
+	from which licensing information can be obtained
+	and other relevant licensing information.
+	Any such information will be made publicly available
+	along with the patent <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure②">disclosures</a> for the <span id="ref-for-GroupsWG③①">Working Group</span> in question.</p>
+   <h2 class="heading settled" data-level="6" id="sec-Disclosure"><span class="secno">6. </span><span class="content"> Disclosure</span><a class="self-link" href="#sec-Disclosure"></a></h2>
+   <h3 class="heading settled" data-level="6.1" id="sec-disclosure-requirements"><span class="secno">6.1. </span><span class="content"> Disclosure Requirements</span><a class="self-link" href="#sec-disclosure-requirements"></a></h3>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="disclosure">Disclosure</dfn> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="disclosure requirement" data-noexport id="disclosure-requirement">required</dfn> when both of the following are true:</p>
+   <ol>
+    <li> an individual in a Member organization
+			receives a <a data-link-type="dfn" href="#disclosure-requests" id="ref-for-disclosure-requests">disclosure request</a> as described in <a href="#sec-disclosure-requests">section 6.3</a>;
+			and 
+    <li> that individual has actual knowledge of a patent
+			which the individual believes contains <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③①">Essential Claim</a>(s)
+			with respect to the <a data-link-type="dfn" href="#specification" id="ref-for-specification②②">Specification</a> for which disclosure is <a data-link-type="dfn" href="#disclosure-requests" id="ref-for-disclosure-requests①">requested</a>. 
+   </ol>
+   <p>Anyone in a Member organization
+	who receives a <a data-link-type="dfn" href="#disclosure-requests" id="ref-for-disclosure-requests②">disclosure request</a> and who has such knowledge must inform that <a data-link-type="dfn" href="https://www.w3.org/policies/process/#advisory-committee-representative" id="ref-for-advisory-committee-representative">AC Rep</a>.
+	Where <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure③">disclosure</a> is required,
+	the <span id="ref-for-advisory-committee-representative①">AC Rep</span> will do so.</p>
+   <h3 class="heading settled" data-level="6.2" id="sec-disclosure-exemption"><span class="secno">6.2. </span><span class="content"> Disclosure Exemption</span><a class="self-link" href="#sec-disclosure-exemption"></a></h3>
+   <p>The <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure④">disclosure</a> obligation
+	as to a particular claim
+	is satisfied if the holder of the claim
+	has made a commitment to license that claim
+	under <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF⑧">W3C RF licensing requirements</a> and the claim is no longer subject to exclusion under <a href="#sec-Exclusion">section 4</a>.
+	An <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③②">Essential Claim</a> is no longer subject to exclusion
+	if a patent holder has affirmatively agreed
+	to license the <span id="ref-for-essential-claims③③">Essential Claim</span> (effectively waiving its right to exclude such patent under <a href="#sec-Exclusion">section 4</a>)
+	or if the relevant exclusion period under <a href="#sec-Exclusion">section 4</a> has lapsed.</p>
+   <h3 class="heading settled" data-level="6.3" id="sec-disclosure-requests"><span class="secno">6.3. </span><span class="content"> Disclosure Requests</span><a class="self-link" href="#sec-disclosure-requests"></a></h3>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="disclosure-requests">Disclosure requests</dfn> will be included
+	in each <a data-link-type="dfn" href="#specification" id="ref-for-specification②③">Specification</a>.
+	Separate requests may be issued by W3C
+	to any party suspected of having knowledge of <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③④">Essential Claims</a>.
+	Such <a data-link-type="dfn" href="#disclosure-requests" id="ref-for-disclosure-requests③">disclosure requests</a> will instruct the recipient
+	to respond through their <a data-link-type="dfn" href="https://www.w3.org/policies/process/#advisory-committee-representative" id="ref-for-advisory-committee-representative②">AC Rep</a> (in the case of Members)
+	or a W3C contact
+	(in the case of non-Members). <span id="ref-for-disclosure-requests④">Disclosure requests</span> other than those that appear in the <span id="ref-for-specification②④">Specification</span> itself
+	should be directed to the AC Rep.</p>
+   <p><a data-link-type="dfn" href="#disclosure-requests" id="ref-for-disclosure-requests⑤">Disclosure requests</a> will provide administrative details
+	for making disclosures.</p>
+   <h3 class="heading settled" data-level="6.4" id="sec-disclosure-contents"><span class="secno">6.4. </span><span class="content"> Disclosure Contents</span><a class="self-link" href="#sec-disclosure-contents"></a></h3>
+   <p><a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure⑤">Disclosure</a> statements must include:</p>
+   <ol>
+    <li> the patent number,
+			but need not mention specific claims 
+    <li> the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③②">Working Group</a> and/or <a data-link-type="dfn" href="#specification" id="ref-for-specification②⑤">Specification</a> to which it applies 
+   </ol>
+   <h3 class="heading settled" data-level="6.5" id="sec-published"><span class="secno">6.5. </span><span class="content"> Disclosure of Laid-Open or Published Applications</span><a class="self-link" href="#sec-published"></a></h3>
+   <p>In the case of laid-open or published applications,
+	the Member’s good faith <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure⑥">disclosure</a> obligation
+	extends to unpublished amended and/or added claims
+	that have been allowed by relevant legal authorities
+	and that the Member believes to be <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③⑤">Essential Claims</a>.
+	To satisfy the <span id="ref-for-disclosure⑦">disclosure</span> obligation for such claims,
+	the Member shall either:</p>
+   <ol>
+    <li> disclose such claims,
+			or 
+    <li> identify those portions of the <a data-link-type="dfn" href="#specification" id="ref-for-specification②⑥">Specification</a> likely to be covered by such claims. 
+   </ol>
+   <h3 class="heading settled" data-level="6.6" id="sec-pending"><span class="secno">6.6. </span><span class="content"> Disclosure of Pending, Unpublished Applications</span><a class="self-link" href="#sec-pending"></a></h3>
+   <p>If a W3C Member includes claims in a patent application
+	and such claims were developed
+	based on information from a W3C <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③③">Working Group</a> or W3C document,
+	the Member must disclose the existence of such pending unpublished applications.</p>
+   <h3 class="heading settled" data-level="6.7" id="sec-good-faith"><span class="secno">6.7. </span><span class="content"> Good Faith Disclosure Standards</span><a class="self-link" href="#sec-good-faith"></a></h3>
+   <p>Satisfaction of the <a data-link-type="dfn" href="#disclosure-requirement" id="ref-for-disclosure-requirement">disclosure requirement</a> does not require that the discloser perform a patent search
+	or any analysis of the relationship
+	between the patents that the Member organization holds
+	and the <a data-link-type="dfn" href="#specification" id="ref-for-specification②⑦">Specification</a> in question.</p>
+   <p><a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure⑧">Disclosure</a> of third party patents is only required
+	where the <a data-link-type="dfn" data-refhint-key="6d799a04" href="https://www.w3.org/policies/process/#advisory-committee-representative" id="ref-for-advisory-committee-representative③">Advisory Committee Representative</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③④">Working Group</a> <a data-link-type="dfn" href="#participant" id="ref-for-participant③④">participant</a> has been made aware that the third party patent holder or applicant
+	has asserted that its patent contains <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③⑥">Essential Claims</a>,
+	unless such <span id="ref-for-disclosure⑨">disclosure</span> would breach a pre-existing non-disclosure obligation.</p>
+   <h3 class="heading settled" data-level="6.8" id="sec-disclosure-timing"><span class="secno">6.8. </span><span class="content"> Timing of Disclosure Obligations</span><a class="self-link" href="#sec-disclosure-timing"></a></h3>
+   <p>The <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure①⓪">disclosure</a> obligation is an ongoing obligation
+	that begins with the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#cfp" id="ref-for-cfp①">Call for Participation</a>.
+	Full satisfaction of the <span id="ref-for-disclosure①①">disclosure</span> obligation
+	may not be possible until later in the process
+	when the design is more complete.
+	In any case, <span id="ref-for-disclosure①②">disclosure</span> as soon as practically possible is required.</p>
+   <h3 class="heading settled" data-level="6.9" id="sec-disclosure-termination"><span class="secno">6.9. </span><span class="content"> Termination of Disclosure Obligations</span><a class="self-link" href="#sec-disclosure-termination"></a></h3>
+   <p>The <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure①③">disclosure</a> obligation terminates
+	when the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①⑦">Recommendation</a> is published or when the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③⑤">Working Group</a> terminates.</p>
+   <h3 class="heading settled" data-level="6.10" id="sec-disclosure-invite"><span class="secno">6.10. </span><span class="content"> Disclosure Obligations of Invited Experts</span><a class="self-link" href="#sec-disclosure-invite"></a></h3>
+   <p><a data-link-type="dfn" href="https://www.w3.org/policies/process/#invited-expert-wg" id="ref-for-invited-expert-wg②">Invited experts</a> or members of the public participating in a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③⑥">Working Group</a> must comply with <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure①④">disclosure</a> obligations to the extent of their own personal knowledge.</p>
+   <h3 class="heading settled" data-level="6.11" id="sec-disclosure-public"><span class="secno">6.11. </span><span class="content"> Disclosures to Be Publicly Available on Recommendation Track</span><a class="self-link" href="#sec-disclosure-public"></a></h3>
+   <p>Patent <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure①⑤">disclosure</a> information
+	for each <a data-link-type="dfn" href="#specification" id="ref-for-specification②⑧">Specification</a> will be made public
+	along with each public <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsWD" id="ref-for-RecsWD⑤">Working Draft</a> issued by the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③⑦">Working Group</a>.</p>
+   <h2 class="heading settled" data-level="7" id="sec-Exception"><span class="secno">7. </span><span class="content"> Exception Handling</span><a class="self-link" href="#sec-Exception"></a></h2>
+   <h3 class="heading settled" data-level="7.1" id="sec-PAG-formation"><span class="secno">7.1. </span><span class="content"> PAG Formation</span><a class="self-link" href="#sec-PAG-formation"></a></h3>
+   <p>In the event a patent has been disclosed that may be essential,
+	but is not available under <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF⑨">W3C RF licensing requirements</a>,
+	a <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-lt="Patent Advisory Group | PAG" id="patent-advisory-group">Patent Advisory Group (PAG)</dfn> will be launched to resolve the conflict.
+	The <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group">PAG</a> is an ad-hoc group
+	constituted specifically in relation to the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG③⑧">Working Group</a> with the conflict.
+	A <span id="ref-for-patent-advisory-group①">PAG</span> may also be formed without such a disclosure
+	if a <span id="ref-for-patent-advisory-group②">PAG</span> could help avoid anticipated patent problems.
+	During the time that the <span id="ref-for-patent-advisory-group③">PAG</span> is operating,
+	the <span id="ref-for-GroupsWG③⑨">Working Group</span> may continue its technical work
+	within the bounds of its <a data-link-type="dfn" href="https://www.w3.org/policies/process/#WGCharter" id="ref-for-WGCharter③">charter</a>.</p>
+   <h3 class="heading settled" data-level="7.2" id="sec-PAG-post-Recommendation"><span class="secno">7.2. </span><span class="content"> PAG Formation After a Recommendation Is Issued</span><a class="self-link" href="#sec-PAG-post-Recommendation"></a></h3>
+   <p>A <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group④">PAG</a> may also be convened
+	in the event <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③⑦">Essential Claims</a> are discovered after a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①⑧">Recommendation</a> is issued.
+	In this case the <span id="ref-for-patent-advisory-group⑤">PAG</span> will be open to any interested Member,
+	though the <span id="ref-for-patent-advisory-group⑥">PAG</span> may choose to meet
+	without the holder of the <span id="ref-for-essential-claims③⑧">Essential Claims</span> in question.</p>
+   <h3 class="heading settled" data-level="7.3" id="sec-PAG-composition"><span class="secno">7.3. </span><span class="content"> PAG Composition</span><a class="self-link" href="#sec-PAG-composition"></a></h3>
+   <p>The <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group⑦">PAG</a> is composed of:</p>
+   <ul>
+    <li> <a data-link-type="dfn" data-refhint-key="6d799a04" href="https://www.w3.org/policies/process/#advisory-committee-representative" id="ref-for-advisory-committee-representative④">Advisory Committee Representatives</a> of each W3C Member organization participating in the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④⓪">Working Group</a> (or alternate designated by the <span id="ref-for-advisory-committee-representative⑤">AC Rep</span>) 
+    <li> <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④①">Working Group</a> Team Contact 
+    <li> W3C counsel 
+    <li> <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④②">Working Group</a> Chair, <em>ex officio</em> 
+    <li> W3C Manager responsible for the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④③">Working Group</a> 
+    <li> Others suggested by the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④④">Working Group</a> Chair
+			and/or the Team
+			with the approval of the CEO 
+   </ul>
+   <p>W3C Member participants in the <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group⑧">PAG</a> should be authorized to represent their organization’s views
+	on patent licensing issues.
+	Any participant in the <span id="ref-for-patent-advisory-group⑨">PAG</span> may also be represented by legal counsel,
+	though this is not required. <a data-link-type="dfn" href="https://www.w3.org/policies/process/#invited-expert-wg" id="ref-for-invited-expert-wg③">Invited experts</a> are not entitled to participate in the <span id="ref-for-patent-advisory-group①⓪">PAG</span>,
+	though the <span id="ref-for-patent-advisory-group①①">PAG</span> may chose to invite any qualified experts
+	who would be able to assist the <span id="ref-for-patent-advisory-group①②">PAG</span> in its determinations.</p>
+   <p>W3C expects to provide qualified legal staffing to all <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group①③">PAGs</a> in the form of a Team member
+	who develops experience with the <span id="ref-for-patent-advisory-group①④">PAG</span> process
+	and patent issues at W3C.
+	Legal staff to the <span id="ref-for-patent-advisory-group①⑤">PAG</span> will represent
+	the interests of the Consortium as a whole.</p>
+   <h3 class="heading settled" data-level="7.4" id="sec-PAG-procedures"><span class="secno">7.4. </span><span class="content"> PAG Procedures</span><a class="self-link" href="#sec-PAG-procedures"></a></h3>
+   <h4 class="heading settled" data-level="7.4.1" id="sec-PAG-procedures-timing"><span class="secno">7.4.1. </span><span class="content"> PAG Formation Timing</span><a class="self-link" href="#sec-PAG-procedures-timing"></a></h4>
+   <p>The <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group①⑥">PAG</a> will be convened by the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④⑤">Working Group</a> Team Contact,
+	based on a charter developed initially by the Team.
+	The timing for convening the <span id="ref-for-patent-advisory-group①⑦">PAG</span> is at the discretion of the CEO,
+	based on consultation with the Chair of the <span id="ref-for-GroupsWG④⑥">Working Group</span>.
+	The CEO will inform the Board of Directors of the formation of the <span id="ref-for-patent-advisory-group①⑧">PAG</span>.
+	In some cases,
+	convening a <span id="ref-for-patent-advisory-group①⑨">PAG</span> before a specific patent <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure①⑥">disclosure</a> is made may be useful.
+	In other cases,
+	it may be that the <span id="ref-for-patent-advisory-group②⓪">PAG</span> can better resolve the licensing problems
+	when the <a data-link-type="dfn" href="#specification" id="ref-for-specification②⑨">Specification</a> is at the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsCR" id="ref-for-RecsCR">Candidate Recommendation</a> <a data-link-type="dfn" href="https://www.w3.org/policies/process/#maturity-levels" id="ref-for-maturity-levels">maturity level</a>.</p>
+   <h4 class="heading settled" data-level="7.4.2" id="sec-PAG-procedures-charter"><span class="secno">7.4.2. </span><span class="content"> PAG Charter Requirements</span><a class="self-link" href="#sec-PAG-procedures-charter"></a></h4>
+   <p>The charter should include:</p>
+   <ul>
+    <li> clear goals for the <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group②①">PAG</a>,
+			especially a statement of the question(s) the <span id="ref-for-patent-advisory-group②②">PAG</span> is to answer. 
+    <li> duration. 
+    <li> confidentiality status,
+			which must follow the underlying <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④⑦">Working Group</a> (<a data-link-type="dfn" href="https://www.w3.org/policies/process/#Member-only" id="ref-for-Member-only">Member only</a>, public, etc.). 
+   </ul>
+   <p>The <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group②③">PAG</a> charter must specify deadlines
+	for completion of individual work items it takes on.
+	The <span id="ref-for-patent-advisory-group②④">PAG</span>,
+	once convened,
+	may propose changes to its charter as appropriate,
+	to be accepted based on consensus of the <span id="ref-for-patent-advisory-group②⑤">PAG</span> participants.
+	The Team will choose a member of the <span id="ref-for-patent-advisory-group②⑥">PAG</span> to serve as Chair.
+	A single <span id="ref-for-patent-advisory-group②⑦">PAG</span> may exist for the duration of the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④⑧">Working Group</a> with which it is associated if needed.</p>
+   <p>In order to obtain input from the interested public at large,
+	as soon as the <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group②⑧">PAG</a> is convened,
+	the <span id="ref-for-patent-advisory-group②⑨">PAG</span> charter will be made public,
+	along with all of the patent <a data-link-type="dfn" href="#disclosure" id="ref-for-disclosure①⑦">disclosure</a> and licensing statements
+	applicable to the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG④⑨">Working Group</a> in question.</p>
+   <h3 class="heading settled" data-level="7.5" id="sec-PAG-conclude"><span class="secno">7.5. </span><span class="content"> PAG Conclusion</span><a class="self-link" href="#sec-PAG-conclude"></a></h3>
+   <h4 class="heading settled" data-level="7.5.1" id="sec-PAG-conclude-possible"><span class="secno">7.5.1. </span><span class="content"> Possible PAG Conclusions</span><a class="self-link" href="#sec-PAG-conclude-possible"></a></h4>
+   <p>After appropriate consultation,
+	the <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group③⓪">PAG</a> may conclude:</p>
+   <ol>
+    <li> The initial concern has been resolved,
+			enabling the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑤⓪">Working Group</a> to continue. 
+    <li> The <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑤①">Working Group</a> should be instructed to
+			consider designing around the identified claims. 
+    <li> The Team should seek further information and evaluation,
+			including and not limited to evaluation of the patents in question
+			or the terms under which <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF①⓪">W3C RF licensing requirements</a> may be met. 
+    <li> The <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑤②">Working Group</a>, or its work on the <a data-link-type="dfn" href="#specification" id="ref-for-specification③⓪">Specification</a>(s) at issue, should be terminated. 
+    <li> The <a data-link-type="dfn" href="#specification" id="ref-for-specification③①">Specification</a> (if it has already been issued)
+			should be <a data-link-type="dfn" href="https://www.w3.org/policies/process/#rec-rescind" id="ref-for-rec-rescind②">rescinded</a>. 
+    <li> Alternative licensing terms should be considered.
+			The procedure in <a href="#sec-PAG-conclude-alternate">section 7.5.3</a> must be followed. 
+   </ol>
+   <h4 class="heading settled" data-level="7.5.2" id="sec-PAG-conclude-outcome"><span class="secno">7.5.2. </span><span class="content"> PAG Outcome</span><a class="self-link" href="#sec-PAG-conclude-outcome"></a></h4>
+   <p>Outcomes 4, 5 or 6 require an <a data-link-type="dfn" href="https://www.w3.org/policies/process/#ACReview" id="ref-for-ACReview">Advisory Committee review</a> and <a data-link-type="dfn" href="https://www.w3.org/policies/process/#def-w3c-decision" id="ref-for-def-w3c-decision">W3C decision</a>.
+	The CEO will inform the Board of Directors of the <a data-link-type="dfn" href="#patent-advisory-group" id="ref-for-patent-advisory-group③①">PAG</a> Outcome.
+	In any case,
+	the <span id="ref-for-patent-advisory-group③②">PAG</span> must state its proposal and reasons in a public W3C document.</p>
+   <h4 class="heading settled" data-level="7.5.3" id="sec-PAG-conclude-alternate"><span class="secno">7.5.3. </span><span class="content"> Procedure for Considering Alternate Licensing Terms</span><a class="self-link" href="#sec-PAG-conclude-alternate"></a></h4>
+   <p>After having made every effort to resolve the conflict
+	through options 1, 2, and 3 under <a href="#sec-PAG-conclude-possible">7.5.1</a>,
+	the PAG, by <a data-link-type="dfn" href="https://www.w3.org/policies/process/#def-Consensus" id="ref-for-def-Consensus">consensus</a> <a href="https://www.w3.org/policies/process/#Consensus">PROCESS, section 3.3</a>],
+	may propose that specifically identified patented technology
+	be included in the <a data-link-type="dfn" href="#specification" id="ref-for-specification③②">Specification</a> even though such claims are not available
+	according to the <a data-link-type="dfn" href="#def-RF" id="ref-for-def-RF①①">W3C RF licensing requirements</a> of this policy
+	("<dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="pag-proposal">PAG Proposal</dfn>").
+	The <a data-link-type="dfn" href="#pag-proposal" id="ref-for-pag-proposal">PAG Proposal</a> must explain:</p>
+   <ul>
+    <li> why the chartered goals of the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑤③">Working Group</a> cannot be met
+			without inclusion of the identified technology; 
+    <li> how the proposed licensing terms
+			will be consistent with widespread adoption. 
+   </ul>
+   <p>The <a data-link-type="dfn" href="#pag-proposal" id="ref-for-pag-proposal①">PAG Proposal</a> must include:</p>
+   <ul>
+    <li> a complete list of claims
+			and licensing terms of the proposed alternative arrangements;
+			and, 
+    <li> a proposed charter for the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑤④">Working Group</a>,
+			unless the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C①⑨">Recommendation</a> has been issued
+			and no new work is required. 
+   </ul>
+   <p>The <a data-link-type="dfn" href="https://www.w3.org/policies/process/#team" id="ref-for-team">Team</a> will circulate the <a data-link-type="dfn" href="#pag-proposal" id="ref-for-pag-proposal②">PAG Proposal</a> for public comment, <a data-link-type="dfn" href="https://www.w3.org/policies/process/#ACReview" id="ref-for-ACReview①">Advisory Committee review</a> and <a data-link-type="dfn" href="https://www.w3.org/policies/process/#def-w3c-decision" id="ref-for-def-w3c-decision①">W3C decision</a>.
+	If the <span id="ref-for-team①">Team</span> determines
+	that the <span id="ref-for-pag-proposal③">PAG Proposal</span> is the best alternative consistent with the W3C mission,
+	the interests of the web community,
+	and is clearly justified
+	despite the expressed preference of the W3C Membership for RF licensing,
+	then the <span id="ref-for-team②">Team</span> may circulate its endorsement with <span id="ref-for-pag-proposal④">PAG Proposal</span>.
+	Should the <span id="ref-for-pag-proposal⑤">PAG Proposal</span> be rejected,
+	then either sub-paragraph 4 or 5 of <a href="#sec-PAG-conclude-possible">section 7.5.1</a> will apply as appropriate,
+	without further action of the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#AC" id="ref-for-AC①">Advisory Committee</a>.
+	Members of the <a data-link-type="dfn" href="https://www.w3.org/policies/process/#GroupsWG" id="ref-for-GroupsWG⑤⑤">Working Group</a> who are bound to RF terms
+	are not released from their obligations by virtue of the <span id="ref-for-pag-proposal⑥">PAG Proposal</span> alone.
+	As with any newly chartered <span id="ref-for-GroupsWG⑤⑥">Working Group</span>,
+	new commitments must be made,
+	along with possible exclusions.
+	In order to expedite the process,
+	the <span id="ref-for-pag-proposal⑦">PAG Proposal</span> should consider
+	whether additional claims would be excluded
+	under the new charter and include such information in the <span id="ref-for-pag-proposal⑧">PAG Proposal</span>.</p>
+   <h2 class="heading settled" data-level="8" id="def-essential"><span class="secno">8. </span><span class="content"> Definition of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="essential-claims">Essential Claims</dfn></span><a class="self-link" href="#def-essential"></a></h2>
+   <h3 class="heading settled" data-level="8.1" id="def-essential-definition"><span class="secno">8.1. </span><span class="content"> Essential Claims</span><a class="self-link" href="#def-essential-definition"></a></h3>
+   <p><a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims③⑨">Essential Claims</a> shall mean
+	all claims in any patent or patent application
+	in any jurisdiction in the world
+	that would necessarily be infringed by implementation of a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft②⑥">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C②⓪">Recommendation</a>.
+	A claim is necessarily infringed hereunder
+	only when it is not possible to avoid infringing it
+	because there is no non-infringing alternative
+	for implementing the <a data-link-type="dfn" href="#dfn-norm" id="ref-for-dfn-norm">normative</a> portions of the <a data-link-type="dfn" href="#specification" id="ref-for-specification③③">Specification</a>.
+	Existence of a non-infringing alternative shall be judged
+	based on the state of the art at the time
+	the first <span id="ref-for-patent-review-draft②⑦">Patent Review Draft</span> containing the relevant normative text was published.</p>
+   <p>Where this text refers to <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims④⓪">Essential Claims</a> with respect to a <a data-link-type="dfn" href="#specification" id="ref-for-specification③④">Specification</a> that is neither a <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft②⑧">Patent Review Draft</a> nor a <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C②①">Recommendation</a>,
+	it refers to claims that would be <span id="ref-for-essential-claims④①">Essential Claims</span> if that <span id="ref-for-specification③⑤">Specification</span> were a <span id="ref-for-patent-review-draft②⑨">Patent Review Draft</span> or <span id="ref-for-RecsW3C②②">Recommendation</span>.</p>
+   <h3 class="heading settled" data-level="8.2" id="def-essential-exclusions"><span class="secno">8.2. </span><span class="content"> Limitations on the Scope of Definition of Essential Claims</span><a class="self-link" href="#def-essential-exclusions"></a></h3>
+   <p>The following are expressly excluded from
+	and shall not be deemed to constitute <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims④②">Essential Claims</a>:</p>
+   <ol>
+    <li> any claims other than as set forth above
+			even if contained in the same patent as <a data-link-type="dfn" href="#essential-claims" id="ref-for-essential-claims④③">Essential Claims</a>; 
+    <li>
+      claims which would be infringed only by: 
+     <ul>
+      <li> portions of an implementation that are not specified
+					in the <a data-link-type="dfn" href="#dfn-norm" id="ref-for-dfn-norm①">normative</a> portions of the <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft③⓪">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C②③">Recommendation</a>,
+					or 
+      <li> enabling technologies
+					that may be necessary to make or use any product
+					or portion thereof
+					that complies with the <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft③①">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C②④">Recommendation</a> and are not themselves expressly set forth in the <span id="ref-for-patent-review-draft③②">Patent Review Draft</span> or <span id="ref-for-RecsW3C②⑤">Recommendation</span> (e.g., semiconductor manufacturing technology,
+					compiler technology,
+					object-oriented technology,
+					basic operating system technology,
+					and the like),
+					or 
+      <li> the implementation of technology developed elsewhere
+					and merely incorporated by reference
+					in the body of the <a data-link-type="dfn" href="#patent-review-draft" id="ref-for-patent-review-draft③③">Patent Review Draft</a> or <a data-link-type="dfn" href="https://www.w3.org/policies/process/#RecsW3C" id="ref-for-RecsW3C②⑥">Recommendation</a>; 
+     </ul>
+    <li> design patents and design registrations. 
+   </ol>
+   <h3 class="heading settled" data-level="8.3" id="def-essential-requirements"><span class="secno">8.3. </span><span class="content"> Definition of Normative, Optional and Informative</span><a class="self-link" href="#def-essential-requirements"></a></h3>
+   <p>For purposes of this definition,
+	the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dfn-norm">normative</dfn> portions of the <a data-link-type="dfn" href="#specification" id="ref-for-specification③⑥">Specification</a> shall be deemed to include
+	only architectural and interoperability requirements.
+	Optional features in the RFC 2119 <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> sense
+	are considered <a data-link-type="dfn" href="#dfn-norm" id="ref-for-dfn-norm②">normative</a> unless they are specifically identified as informative.
+	Implementation examples
+	or any other material
+	that merely illustrate the requirements of the <span id="ref-for-specification③⑦">Specification</span> are informative, rather than <span id="ref-for-dfn-norm③">normative</span>.</p>
+   <div data-fill-with="references">
+    <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+    <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+    <dl>
+     <dt id="biblio-process">[PROCESS]
+     <dd><a href="https://www.w3.org/policies/process/"><cite>World Wide Web Consortium Process Document</cite></a>. URL: <a href="https://www.w3.org/policies/process/">https://www.w3.org/policies/process/</a>
+     <dt id="biblio-rfc2119">[RFC2119]
+     <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+    </dl>
+   </div>
+   <h2 class="no-num heading settled" id="sec-acknowledgments"><span class="content"> Acknowledgments</span><a class="self-link" href="#sec-acknowledgments"></a></h2>
+   <p>W3C thanks those who have contributed to the Patent Policy,
+	particularly the members of the <a href="https://www.w3.org/groups/ig/psig/">W3C Patents and Standards Interest Group (PSIG)</a>,
+	the <a href="https://www.w3.org/Consortium/Patent-Policy-20170801/#sec-acknowledgments">contributors to the original Patent Policy</a>,
+	and <a href="https://www.w3.org/policies/patent-policy/20200915/#sec-acknowledgments">contributors to the 2020 revision</a>.</p>
+   <div data-fill-with="index">
+    <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+    <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+    <ul class="index">
+     <li><a href="#call-for-exclusion">Call for Exclusion</a><span>, in § 4.5</span>
+     <li><a href="#disclosure">Disclosure</a><span>, in § 6.1</span>
+     <li><a href="#disclosure-requests">Disclosure requests</a><span>, in § 6.3</span>
+     <li><a href="#disclosure-requirement">disclosure requirement</a><span>, in § 6.1</span>
+     <li><a href="#essential-claims">Essential Claims</a><span>, in § 8</span>
+     <li><a href="#exclusion-opportunity">Exclusion Opportunity</a><span>, in § 4.1</span>
+     <li><a href="#licensing-commitment">Licensing Commitment</a><span>, in § 3.5</span>
+     <li><a href="#dfn-norm">normative</a><span>, in § 8.3</span>
+     <li><a href="#patent-advisory-group">PAG</a><span>, in § 7.1</span>
+     <li><a href="#pag-proposal">PAG Proposal</a><span>, in § 7.5.3</span>
+     <li><a href="#participant">participant</a><span>, in § 3.1</span>
+     <li><a href="#patent-advisory-group">Patent Advisory Group</a><span>, in § 7.1</span>
+     <li><a href="#patent-review-draft">Patent Review Draft</a><span>, in § 2</span>
+     <li><a href="#def-RF">RF License</a><span>, in § 5</span>
+     <li><a href="#specification">Specification</a><span>, in § 2</span>
+     <li><a href="#def-RF">W3C RF Licensing Requirements</a><span>, in § 5</span>
+     <li><a href="#def-RF">W3C Royalty-Free license</a><span>, in § 5</span>
+     <li><a href="#def-RF">W3C Royalty-Free Licensing Requirements</a><span>, in § 5</span>
+    </ul>
+    <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+    <ul class="index">
+     <li>
+      <a data-link-type="biblio">[PROCESS]</a> defines the following terms:
+      <ul>
+       <li><span class="dfn-paneled" id="c7060077">AC Rep</span>
+       <li><span class="dfn-paneled" id="78bc58d5">Advisory Committee</span>
+       <li><span class="dfn-paneled" id="aef0c7a1">Advisory Committee Representative</span>
+       <li><span class="dfn-paneled" id="18a57c40">Advisory Committee review</span>
+       <li><span class="dfn-paneled" id="f2bef8b9">Call for Participation</span>
+       <li><span class="dfn-paneled" id="f2a05329">Candidate Recommendation</span>
+       <li><span class="dfn-paneled" id="69e311dc">consensus</span>
+       <li><span class="dfn-paneled" id="aba9ba76">First Public Working Draft</span>
+       <li><span class="dfn-paneled" id="096dd60f">Invited Expert</span>
+       <li><span class="dfn-paneled" id="cf095308">maturity level</span>
+       <li><span class="dfn-paneled" id="c1121b78">Member Submission</span>
+       <li><span class="dfn-paneled" id="b2c7a336">Member-only</span>
+       <li><span class="dfn-paneled" id="f6401b11">Patent Review Draft</span>
+       <li><span class="dfn-paneled" id="b6266b80">Recommendation</span>
+       <li><span class="dfn-paneled" id="639ddde6">Recommendation Track</span>
+       <li><span class="dfn-paneled" id="8f7f0924">rescinded</span>
+       <li><span class="dfn-paneled" id="be637790">Team</span>
+       <li><span class="dfn-paneled" id="ebc26626">W3C decision</span>
+       <li><span class="dfn-paneled" id="d41fed46">W3C Member Submission</span>
+       <li><span class="dfn-paneled" id="94aff898">W3C Recommendation</span>
+       <li><span class="dfn-paneled" id="fc436603">W3C technical report</span>
+       <li><span class="dfn-paneled" id="608e723f">W3C Working Group</span>
+       <li><span class="dfn-paneled" id="f1797f67">Working Draft</span>
+       <li><span class="dfn-paneled" id="1b4b374b">Working Group</span>
+       <li><span class="dfn-paneled" id="225e1dd7">Working Group charter</span>
+      </ul>
+    </ul>
+   </div>
+   <div data-fill-with="issues-index"></div>
+  </main>
+  <script src="https://www.w3.org/scripts/TR/2016/fixup.js"></script>
+<script>/* Boilerplate: script-dom-helper */
+"use strict";
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"096dd60f": {"dfnID":"096dd60f","dfnText":"Invited Expert","external":true,"refSections":[{"refs":[{"id":"ref-for-invited-expert-wg"},{"id":"ref-for-invited-expert-wg\u2460"}],"title":"3.4. \nNote on Licensing Commitments for Invited Experts"},{"refs":[{"id":"ref-for-invited-expert-wg\u2461"}],"title":"6.10. \nDisclosure Obligations of Invited Experts"},{"refs":[{"id":"ref-for-invited-expert-wg\u2462"}],"title":"7.3. \nPAG Composition"}],"url":"https://www.w3.org/policies/process/#invited-expert-wg"},
+"18a57c40": {"dfnID":"18a57c40","dfnText":"Advisory Committee review","external":true,"refSections":[{"refs":[{"id":"ref-for-ACReview"}],"title":"7.5.2. \nPAG Outcome"},{"refs":[{"id":"ref-for-ACReview\u2460"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"https://www.w3.org/policies/process/#ACReview"},
+"1b4b374b": {"dfnID":"1b4b374b","dfnText":"Working Group","external":true,"refSections":[{"refs":[{"id":"ref-for-GroupsWG"},{"id":"ref-for-GroupsWG\u2460"}],"title":"1. \nOverview"},{"refs":[{"id":"ref-for-GroupsWG\u2461"},{"id":"ref-for-GroupsWG\u2462"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-GroupsWG\u2463"}],"title":"3. \nLicensing Obligations of Working Group Participants"},{"refs":[{"id":"ref-for-GroupsWG\u2464"},{"id":"ref-for-GroupsWG\u2465"},{"id":"ref-for-GroupsWG\u2466"}],"title":"3.1. \nW3C RF Licensing Requirements for All Working Group Participants"},{"refs":[{"id":"ref-for-GroupsWG\u2467"}],"title":"3.2. \nLimitation on Licensing Requirement for Non-Participating Members"},{"refs":[{"id":"ref-for-GroupsWG\u2468"}],"title":"3.4. \nNote on Licensing Commitments for Invited Experts"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u24ea"},{"id":"ref-for-GroupsWG\u2460\u2460"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2461"},{"id":"ref-for-GroupsWG\u2460\u2462"},{"id":"ref-for-GroupsWG\u2460\u2463"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2464"}],"title":"4. \nExclusion From W3C RF Licensing Requirements"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2465"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2466"},{"id":"ref-for-GroupsWG\u2460\u2467"},{"id":"ref-for-GroupsWG\u2460\u2468"},{"id":"ref-for-GroupsWG\u2461\u24ea"},{"id":"ref-for-GroupsWG\u2461\u2460"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-GroupsWG\u2461\u2461"},{"id":"ref-for-GroupsWG\u2461\u2462"},{"id":"ref-for-GroupsWG\u2461\u2463"},{"id":"ref-for-GroupsWG\u2461\u2464"},{"id":"ref-for-GroupsWG\u2461\u2465"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-GroupsWG\u2461\u2466"},{"id":"ref-for-GroupsWG\u2461\u2467"},{"id":"ref-for-GroupsWG\u2461\u2468"}],"title":"4.5. \nExclusion Mechanics"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u24ea"},{"id":"ref-for-GroupsWG\u2462\u2460"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2461"}],"title":"6.4. \nDisclosure Contents"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2462"}],"title":"6.6. \nDisclosure of Pending, Unpublished Applications"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2463"}],"title":"6.7. \nGood Faith Disclosure Standards"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2464"}],"title":"6.9. \nTermination of Disclosure Obligations"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2465"}],"title":"6.10. \nDisclosure Obligations of Invited Experts"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2466"}],"title":"6.11. \nDisclosures to Be Publicly Available on Recommendation Track"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2467"},{"id":"ref-for-GroupsWG\u2462\u2468"}],"title":"7.1. \nPAG Formation"},{"refs":[{"id":"ref-for-GroupsWG\u2463\u24ea"},{"id":"ref-for-GroupsWG\u2463\u2460"},{"id":"ref-for-GroupsWG\u2463\u2461"},{"id":"ref-for-GroupsWG\u2463\u2462"},{"id":"ref-for-GroupsWG\u2463\u2463"}],"title":"7.3. \nPAG Composition"},{"refs":[{"id":"ref-for-GroupsWG\u2463\u2464"},{"id":"ref-for-GroupsWG\u2463\u2465"}],"title":"7.4.1. \nPAG Formation Timing"},{"refs":[{"id":"ref-for-GroupsWG\u2463\u2466"},{"id":"ref-for-GroupsWG\u2463\u2467"},{"id":"ref-for-GroupsWG\u2463\u2468"}],"title":"7.4.2. \nPAG Charter Requirements"},{"refs":[{"id":"ref-for-GroupsWG\u2464\u24ea"},{"id":"ref-for-GroupsWG\u2464\u2460"},{"id":"ref-for-GroupsWG\u2464\u2461"}],"title":"7.5.1. \nPossible PAG Conclusions"},{"refs":[{"id":"ref-for-GroupsWG\u2464\u2462"},{"id":"ref-for-GroupsWG\u2464\u2463"},{"id":"ref-for-GroupsWG\u2464\u2464"},{"id":"ref-for-GroupsWG\u2464\u2465"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"https://www.w3.org/policies/process/#GroupsWG"},
+"225e1dd7": {"dfnID":"225e1dd7","dfnText":"Working Group charter","external":true,"refSections":[{"refs":[{"id":"ref-for-WGCharter"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-WGCharter\u2460"}],"title":"3. \nLicensing Obligations of Working Group Participants"},{"refs":[{"id":"ref-for-WGCharter\u2461"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-WGCharter\u2462"}],"title":"7.1. \nPAG Formation"}],"url":"https://www.w3.org/policies/process/#WGCharter"},
+"608e723f": {"dfnID":"608e723f","dfnText":"W3C Working Group","external":true,"refSections":[{"refs":[{"id":"ref-for-GroupsWG"},{"id":"ref-for-GroupsWG\u2460"}],"title":"1. \nOverview"},{"refs":[{"id":"ref-for-GroupsWG\u2461"},{"id":"ref-for-GroupsWG\u2462"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-GroupsWG\u2463"}],"title":"3. \nLicensing Obligations of Working Group Participants"},{"refs":[{"id":"ref-for-GroupsWG\u2464"},{"id":"ref-for-GroupsWG\u2465"},{"id":"ref-for-GroupsWG\u2466"}],"title":"3.1. \nW3C RF Licensing Requirements for All Working Group Participants"},{"refs":[{"id":"ref-for-GroupsWG\u2467"}],"title":"3.2. \nLimitation on Licensing Requirement for Non-Participating Members"},{"refs":[{"id":"ref-for-GroupsWG\u2468"}],"title":"3.4. \nNote on Licensing Commitments for Invited Experts"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u24ea"},{"id":"ref-for-GroupsWG\u2460\u2460"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2461"},{"id":"ref-for-GroupsWG\u2460\u2462"},{"id":"ref-for-GroupsWG\u2460\u2463"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2464"}],"title":"4. \nExclusion From W3C RF Licensing Requirements"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2465"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-GroupsWG\u2460\u2466"},{"id":"ref-for-GroupsWG\u2460\u2467"},{"id":"ref-for-GroupsWG\u2460\u2468"},{"id":"ref-for-GroupsWG\u2461\u24ea"},{"id":"ref-for-GroupsWG\u2461\u2460"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-GroupsWG\u2461\u2461"},{"id":"ref-for-GroupsWG\u2461\u2462"},{"id":"ref-for-GroupsWG\u2461\u2463"},{"id":"ref-for-GroupsWG\u2461\u2464"},{"id":"ref-for-GroupsWG\u2461\u2465"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-GroupsWG\u2461\u2466"},{"id":"ref-for-GroupsWG\u2461\u2467"},{"id":"ref-for-GroupsWG\u2461\u2468"}],"title":"4.5. \nExclusion Mechanics"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u24ea"},{"id":"ref-for-GroupsWG\u2462\u2460"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2461"}],"title":"6.4. \nDisclosure Contents"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2462"}],"title":"6.6. \nDisclosure of Pending, Unpublished Applications"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2463"}],"title":"6.7. \nGood Faith Disclosure Standards"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2464"}],"title":"6.9. \nTermination of Disclosure Obligations"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2465"}],"title":"6.10. \nDisclosure Obligations of Invited Experts"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2466"}],"title":"6.11. \nDisclosures to Be Publicly Available on Recommendation Track"},{"refs":[{"id":"ref-for-GroupsWG\u2462\u2467"},{"id":"ref-for-GroupsWG\u2462\u2468"}],"title":"7.1. \nPAG Formation"},{"refs":[{"id":"ref-for-GroupsWG\u2463\u24ea"},{"id":"ref-for-GroupsWG\u2463\u2460"},{"id":"ref-for-GroupsWG\u2463\u2461"},{"id":"ref-for-GroupsWG\u2463\u2462"},{"id":"ref-for-GroupsWG\u2463\u2463"}],"title":"7.3. \nPAG Composition"},{"refs":[{"id":"ref-for-GroupsWG\u2463\u2464"},{"id":"ref-for-GroupsWG\u2463\u2465"}],"title":"7.4.1. \nPAG Formation Timing"},{"refs":[{"id":"ref-for-GroupsWG\u2463\u2466"},{"id":"ref-for-GroupsWG\u2463\u2467"},{"id":"ref-for-GroupsWG\u2463\u2468"}],"title":"7.4.2. \nPAG Charter Requirements"},{"refs":[{"id":"ref-for-GroupsWG\u2464\u24ea"},{"id":"ref-for-GroupsWG\u2464\u2460"},{"id":"ref-for-GroupsWG\u2464\u2461"}],"title":"7.5.1. \nPossible PAG Conclusions"},{"refs":[{"id":"ref-for-GroupsWG\u2464\u2462"},{"id":"ref-for-GroupsWG\u2464\u2463"},{"id":"ref-for-GroupsWG\u2464\u2464"},{"id":"ref-for-GroupsWG\u2464\u2465"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"https://www.w3.org/policies/process/#GroupsWG"},
+"639ddde6": {"dfnID":"639ddde6","dfnText":"Recommendation Track","external":true,"refSections":[{"refs":[{"id":"ref-for-rec-track"}],"title":"2. \nLicensing Goals for W3C Specifications"}],"url":"https://www.w3.org/policies/process/#rec-track"},
+"69e311dc": {"dfnID":"69e311dc","dfnText":"consensus","external":true,"refSections":[{"refs":[{"id":"ref-for-def-Consensus"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"https://www.w3.org/policies/process/#def-Consensus"},
+"78bc58d5": {"dfnID":"78bc58d5","dfnText":"Advisory Committee","external":true,"refSections":[{"refs":[{"id":"ref-for-AC"}],"title":"4.5. \nExclusion Mechanics"},{"refs":[{"id":"ref-for-AC\u2460"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"https://www.w3.org/policies/process/#AC"},
+"8f7f0924": {"dfnID":"8f7f0924","dfnText":"rescinded","external":true,"refSections":[{"refs":[{"id":"ref-for-rec-rescind"},{"id":"912123160"},{"id":"ref-for-rec-rescind\u2460"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-rec-rescind\u2461"}],"title":"7.5.1. \nPossible PAG Conclusions"}],"url":"https://www.w3.org/policies/process/#rec-rescind"},
+"94aff898": {"dfnID":"94aff898","dfnText":"W3C Recommendation","external":true,"refSections":[{"refs":[{"id":"ref-for-RecsW3C"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-RecsW3C\u2460"}],"title":"3.3. \nLicensing Commitments in W3C Submissions"},{"refs":[{"id":"ref-for-RecsW3C\u2461"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-RecsW3C\u2462"},{"id":"ref-for-RecsW3C\u2463"},{"id":"ref-for-RecsW3C\u2464"},{"id":"ref-for-RecsW3C\u2465"},{"id":"ref-for-RecsW3C\u2466"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-RecsW3C\u2467"},{"id":"ref-for-RecsW3C\u2468"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u24ea"},{"id":"ref-for-RecsW3C\u2460\u2460"},{"id":"ref-for-RecsW3C\u2460\u2461"},{"id":"ref-for-RecsW3C\u2460\u2462"},{"id":"ref-for-RecsW3C\u2460\u2463"},{"id":"ref-for-RecsW3C\u2460\u2464"},{"id":"ref-for-RecsW3C\u2460\u2465"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u2466"}],"title":"6.9. \nTermination of Disclosure Obligations"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u2467"}],"title":"7.2. \nPAG Formation After a Recommendation Is Issued"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u2468"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"},{"refs":[{"id":"ref-for-RecsW3C\u2461\u24ea"},{"id":"ref-for-RecsW3C\u2461\u2460"},{"id":"ref-for-RecsW3C\u2461\u2461"}],"title":"8.1. \nEssential Claims"},{"refs":[{"id":"ref-for-RecsW3C\u2461\u2462"},{"id":"ref-for-RecsW3C\u2461\u2463"},{"id":"ref-for-RecsW3C\u2461\u2464"},{"id":"ref-for-RecsW3C\u2461\u2465"}],"title":"8.2. \nLimitations on the Scope of Definition of Essential Claims"}],"url":"https://www.w3.org/policies/process/#RecsW3C"},
+"aba9ba76": {"dfnID":"aba9ba76","dfnText":"First Public Working Draft","external":true,"refSections":[{"refs":[{"id":"ref-for-fpwd"},{"id":"ref-for-fpwd\u2460"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-fpwd\u2461"},{"id":"ref-for-fpwd\u2462"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-fpwd\u2463"},{"id":"ref-for-fpwd\u2464"},{"id":"ref-for-fpwd\u2465"}],"title":"4.3. \nJoining an Already Established Working Group"}],"url":"https://www.w3.org/policies/process/#fpwd"},
+"aef0c7a1": {"dfnID":"aef0c7a1","dfnText":"Advisory Committee Representative","external":true,"refSections":[{"refs":[{"id":"ref-for-advisory-committee-representative"},{"id":"ref-for-advisory-committee-representative\u2460"}],"title":"6.1. \nDisclosure Requirements"},{"refs":[{"id":"ref-for-advisory-committee-representative\u2461"}],"title":"6.3. \nDisclosure Requests"},{"refs":[{"id":"ref-for-advisory-committee-representative\u2462"}],"title":"6.7. \nGood Faith Disclosure Standards"},{"refs":[{"id":"ref-for-advisory-committee-representative\u2463"},{"id":"ref-for-advisory-committee-representative\u2464"}],"title":"7.3. \nPAG Composition"}],"url":"https://www.w3.org/policies/process/#advisory-committee-representative"},
+"b2c7a336": {"dfnID":"b2c7a336","dfnText":"Member-only","external":true,"refSections":[{"refs":[{"id":"ref-for-Member-only"}],"title":"7.4.2. \nPAG Charter Requirements"}],"url":"https://www.w3.org/policies/process/#Member-only"},
+"b6266b80": {"dfnID":"b6266b80","dfnText":"Recommendation","external":true,"refSections":[{"refs":[{"id":"ref-for-RecsW3C"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-RecsW3C\u2460"}],"title":"3.3. \nLicensing Commitments in W3C Submissions"},{"refs":[{"id":"ref-for-RecsW3C\u2461"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-RecsW3C\u2462"},{"id":"ref-for-RecsW3C\u2463"},{"id":"ref-for-RecsW3C\u2464"},{"id":"ref-for-RecsW3C\u2465"},{"id":"ref-for-RecsW3C\u2466"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-RecsW3C\u2467"},{"id":"ref-for-RecsW3C\u2468"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u24ea"},{"id":"ref-for-RecsW3C\u2460\u2460"},{"id":"ref-for-RecsW3C\u2460\u2461"},{"id":"ref-for-RecsW3C\u2460\u2462"},{"id":"ref-for-RecsW3C\u2460\u2463"},{"id":"ref-for-RecsW3C\u2460\u2464"},{"id":"ref-for-RecsW3C\u2460\u2465"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u2466"}],"title":"6.9. \nTermination of Disclosure Obligations"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u2467"}],"title":"7.2. \nPAG Formation After a Recommendation Is Issued"},{"refs":[{"id":"ref-for-RecsW3C\u2460\u2468"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"},{"refs":[{"id":"ref-for-RecsW3C\u2461\u24ea"},{"id":"ref-for-RecsW3C\u2461\u2460"},{"id":"ref-for-RecsW3C\u2461\u2461"}],"title":"8.1. \nEssential Claims"},{"refs":[{"id":"ref-for-RecsW3C\u2461\u2462"},{"id":"ref-for-RecsW3C\u2461\u2463"},{"id":"ref-for-RecsW3C\u2461\u2464"},{"id":"ref-for-RecsW3C\u2461\u2465"}],"title":"8.2. \nLimitations on the Scope of Definition of Essential Claims"}],"url":"https://www.w3.org/policies/process/#RecsW3C"},
+"be637790": {"dfnID":"be637790","dfnText":"Team","external":true,"refSections":[{"refs":[{"id":"ref-for-team"},{"id":"ref-for-team\u2460"},{"id":"ref-for-team\u2461"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"https://www.w3.org/policies/process/#team"},
+"c1121b78": {"dfnID":"c1121b78","dfnText":"Member Submission","external":true,"refSections":[{"refs":[{"id":"ref-for-MemberSubmission"},{"id":"ref-for-MemberSubmission\u2460"},{"id":"ref-for-MemberSubmission\u2461"},{"id":"ref-for-MemberSubmission\u2462"}],"title":"3.3. \nLicensing Commitments in W3C Submissions"}],"url":"https://www.w3.org/policies/process/#MemberSubmission"},
+"c7060077": {"dfnID":"c7060077","dfnText":"AC Rep","external":true,"refSections":[{"refs":[{"id":"ref-for-advisory-committee-representative"},{"id":"ref-for-advisory-committee-representative\u2460"}],"title":"6.1. \nDisclosure Requirements"},{"refs":[{"id":"ref-for-advisory-committee-representative\u2461"}],"title":"6.3. \nDisclosure Requests"},{"refs":[{"id":"ref-for-advisory-committee-representative\u2462"}],"title":"6.7. \nGood Faith Disclosure Standards"},{"refs":[{"id":"ref-for-advisory-committee-representative\u2463"},{"id":"ref-for-advisory-committee-representative\u2464"}],"title":"7.3. \nPAG Composition"}],"url":"https://www.w3.org/policies/process/#advisory-committee-representative"},
+"call-for-exclusion": {"dfnID":"call-for-exclusion","dfnText":"Call for Exclusion","external":false,"refSections":[{"refs":[{"id":"ref-for-call-for-exclusion"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-call-for-exclusion\u2460"}],"title":"4.4. \nExclusion Procedures for Pending, Unpublished Patent Applications"},{"refs":[{"id":"ref-for-call-for-exclusion\u2461"},{"id":"ref-for-call-for-exclusion\u2462"}],"title":"4.5. \nExclusion Mechanics"}],"url":"#call-for-exclusion"},
+"cf095308": {"dfnID":"cf095308","dfnText":"maturity level","external":true,"refSections":[{"refs":[{"id":"ref-for-maturity-levels"}],"title":"7.4.1. \nPAG Formation Timing"}],"url":"https://www.w3.org/policies/process/#maturity-levels"},
+"d41fed46": {"dfnID":"d41fed46","dfnText":"W3C Member Submission","external":true,"refSections":[{"refs":[{"id":"ref-for-MemberSubmission"},{"id":"ref-for-MemberSubmission\u2460"},{"id":"ref-for-MemberSubmission\u2461"},{"id":"ref-for-MemberSubmission\u2462"}],"title":"3.3. \nLicensing Commitments in W3C Submissions"}],"url":"https://www.w3.org/policies/process/#MemberSubmission"},
+"def-RF": {"dfnID":"def-RF","dfnText":"W3C Royalty-Free license","external":false,"refSections":[{"refs":[{"id":"ref-for-def-RF"}],"title":"1. \nOverview"},{"refs":[{"id":"ref-for-def-RF"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-def-RF\u2460"}],"title":"3.1. \nW3C RF Licensing Requirements for All Working Group Participants"},{"refs":[{"id":"ref-for-def-RF\u2461"}],"title":"3.3. \nLicensing Commitments in W3C Submissions"},{"refs":[{"id":"ref-for-def-RF\u2462"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-def-RF\u2463"}],"title":"4. \nExclusion From W3C RF Licensing Requirements"},{"refs":[{"id":"ref-for-def-RF\u2464"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-def-RF\u2465"},{"id":"ref-for-def-RF\u2466"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-def-RF\u2467"}],"title":"6.2. \nDisclosure Exemption"},{"refs":[{"id":"ref-for-def-RF\u2468"}],"title":"7.1. \nPAG Formation"},{"refs":[{"id":"ref-for-def-RF\u2460\u24ea"}],"title":"7.5.1. \nPossible PAG Conclusions"},{"refs":[{"id":"ref-for-def-RF\u2460\u2460"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"#def-RF"},
+"dfn-norm": {"dfnID":"dfn-norm","dfnText":"normative","external":false,"refSections":[{"refs":[{"id":"ref-for-dfn-norm"}],"title":"8.1. \nEssential Claims"},{"refs":[{"id":"ref-for-dfn-norm\u2460"}],"title":"8.2. \nLimitations on the Scope of Definition of Essential Claims"},{"refs":[{"id":"ref-for-dfn-norm\u2461"},{"id":"ref-for-dfn-norm\u2462"}],"title":"8.3. \nDefinition of Normative, Optional and Informative"}],"url":"#dfn-norm"},
+"disclosure": {"dfnID":"disclosure","dfnText":"Disclosure","external":false,"refSections":[{"refs":[{"id":"ref-for-disclosure"}],"title":"1. \nOverview"},{"refs":[{"id":"ref-for-disclosure\u2460"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-disclosure\u2461"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-disclosure\u2462"}],"title":"6.1. \nDisclosure Requirements"},{"refs":[{"id":"ref-for-disclosure\u2463"}],"title":"6.2. \nDisclosure Exemption"},{"refs":[{"id":"ref-for-disclosure\u2464"}],"title":"6.4. \nDisclosure Contents"},{"refs":[{"id":"ref-for-disclosure\u2465"},{"id":"ref-for-disclosure\u2466"}],"title":"6.5. \nDisclosure of Laid-Open or Published Applications"},{"refs":[{"id":"ref-for-disclosure\u2467"},{"id":"ref-for-disclosure\u2468"}],"title":"6.7. \nGood Faith Disclosure Standards"},{"refs":[{"id":"ref-for-disclosure\u2460\u24ea"},{"id":"ref-for-disclosure\u2460\u2460"},{"id":"ref-for-disclosure\u2460\u2461"}],"title":"6.8. \nTiming of Disclosure Obligations"},{"refs":[{"id":"ref-for-disclosure\u2460\u2462"}],"title":"6.9. \nTermination of Disclosure Obligations"},{"refs":[{"id":"ref-for-disclosure\u2460\u2463"}],"title":"6.10. \nDisclosure Obligations of Invited Experts"},{"refs":[{"id":"ref-for-disclosure\u2460\u2464"}],"title":"6.11. \nDisclosures to Be Publicly Available on Recommendation Track"},{"refs":[{"id":"ref-for-disclosure\u2460\u2465"}],"title":"7.4.1. \nPAG Formation Timing"},{"refs":[{"id":"ref-for-disclosure\u2460\u2466"}],"title":"7.4.2. \nPAG Charter Requirements"}],"url":"#disclosure"},
+"disclosure-requests": {"dfnID":"disclosure-requests","dfnText":"Disclosure requests","external":false,"refSections":[{"refs":[{"id":"ref-for-disclosure-requests"},{"id":"ref-for-disclosure-requests\u2460"},{"id":"ref-for-disclosure-requests\u2461"}],"title":"6.1. \nDisclosure Requirements"},{"refs":[{"id":"ref-for-disclosure-requests\u2462"},{"id":"ref-for-disclosure-requests\u2463"},{"id":"ref-for-disclosure-requests\u2464"}],"title":"6.3. \nDisclosure Requests"}],"url":"#disclosure-requests"},
+"disclosure-requirement": {"dfnID":"disclosure-requirement","dfnText":"required","external":false,"refSections":[{"refs":[{"id":"ref-for-disclosure-requirement"}],"title":"6.7. \nGood Faith Disclosure Standards"}],"url":"#disclosure-requirement"},
+"ebc26626": {"dfnID":"ebc26626","dfnText":"W3C decision","external":true,"refSections":[{"refs":[{"id":"ref-for-def-w3c-decision"}],"title":"7.5.2. \nPAG Outcome"},{"refs":[{"id":"ref-for-def-w3c-decision\u2460"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"https://www.w3.org/policies/process/#def-w3c-decision"},
+"essential-claims": {"dfnID":"essential-claims","dfnText":"Essential Claims","external":false,"refSections":[{"refs":[{"id":"ref-for-essential-claims"}],"title":"1. \nOverview"},{"refs":[{"id":"ref-for-essential-claims\u2460"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-essential-claims\u2461"},{"id":"ref-for-essential-claims\u2462"},{"id":"ref-for-essential-claims\u2463"}],"title":"3.1. \nW3C RF Licensing Requirements for All Working Group Participants"},{"refs":[{"id":"ref-for-essential-claims\u2464"},{"id":"ref-for-essential-claims\u2465"},{"id":"ref-for-essential-claims\u2466"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-essential-claims\u2467"},{"id":"ref-for-essential-claims\u2468"},{"id":"ref-for-essential-claims\u2460\u24ea"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-essential-claims\u2460\u2460"}],"title":"4. \nExclusion From W3C RF Licensing Requirements"},{"refs":[{"id":"ref-for-essential-claims\u2460\u2461"},{"id":"ref-for-essential-claims\u2460\u2462"},{"id":"ref-for-essential-claims\u2460\u2463"},{"id":"ref-for-essential-claims\u2460\u2464"},{"id":"ref-for-essential-claims\u2460\u2465"},{"id":"ref-for-essential-claims\u2460\u2466"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-essential-claims\u2460\u2467"},{"id":"ref-for-essential-claims\u2460\u2468"},{"id":"ref-for-essential-claims\u2461\u24ea"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-essential-claims\u2461\u2460"},{"id":"ref-for-essential-claims\u2461\u2461"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-essential-claims\u2461\u2462"},{"id":"ref-for-essential-claims\u2461\u2463"},{"id":"ref-for-essential-claims\u2461\u2464"}],"title":"4.4. \nExclusion Procedures for Pending, Unpublished Patent Applications"},{"refs":[{"id":"ref-for-essential-claims\u2461\u2465"},{"id":"ref-for-essential-claims\u2461\u2466"}],"title":"4.5. \nExclusion Mechanics"},{"refs":[{"id":"ref-for-essential-claims\u2461\u2467"},{"id":"ref-for-essential-claims\u2461\u2468"},{"id":"ref-for-essential-claims\u2462\u24ea"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-essential-claims\u2462\u2460"}],"title":"6.1. \nDisclosure Requirements"},{"refs":[{"id":"ref-for-essential-claims\u2462\u2461"},{"id":"ref-for-essential-claims\u2462\u2462"}],"title":"6.2. \nDisclosure Exemption"},{"refs":[{"id":"ref-for-essential-claims\u2462\u2463"}],"title":"6.3. \nDisclosure Requests"},{"refs":[{"id":"ref-for-essential-claims\u2462\u2464"}],"title":"6.5. \nDisclosure of Laid-Open or Published Applications"},{"refs":[{"id":"ref-for-essential-claims\u2462\u2465"}],"title":"6.7. \nGood Faith Disclosure Standards"},{"refs":[{"id":"ref-for-essential-claims\u2462\u2466"},{"id":"ref-for-essential-claims\u2462\u2467"}],"title":"7.2. \nPAG Formation After a Recommendation Is Issued"},{"refs":[{"id":"ref-for-essential-claims\u2462\u2468"},{"id":"ref-for-essential-claims\u2463\u24ea"},{"id":"ref-for-essential-claims\u2463\u2460"}],"title":"8.1. \nEssential Claims"},{"refs":[{"id":"ref-for-essential-claims\u2463\u2461"},{"id":"ref-for-essential-claims\u2463\u2462"}],"title":"8.2. \nLimitations on the Scope of Definition of Essential Claims"}],"url":"#essential-claims"},
+"exclusion-opportunity": {"dfnID":"exclusion-opportunity","dfnText":"Exclusion Opportunity","external":false,"refSections":[{"refs":[{"id":"ref-for-exclusion-opportunity"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-exclusion-opportunity\u2460"},{"id":"ref-for-exclusion-opportunity\u2461"},{"id":"ref-for-exclusion-opportunity\u2462"},{"id":"ref-for-exclusion-opportunity\u2463"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-exclusion-opportunity\u2464"},{"id":"ref-for-exclusion-opportunity\u2465"}],"title":"4.2. \nExclusion and Resignation From the Working Group"}],"url":"#exclusion-opportunity"},
+"f1797f67": {"dfnID":"f1797f67","dfnText":"Working Draft","external":true,"refSections":[{"refs":[{"id":"ref-for-RecsWD"},{"id":"ref-for-RecsWD\u2460"},{"id":"ref-for-RecsWD\u2461"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-RecsWD\u2462"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-RecsWD\u2463"}],"title":"4.4. \nExclusion Procedures for Pending, Unpublished Patent Applications"},{"refs":[{"id":"ref-for-RecsWD\u2464"}],"title":"6.11. \nDisclosures to Be Publicly Available on Recommendation Track"}],"url":"https://www.w3.org/policies/process/#RecsWD"},
+"f2a05329": {"dfnID":"f2a05329","dfnText":"Candidate Recommendation","external":true,"refSections":[{"refs":[{"id":"ref-for-RecsCR"}],"title":"7.4.1. \nPAG Formation Timing"}],"url":"https://www.w3.org/policies/process/#RecsCR"},
+"f2bef8b9": {"dfnID":"f2bef8b9","dfnText":"Call for Participation","external":true,"refSections":[{"refs":[{"id":"ref-for-cfp"}],"title":"3. \nLicensing Obligations of Working Group Participants"},{"refs":[{"id":"ref-for-cfp\u2460"}],"title":"6.8. \nTiming of Disclosure Obligations"}],"url":"https://www.w3.org/policies/process/#cfp"},
+"f6401b11": {"dfnID":"f6401b11","dfnText":"Patent Review Draft","external":true,"refSections":[{"refs":[{"id":"ref-for-patent-review-drafts"}],"title":"2. \nLicensing Goals for W3C Specifications"}],"url":"https://www.w3.org/policies/process/#patent-review-drafts"},
+"fc436603": {"dfnID":"fc436603","dfnText":"W3C technical report","external":true,"refSections":[{"refs":[{"id":"ref-for-technical-report"}],"title":"2. \nLicensing Goals for W3C Specifications"}],"url":"https://www.w3.org/policies/process/#technical-report"},
+"licensing-commitment": {"dfnID":"licensing-commitment","dfnText":"Licensing Commitment","external":false,"refSections":[{"refs":[{"id":"ref-for-licensing-commitment"}],"title":"3.1. \nW3C RF Licensing Requirements for All Working Group Participants"},{"refs":[{"id":"ref-for-licensing-commitment\u2460"},{"id":"ref-for-licensing-commitment\u2461"},{"id":"ref-for-licensing-commitment\u2462"},{"id":"ref-for-licensing-commitment\u2463"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-licensing-commitment\u2464"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-licensing-commitment\u2465"}],"title":"4.3. \nJoining an Already Established Working Group"}],"url":"#licensing-commitment"},
+"pag-proposal": {"dfnID":"pag-proposal","dfnText":"PAG Proposal","external":false,"refSections":[{"refs":[{"id":"ref-for-pag-proposal"},{"id":"ref-for-pag-proposal\u2460"},{"id":"ref-for-pag-proposal\u2461"},{"id":"ref-for-pag-proposal\u2462"},{"id":"ref-for-pag-proposal\u2463"},{"id":"ref-for-pag-proposal\u2464"},{"id":"ref-for-pag-proposal\u2465"},{"id":"ref-for-pag-proposal\u2466"},{"id":"ref-for-pag-proposal\u2467"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"}],"url":"#pag-proposal"},
+"participant": {"dfnID":"participant","dfnText":"participant","external":false,"refSections":[{"refs":[{"id":"ref-for-participant"}],"title":"1. \nOverview"},{"refs":[{"id":"ref-for-participant\u2460"}],"title":"3. \nLicensing Obligations of Working Group Participants"},{"refs":[{"id":"ref-for-participant\u2461"},{"id":"ref-for-participant\u2462"},{"id":"ref-for-participant\u2463"}],"title":"3.1. \nW3C RF Licensing Requirements for All Working Group Participants"},{"refs":[{"id":"ref-for-participant\u2464"},{"id":"ref-for-participant\u2465"},{"id":"ref-for-participant\u2466"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-participant\u2467"},{"id":"ref-for-participant\u2468"},{"id":"ref-for-participant\u2460\u24ea"},{"id":"ref-for-participant\u2460\u2460"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-participant\u2460\u2461"}],"title":"4. \nExclusion From W3C RF Licensing Requirements"},{"refs":[{"id":"ref-for-participant\u2460\u2462"},{"id":"ref-for-participant\u2460\u2463"},{"id":"ref-for-participant\u2460\u2464"},{"id":"ref-for-participant\u2460\u2465"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-participant\u2460\u2466"},{"id":"ref-for-participant\u2460\u2467"},{"id":"ref-for-participant\u2460\u2468"},{"id":"ref-for-participant\u2461\u24ea"},{"id":"ref-for-participant\u2461\u2460"},{"id":"ref-for-participant\u2461\u2461"},{"id":"ref-for-participant\u2461\u2462"},{"id":"ref-for-participant\u2461\u2463"},{"id":"ref-for-participant\u2461\u2464"},{"id":"ref-for-participant\u2461\u2465"},{"id":"ref-for-participant\u2461\u2466"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-participant\u2461\u2467"},{"id":"ref-for-participant\u2461\u2468"},{"id":"ref-for-participant\u2462\u24ea"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-participant\u2462\u2460"}],"title":"4.4. \nExclusion Procedures for Pending, Unpublished Patent Applications"},{"refs":[{"id":"ref-for-participant\u2462\u2461"}],"title":"4.5. \nExclusion Mechanics"},{"refs":[{"id":"ref-for-participant\u2462\u2462"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-participant\u2462\u2463"}],"title":"6.7. \nGood Faith Disclosure Standards"}],"url":"#participant"},
+"patent-advisory-group": {"dfnID":"patent-advisory-group","dfnText":"Patent Advisory Group (PAG)","external":false,"refSections":[{"refs":[{"id":"ref-for-patent-advisory-group"},{"id":"ref-for-patent-advisory-group\u2460"},{"id":"ref-for-patent-advisory-group\u2461"},{"id":"ref-for-patent-advisory-group\u2462"}],"title":"7.1. \nPAG Formation"},{"refs":[{"id":"ref-for-patent-advisory-group\u2463"},{"id":"ref-for-patent-advisory-group\u2464"},{"id":"ref-for-patent-advisory-group\u2465"}],"title":"7.2. \nPAG Formation After a Recommendation Is Issued"},{"refs":[{"id":"ref-for-patent-advisory-group\u2466"},{"id":"ref-for-patent-advisory-group\u2467"},{"id":"ref-for-patent-advisory-group\u2468"},{"id":"ref-for-patent-advisory-group\u2460\u24ea"},{"id":"ref-for-patent-advisory-group\u2460\u2460"},{"id":"ref-for-patent-advisory-group\u2460\u2461"},{"id":"ref-for-patent-advisory-group\u2460\u2462"},{"id":"ref-for-patent-advisory-group\u2460\u2463"},{"id":"ref-for-patent-advisory-group\u2460\u2464"}],"title":"7.3. \nPAG Composition"},{"refs":[{"id":"ref-for-patent-advisory-group\u2460\u2465"},{"id":"ref-for-patent-advisory-group\u2460\u2466"},{"id":"ref-for-patent-advisory-group\u2460\u2467"},{"id":"ref-for-patent-advisory-group\u2460\u2468"},{"id":"ref-for-patent-advisory-group\u2461\u24ea"}],"title":"7.4.1. \nPAG Formation Timing"},{"refs":[{"id":"ref-for-patent-advisory-group\u2461\u2460"},{"id":"ref-for-patent-advisory-group\u2461\u2461"},{"id":"ref-for-patent-advisory-group\u2461\u2462"},{"id":"ref-for-patent-advisory-group\u2461\u2463"},{"id":"ref-for-patent-advisory-group\u2461\u2464"},{"id":"ref-for-patent-advisory-group\u2461\u2465"},{"id":"ref-for-patent-advisory-group\u2461\u2466"},{"id":"ref-for-patent-advisory-group\u2461\u2467"},{"id":"ref-for-patent-advisory-group\u2461\u2468"}],"title":"7.4.2. \nPAG Charter Requirements"},{"refs":[{"id":"ref-for-patent-advisory-group\u2462\u24ea"}],"title":"7.5.1. \nPossible PAG Conclusions"},{"refs":[{"id":"ref-for-patent-advisory-group\u2462\u2460"},{"id":"ref-for-patent-advisory-group\u2462\u2461"}],"title":"7.5.2. \nPAG Outcome"}],"url":"#patent-advisory-group"},
+"patent-review-draft": {"dfnID":"patent-review-draft","dfnText":"Patent Review Draft","external":false,"refSections":[{"refs":[{"id":"ref-for-patent-review-draft"}],"title":"3.3. \nLicensing Commitments in W3C Submissions"},{"refs":[{"id":"ref-for-patent-review-draft\u2460"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-patent-review-draft\u2461"},{"id":"ref-for-patent-review-draft\u2462"},{"id":"ref-for-patent-review-draft\u2463"},{"id":"ref-for-patent-review-draft\u2464"},{"id":"ref-for-patent-review-draft\u2465"},{"id":"ref-for-patent-review-draft\u2466"},{"id":"ref-for-patent-review-draft\u2467"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-patent-review-draft\u2468"},{"id":"ref-for-patent-review-draft\u2460\u24ea"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-patent-review-draft\u2460\u2460"},{"id":"ref-for-patent-review-draft\u2460\u2461"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-patent-review-draft\u2460\u2462"},{"id":"ref-for-patent-review-draft\u2460\u2463"},{"id":"ref-for-patent-review-draft\u2460\u2464"},{"id":"ref-for-patent-review-draft\u2460\u2465"},{"id":"ref-for-patent-review-draft\u2460\u2466"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-patent-review-draft\u2460\u2467"}],"title":"4.4. \nExclusion Procedures for Pending, Unpublished Patent Applications"},{"refs":[{"id":"ref-for-patent-review-draft\u2460\u2468"},{"id":"ref-for-patent-review-draft\u2461\u24ea"},{"id":"ref-for-patent-review-draft\u2461\u2460"},{"id":"ref-for-patent-review-draft\u2461\u2461"},{"id":"ref-for-patent-review-draft\u2461\u2462"},{"id":"ref-for-patent-review-draft\u2461\u2463"},{"id":"ref-for-patent-review-draft\u2461\u2464"}],"title":"5. \nW3C Royalty-Free (RF) Licensing Requirements"},{"refs":[{"id":"ref-for-patent-review-draft\u2461\u2465"},{"id":"ref-for-patent-review-draft\u2461\u2466"},{"id":"ref-for-patent-review-draft\u2461\u2467"},{"id":"ref-for-patent-review-draft\u2461\u2468"}],"title":"8.1. \nEssential Claims"},{"refs":[{"id":"ref-for-patent-review-draft\u2462\u24ea"},{"id":"ref-for-patent-review-draft\u2462\u2460"},{"id":"ref-for-patent-review-draft\u2462\u2461"},{"id":"ref-for-patent-review-draft\u2462\u2462"}],"title":"8.2. \nLimitations on the Scope of Definition of Essential Claims"}],"url":"#patent-review-draft"},
+"specification": {"dfnID":"specification","dfnText":"Specification","external":false,"refSections":[{"refs":[{"id":"ref-for-specification"},{"id":"ref-for-specification\u2460"}],"title":"1. \nOverview"},{"refs":[{"id":"ref-for-specification\u2461"},{"id":"ref-for-specification\u2462"},{"id":"ref-for-specification\u2463"}],"title":"2. \nLicensing Goals for W3C Specifications"},{"refs":[{"id":"ref-for-specification\u2464"},{"id":"ref-for-specification\u2465"},{"id":"ref-for-specification\u2466"}],"title":"3.5. \nSpecification Licensing Commitments"},{"refs":[{"id":"ref-for-specification\u2467"},{"id":"ref-for-specification\u2468"},{"id":"ref-for-specification\u2460\u24ea"},{"id":"ref-for-specification\u2460\u2460"}],"title":"3.6. \nLicensing Commitment Persistence"},{"refs":[{"id":"ref-for-specification\u2460\u2461"},{"id":"ref-for-specification\u2460\u2462"}],"title":"4.1. \nExclusion With Continued Participation"},{"refs":[{"id":"ref-for-specification\u2460\u2463"},{"id":"ref-for-specification\u2460\u2464"},{"id":"ref-for-specification\u2460\u2465"},{"id":"ref-for-specification\u2460\u2466"}],"title":"4.2. \nExclusion and Resignation From the Working Group"},{"refs":[{"id":"ref-for-specification\u2460\u2467"}],"title":"4.3. \nJoining an Already Established Working Group"},{"refs":[{"id":"ref-for-specification\u2460\u2468"}],"title":"4.4. \nExclusion Procedures for Pending, Unpublished Patent Applications"},{"refs":[{"id":"ref-for-specification\u2461\u24ea"},{"id":"ref-for-specification\u2461\u2460"}],"title":"4.5. \nExclusion Mechanics"},{"refs":[{"id":"ref-for-specification\u2461\u2461"}],"title":"6.1. \nDisclosure Requirements"},{"refs":[{"id":"ref-for-specification\u2461\u2462"},{"id":"ref-for-specification\u2461\u2463"}],"title":"6.3. \nDisclosure Requests"},{"refs":[{"id":"ref-for-specification\u2461\u2464"}],"title":"6.4. \nDisclosure Contents"},{"refs":[{"id":"ref-for-specification\u2461\u2465"}],"title":"6.5. \nDisclosure of Laid-Open or Published Applications"},{"refs":[{"id":"ref-for-specification\u2461\u2466"}],"title":"6.7. \nGood Faith Disclosure Standards"},{"refs":[{"id":"ref-for-specification\u2461\u2467"}],"title":"6.11. \nDisclosures to Be Publicly Available on Recommendation Track"},{"refs":[{"id":"ref-for-specification\u2461\u2468"}],"title":"7.4.1. \nPAG Formation Timing"},{"refs":[{"id":"ref-for-specification\u2462\u24ea"},{"id":"ref-for-specification\u2462\u2460"}],"title":"7.5.1. \nPossible PAG Conclusions"},{"refs":[{"id":"ref-for-specification\u2462\u2461"}],"title":"7.5.3. \nProcedure for Considering Alternate Licensing Terms"},{"refs":[{"id":"ref-for-specification\u2462\u2462"},{"id":"ref-for-specification\u2462\u2463"},{"id":"ref-for-specification\u2462\u2464"}],"title":"8.1. \nEssential Claims"},{"refs":[{"id":"ref-for-specification\u2462\u2465"},{"id":"ref-for-specification\u2462\u2466"}],"title":"8.3. \nDefinition of Normative, Optional and Informative"}],"url":"#specification"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#call-for-exclusion": {"displayText":"call for exclusion","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"call for exclusion","type":"dfn","url":"#call-for-exclusion"},
+"#def-RF": {"displayText":"w3c royalty-free license","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"w3c royalty-free license","type":"dfn","url":"#def-RF"},
+"#dfn-norm": {"displayText":"normative","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"normative","type":"dfn","url":"#dfn-norm"},
+"#disclosure": {"displayText":"disclosure","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"disclosure","type":"dfn","url":"#disclosure"},
+"#disclosure-requests": {"displayText":"disclosure requests","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"disclosure requests","type":"dfn","url":"#disclosure-requests"},
+"#disclosure-requirement": {"displayText":"disclosure requirement","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"disclosure requirement","type":"dfn","url":"#disclosure-requirement"},
+"#essential-claims": {"displayText":"essential claims","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"essential claims","type":"dfn","url":"#essential-claims"},
+"#exclusion-opportunity": {"displayText":"exclusion opportunity","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"exclusion opportunity","type":"dfn","url":"#exclusion-opportunity"},
+"#licensing-commitment": {"displayText":"licensing commitment","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"licensing commitment","type":"dfn","url":"#licensing-commitment"},
+"#pag-proposal": {"displayText":"pag proposal","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"pag proposal","type":"dfn","url":"#pag-proposal"},
+"#participant": {"displayText":"participant","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"participant","type":"dfn","url":"#participant"},
+"#patent-advisory-group": {"displayText":"pag","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"pag","type":"dfn","url":"#patent-advisory-group"},
+"#patent-review-draft": {"displayText":"patent review draft","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"patent review draft","type":"dfn","url":"#patent-review-draft"},
+"#specification": {"displayText":"specification","export":true,"for_":[],"level":"","normative":true,"shortname":"patent-policy","spec":"patent-policy","status":"local","text":"specification","type":"dfn","url":"#specification"},
+"1475b567_https://www.w3.org/policies/process/#GroupsWG": {"displayText":"W3C Working Group","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"w3c working group","type":"dfn","url":"https://www.w3.org/policies/process/#GroupsWG"},
+"6d799a04_https://www.w3.org/policies/process/#advisory-committee-representative": {"displayText":"Advisory Committee Representative","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"advisory committee representative","type":"dfn","url":"https://www.w3.org/policies/process/#advisory-committee-representative"},
+"732407e9_https://www.w3.org/policies/process/#MemberSubmission": {"displayText":"Member Submission","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"member submission","type":"dfn","url":"https://www.w3.org/policies/process/#MemberSubmission"},
+"eb8f5040_https://www.w3.org/policies/process/#RecsW3C": {"displayText":"W3C Recommendation","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"w3c recommendation","type":"dfn","url":"https://www.w3.org/policies/process/#RecsW3C"},
+"https://www.w3.org/policies/process/#AC": {"displayText":"Advisory Committee","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"advisory committee","type":"dfn","url":"https://www.w3.org/policies/process/#AC"},
+"https://www.w3.org/policies/process/#ACReview": {"displayText":"Advisory Committee review","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"advisory committee review","type":"dfn","url":"https://www.w3.org/policies/process/#ACReview"},
+"https://www.w3.org/policies/process/#GroupsWG": {"displayText":"Working Group","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"working group","type":"dfn","url":"https://www.w3.org/policies/process/#GroupsWG"},
+"https://www.w3.org/policies/process/#Member-only": {"displayText":"Member-only","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"member-only","type":"dfn","url":"https://www.w3.org/policies/process/#Member-only"},
+"https://www.w3.org/policies/process/#MemberSubmission": {"displayText":"W3C Member Submission","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"w3c member submission","type":"dfn","url":"https://www.w3.org/policies/process/#MemberSubmission"},
+"https://www.w3.org/policies/process/#RecsCR": {"displayText":"Candidate Recommendation","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"candidate recommendation","type":"dfn","url":"https://www.w3.org/policies/process/#RecsCR"},
+"https://www.w3.org/policies/process/#RecsW3C": {"displayText":"Recommendation","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"recommendation","type":"dfn","url":"https://www.w3.org/policies/process/#RecsW3C"},
+"https://www.w3.org/policies/process/#RecsWD": {"displayText":"Working Draft","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"working draft","type":"dfn","url":"https://www.w3.org/policies/process/#RecsWD"},
+"https://www.w3.org/policies/process/#WGCharter": {"displayText":"Working Group charter","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"working group charter","type":"dfn","url":"https://www.w3.org/policies/process/#WGCharter"},
+"https://www.w3.org/policies/process/#advisory-committee-representative": {"displayText":"AC Rep","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"ac rep","type":"dfn","url":"https://www.w3.org/policies/process/#advisory-committee-representative"},
+"https://www.w3.org/policies/process/#cfp": {"displayText":"Call for Participation","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"call for participation","type":"dfn","url":"https://www.w3.org/policies/process/#cfp"},
+"https://www.w3.org/policies/process/#def-Consensus": {"displayText":"consensus","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"consensus","type":"dfn","url":"https://www.w3.org/policies/process/#def-Consensus"},
+"https://www.w3.org/policies/process/#def-w3c-decision": {"displayText":"W3C decision","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"w3c decision","type":"dfn","url":"https://www.w3.org/policies/process/#def-w3c-decision"},
+"https://www.w3.org/policies/process/#fpwd": {"displayText":"First Public Working Draft","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"first public working draft","type":"dfn","url":"https://www.w3.org/policies/process/#fpwd"},
+"https://www.w3.org/policies/process/#invited-expert-wg": {"displayText":"Invited Expert","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"invited expert","type":"dfn","url":"https://www.w3.org/policies/process/#invited-expert-wg"},
+"https://www.w3.org/policies/process/#maturity-levels": {"displayText":"maturity level","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"maturity level","type":"dfn","url":"https://www.w3.org/policies/process/#maturity-levels"},
+"https://www.w3.org/policies/process/#patent-review-drafts": {"displayText":"Patent Review Draft","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"patent review draft","type":"dfn","url":"https://www.w3.org/policies/process/#patent-review-drafts"},
+"https://www.w3.org/policies/process/#rec-rescind": {"displayText":"rescinded","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"rescinded","type":"dfn","url":"https://www.w3.org/policies/process/#rec-rescind"},
+"https://www.w3.org/policies/process/#rec-track": {"displayText":"Recommendation Track","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"recommendation track","type":"dfn","url":"https://www.w3.org/policies/process/#rec-track"},
+"https://www.w3.org/policies/process/#team": {"displayText":"Team","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"team","type":"dfn","url":"https://www.w3.org/policies/process/#team"},
+"https://www.w3.org/policies/process/#technical-report": {"displayText":"W3C technical report","export":true,"for_":[],"level":"","normative":true,"shortname":"process","spec":"process","status":"anchor-block","text":"w3c technical report","type":"dfn","url":"https://www.w3.org/policies/process/#technical-report"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.displayText)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
+}
+</script>

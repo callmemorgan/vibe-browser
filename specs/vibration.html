@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Vibration API
+    </title>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c' async
+    class='remove'>
+    </script>
+    <script class='remove'>
+      var respecConfig = {
+          specStatus:           "ED",
+          shortName:            "vibration",
+          previousPublishDate:  "2024-11-28",
+          previousMaturity:     "CR",
+          github:               "w3c/vibration",
+          crEnd:                "2024-12-26",
+          editors:  [
+              { name: "Anssi Kostiainen", company: "Intel", w3cid: "41974" }
+          ],
+          inlineCSS:    true,
+          noIDLIn:      true,
+          group:        "das",
+          wgPublicList: "public-device-apis",
+          testSuiteURI: "https://wpt.live/vibration/",
+          implementationReportURI: "https://w3c.github.io/vibration/reports/implementation.html",
+          processVersion: 2023,
+          implementationStatus: true,
+          xref: {
+            profile: "web-platform"
+          },
+          otherLinks: [
+            {
+              key: 'Translation',
+              data: [
+                {
+                  value: '简体中文',
+                  href: 'https://w3c-html-ig-zh.github.io/vibration/'
+                }
+              ]
+            }
+          ]
+      };
+    </script>
+  </head>
+  <body>
+    <section id='abstract'>
+      This specification defines an API that provides access to the vibration
+      mechanism of the hosting device. Vibration is a form of tactile feedback.
+    </section>
+    <section id='sotd'>
+      <p class="advisement">
+        This specification is implemented in Chromium-based browsers. WebKit has <a href="https://github.com/WebKit/standards-positions/issues/267">published a position opposing this specification</a>. Firefox <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/vibrate#browser_compatibility">removed its implementation in version 129</a>. It is not expected to advance to W3C Recommendation in its current form.
+      </p>
+      <p>
+        This document represents the consensus of the group on the scope and
+        features of the Vibration API. It should be noted that the group is
+        aware of more advanced use cases that cannot be realized using this
+        simpler first version. The intent is to address them in a future
+        revision.
+      </p>
+      <p>
+        A history of <a href="#changes">changes</a> from previous version is provided.
+      </p>
+    </section>
+    <section class="informative">
+      <h2>
+        Introduction
+      </h2>
+      <p>
+        The API is specifically designed to address use cases that require
+        simple tactile feedback only. Use cases requiring more fine-grained
+        control are out of scope for this specification. This API is not meant
+        to be used as a generic notification mechanism. Such use cases may be
+        handled using the <cite>Notifications API</cite> [[NOTIFICATIONS]]
+        specification. In addition, determining whether vibration is enabled is
+        out of scope for this specification.
+      </p>
+    </section>
+    <section id='conformance'>
+      <p>
+        This specification defines conformance criteria that apply to a single
+        product: the <dfn id="ua">user agent</dfn> that implements the
+        interfaces that it contains.
+      </p>
+      <p>
+        Implementations that use ECMAScript to implement the APIs defined in
+        this specification must implement them in a manner consistent with the
+        ECMAScript Bindings defined in the Web IDL specification [[!WEBIDL-1]],
+        as this specification uses that specification and terminology.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Vibration Interface
+      </h2>
+      <pre class="idl" data-cite="HTML">
+        typedef (unsigned long or sequence&lt;unsigned long&gt;) VibratePattern;
+
+        partial interface Navigator {
+            boolean vibrate (VibratePattern pattern);
+        };
+      </pre>
+      <p data-link-for="Navigator">
+        The <code><dfn data-dfn-for="Navigator">vibrate</dfn>()</code> method
+        steps are to run the <a>processing vibration patterns</a> algorithm.
+        A <dfn>vibration pattern</dfn> is represented by a
+        <dfn><code>VibratePattern</code></dfn> object.
+      </p>
+      <p>
+        The rules for <dfn>processing vibration patterns</dfn> are as given in
+        the following algorithm:
+      </p>
+      <ol data-link-for="Navigator">
+        <li>Let <var>pattern</var> be the first method argument of the
+        <code><a>vibrate</a>()</code> method.
+        </li>
+        <li>Let <var>valid pattern</var> be the result of passing
+        <var>pattern</var> to <a>validate and normalize</a>.
+        </li>
+        <li>If the <a>document</a>'s [=Document/visibility state=] is not 
+          <code>visible</code>, then return false and terminate these steps.
+          <div class="note">
+            A trusted (also known as privileged) application that integrates
+            closely with the operating system's functionality may vibrate the
+            device even if such an application is not visible at all, and thus
+            may ignore the previous step.
+          </div>
+        </li>
+        <li>
+          <a>Perform vibration</a> with <a>this</a>'s <a>relevant global object
+          </a> and <var>valid pattern</var>.
+        </li>
+      </ol>
+      <p>
+        To <dfn>validate and normalize</dfn> a <a>vibration pattern</a> given
+        <var>pattern</var>, run these steps:
+      </p>
+      <ol>
+        <li>If <var>pattern</var> is a list, proceed to the next step.
+        Otherwise run the following substeps:
+          <ol>
+            <li>Let <var>list</var> be an initially empty list, and add
+            <var>pattern</var> to <var>list</var>.
+            </li>
+            <li>Set <var>pattern</var> to <var>list</var>.
+            </li>
+          </ol>
+        </li>
+        <li>Let <var>max length</var> have the value 10.
+        </li>
+        <li>If the length of <var>pattern</var> is greater than <var>max
+        length</var>, truncate <var>pattern</var>, leaving only the first <var>
+          max length</var> entries.
+          <div class="note" id="remove-last-entry">
+            If the length of the <var>pattern</var> is even and not zero then
+            the last entry in the pattern will have no effect so an
+            implementation can remove it from the <var>pattern</var> at this
+            point.
+          </div>
+        </li>
+        <li>Let <var>max duration</var> have the value 10000.
+        </li>
+        <li>For each entry in <var>pattern</var> whose value is greater than
+        <var>max duration</var>, set the entry's value to <var>max
+        duration</var>.
+        </li>
+        <li>Return <var>pattern</var>.
+        </li>
+      </ol>
+      <p>
+        To <dfn>perform vibration</dfn> using a <a>global object</a>
+        <var>global</var> and a <a>vibration pattern</a> <var>pattern</var>,
+        run these steps:
+      </p>
+      <ol>
+        <li>
+          If <var>global</var> does not have <a>sticky activation</a>,
+          return false and terminate these steps.
+        </li>
+        <li>An implementation MAY return false and terminate these steps.
+          <div class="note">
+            For example, an implementation might abort the algorithm because no
+            vibration hardware is present, the user has set a preference
+            indicating that pages at a given origin should never be able to
+            vibrate the device, or an implementation might cap the total amount
+            of time a page may cause the device to vibrate and reject requests
+            in excess of this limit.
+          </div>
+        </li>
+        <li>If another instance of the <a>perform vibration</a> algorithm is
+        already running, run the following substeps:
+          <ol>
+            <li>Abort that other instance of the <a>perform vibration</a>
+            algorithm, if any.
+            </li>
+            <li>If <var>pattern</var> is an empty list, contains a single entry
+            with a value of 0, or if the device is unable to vibrate, then
+            return true and terminate these steps.
+            </li>
+          </ol>
+        </li>
+        <li>Return true, and then continue running these steps asynchronously.
+        </li>
+        <li>For each <var>time</var> in <var>pattern</var>, run the following
+        substeps:
+          <ol>
+            <li>If the index of <var>time</var> is even (the first entry has
+            index 0), vibrate the device for <var>time</var> milliseconds.
+            </li>
+            <li>Otherwise wait for <var>time</var> milliseconds.
+            </li>
+          </ol>
+        </li>
+      </ol>
+      <p>
+        When the <a>user agent</a> determines that 
+        the [=Document/visibility state=] of 
+        the <code>Document</code> of the <a>top-level browsing
+        context</a> changes, it MUST abort the already running <a>processing
+        vibration patterns</a> algorithm, if any.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Security and privacy considerations
+      </h2>
+      <p>
+        Vibration API is not a source of data on its own and as such is not
+        producing any data possible to consume on the Web. However, it is known
+        that it can serve as a source of events for other APIs. In particular,
+        it is known that certain sensors such as accelerometers or gyroscopes
+        are prone to tiny imperfections during their manufacturing. As such,
+        they provide a fingerprinting surface that can be exploited utilizing
+        the vibration stimuli generated via the Vibration API. In this sense,
+        Vibration API provides an indirect privacy risk, in conjunction with
+        other mechanisms. This can create possibly unexpected privacy risks,
+        including cross-device tracking and communication. Additionally, a
+        device that is vibrating might be visible to external observers and
+        enable physical identification, and possibly tracking of the user.
+      </p>
+      <p>
+        For these reasons, the <a>user agent</a> MAY inform the user when
+        the API is being used and provide a mechanism to disable the API
+        (effectively no-op), on a per-origin basis or globally.
+      </p>
+      <p>
+        The <a>user agent</a> SHOULD employ global rate limiting to restrict
+        the number of vibration requests made within a certain period
+        (e.g., per minute or hour) to prevent excessive use.
+      </p>
+    </section>
+    <section class='informative'>
+      <h2>
+        Examples
+      </h2>
+      <p>
+        In the following example the device will vibrate for 1000 milliseconds
+        (ms):
+      </p>
+      <pre class='example highlight'>
+        // vibrate for 1000 ms
+        navigator.vibrate(1000);
+        
+        // or alternatively
+        navigator.vibrate([1000]);
+      </pre>
+      <p>
+        In the following example the pattern will cause the device to vibrate
+        for 50 ms, be still for 100 ms, and then vibrate for 150 ms:
+      </p>
+      <pre class='example highlight'>
+        navigator.vibrate([50, 100, 150]);
+      </pre>
+      <p>
+        The following example cancels any existing vibrations:
+      </p>
+      <pre class='example highlight'>
+          // cancel any existing vibrations
+          navigator.vibrate(0);
+          
+          // or alternatively
+          navigator.vibrate([]);
+        </pre>
+    </section>
+    <section class='appendix'>
+      <h2>
+        Acknowledgements
+      </h2>
+      <p>
+        The group is deeply indebted to Justin Lebar, Mounir Lamouri, Jonas
+        Sicking, and the Mozilla WebAPI team for their contributions, and for
+        providing the WebVibrator prototype as an initial input. Thanks to Anne
+        van Kesteren for suggestions on how to make the specification reusable
+        in other contexts, and to Lukasz Olejnik for the privacy
+        considerations. Finally, thanks to Zhiqiang Zhang for the Simplified
+        Chinese translation.
+      </p>
+    </section>
+    <section class='appendix'>
+      <h2>
+        Changes
+      </h2>
+      <p>
+        Changes since <a href="https://www.w3.org/TR/2016/REC-vibration-20161018/">W3C Recommendation 18 October 2016</a>:
+      </p>
+      <ul>
+        <li>Update Security and privacy considerations (<a href="https://github.com/w3c/vibration/pull/47/commits/7d644a2ffa518460fdbcdcd65cc9d4ffcb5e0e5e">7d644a2</a>, <a href="https://github.com/w3c/vibration/pull/47">#47</a>)</li>
+        <li>Define "max length" and "max duration" normatively (<a href="https://github.com/w3c/vibration/pull/46/commits/23e6347c1cd19b50d9c356fefb6f1800330868f1">23e6347</a>, <a href="https://github.com/w3c/vibration/pull/46/commits/a3af007daf49001bb924a6d345e5dbc2a0c6d96f">a3af007</a>, <a href="https://github.com/w3c/vibration/pull/46">#46</a>)</li>
+        <li>Require sticky activation to <a>perform vibration</a> to mitigate privacy concerns (<a href="https://github.com/w3c/vibration/pull/30/commits/41d039ece8a0cfb43ef7ec818dabf9156fc956d3">41d039e</a>, <a href="https://github.com/w3c/vibration/pull/30">#30</a>)</li>
+        <li>Add <a>vibration pattern</a> definition for reuse in other specifications (<a href="https://github.com/w3c/vibration/pull/18/commits/b454da89ae954d4c5a6caa6c311441511349e639">b454da8</a>, <a href="https://github.com/w3c/vibration/pull/18">#18</a>)</li>
+        <li>Refactor <a>perform vibration</a> algorithm to use method steps prose (<a href="https://github.com/w3c/vibration/pull/30/commits/a406e764dd4155c69a4cba4ca1ac15c7b5f47587">a406e76</a>, <a href="https://github.com/w3c/vibration/pull/30">#30</a>)</li>
+        <li>Add definitions for "this", "relevant global object", "sticky activation", "user agent" (<a href="https://github.com/w3c/vibration/pull/30/commits/167cf3c6b2131b3d4d2fd0d2678ca3b3a7bfec29">167cf3c</a>, <a href="https://github.com/w3c/vibration/pull/30">#30</a>)</li>
+        <li>Remove references to obsoleted "spin the event loop" concept (<a href="https://github.com/w3c/vibration/pull/30/commits/41d039ece8a0cfb43ef7ec818dabf9156fc956d3">41d039e</a>, <a href="https://github.com/w3c/vibration/pull/30">#30</a>)</li>
+        <li>Update normative reference from HTML5 to HTML Living Standard [[html]] (<a href="https://github.com/w3c/vibration/pull/23/commits/ee740335ee0ba305a97336d57c03bb449710a268">ee74033</a>, <a href="https://github.com/w3c/vibration/pull/23">#23</a>)</li>
+        <li>Update governance from W3C Process 2015 to 2023</li>
+        <li>Update visibility state definitions to [HTML], remove normative reference to [PAGE-VISIBILITY-2] (<a href="https://github.com/w3c/vibration/pull/41/commits/fff4fbc618a8230eb2b21987df8c6e985a09e786">fff4fbc</a>, <a href="https://github.com/w3c/vibration/pull/41/commits/b4dd105282b2a10d16bb11d53df55e487a0da6ec">b4dd105</a>, <a href="https://github.com/w3c/vibration/pull/41">#41</a>)</li>
+      </ul>
+      <p>
+        Other changes that do not functionally affect interpretation of the document:
+      </p>
+      <ul>
+        <li>Update test suite and implementation report references</li>
+      </ul>
+    </section>
+    <section id='idl-index' class='appendix'>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,2520 @@
+<!doctype html>
+<head><meta charset="utf-8">
+
+<title>Change Array by copy</title><script>'use strict';
+let sdoBox = {
+  init() {
+    this.$alternativeId = null;
+    this.$outer = document.createElement('div');
+    this.$outer.classList.add('toolbox-container');
+    this.$container = document.createElement('div');
+    this.$container.classList.add('toolbox');
+    this.$displayLink = document.createElement('a');
+    this.$displayLink.setAttribute('href', '#');
+    this.$displayLink.textContent = 'Syntax-Directed Operations';
+    this.$displayLink.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      referencePane.showSDOs(sdoMap[this.$alternativeId] || {}, this.$alternativeId);
+    });
+    this.$container.appendChild(this.$displayLink);
+    this.$outer.appendChild(this.$container);
+    document.body.appendChild(this.$outer);
+  },
+
+  activate(el) {
+    clearTimeout(this.deactiveTimeout);
+    Toolbox.deactivate();
+    this.$alternativeId = el.id;
+    let numSdos = Object.keys(sdoMap[this.$alternativeId] || {}).length;
+    this.$displayLink.textContent = 'Syntax-Directed Operations (' + numSdos + ')';
+    this.$outer.classList.add('active');
+    let top = el.offsetTop - this.$outer.offsetHeight;
+    let left = el.offsetLeft + 50 - 10; // 50px = padding-left(=75px) + text-indent(=-25px)
+    this.$outer.setAttribute('style', 'left: ' + left + 'px; top: ' + top + 'px');
+    if (top < document.body.scrollTop) {
+      this.$container.scrollIntoView();
+    }
+  },
+
+  deactivate() {
+    clearTimeout(this.deactiveTimeout);
+    this.$outer.classList.remove('active');
+  },
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof sdoMap == 'undefined') {
+    console.error('could not find sdo map');
+    return;
+  }
+  sdoBox.init();
+
+  let insideTooltip = false;
+  sdoBox.$outer.addEventListener('pointerenter', () => {
+    insideTooltip = true;
+  });
+  sdoBox.$outer.addEventListener('pointerleave', () => {
+    insideTooltip = false;
+    sdoBox.deactivate();
+  });
+
+  sdoBox.deactiveTimeout = null;
+  [].forEach.call(document.querySelectorAll('emu-grammar[type=definition] emu-rhs'), node => {
+    node.addEventListener('pointerenter', function () {
+      sdoBox.activate(this);
+    });
+
+    node.addEventListener('pointerleave', () => {
+      sdoBox.deactiveTimeout = setTimeout(() => {
+        if (!insideTooltip) {
+          sdoBox.deactivate();
+        }
+      }, 500);
+    });
+  });
+
+  document.addEventListener(
+    'keydown',
+    debounce(e => {
+      if (e.code === 'Escape') {
+        sdoBox.deactivate();
+      }
+    })
+  );
+});
+
+'use strict';
+function Search(menu) {
+  this.menu = menu;
+  this.$search = document.getElementById('menu-search');
+  this.$searchBox = document.getElementById('menu-search-box');
+  this.$searchResults = document.getElementById('menu-search-results');
+
+  this.loadBiblio();
+
+  document.addEventListener('keydown', this.documentKeydown.bind(this));
+
+  this.$searchBox.addEventListener(
+    'keydown',
+    debounce(this.searchBoxKeydown.bind(this), { stopPropagation: true })
+  );
+  this.$searchBox.addEventListener(
+    'keyup',
+    debounce(this.searchBoxKeyup.bind(this), { stopPropagation: true })
+  );
+
+  // Perform an initial search if the box is not empty.
+  if (this.$searchBox.value) {
+    this.search(this.$searchBox.value);
+  }
+}
+
+Search.prototype.loadBiblio = function () {
+  if (typeof biblio === 'undefined') {
+    console.error('could not find biblio');
+    this.biblio = { refToClause: {}, entries: [] };
+  } else {
+    this.biblio = biblio;
+    this.biblio.clauses = this.biblio.entries.filter(e => e.type === 'clause');
+    this.biblio.byId = this.biblio.entries.reduce((map, entry) => {
+      map[entry.id] = entry;
+      return map;
+    }, {});
+    let refParentClause = Object.create(null);
+    this.biblio.refParentClause = refParentClause;
+    let refsByClause = this.biblio.refsByClause;
+    Object.keys(refsByClause).forEach(clause => {
+      refsByClause[clause].forEach(ref => {
+        refParentClause[ref] = clause;
+      });
+    });
+  }
+};
+
+Search.prototype.documentKeydown = function (e) {
+  if (e.keyCode === 191) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.triggerSearch();
+  }
+};
+
+Search.prototype.searchBoxKeydown = function (e) {
+  e.stopPropagation();
+  e.preventDefault();
+  if (e.keyCode === 191 && e.target.value.length === 0) {
+    e.preventDefault();
+  } else if (e.keyCode === 13) {
+    e.preventDefault();
+    this.selectResult();
+  }
+};
+
+Search.prototype.searchBoxKeyup = function (e) {
+  if (e.keyCode === 13 || e.keyCode === 9) {
+    return;
+  }
+
+  this.search(e.target.value);
+};
+
+Search.prototype.triggerSearch = function () {
+  if (this.menu.isVisible()) {
+    this._closeAfterSearch = false;
+  } else {
+    this._closeAfterSearch = true;
+    this.menu.show();
+  }
+
+  this.$searchBox.focus();
+  this.$searchBox.select();
+};
+// bit 12 - Set if the result starts with searchString
+// bits 8-11: 8 - number of chunks multiplied by 2 if cases match, otherwise 1.
+// bits 1-7: 127 - length of the entry
+// General scheme: prefer case sensitive matches with fewer chunks, and otherwise
+// prefer shorter matches.
+function relevance(result) {
+  let relevance = 0;
+
+  relevance = Math.max(0, 8 - result.match.chunks) << 7;
+
+  if (result.match.caseMatch) {
+    relevance *= 2;
+  }
+
+  if (result.match.prefix) {
+    relevance += 2048;
+  }
+
+  relevance += Math.max(0, 255 - result.key.length);
+
+  return relevance;
+}
+
+Search.prototype.search = function (searchString) {
+  if (searchString === '') {
+    this.displayResults([]);
+    this.hideSearch();
+    return;
+  } else {
+    this.showSearch();
+  }
+
+  if (searchString.length === 1) {
+    this.displayResults([]);
+    return;
+  }
+
+  let results;
+
+  if (/^[\d.]*$/.test(searchString)) {
+    results = this.biblio.clauses
+      .filter(clause => clause.number.substring(0, searchString.length) === searchString)
+      .map(clause => ({ entry: clause }));
+  } else {
+    results = [];
+
+    for (let i = 0; i < this.biblio.entries.length; i++) {
+      let entry = this.biblio.entries[i];
+      let key = getKey(entry);
+      if (!key) {
+        // biblio entries without a key aren't searchable
+        continue;
+      }
+
+      let match = fuzzysearch(searchString, key);
+      if (match) {
+        results.push({ key, entry, match });
+      }
+    }
+
+    results.forEach(result => {
+      result.relevance = relevance(result, searchString);
+    });
+
+    results = results.sort((a, b) => b.relevance - a.relevance);
+  }
+
+  if (results.length > 50) {
+    results = results.slice(0, 50);
+  }
+
+  this.displayResults(results);
+};
+Search.prototype.hideSearch = function () {
+  this.$search.classList.remove('active');
+};
+
+Search.prototype.showSearch = function () {
+  this.$search.classList.add('active');
+};
+
+Search.prototype.selectResult = function () {
+  let $first = this.$searchResults.querySelector('li:first-child a');
+
+  if ($first) {
+    document.location = $first.getAttribute('href');
+  }
+
+  this.$searchBox.value = '';
+  this.$searchBox.blur();
+  this.displayResults([]);
+  this.hideSearch();
+
+  if (this._closeAfterSearch) {
+    this.menu.hide();
+  }
+};
+
+Search.prototype.displayResults = function (results) {
+  if (results.length > 0) {
+    this.$searchResults.classList.remove('no-results');
+
+    let html = '<ul>';
+
+    results.forEach(result => {
+      let key = result.key;
+      let entry = result.entry;
+      let id = entry.id;
+      let cssClass = '';
+      let text = '';
+
+      if (entry.type === 'clause') {
+        let number = entry.number ? entry.number + ' ' : '';
+        text = number + key;
+        cssClass = 'clause';
+        id = entry.id;
+      } else if (entry.type === 'production') {
+        text = key;
+        cssClass = 'prod';
+        id = entry.id;
+      } else if (entry.type === 'op') {
+        text = key;
+        cssClass = 'op';
+        id = entry.id || entry.refId;
+      } else if (entry.type === 'term') {
+        text = key;
+        cssClass = 'term';
+        id = entry.id || entry.refId;
+      }
+
+      if (text) {
+        // prettier-ignore
+        html += `<li class=menu-search-result-${cssClass}><a href="${makeLinkToId(id)}">${text}</a></li>`;
+      }
+    });
+
+    html += '</ul>';
+
+    this.$searchResults.innerHTML = html;
+  } else {
+    this.$searchResults.innerHTML = '';
+    this.$searchResults.classList.add('no-results');
+  }
+};
+
+function getKey(item) {
+  if (item.key) {
+    return item.key;
+  }
+  switch (item.type) {
+    case 'clause':
+      return item.title || item.titleHTML;
+    case 'production':
+      return item.name;
+    case 'op':
+      return item.aoid;
+    case 'term':
+      return item.term;
+    case 'table':
+    case 'figure':
+    case 'example':
+    case 'note':
+      return item.caption;
+    case 'step':
+      return item.id;
+    default:
+      throw new Error("Can't get key for " + item.type);
+  }
+}
+
+function Menu() {
+  this.$toggle = document.getElementById('menu-toggle');
+  this.$menu = document.getElementById('menu');
+  this.$toc = document.querySelector('menu-toc > ol');
+  this.$pins = document.querySelector('#menu-pins');
+  this.$pinList = document.getElementById('menu-pins-list');
+  this.$toc = document.querySelector('#menu-toc > ol');
+  this.$specContainer = document.getElementById('spec-container');
+  this.search = new Search(this);
+
+  this._pinnedIds = {};
+  this.loadPinEntries();
+
+  // toggle menu
+  this.$toggle.addEventListener('click', this.toggle.bind(this));
+
+  // keydown events for pinned clauses
+  document.addEventListener('keydown', this.documentKeydown.bind(this));
+
+  // toc expansion
+  let tocItems = this.$menu.querySelectorAll('#menu-toc li');
+  for (let i = 0; i < tocItems.length; i++) {
+    let $item = tocItems[i];
+    $item.addEventListener('click', event => {
+      $item.classList.toggle('active');
+      event.stopPropagation();
+    });
+  }
+
+  // close toc on toc item selection
+  let tocLinks = this.$menu.querySelectorAll('#menu-toc li > a');
+  for (let i = 0; i < tocLinks.length; i++) {
+    let $link = tocLinks[i];
+    $link.addEventListener('click', event => {
+      this.toggle();
+      event.stopPropagation();
+    });
+  }
+
+  // update active clause on scroll
+  window.addEventListener('scroll', debounce(this.updateActiveClause.bind(this)));
+  this.updateActiveClause();
+
+  // prevent menu scrolling from scrolling the body
+  this.$toc.addEventListener('wheel', e => {
+    let target = e.currentTarget;
+    let offTop = e.deltaY < 0 && target.scrollTop === 0;
+    if (offTop) {
+      e.preventDefault();
+    }
+    let offBottom = e.deltaY > 0 && target.offsetHeight + target.scrollTop >= target.scrollHeight;
+
+    if (offBottom) {
+      e.preventDefault();
+    }
+  });
+}
+
+Menu.prototype.documentKeydown = function (e) {
+  e.stopPropagation();
+  if (e.keyCode === 80) {
+    this.togglePinEntry();
+  } else if (e.keyCode > 48 && e.keyCode < 58) {
+    this.selectPin(e.keyCode - 49);
+  }
+};
+
+Menu.prototype.updateActiveClause = function () {
+  this.setActiveClause(findActiveClause(this.$specContainer));
+};
+
+Menu.prototype.setActiveClause = function (clause) {
+  this.$activeClause = clause;
+  this.revealInToc(this.$activeClause);
+};
+
+Menu.prototype.revealInToc = function (path) {
+  let current = this.$toc.querySelectorAll('li.revealed');
+  for (let i = 0; i < current.length; i++) {
+    current[i].classList.remove('revealed');
+    current[i].classList.remove('revealed-leaf');
+  }
+
+  current = this.$toc;
+  let index = 0;
+  outer: while (index < path.length) {
+    let children = current.children;
+    for (let i = 0; i < children.length; i++) {
+      if ('#' + path[index].id === children[i].children[1].hash) {
+        children[i].classList.add('revealed');
+        if (index === path.length - 1) {
+          children[i].classList.add('revealed-leaf');
+          let rect = children[i].getBoundingClientRect();
+          // this.$toc.getBoundingClientRect().top;
+          let tocRect = this.$toc.getBoundingClientRect();
+          if (rect.top + 10 > tocRect.bottom) {
+            this.$toc.scrollTop =
+              this.$toc.scrollTop + (rect.top - tocRect.bottom) + (rect.bottom - rect.top);
+          } else if (rect.top < tocRect.top) {
+            this.$toc.scrollTop = this.$toc.scrollTop - (tocRect.top - rect.top);
+          }
+        }
+        current = children[i].querySelector('ol');
+        index++;
+        continue outer;
+      }
+    }
+    console.log('could not find location in table of contents', path);
+    break;
+  }
+};
+
+function findActiveClause(root, path) {
+  let clauses = getChildClauses(root);
+  path = path || [];
+
+  for (let $clause of clauses) {
+    let rect = $clause.getBoundingClientRect();
+    let $header = $clause.querySelector('h1');
+    let marginTop = Math.max(
+      parseInt(getComputedStyle($clause)['margin-top']),
+      parseInt(getComputedStyle($header)['margin-top'])
+    );
+
+    if (rect.top - marginTop <= 1 && rect.bottom > 0) {
+      return findActiveClause($clause, path.concat($clause)) || path;
+    }
+  }
+
+  return path;
+}
+
+function* getChildClauses(root) {
+  for (let el of root.children) {
+    switch (el.nodeName) {
+      // descend into <emu-import>
+      case 'EMU-IMPORT':
+        yield* getChildClauses(el);
+        break;
+
+      // accept <emu-clause>, <emu-intro>, and <emu-annex>
+      case 'EMU-CLAUSE':
+      case 'EMU-INTRO':
+      case 'EMU-ANNEX':
+        yield el;
+    }
+  }
+}
+
+Menu.prototype.toggle = function () {
+  this.$menu.classList.toggle('active');
+};
+
+Menu.prototype.show = function () {
+  this.$menu.classList.add('active');
+};
+
+Menu.prototype.hide = function () {
+  this.$menu.classList.remove('active');
+};
+
+Menu.prototype.isVisible = function () {
+  return this.$menu.classList.contains('active');
+};
+
+Menu.prototype.showPins = function () {
+  this.$pins.classList.add('active');
+};
+
+Menu.prototype.hidePins = function () {
+  this.$pins.classList.remove('active');
+};
+
+Menu.prototype.addPinEntry = function (id) {
+  let entry = this.search.biblio.byId[id];
+  if (!entry) {
+    // id was deleted after pin (or something) so remove it
+    delete this._pinnedIds[id];
+    this.persistPinEntries();
+    return;
+  }
+
+  if (entry.type === 'clause') {
+    let prefix;
+    if (entry.number) {
+      prefix = entry.number + ' ';
+    } else {
+      prefix = '';
+    }
+    // prettier-ignore
+    this.$pinList.innerHTML += `<li><a href="${makeLinkToId(entry.id)}">${prefix}${entry.titleHTML}</a></li>`;
+  } else {
+    this.$pinList.innerHTML += `<li><a href="${makeLinkToId(entry.id)}">${getKey(entry)}</a></li>`;
+  }
+
+  if (Object.keys(this._pinnedIds).length === 0) {
+    this.showPins();
+  }
+  this._pinnedIds[id] = true;
+  this.persistPinEntries();
+};
+
+Menu.prototype.removePinEntry = function (id) {
+  let item = this.$pinList.querySelector(`a[href="${makeLinkToId(id)}"]`).parentNode;
+  this.$pinList.removeChild(item);
+  delete this._pinnedIds[id];
+  if (Object.keys(this._pinnedIds).length === 0) {
+    this.hidePins();
+  }
+
+  this.persistPinEntries();
+};
+
+Menu.prototype.persistPinEntries = function () {
+  try {
+    if (!window.localStorage) return;
+  } catch (e) {
+    return;
+  }
+
+  localStorage.pinEntries = JSON.stringify(Object.keys(this._pinnedIds));
+};
+
+Menu.prototype.loadPinEntries = function () {
+  try {
+    if (!window.localStorage) return;
+  } catch (e) {
+    return;
+  }
+
+  let pinsString = window.localStorage.pinEntries;
+  if (!pinsString) return;
+  let pins = JSON.parse(pinsString);
+  for (let i = 0; i < pins.length; i++) {
+    this.addPinEntry(pins[i]);
+  }
+};
+
+Menu.prototype.togglePinEntry = function (id) {
+  if (!id) {
+    id = this.$activeClause[this.$activeClause.length - 1].id;
+  }
+
+  if (this._pinnedIds[id]) {
+    this.removePinEntry(id);
+  } else {
+    this.addPinEntry(id);
+  }
+};
+
+Menu.prototype.selectPin = function (num) {
+  document.location = this.$pinList.children[num].children[0].href;
+};
+
+let menu;
+
+document.addEventListener('DOMContentLoaded', init);
+
+function debounce(fn, opts) {
+  opts = opts || {};
+  let timeout;
+  return function (e) {
+    if (opts.stopPropagation) {
+      e.stopPropagation();
+    }
+    let args = arguments;
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      timeout = null;
+      fn.apply(this, args);
+    }, 150);
+  };
+}
+
+let CLAUSE_NODES = ['EMU-CLAUSE', 'EMU-INTRO', 'EMU-ANNEX'];
+function findContainer($elem) {
+  let parentClause = $elem.parentNode;
+  while (parentClause && CLAUSE_NODES.indexOf(parentClause.nodeName) === -1) {
+    parentClause = parentClause.parentNode;
+  }
+  return parentClause;
+}
+
+function findLocalReferences(parentClause, name) {
+  let vars = parentClause.querySelectorAll('var');
+  let references = [];
+
+  for (let i = 0; i < vars.length; i++) {
+    let $var = vars[i];
+
+    if ($var.innerHTML === name) {
+      references.push($var);
+    }
+  }
+
+  return references;
+}
+
+let REFERENCED_CLASSES = Array.from({ length: 7 }, (x, i) => `referenced${i}`);
+function chooseHighlightIndex(parentClause) {
+  let counts = REFERENCED_CLASSES.map($class => parentClause.getElementsByClassName($class).length);
+  // Find the earliest index with the lowest count.
+  let minCount = Infinity;
+  let index = null;
+  for (let i = 0; i < counts.length; i++) {
+    if (counts[i] < minCount) {
+      minCount = counts[i];
+      index = i;
+    }
+  }
+  return index;
+}
+
+function toggleFindLocalReferences($elem) {
+  let parentClause = findContainer($elem);
+  let references = findLocalReferences(parentClause, $elem.innerHTML);
+  if ($elem.classList.contains('referenced')) {
+    references.forEach($reference => {
+      $reference.classList.remove('referenced', ...REFERENCED_CLASSES);
+    });
+  } else {
+    let index = chooseHighlightIndex(parentClause);
+    references.forEach($reference => {
+      $reference.classList.add('referenced', `referenced${index}`);
+    });
+  }
+}
+
+function installFindLocalReferences() {
+  document.addEventListener('click', e => {
+    if (e.target.nodeName === 'VAR') {
+      toggleFindLocalReferences(e.target);
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', installFindLocalReferences);
+
+// The following license applies to the fuzzysearch function
+// The MIT License (MIT)
+// Copyright © 2015 Nicolas Bevacqua
+// Copyright © 2016 Brian Terlson
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+// the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+function fuzzysearch(searchString, haystack, caseInsensitive) {
+  let tlen = haystack.length;
+  let qlen = searchString.length;
+  let chunks = 1;
+  let finding = false;
+
+  if (qlen > tlen) {
+    return false;
+  }
+
+  if (qlen === tlen) {
+    if (searchString === haystack) {
+      return { caseMatch: true, chunks: 1, prefix: true };
+    } else if (searchString.toLowerCase() === haystack.toLowerCase()) {
+      return { caseMatch: false, chunks: 1, prefix: true };
+    } else {
+      return false;
+    }
+  }
+
+  let j = 0;
+  outer: for (let i = 0; i < qlen; i++) {
+    let nch = searchString[i];
+    while (j < tlen) {
+      let targetChar = haystack[j++];
+      if (targetChar === nch) {
+        finding = true;
+        continue outer;
+      }
+      if (finding) {
+        chunks++;
+        finding = false;
+      }
+    }
+
+    if (caseInsensitive) {
+      return false;
+    }
+
+    return fuzzysearch(searchString.toLowerCase(), haystack.toLowerCase(), true);
+  }
+
+  return { caseMatch: !caseInsensitive, chunks, prefix: j <= qlen };
+}
+
+let referencePane = {
+  init() {
+    this.$container = document.createElement('div');
+    this.$container.setAttribute('id', 'references-pane-container');
+
+    let $spacer = document.createElement('div');
+    $spacer.setAttribute('id', 'references-pane-spacer');
+
+    this.$pane = document.createElement('div');
+    this.$pane.setAttribute('id', 'references-pane');
+
+    this.$container.appendChild($spacer);
+    this.$container.appendChild(this.$pane);
+
+    this.$header = document.createElement('div');
+    this.$header.classList.add('menu-pane-header');
+    this.$headerText = document.createElement('span');
+    this.$header.appendChild(this.$headerText);
+    this.$headerRefId = document.createElement('a');
+    this.$header.appendChild(this.$headerRefId);
+    this.$closeButton = document.createElement('span');
+    this.$closeButton.setAttribute('id', 'references-pane-close');
+    this.$closeButton.addEventListener('click', () => {
+      this.deactivate();
+    });
+    this.$header.appendChild(this.$closeButton);
+
+    this.$pane.appendChild(this.$header);
+    let tableContainer = document.createElement('div');
+    tableContainer.setAttribute('id', 'references-pane-table-container');
+
+    this.$table = document.createElement('table');
+    this.$table.setAttribute('id', 'references-pane-table');
+
+    this.$tableBody = this.$table.createTBody();
+
+    tableContainer.appendChild(this.$table);
+    this.$pane.appendChild(tableContainer);
+
+    menu.$specContainer.appendChild(this.$container);
+  },
+
+  activate() {
+    this.$container.classList.add('active');
+  },
+
+  deactivate() {
+    this.$container.classList.remove('active');
+    this.state = null;
+  },
+
+  showReferencesFor(entry) {
+    this.activate();
+    this.state = { type: 'ref', id: entry.id };
+    this.$headerText.textContent = 'References to ';
+    let newBody = document.createElement('tbody');
+    let previousId;
+    let previousCell;
+    let dupCount = 0;
+    this.$headerRefId.textContent = '#' + entry.id;
+    this.$headerRefId.setAttribute('href', makeLinkToId(entry.id));
+    this.$headerRefId.style.display = 'inline';
+    (entry.referencingIds || [])
+      .map(id => {
+        let cid = menu.search.biblio.refParentClause[id];
+        let clause = menu.search.biblio.byId[cid];
+        if (clause == null) {
+          throw new Error('could not find clause for id ' + cid);
+        }
+        return { id, clause };
+      })
+      .sort((a, b) => sortByClauseNumber(a.clause, b.clause))
+      .forEach(record => {
+        if (previousId === record.clause.id) {
+          previousCell.innerHTML += ` (<a href="${makeLinkToId(record.id)}">${dupCount + 2}</a>)`;
+          dupCount++;
+        } else {
+          let row = newBody.insertRow();
+          let cell = row.insertCell();
+          cell.innerHTML = record.clause.number;
+          cell = row.insertCell();
+          cell.innerHTML = `<a href="${makeLinkToId(record.id)}">${record.clause.titleHTML}</a>`;
+          previousCell = cell;
+          previousId = record.clause.id;
+          dupCount = 0;
+        }
+      }, this);
+    this.$table.removeChild(this.$tableBody);
+    this.$tableBody = newBody;
+    this.$table.appendChild(this.$tableBody);
+  },
+
+  showSDOs(sdos, alternativeId) {
+    let rhs = document.getElementById(alternativeId);
+    let parentName = rhs.parentNode.getAttribute('name');
+    let colons = rhs.parentNode.querySelector('emu-geq');
+    rhs = rhs.cloneNode(true);
+    rhs.querySelectorAll('emu-params,emu-constraints').forEach(e => {
+      e.remove();
+    });
+    rhs.querySelectorAll('[id]').forEach(e => {
+      e.removeAttribute('id');
+    });
+    rhs.querySelectorAll('a').forEach(e => {
+      e.parentNode.replaceChild(document.createTextNode(e.textContent), e);
+    });
+
+    // prettier-ignore
+    this.$headerText.innerHTML = `Syntax-Directed Operations for<br><a href="${makeLinkToId(alternativeId)}" class="menu-pane-header-production"><emu-nt>${parentName}</emu-nt> ${colons.outerHTML} </a>`;
+    this.$headerText.querySelector('a').append(rhs);
+    this.showSDOsBody(sdos, alternativeId);
+  },
+
+  showSDOsBody(sdos, alternativeId) {
+    this.activate();
+    this.state = { type: 'sdo', id: alternativeId, html: this.$headerText.innerHTML };
+    this.$headerRefId.style.display = 'none';
+    let newBody = document.createElement('tbody');
+    Object.keys(sdos).forEach(sdoName => {
+      let pair = sdos[sdoName];
+      let clause = pair.clause;
+      let ids = pair.ids;
+      let first = ids[0];
+      let row = newBody.insertRow();
+      let cell = row.insertCell();
+      cell.innerHTML = clause;
+      cell = row.insertCell();
+      let html = '<a href="' + makeLinkToId(first) + '">' + sdoName + '</a>';
+      for (let i = 1; i < ids.length; ++i) {
+        html += ' (<a href="' + makeLinkToId(ids[i]) + '">' + (i + 1) + '</a>)';
+      }
+      cell.innerHTML = html;
+    });
+    this.$table.removeChild(this.$tableBody);
+    this.$tableBody = newBody;
+    this.$table.appendChild(this.$tableBody);
+  },
+};
+
+let Toolbox = {
+  init() {
+    this.$outer = document.createElement('div');
+    this.$outer.classList.add('toolbox-container');
+    this.$container = document.createElement('div');
+    this.$container.classList.add('toolbox');
+    this.$outer.appendChild(this.$container);
+    this.$permalink = document.createElement('a');
+    this.$permalink.textContent = 'Permalink';
+    this.$pinLink = document.createElement('a');
+    this.$pinLink.textContent = 'Pin';
+    this.$pinLink.setAttribute('href', '#');
+    this.$pinLink.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      menu.togglePinEntry(this.entry.id);
+    });
+
+    this.$refsLink = document.createElement('a');
+    this.$refsLink.setAttribute('href', '#');
+    this.$refsLink.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      referencePane.showReferencesFor(this.entry);
+    });
+    this.$container.appendChild(this.$permalink);
+    this.$container.appendChild(this.$pinLink);
+    this.$container.appendChild(this.$refsLink);
+    document.body.appendChild(this.$outer);
+  },
+
+  activate(el, entry, target) {
+    if (el === this._activeEl) return;
+    sdoBox.deactivate();
+    this.active = true;
+    this.entry = entry;
+    this.$outer.classList.add('active');
+    this.top = el.offsetTop - this.$outer.offsetHeight;
+    this.left = el.offsetLeft - 10;
+    this.$outer.setAttribute('style', 'left: ' + this.left + 'px; top: ' + this.top + 'px');
+    this.updatePermalink();
+    this.updateReferences();
+    this._activeEl = el;
+    if (this.top < document.body.scrollTop && el === target) {
+      // don't scroll unless it's a small thing (< 200px)
+      this.$outer.scrollIntoView();
+    }
+  },
+
+  updatePermalink() {
+    this.$permalink.setAttribute('href', makeLinkToId(this.entry.id));
+  },
+
+  updateReferences() {
+    this.$refsLink.textContent = `References (${(this.entry.referencingIds || []).length})`;
+  },
+
+  activateIfMouseOver(e) {
+    let ref = this.findReferenceUnder(e.target);
+    if (ref && (!this.active || e.pageY > this._activeEl.offsetTop)) {
+      let entry = menu.search.biblio.byId[ref.id];
+      this.activate(ref.element, entry, e.target);
+    } else if (
+      this.active &&
+      (e.pageY < this.top || e.pageY > this._activeEl.offsetTop + this._activeEl.offsetHeight)
+    ) {
+      this.deactivate();
+    }
+  },
+
+  findReferenceUnder(el) {
+    while (el) {
+      let parent = el.parentNode;
+      if (el.nodeName === 'EMU-RHS' || el.nodeName === 'EMU-PRODUCTION') {
+        return null;
+      }
+      if (
+        el.nodeName === 'H1' &&
+        parent.nodeName.match(/EMU-CLAUSE|EMU-ANNEX|EMU-INTRO/) &&
+        parent.id
+      ) {
+        return { element: el, id: parent.id };
+      } else if (el.nodeName === 'EMU-NT') {
+        if (
+          parent.nodeName === 'EMU-PRODUCTION' &&
+          parent.id &&
+          parent.id[0] !== '_' &&
+          parent.firstElementChild === el
+        ) {
+          // return the LHS non-terminal element
+          return { element: el, id: parent.id };
+        }
+        return null;
+      } else if (
+        el.nodeName.match(/EMU-(?!CLAUSE|XREF|ANNEX|INTRO)|DFN/) &&
+        el.id &&
+        el.id[0] !== '_'
+      ) {
+        if (
+          el.nodeName === 'EMU-FIGURE' ||
+          el.nodeName === 'EMU-TABLE' ||
+          el.nodeName === 'EMU-EXAMPLE'
+        ) {
+          // return the figcaption element
+          return { element: el.children[0].children[0], id: el.id };
+        } else {
+          return { element: el, id: el.id };
+        }
+      }
+      el = parent;
+    }
+  },
+
+  deactivate() {
+    this.$outer.classList.remove('active');
+    this._activeEl = null;
+    this.active = false;
+  },
+};
+
+function sortByClauseNumber(clause1, clause2) {
+  let c1c = clause1.number.split('.');
+  let c2c = clause2.number.split('.');
+
+  for (let i = 0; i < c1c.length; i++) {
+    if (i >= c2c.length) {
+      return 1;
+    }
+
+    let c1 = c1c[i];
+    let c2 = c2c[i];
+    let c1cn = Number(c1);
+    let c2cn = Number(c2);
+
+    if (Number.isNaN(c1cn) && Number.isNaN(c2cn)) {
+      if (c1 > c2) {
+        return 1;
+      } else if (c1 < c2) {
+        return -1;
+      }
+    } else if (!Number.isNaN(c1cn) && Number.isNaN(c2cn)) {
+      return -1;
+    } else if (Number.isNaN(c1cn) && !Number.isNaN(c2cn)) {
+      return 1;
+    } else if (c1cn > c2cn) {
+      return 1;
+    } else if (c1cn < c2cn) {
+      return -1;
+    }
+  }
+
+  if (c1c.length === c2c.length) {
+    return 0;
+  }
+  return -1;
+}
+
+function makeLinkToId(id) {
+  let hash = '#' + id;
+  if (typeof idToSection === 'undefined' || !idToSection[id]) {
+    return hash;
+  }
+  let targetSec = idToSection[id];
+  return (targetSec === 'index' ? './' : targetSec + '.html') + hash;
+}
+
+function doShortcut(e) {
+  if (!(e.target instanceof HTMLElement)) {
+    return;
+  }
+  let target = e.target;
+  let name = target.nodeName.toLowerCase();
+  if (name === 'textarea' || name === 'input' || name === 'select' || target.isContentEditable) {
+    return;
+  }
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+    return;
+  }
+  if (e.key === 'm' && usesMultipage) {
+    let pathParts = location.pathname.split('/');
+    let hash = location.hash;
+    if (pathParts[pathParts.length - 2] === 'multipage') {
+      if (hash === '') {
+        let sectionName = pathParts[pathParts.length - 1];
+        if (sectionName.endsWith('.html')) {
+          sectionName = sectionName.slice(0, -5);
+        }
+        if (idToSection['sec-' + sectionName] !== undefined) {
+          hash = '#sec-' + sectionName;
+        }
+      }
+      location = pathParts.slice(0, -2).join('/') + '/' + hash;
+    } else {
+      location = 'multipage/' + hash;
+    }
+  } else if (e.key === 'u') {
+    document.documentElement.classList.toggle('show-ao-annotations');
+  }
+}
+
+function init() {
+  menu = new Menu();
+  let $container = document.getElementById('spec-container');
+  $container.addEventListener(
+    'mouseover',
+    debounce(e => {
+      Toolbox.activateIfMouseOver(e);
+    })
+  );
+  document.addEventListener(
+    'keydown',
+    debounce(e => {
+      if (e.code === 'Escape' && Toolbox.active) {
+        Toolbox.deactivate();
+      }
+    })
+  );
+}
+
+document.addEventListener('keypress', doShortcut);
+
+document.addEventListener('DOMContentLoaded', () => {
+  Toolbox.init();
+  referencePane.init();
+});
+
+'use strict';
+let decimalBullet = Array.from({ length: 100 }, (a, i) => '' + (i + 1));
+let alphaBullet = Array.from({ length: 26 }, (a, i) => String.fromCharCode('a'.charCodeAt(0) + i));
+
+// prettier-ignore
+let romanBullet = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv', 'xvi', 'xvii', 'xviii', 'xix', 'xx', 'xxi', 'xxii', 'xxiii', 'xxiv', 'xxv'];
+// prettier-ignore
+let bullets = [decimalBullet, alphaBullet, romanBullet, decimalBullet, alphaBullet, romanBullet];
+
+function addStepNumberText(ol, parentIndex) {
+  for (let i = 0; i < ol.children.length; ++i) {
+    let child = ol.children[i];
+    let index = parentIndex.concat([i]);
+    let applicable = bullets[Math.min(index.length - 1, 5)];
+    let span = document.createElement('span');
+    span.textContent = (applicable[i] || '?') + '. ';
+    span.style.fontSize = '0';
+    span.setAttribute('aria-hidden', 'true');
+    child.prepend(span);
+    let sublist = child.querySelector('ol');
+    if (sublist != null) {
+      addStepNumberText(sublist, index);
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('emu-alg > ol').forEach(ol => {
+    addStepNumberText(ol, []);
+  });
+});
+
+let sdoMap = JSON.parse(`{}`);
+let biblio = JSON.parse(`{"refsByClause":{"sec-array.prototype.sort":["_ref_0","_ref_4","_ref_5","_ref_6","_ref_7","_ref_8","_ref_9","_ref_10","_ref_11","_ref_12","_ref_13","_ref_14","_ref_15","_ref_16","_ref_17","_ref_18"],"sec-%typedarray%.prototype.sort":["_ref_1","_ref_80","_ref_81","_ref_82","_ref_83","_ref_84","_ref_85","_ref_86","_ref_87","_ref_88"],"sec-comparetypedarrayelements":["_ref_2","_ref_89","_ref_90"],"sec-%typedarray%.prototype.toSorted":["_ref_3","_ref_97","_ref_98","_ref_99","_ref_100","_ref_101","_ref_102","_ref_103"],"sec-comparearrayelements":["_ref_19","_ref_20","_ref_21","_ref_22"],"sec-sortindexedproperties":["_ref_23","_ref_24","_ref_25","_ref_26","_ref_27","_ref_28","_ref_29","_ref_30"],"sec-array.prototype.toReversed":["_ref_31","_ref_32","_ref_33","_ref_34","_ref_35","_ref_36","_ref_37"],"sec-array.prototype.toSorted":["_ref_38","_ref_39","_ref_40","_ref_41","_ref_42","_ref_43","_ref_44","_ref_45"],"sec-array.prototype.toSpliced":["_ref_46","_ref_47","_ref_48","_ref_49","_ref_50","_ref_51","_ref_52","_ref_53","_ref_54","_ref_55","_ref_56","_ref_57"],"sec-array.prototype.with":["_ref_58","_ref_59","_ref_60","_ref_61","_ref_62","_ref_63"],"sec-array.prototype-@@unscopables":["_ref_64","_ref_65","_ref_66","_ref_67","_ref_68","_ref_69","_ref_70","_ref_71","_ref_72","_ref_73","_ref_74","_ref_75","_ref_76","_ref_77"],"typedarray-create-same-type":["_ref_78","_ref_79"],"sec-%typedarray%.prototype.toReversed":["_ref_91","_ref_92","_ref_93","_ref_94","_ref_95","_ref_96"],"sec-%typedarray%.prototype.with":["_ref_104","_ref_105","_ref_106","_ref_107","_ref_108","_ref_109","_ref_110","_ref_111"]},"entries":[{"type":"step","id":"step-array-sort-comparefn","stepNumbers":[1]},{"type":"step","id":"step-array-sort-len","stepNumbers":[3]},{"type":"step","id":"step-array-sortindexedproperties","stepNumbers":[6],"referencingIds":["_ref_0"]},{"type":"clause","id":"sec-array.prototype.sort","title":"Array.prototype.sort ( comparefn )","titleHTML":"Array.prototype.sort ( <var>comparefn</var> )","number":"1.1.1.1","referencingIds":["_ref_1"]},{"type":"step","id":"step-sortcompare-tostring-x","stepNumbers":[5]},{"type":"step","id":"step-sortcompare-tostring-y","stepNumbers":[6]},{"type":"op","aoid":"CompareArrayElements","refId":"sec-comparearrayelements"},{"type":"clause","id":"sec-comparearrayelements","title":"CompareArrayElements ( x, y, comparefn )","titleHTML":"CompareArrayElements ( <var>x</var>, <var>y</var>, <var>comparefn</var> )","number":"1.1.1.2","referencingIds":["_ref_2","_ref_11","_ref_42"]},{"type":"step","id":"step-array-sort","stepNumbers":[5]},{"type":"op","aoid":"SortIndexedProperties","refId":"sec-sortindexedproperties"},{"type":"clause","id":"sec-sortindexedproperties","title":"SortIndexedProperties ( obj, len, SortCompare, skipHoles )","titleHTML":"SortIndexedProperties ( <var>obj</var>, <var>len</var>, <var>SortCompare</var>, <ins><var>skipHoles</var></ins> )","number":"1.1.1.3","referencingIds":["_ref_12","_ref_13","_ref_16","_ref_43","_ref_85","_ref_86","_ref_101"]},{"type":"clause","id":"sec-array.prototype.toReversed","titleHTML":"Array.prototype.toReversed ( )","number":"1.1.1.4"},{"type":"clause","id":"sec-array.prototype.toSorted","title":"Array.prototype.toSorted ( comparefn )","titleHTML":"Array.prototype.toSorted ( <var>comparefn</var> )","number":"1.1.1.5","referencingIds":["_ref_3"]},{"type":"clause","id":"sec-array.prototype.toSpliced","title":"Array.prototype.toSpliced ( start, deleteCount, ...items )","titleHTML":"Array.prototype.toSpliced ( <var>start</var>, <var>deleteCount</var>, ...<var>items</var> )","number":"1.1.1.6"},{"type":"clause","id":"sec-array.prototype.with","title":"Array.prototype.with ( index, value )","titleHTML":"Array.prototype.with ( <var>index</var>, <var>value</var> )","number":"1.1.1.7"},{"type":"clause","id":"sec-array.prototype-@@unscopables","titleHTML":"Array.prototype [ @@unscopables ]","number":"1.1.1.8"},{"type":"clause","id":"sec-properties-of-the-array-prototype-object","titleHTML":"Properties of the Array Prototype Object","number":"1.1.1"},{"type":"clause","id":"sec-array-objects","titleHTML":"Array Objects","number":"1.1"},{"type":"op","aoid":"TypedArrayCreateSameType","refId":"typedarray-create-same-type"},{"type":"clause","id":"typedarray-create-same-type","title":"TypedArrayCreateSameType ( exemplar, argumentList )","titleHTML":"TypedArrayCreateSameType ( <var>exemplar</var>, <var>argumentList</var> )","number":"1.2.1.1","referencingIds":["_ref_92","_ref_99","_ref_108"]},{"type":"clause","id":"sec-abstract-operations-for-typedarray-objects","titleHTML":"Abstract Operations for TypedArray Objects","number":"1.2.1"},{"type":"clause","id":"sec-%typedarray%.prototype.sort","title":"%TypedArray%.prototype.sort ( comparefn )","titleHTML":"%TypedArray%.prototype.sort ( <var>comparefn</var> )","number":"1.2.2.1.1"},{"type":"op","aoid":"CompareTypedArrayElements","refId":"sec-comparetypedarrayelements"},{"type":"clause","id":"sec-comparetypedarrayelements","title":"CompareTypedArrayElements ( x, y, comparefn )","titleHTML":"CompareTypedArrayElements ( <var>x</var>, <var>y</var>, <var>comparefn</var> )","number":"1.2.2.1.2","referencingIds":["_ref_84","_ref_100"]},{"type":"clause","id":"sec-%typedarray%.prototype.toReversed","titleHTML":"%TypedArray%.prototype.toReversed ( )","number":"1.2.2.1.3"},{"type":"clause","id":"sec-%typedarray%.prototype.toSorted","title":"%TypedArray%.prototype.toSorted ( comparefn )","titleHTML":"%TypedArray%.prototype.toSorted ( <var>comparefn</var> )","number":"1.2.2.1.4"},{"type":"clause","id":"sec-%typedarray%.prototype.with","title":"%TypedArray%.prototype.with ( index, value )","titleHTML":"%TypedArray%.prototype.with ( <var>index</var>, <var>value</var> )","number":"1.2.2.1.5"},{"type":"clause","id":"sec-properties-of-the-%typedarrayprototype%-object","titleHTML":"Properties of the %TypedArray% Prototype Object","number":"1.2.2.1"},{"type":"clause","id":"sec-%typedarray%-intrinsic-object","titleHTML":"The %TypedArray% Intrinsic Object","number":"1.2.2"},{"type":"clause","id":"sec-typedarray-objects","titleHTML":"TypedArray Objects","number":"1.2"},{"type":"clause","id":"sec-indexed-collections","titleHTML":"Indexed Collections","number":"1"},{"type":"clause","id":"sec-copyright-and-software-license","title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A"}]}`);
+;let usesMultipage = false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-light.min.css"><style>body {
+  display: flex;
+  font-size: 18px;
+  line-height: 1.5;
+  font-family: Cambria, Palatino Linotype, Palatino, Liberation Serif, serif;
+  padding: 0;
+  margin: 0;
+  color: #111;
+}
+
+#spec-container {
+  padding: 0 20px;
+  flex-grow: 1;
+  flex-basis: 66%;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-bottom: 1em;
+}
+
+body.oldtoc {
+  margin: 0 auto;
+}
+
+a {
+  text-decoration: none;
+  color: #206ca7;
+}
+
+a:visited {
+  color: #206ca7;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #239dee;
+}
+
+a.e-user-code,
+span.e-user-code {
+  white-space: nowrap;
+}
+
+a.e-user-code::before,
+span.e-user-code::before {
+  display: none;
+  color: brown;
+  background-color: white;
+  border: 2pt solid brown;
+  padding: 0.3ex;
+  margin: 0 0.25em 0 0;
+  line-height: 1;
+  vertical-align: text-top;
+  text-transform: uppercase;
+  font-family: 'Comic Code', sans-serif;
+  font-weight: 900;
+  font-size: x-small;
+}
+
+a.e-user-code:hover::before,
+span.e-user-code:hover::before {
+  background-color: brown;
+  color: white;
+}
+
+html.show-ao-annotations a.e-user-code::before,
+html.show-ao-annotations span.e-user-code::before {
+  display: inline-block;
+}
+
+a.e-user-code::before,
+span.e-user-code::before {
+  content: 'UC';
+}
+
+code {
+  font-weight: bold;
+  font-family: Consolas, Monaco, monospace;
+  white-space: pre;
+}
+
+pre code {
+  font-weight: inherit;
+}
+
+pre code.hljs {
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+ol.toc {
+  list-style: none;
+  padding-left: 0;
+}
+
+ol.toc ol.toc {
+  padding-left: 2ex;
+  list-style: none;
+}
+
+var {
+  color: #2aa198;
+  transition: background-color 0.25s ease;
+  cursor: pointer;
+}
+
+var.referenced0 {
+  color: inherit;
+  background-color: #ffff33;
+  box-shadow: 0 0 0 2px #ffff33;
+}
+var.referenced1 {
+  color: inherit;
+  background-color: #ff87a2;
+  box-shadow: 0 0 0 2px #ff87a2;
+}
+var.referenced2 {
+  color: inherit;
+  background-color: #96e885;
+  box-shadow: 0 0 0 2px #96e885;
+}
+var.referenced3 {
+  color: inherit;
+  background-color: #3eeed2;
+  box-shadow: 0 0 0 2px #3eeed2;
+}
+var.referenced4 {
+  color: inherit;
+  background-color: #eacfb6;
+  box-shadow: 0 0 0 2px #eacfb6;
+}
+var.referenced5 {
+  color: inherit;
+  background-color: #82ddff;
+  box-shadow: 0 0 0 2px #82ddff;
+}
+var.referenced6 {
+  color: inherit;
+  background-color: #ffbcf2;
+  box-shadow: 0 0 0 2px #ffbcf2;
+}
+
+emu-const {
+  font-family: sans-serif;
+}
+
+emu-val {
+  font-weight: bold;
+}
+
+/* depth 1 */
+emu-alg ol,
+/* depth 4 */
+emu-alg ol ol ol ol,
+emu-alg ol.nested-thrice,
+emu-alg ol.nested-twice ol,
+emu-alg ol.nested-once ol ol {
+  list-style-type: decimal;
+}
+
+/* depth 2 */
+emu-alg ol ol,
+emu-alg ol.nested-once,
+/* depth 5 */
+emu-alg ol ol ol ol ol,
+emu-alg ol.nested-four-times,
+emu-alg ol.nested-thrice ol,
+emu-alg ol.nested-twice ol ol,
+emu-alg ol.nested-once ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+/* depth 3 */
+emu-alg ol ol ol,
+emu-alg ol.nested-twice,
+emu-alg ol.nested-once ol,
+/* depth 6 */
+emu-alg ol ol ol ol ol ol,
+emu-alg ol.nested-lots,
+emu-alg ol.nested-four-times ol,
+emu-alg ol.nested-thrice ol ol,
+emu-alg ol.nested-twice ol ol ol,
+emu-alg ol.nested-once ol ol ol ol,
+/* depth 7+ */
+emu-alg ol.nested-lots ol {
+  list-style-type: lower-roman;
+}
+
+emu-eqn {
+  display: block;
+  margin-left: 4em;
+}
+
+emu-eqn.inline {
+  display: inline;
+  margin: 0;
+}
+
+emu-eqn div:first-child {
+  margin-left: -2em;
+}
+
+emu-note {
+  margin: 1em 0;
+  display: flex;
+  flex-direction: row;
+  color: inherit;
+  border-left: 5px solid #52e052;
+  background: #e9fbe9;
+  padding: 10px 10px 10px 0;
+}
+
+emu-note > span.note {
+  flex-basis: 100px;
+  min-width: 100px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  text-transform: uppercase;
+  padding-left: 5px;
+}
+
+emu-note[type='editor'] {
+  border-left-color: #faa;
+}
+
+emu-note > div.note-contents {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: auto;
+}
+
+emu-note > div.note-contents > p:first-of-type {
+  margin-top: 0;
+}
+
+emu-note > div.note-contents > p:last-of-type {
+  margin-bottom: 0;
+}
+
+emu-table td code {
+  white-space: normal;
+}
+
+emu-figure {
+  display: block;
+}
+
+emu-example {
+  display: block;
+  margin: 1em 3em;
+}
+
+emu-example figure figcaption {
+  margin-top: 0.5em;
+  text-align: left;
+}
+
+emu-figure figure,
+emu-example figure,
+emu-table figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+emu-production {
+  display: block;
+}
+
+emu-grammar[type='example'] emu-production,
+emu-grammar[type='definition'] emu-production {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 5ex;
+}
+
+emu-grammar.inline,
+emu-production.inline,
+emu-grammar.inline emu-production emu-rhs,
+emu-production.inline emu-rhs,
+emu-grammar[collapsed] emu-production emu-rhs {
+  display: inline;
+  padding-left: 1ex;
+  margin-left: 0;
+}
+
+emu-production[collapsed] emu-rhs {
+  display: inline;
+  padding-left: 0.5ex;
+  margin-left: 0;
+}
+
+emu-grammar[collapsed] emu-production,
+emu-production[collapsed] {
+  margin: 0;
+}
+
+emu-constraints {
+  font-size: 0.75em;
+  margin-right: 0.5ex;
+}
+
+emu-gann {
+  margin-right: 0.5ex;
+}
+
+emu-gann emu-t:last-child,
+emu-gann emu-gprose:last-child,
+emu-gann emu-nt:last-child {
+  margin-right: 0;
+}
+
+emu-geq {
+  margin-left: 0.5ex;
+  font-weight: bold;
+}
+
+emu-oneof {
+  font-weight: bold;
+  margin-left: 0.5ex;
+}
+
+emu-nt {
+  display: inline-block;
+  font-style: italic;
+  white-space: nowrap;
+  text-indent: 0;
+}
+
+emu-nt a,
+emu-nt a:visited {
+  color: #333;
+}
+
+emu-rhs emu-nt {
+  margin-right: 0.5ex;
+}
+
+emu-t {
+  display: inline-block;
+  font-family: monospace;
+  font-weight: bold;
+  white-space: nowrap;
+  text-indent: 0;
+}
+
+emu-production emu-t {
+  margin-right: 0.5ex;
+}
+
+emu-rhs {
+  display: block;
+  padding-left: 75px;
+  text-indent: -25px;
+}
+
+emu-production:not([collapsed]) emu-rhs {
+  border: 0.2ex dashed transparent;
+}
+
+emu-production:not([collapsed]) emu-rhs:hover {
+  border-color: #888;
+  background-color: #f0f0f0;
+}
+
+emu-mods {
+  font-size: 0.85em;
+  vertical-align: sub;
+  font-style: normal;
+  font-weight: normal;
+}
+
+emu-params,
+emu-opt {
+  margin-right: 1ex;
+  font-family: monospace;
+}
+
+emu-params,
+emu-constraints {
+  color: #2aa198;
+}
+
+emu-opt {
+  color: #b58900;
+}
+
+emu-gprose {
+  font-size: 0.9em;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+emu-production emu-gprose {
+  margin-right: 1ex;
+}
+
+h1.shortname {
+  color: #f60;
+  font-size: 1.5em;
+  margin: 0;
+}
+
+h1.version {
+  color: #f60;
+  font-size: 1.5em;
+}
+
+h1.title {
+  color: #f60;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  position: relative;
+}
+
+h1 .secnum {
+  text-decoration: none;
+  margin-right: 5px;
+}
+
+h1 span.title {
+  order: 2;
+}
+
+h1 {
+  font-size: 2.67em;
+  margin-bottom: 0;
+  line-height: 1em;
+}
+h2 {
+  font-size: 2em;
+}
+h3 {
+  font-size: 1.56em;
+}
+h4 {
+  font-size: 1.25em;
+}
+h5 {
+  font-size: 1.11em;
+}
+h6 {
+  font-size: 1em;
+}
+
+pre code.hljs {
+  background: transparent;
+}
+
+emu-clause[id],
+emu-annex[id],
+emu-intro[id] {
+  scroll-margin-top: 2ex;
+}
+
+emu-intro h1,
+emu-clause h1,
+emu-annex h1 {
+  font-size: 2em;
+}
+emu-intro h2,
+emu-clause h2,
+emu-annex h2 {
+  font-size: 1.56em;
+}
+emu-intro h3,
+emu-clause h3,
+emu-annex h3 {
+  font-size: 1.25em;
+}
+emu-intro h4,
+emu-clause h4,
+emu-annex h4 {
+  font-size: 1.11em;
+}
+emu-intro h5,
+emu-clause h5,
+emu-annex h5 {
+  font-size: 1em;
+}
+emu-intro h6,
+emu-clause h6,
+emu-annex h6 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro h1,
+emu-clause emu-clause h1,
+emu-annex emu-annex h1 {
+  font-size: 1.56em;
+}
+emu-intro emu-intro h2,
+emu-clause emu-clause h2,
+emu-annex emu-annex h2 {
+  font-size: 1.25em;
+}
+emu-intro emu-intro h3,
+emu-clause emu-clause h3,
+emu-annex emu-annex h3 {
+  font-size: 1.11em;
+}
+emu-intro emu-intro h4,
+emu-clause emu-clause h4,
+emu-annex emu-annex h4 {
+  font-size: 1em;
+}
+emu-intro emu-intro h5,
+emu-clause emu-clause h5,
+emu-annex emu-annex h5 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex h1 {
+  font-size: 1.25em;
+}
+emu-intro emu-intro emu-intro h2,
+emu-clause emu-clause emu-clause h2,
+emu-annex emu-annex emu-annex h2 {
+  font-size: 1.11em;
+}
+emu-intro emu-intro emu-intro h3,
+emu-clause emu-clause emu-clause h3,
+emu-annex emu-annex emu-annex h3 {
+  font-size: 1em;
+}
+emu-intro emu-intro emu-intro h4,
+emu-clause emu-clause emu-clause h4,
+emu-annex emu-annex emu-annex h4 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex emu-annex h1 {
+  font-size: 1.11em;
+}
+emu-intro emu-intro emu-intro emu-intro h2,
+emu-clause emu-clause emu-clause emu-clause h2,
+emu-annex emu-annex emu-annex emu-annex h2 {
+  font-size: 1em;
+}
+emu-intro emu-intro emu-intro emu-intro h3,
+emu-clause emu-clause emu-clause emu-clause h3,
+emu-annex emu-annex emu-annex emu-annex h3 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex emu-annex emu-annex h1 {
+  font-size: 1em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro h2,
+emu-clause emu-clause emu-clause emu-clause emu-clause h2,
+emu-annex emu-annex emu-annex emu-annex emu-annex h2 {
+  font-size: 0.9em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro emu-intro h1,
+emu-clause emu-clause emu-clause emu-clause emu-clause emu-clause h1,
+emu-annex emu-annex emu-annex emu-annex emu-annex emu-annex h1 {
+  font-size: 0.9em;
+}
+
+emu-clause,
+emu-intro,
+emu-annex {
+  display: block;
+}
+
+/* these values are twice the font-size for the <h1> titles for clauses */
+emu-intro,
+emu-clause,
+emu-annex {
+  margin-top: 4em;
+}
+emu-intro emu-intro,
+emu-clause emu-clause,
+emu-annex emu-annex {
+  margin-top: 3.12em;
+}
+emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex {
+  margin-top: 2.5em;
+}
+emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex {
+  margin-top: 2.22em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex emu-annex {
+  margin-top: 2em;
+}
+emu-intro emu-intro emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex emu-annex emu-annex {
+  margin-top: 1.8em;
+}
+
+#spec-container > emu-intro:first-of-type,
+#spec-container > emu-clause:first-of-type,
+#spec-container > emu-annex:first-of-type {
+  margin-top: 0;
+}
+
+/* Figures and tables */
+figure {
+  display: block;
+  margin: 1em 0 3em 0;
+}
+figure object {
+  display: block;
+  margin: 0 auto;
+}
+figure table.real-table {
+  margin: 0 auto;
+}
+figure figcaption {
+  display: block;
+  color: #555555;
+  font-weight: bold;
+  text-align: center;
+}
+
+emu-table table {
+  margin: 0 auto;
+}
+
+emu-table table,
+table.real-table {
+  border-collapse: collapse;
+}
+
+emu-table td,
+emu-table th,
+table.real-table td,
+table.real-table th {
+  border: 1px solid black;
+  padding: 0.4em;
+  vertical-align: baseline;
+}
+emu-table th,
+emu-table thead td,
+table.real-table th {
+  background-color: #eeeeee;
+}
+
+emu-table td {
+  background: #fff;
+}
+
+/* Note: the left content edges of table.lightweight-table >tbody >tr >td
+   and div.display line up. */
+table.lightweight-table {
+  border-collapse: collapse;
+  margin: 0 0 0 1.5em;
+}
+table.lightweight-table td,
+table.lightweight-table th {
+  border: none;
+  padding: 0 0.5em;
+  vertical-align: baseline;
+}
+
+/* diff styles */
+ins {
+  background-color: #e0f8e0;
+  text-decoration: none;
+  border-bottom: 1px solid #396;
+}
+
+del {
+  background-color: #fee;
+}
+
+ins.block,
+del.block,
+emu-production > ins,
+emu-production > del,
+emu-grammar > ins,
+emu-grammar > del {
+  display: block;
+}
+emu-rhs > ins,
+emu-rhs > del {
+  display: inline;
+}
+
+tr.ins > td > ins {
+  border-bottom: none;
+}
+
+tr.ins > td {
+  background-color: #e0f8e0;
+}
+
+tr.del > td {
+  background-color: #fee;
+}
+
+/* Menu Styles */
+#menu-toggle {
+  font-size: 2em;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1.5em;
+  height: 1.5em;
+  z-index: 3;
+  visibility: hidden;
+  color: #1567a2;
+  background-color: #fff;
+
+  line-height: 1.5em;
+  text-align: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  cursor: pointer;
+}
+
+#menu {
+  display: flex;
+  flex-direction: column;
+  width: 33%;
+  height: 100vh;
+  max-width: 500px;
+  box-sizing: border-box;
+  background-color: #ddd;
+  overflow: hidden;
+  transition: opacity 0.1s linear;
+  padding: 0 5px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 2px solid #bbb;
+
+  z-index: 2;
+}
+
+#menu-spacer {
+  flex-basis: 33%;
+  max-width: 500px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+#menu a {
+  color: #1567a2;
+}
+
+#menu.active {
+  display: flex;
+  opacity: 1;
+  z-index: 2;
+}
+
+#menu-pins {
+  flex-grow: 1;
+  display: none;
+}
+
+#menu-pins.active {
+  display: block;
+}
+
+#menu-pins-list {
+  margin: 0;
+  padding: 0;
+  counter-reset: pins-counter;
+}
+
+#menu-pins-list > li:before {
+  content: counter(pins-counter);
+  counter-increment: pins-counter;
+  display: inline-block;
+  width: 25px;
+  text-align: center;
+  border: 1px solid #bbb;
+  padding: 2px;
+  margin: 4px;
+  box-sizing: border-box;
+  line-height: 1em;
+  background-color: #ccc;
+  border-radius: 4px;
+}
+#menu-toc > ol {
+  padding: 0;
+  flex-grow: 1;
+}
+
+#menu-toc > ol li {
+  padding: 0;
+}
+
+#menu-toc > ol,
+#menu-toc > ol ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#menu-toc > ol ol {
+  padding-left: 0.75em;
+}
+
+#menu-toc li {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#menu-toc .item-toggle {
+  display: inline-block;
+  transform: rotate(-45deg) translate(-5px, -5px);
+  transition: transform 0.1s ease;
+  text-align: center;
+  width: 20px;
+
+  color: #aab;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  cursor: pointer;
+}
+
+#menu-toc .item-toggle-none {
+  display: inline-block;
+  width: 20px;
+}
+
+#menu-toc li.active > .item-toggle {
+  transform: rotate(45deg) translate(-5px, -5px);
+}
+
+#menu-toc li > ol {
+  display: none;
+}
+
+#menu-toc li.active > ol {
+  display: block;
+}
+
+#menu-toc li.revealed > a {
+  background-color: #bbb;
+  font-weight: bold;
+  /*
+  background-color: #222;
+  color: #c6d8e4;
+  */
+}
+
+#menu-toc li.revealed-leaf > a {
+  color: #206ca7;
+  /*
+  background-color: #222;
+  color: #c6d8e4;
+  */
+}
+
+#menu-toc li.revealed > .item-toggle {
+  transform: rotate(45deg) translate(-5px, -5px);
+}
+
+#menu-toc li.revealed > ol {
+  display: block;
+}
+
+#menu-toc li > a {
+  padding: 2px 5px;
+}
+
+#menu > * {
+  margin-bottom: 5px;
+}
+
+.menu-pane-header {
+  padding: 0 5px;
+  text-transform: uppercase;
+  background-color: #aaa;
+  color: #335;
+  font-weight: bold;
+  letter-spacing: 2px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 0.8em;
+}
+
+.menu-pane-header emu-opt,
+.menu-pane-header emu-t,
+.menu-pane-header emu-nt {
+  margin-right: 0px;
+  display: inline;
+  color: inherit;
+}
+
+.menu-pane-header emu-rhs {
+  display: inline;
+  padding-left: 0px;
+  text-indent: 0px;
+}
+
+.menu-pane-header emu-geq {
+  margin-left: 0px;
+}
+
+a.menu-pane-header-production {
+  color: inherit;
+}
+
+.menu-pane-header-production {
+  text-transform: none;
+  letter-spacing: 1.5px;
+  padding-left: 0.5em;
+}
+
+#menu-toc {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+#menu-toc ol.toc {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#menu-search {
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  max-height: 300px;
+}
+
+#menu-trace-list {
+  display: none;
+}
+
+#menu-search-box {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 5px 0 0 0;
+  font-size: 1em;
+  padding: 2px;
+  background-color: #bbb;
+  border: 1px solid #999;
+}
+
+#menu-search-results {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+li.menu-search-result-clause:before {
+  content: 'clause';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+li.menu-search-result-op:before {
+  content: 'op';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+
+li.menu-search-result-prod:before {
+  content: 'prod';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+
+li.menu-search-result-term:before {
+  content: 'term';
+  width: 40px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 1ex;
+  color: #666;
+  font-size: 75%;
+}
+
+#menu-search-results ul {
+  padding: 0 5px;
+  margin: 0;
+}
+
+#menu-search-results li {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#menu-trace-list {
+  counter-reset: item;
+  margin: 0 0 0 20px;
+  padding: 0;
+}
+#menu-trace-list li {
+  display: block;
+  white-space: nowrap;
+}
+
+#menu-trace-list li .secnum:after {
+  content: ' ';
+}
+#menu-trace-list li:before {
+  content: counter(item) ' ';
+  background-color: #222;
+  counter-increment: item;
+  color: #999;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  display: inline-block;
+  text-align: center;
+  margin: 2px 4px 2px 0;
+}
+
+@media (max-width: 1000px) {
+  body {
+    margin: 0;
+    display: block;
+  }
+
+  #menu {
+    display: none;
+    padding-top: 3em;
+    width: 450px;
+  }
+
+  #menu.active {
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 0;
+    right: 300px;
+  }
+
+  #menu-toggle {
+    visibility: visible;
+  }
+
+  #spec-container {
+    padding: 0 5px;
+  }
+
+  #references-pane-spacer {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  #menu {
+    width: 100%;
+  }
+
+  h1 .secnum:empty {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Toolbox */
+.toolbox-container {
+  position: absolute;
+  display: none;
+  padding-bottom: 7px;
+}
+
+.toolbox-container.active {
+  display: inline-block;
+}
+
+.toolbox {
+  position: relative;
+  background: #ddd;
+  border: 1px solid #aaa;
+  color: #eee;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.toolbox a {
+  text-decoration: none;
+  padding: 0 5px;
+}
+
+.toolbox a:hover {
+  text-decoration: underline;
+}
+
+.toolbox:after,
+.toolbox:before {
+  top: 100%;
+  left: 15px;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.toolbox:after {
+  border-color: rgba(0, 0, 0, 0);
+  border-top-color: #ddd;
+  border-width: 10px;
+  margin-left: -10px;
+}
+.toolbox:before {
+  border-color: rgba(204, 204, 204, 0);
+  border-top-color: #aaa;
+  border-width: 12px;
+  margin-left: -12px;
+}
+
+#references-pane-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 250px;
+  display: none;
+  background-color: #ddd;
+  z-index: 1;
+}
+
+#references-pane-table-container {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#references-pane-spacer {
+  flex-basis: 33%;
+  max-width: 500px;
+}
+
+#references-pane {
+  flex-grow: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#references-pane-container.active {
+  display: flex;
+}
+
+#references-pane-close:after {
+  content: '✖';
+  float: right;
+  cursor: pointer;
+}
+
+#references-pane table tr td:first-child {
+  text-align: right;
+  padding-right: 5px;
+}
+
+@media print {
+  #menu-toggle {
+    display: none;
+  }
+}
+
+[normative-optional],
+[legacy] {
+  border-left: 5px solid #ff6600;
+  padding: 0.5em;
+  display: block;
+  background: #ffeedd;
+}
+
+.clause-attributes-tag {
+  text-transform: uppercase;
+  color: #884400;
+}
+
+.clause-attributes-tag a {
+  color: #884400;
+}
+</style></head><body><div id="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; stroke:currentColor" viewBox="0 0 120 120">
+      <title>Menu</title>
+      <path stroke-width="10" stroke-linecap="round" d="M30,60 h60  M30,30 m0,5 h60  M30,90 m0,-5 h60"></path>
+    </svg></div><div id="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle">◢</span><a href="#sec-indexed-collections" title="Indexed Collections"><span class="secnum">1</span> Indexed Collections</a><ol class="toc"><li><span class="item-toggle">◢</span><a href="#sec-array-objects" title="Array Objects"><span class="secnum">1.1</span> Array Objects</a><ol class="toc"><li><span class="item-toggle">◢</span><a href="#sec-properties-of-the-array-prototype-object" title="Properties of the Array Prototype Object"><span class="secnum">1.1.1</span> Properties of the Array Prototype Object</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-array.prototype.sort" title="Array.prototype.sort ( comparefn )"><span class="secnum">1.1.1.1</span> Array.prototype.sort ( <var>comparefn</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-comparearrayelements" title="CompareArrayElements ( x, y, comparefn )"><span class="secnum">1.1.1.2</span> CompareArrayElements ( <var>x</var>, <var>y</var>, <var>comparefn</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-sortindexedproperties" title="SortIndexedProperties ( obj, len, SortCompare, skipHoles )"><span class="secnum">1.1.1.3</span> SortIndexedProperties ( <var>obj</var>, <var>len</var>, <var>SortCompare</var>, <ins><var>skipHoles</var></ins> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-array.prototype.toReversed" title="Array.prototype.toReversed ( )"><span class="secnum">1.1.1.4</span> Array.prototype.toReversed ( )</a></li><li><span class="item-toggle-none"></span><a href="#sec-array.prototype.toSorted" title="Array.prototype.toSorted ( comparefn )"><span class="secnum">1.1.1.5</span> Array.prototype.toSorted ( <var>comparefn</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-array.prototype.toSpliced" title="Array.prototype.toSpliced ( start, deleteCount, ...items )"><span class="secnum">1.1.1.6</span> Array.prototype.toSpliced ( <var>start</var>, <var>deleteCount</var>, ...<var>items</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-array.prototype.with" title="Array.prototype.with ( index, value )"><span class="secnum">1.1.1.7</span> Array.prototype.with ( <var>index</var>, <var>value</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-array.prototype-@@unscopables" title="Array.prototype [ @@unscopables ]"><span class="secnum">1.1.1.8</span> Array.prototype [ @@unscopables ]</a></li></ol></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-typedarray-objects" title="TypedArray Objects"><span class="secnum">1.2</span> TypedArray Objects</a><ol class="toc"><li><span class="item-toggle">◢</span><a href="#sec-abstract-operations-for-typedarray-objects" title="Abstract Operations for TypedArray Objects"><span class="secnum">1.2.1</span> Abstract Operations for TypedArray Objects</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#typedarray-create-same-type" title="TypedArrayCreateSameType ( exemplar, argumentList )"><span class="secnum">1.2.1.1</span> TypedArrayCreateSameType ( <var>exemplar</var>, <var>argumentList</var> )</a></li></ol></li><li><span class="item-toggle">◢</span><a href="#sec-%typedarray%-intrinsic-object" title="The %TypedArray% Intrinsic Object"><span class="secnum">1.2.2</span> The %TypedArray% Intrinsic Object</a><ol class="toc"><li><span class="item-toggle">◢</span><a href="#sec-properties-of-the-%typedarrayprototype%-object" title="Properties of the %TypedArray% Prototype Object"><span class="secnum">1.2.2.1</span> Properties of the %TypedArray% Prototype Object</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-%typedarray%.prototype.sort" title="%TypedArray%.prototype.sort ( comparefn )"><span class="secnum">1.2.2.1.1</span> %TypedArray%.prototype.sort ( <var>comparefn</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-comparetypedarrayelements" title="CompareTypedArrayElements ( x, y, comparefn )"><span class="secnum">1.2.2.1.2</span> CompareTypedArrayElements ( <var>x</var>, <var>y</var>, <var>comparefn</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-%typedarray%.prototype.toReversed" title="%TypedArray%.prototype.toReversed ( )"><span class="secnum">1.2.2.1.3</span> %TypedArray%.prototype.toReversed ( )</a></li><li><span class="item-toggle-none"></span><a href="#sec-%typedarray%.prototype.toSorted" title="%TypedArray%.prototype.toSorted ( comparefn )"><span class="secnum">1.2.2.1.4</span> %TypedArray%.prototype.toSorted ( <var>comparefn</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-%typedarray%.prototype.with" title="%TypedArray%.prototype.with ( index, value )"><span class="secnum">1.2.2.1.5</span> %TypedArray%.prototype.with ( <var>index</var>, <var>value</var> )</a></li></ol></li></ol></li></ol></li></ol></li><li><span class="item-toggle-none"></span><a href="#sec-copyright-and-software-license" title="Copyright &amp; Software License"><span class="secnum">A</span> Copyright &amp; Software License</a></li></ol></div></div><div id="spec-container"><h1 class="version">Stage 2 Draft / August 1, 2023</h1><h1 class="title">Change Array by copy</h1>
+
+<emu-biblio href="biblio.json"></emu-biblio>
+
+<emu-clause id="sec-indexed-collections">
+    <h1><span class="secnum">1</span> Indexed Collections</h1>
+
+    <emu-clause id="sec-array-objects">
+        <h1><span class="secnum">1.1</span> Array Objects</h1>
+
+        <emu-clause id="sec-properties-of-the-array-prototype-object">
+            <h1><span class="secnum">1.1.1</span> Properties of the Array Prototype Object</h1>
+
+            <emu-clause id="sec-array.prototype.sort" oldids="sec-sortcompare"><span id="sec-sortcompare"></span>
+                <h1><span class="secnum">1.1.1.1</span> Array.prototype.sort ( <var>comparefn</var> )</h1>
+
+                <p>When the <code>sort</code> method is called, the following steps are taken:</p>
+                <emu-alg><ol><li id="step-array-sort-comparefn">If <var>comparefn</var> is not <emu-val>undefined</emu-val> and <emu-xref aoid="IsCallable" id="_ref_4"><a href="https://tc39.es/ecma262/#sec-iscallable">IsCallable</a></emu-xref>(<var>comparefn</var>) is <emu-val>false</emu-val>, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>obj</var> be ?&nbsp;<emu-xref aoid="ToObject" id="_ref_5"><a href="https://tc39.es/ecma262/#sec-toobject">ToObject</a></emu-xref>(<emu-val>this</emu-val> value).</li><li id="step-array-sort-len">Let <var>len</var> be ?&nbsp;<emu-xref aoid="LengthOfArrayLike" id="_ref_6"><a href="https://tc39.es/ecma262/#sec-lengthofarraylike">LengthOfArrayLike</a></emu-xref>(<var>obj</var>).</li><li>Let <var>SortCompare</var> be a new Abstract Closure with parameters (<var>x</var>, <var>y</var>) that captures <var>comparefn</var> and performs the following steps when called:<ol><li><del>If <var>x</var> and <var>y</var> are both <emu-val>undefined</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>x</var> is <emu-val>undefined</emu-val>, return <emu-val>1</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>y</var> is <emu-val>undefined</emu-val>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>comparefn</var> is not <emu-val>undefined</emu-val>, then</del><ol><li><del>Let <var>v</var> be ?&nbsp;<emu-xref aoid="ToNumber" id="_ref_7"><a href="https://tc39.es/ecma262/#sec-tonumber">ToNumber</a></emu-xref>(? <emu-xref aoid="Call" id="_ref_8"><a href="https://tc39.es/ecma262/#sec-call">Call</a></emu-xref>(<var>comparefn</var>, <emu-val>undefined</emu-val>, « <var>x</var>, <var>y</var> »)).</del></li><li><del>If <var>v</var> is <emu-val>NaN</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</del></li><li><del>Return <var>v</var>.</del></li></ol></li><li><del>[id="step-sortcompare-tostring-x"] Let <var>xString</var> be ?&nbsp;<emu-xref aoid="ToString" id="_ref_9"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<var>x</var>).</del></li><li><del>[id="step-sortcompare-tostring-y"] Let <var>yString</var> be ?&nbsp;<emu-xref aoid="ToString" id="_ref_10"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<var>y</var>).</del></li><li><del>Let <var>xSmaller</var> be !&nbsp;IsLessThan(<var>xString</var>, <var>yString</var>, <emu-val>true</emu-val>).</del></li><li><del>If <var>xSmaller</var> is <emu-val>true</emu-val>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</del></li><li><del>Let <var>ySmaller</var> be !&nbsp;IsLessThan(<var>yString</var>, <var>xString</var>, <emu-val>true</emu-val>).</del></li><li><del>If <var>ySmaller</var> is <emu-val>true</emu-val>, return <emu-val>1</emu-val><sub>𝔽</sub>.</del></li><li><del>Return <emu-val>+0</emu-val><sub>𝔽</sub>.</del></li><li><ins>Return ?&nbsp;<emu-xref aoid="CompareArrayElements" id="_ref_11"><a href="#sec-comparearrayelements">CompareArrayElements</a></emu-xref>(<var>x</var>, <var>y</var>, <var>comparefn</var>).</ins></li></ol></li><li><del>Return ?&nbsp;<emu-xref aoid="SortIndexedProperties" id="_ref_12"><a href="#sec-sortindexedproperties">SortIndexedProperties</a></emu-xref>(<var>obj</var>, <var>len</var>, <var>SortCompare</var>).</del></li><li id="step-array-sortindexedproperties"><ins>Let <var>sortedList</var> be ?&nbsp;<emu-xref aoid="SortIndexedProperties" id="_ref_13"><a href="#sec-sortindexedproperties">SortIndexedProperties</a></emu-xref>(<var>obj</var>, <var>len</var>, <var>SortCompare</var>, <emu-val>true</emu-val>).</ins></li><li><ins>Let <var>itemCount</var> be the number of elements in <var>sortedList</var>.</ins></li><li><ins>Let <var>j</var> be 0.</ins></li><li><ins>Repeat, while <var>j</var> &lt; <var>itemCount</var>,</ins><ol><li><ins>Perform ?&nbsp;<emu-xref aoid="Set" id="_ref_14"><a href="https://tc39.es/ecma262/#sec-set-o-p-v-throw">Set</a></emu-xref>(<var>obj</var>, !&nbsp;<emu-xref aoid="ToString" id="_ref_15"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>j</var>)), <var>sortedList</var>[<var>j</var>], true).</ins></li><li><ins>Set <var>j</var> to <var>j</var> + 1.</ins></li></ol></li><li><ins>NOTE: The call to <emu-xref aoid="SortIndexedProperties" id="_ref_16"><a href="#sec-sortindexedproperties">SortIndexedProperties</a></emu-xref> in step <emu-xref href="#step-array-sortindexedproperties" id="_ref_0"><a href="#step-array-sortindexedproperties">6</a></emu-xref> has the <emu-val>skipHoles</emu-val> parameter set to <emu-val>true</emu-val>. The remaining indexes are deleted to preserve the number of holes that were detected and excluded from the sort.</ins></li><li><ins>Repeat, while <var>j</var> &lt; <var>len</var>,</ins><ol><li><ins>Perform ?&nbsp;<emu-xref aoid="DeletePropertyOrThrow" id="_ref_17"><a href="https://tc39.es/ecma262/#sec-deletepropertyorthrow">DeletePropertyOrThrow</a></emu-xref>(<var>obj</var>, !&nbsp;<emu-xref aoid="ToString" id="_ref_18"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>j</var>))).</ins></li><li><ins>Set <var>j</var> to <var>j</var> + 1.</ins></li></ol></li><li><ins>Return <var>obj</var>.</ins></li></ol></emu-alg>
+            </emu-clause>
+
+            <emu-clause id="sec-comparearrayelements" type="abstract operation" aoid="CompareArrayElements">
+                <h1><span class="secnum">1.1.1.2</span> CompareArrayElements ( <var>x</var>, <var>y</var>, <var>comparefn</var> )</h1>
+                <p>The abstract operation CompareArrayElements takes arguments <var>x</var>, <var>y</var>, and <var>comparefn</var> (a <emu-xref href="#function-object"><a href="https://tc39.es/ecma262/#function-object">function object</a></emu-xref> or <emu-val>undefined</emu-val>) and returns either a normal completion containing a Number or an <emu-xref href="#sec-completion-record-specification-type"><a href="https://tc39.es/ecma262/#sec-completion-record-specification-type">abrupt completion</a></emu-xref>. It performs the following steps when called:</p>
+                <emu-alg><ol><li>If <var>x</var> and <var>y</var> are both <emu-val>undefined</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</li><li>If <var>x</var> is <emu-val>undefined</emu-val>, return <emu-val>1</emu-val><sub>𝔽</sub>.</li><li>If <var>y</var> is <emu-val>undefined</emu-val>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</li><li>If <var>comparefn</var> is not <emu-val>undefined</emu-val>, then<ol><li>Let <var>v</var> be ?&nbsp;<emu-xref aoid="ToNumber" id="_ref_19"><a href="https://tc39.es/ecma262/#sec-tonumber">ToNumber</a></emu-xref>(? <emu-xref aoid="Call" id="_ref_20"><a href="https://tc39.es/ecma262/#sec-call">Call</a></emu-xref>(<var>comparefn</var>, <emu-val>undefined</emu-val>, « <var>x</var>, <var>y</var> »)).</li><li>If <var>v</var> is <emu-val>NaN</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</li><li>Return <var>v</var>.</li></ol></li><li id="step-sortcompare-tostring-x">Let <var>xString</var> be ?&nbsp;<emu-xref aoid="ToString" id="_ref_21"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<var>x</var>).</li><li id="step-sortcompare-tostring-y">Let <var>yString</var> be ?&nbsp;<emu-xref aoid="ToString" id="_ref_22"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<var>y</var>).</li><li>Let <var>xSmaller</var> be !&nbsp;IsLessThan(<var>xString</var>, <var>yString</var>, <emu-val>true</emu-val>).</li><li>If <var>xSmaller</var> is <emu-val>true</emu-val>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</li><li>Let <var>ySmaller</var> be !&nbsp;IsLessThan(<var>yString</var>, <var>xString</var>, <emu-val>true</emu-val>).</li><li>If <var>ySmaller</var> is <emu-val>true</emu-val>, return <emu-val>1</emu-val><sub>𝔽</sub>.</li><li>Return <emu-val>+0</emu-val><sub>𝔽</sub>.</li></ol></emu-alg>
+            </emu-clause>
+
+            <emu-clause id="sec-sortindexedproperties" type="abstract operation" aoid="SortIndexedProperties">
+                <h1><span class="secnum">1.1.1.3</span> SortIndexedProperties ( <var>obj</var>, <var>len</var>, <var>SortCompare</var>, <ins><var>skipHoles</var></ins> )</h1>
+                <p>The abstract operation SortIndexedProperties takes arguments <var>obj</var> (an Object), <var>len</var> (a non-negative <emu-xref href="#integer"><a href="https://tc39.es/ecma262/#integer">integer</a></emu-xref>), <var>SortCompare</var> (an Abstract Closure with two parameters), and <ins><var>skipHoles</var> (a Boolean)</ins> and returns either a normal completion containing <del>an Object</del><ins>a <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref></ins> or an <emu-xref href="#sec-completion-record-specification-type"><a href="https://tc39.es/ecma262/#sec-completion-record-specification-type">abrupt completion</a></emu-xref>. It performs the following steps when called:</p>
+                <emu-alg><ol><li>Let <var>items</var> be a new empty <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref>.</li><li>Let <var>k</var> be 0.</li><li>Repeat, while <var>k</var> &lt; <var>len</var>,<ol><li>Let <var>Pk</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_23"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>k</var>)).</li><li><del>Let <var>kPresent</var> be ?&nbsp;<emu-xref aoid="HasProperty" id="_ref_24"><a href="https://tc39.es/ecma262/#sec-hasproperty">HasProperty</a></emu-xref>(<var>obj</var>, <var>Pk</var>).</del></li><li><ins>If <var>skipHoles</var> is <emu-val>true</emu-val>, then</ins><ol><li><ins>Let <var>kRead</var> be ?&nbsp;<emu-xref aoid="HasProperty" id="_ref_25"><a href="https://tc39.es/ecma262/#sec-hasproperty">HasProperty</a></emu-xref>(<var>obj</var>, <var>Pk</var>).</ins></li></ol></li><li><ins>Else,</ins><ol><li><ins>Let <var>kRead</var> be <emu-val>true</emu-val>.</ins></li></ol></li><li>If <del><var>kPresent</var></del><ins><var>kRead</var></ins> is <emu-val>true</emu-val>, then<ol><li>Let <var>kValue</var> be ?&nbsp;<emu-xref aoid="Get" id="_ref_26"><a href="https://tc39.es/ecma262/#sec-get-o-p">Get</a></emu-xref>(<var>obj</var>, <var>Pk</var>).</li><li>Append <var>kValue</var> to <var>items</var>.</li></ol></li><li>Set <var>k</var> to <var>k</var> + 1.</li></ol></li><li><del>Let <var>itemCount</var> be the number of elements in <var>items</var>.</del></li><li id="step-array-sort">Sort <var>items</var> using an implementation-defined sequence of calls to <var>SortCompare</var>. If any such call returns an <emu-xref href="#sec-completion-record-specification-type"><a href="https://tc39.es/ecma262/#sec-completion-record-specification-type">abrupt completion</a></emu-xref>, stop before performing any further calls to <var>SortCompare</var> or steps in this algorithm and return that <emu-xref href="#sec-completion-record-specification-type"><a href="https://tc39.es/ecma262/#sec-completion-record-specification-type">Completion Record</a></emu-xref>.</li><li><del>Let <var>j</var> be 0.</del></li><li><del>Repeat, while <var>j</var> &lt; <var>itemCount</var>,</del><ol><li><del>Perform ?&nbsp;<emu-xref aoid="Set" id="_ref_27"><a href="https://tc39.es/ecma262/#sec-set-o-p-v-throw">Set</a></emu-xref>(<var>obj</var>, !&nbsp;<emu-xref aoid="ToString" id="_ref_28"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>j</var>)), <var>items</var>[<var>j</var>], <emu-val>true</emu-val>).</del></li><li><del>Set <var>j</var> to <var>j</var> + 1.</del></li></ol></li><li><del>Repeat, while <var>j</var> &lt; <var>len</var>,</del><ol><li><del>Perform ?&nbsp;<emu-xref aoid="DeletePropertyOrThrow" id="_ref_29"><a href="https://tc39.es/ecma262/#sec-deletepropertyorthrow">DeletePropertyOrThrow</a></emu-xref>(<var>obj</var>, !&nbsp;<emu-xref aoid="ToString" id="_ref_30"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>j</var>))).</del></li><li><del>Set <var>j</var> to <var>j</var> + 1.</del></li></ol></li><li><del>Return <var>obj</var>.</del></li><li><ins>Return <var>items</var>.</ins></li></ol></emu-alg>
+            </emu-clause>
+
+            <emu-clause id="sec-array.prototype.toReversed">
+                <h1><span class="secnum">1.1.1.4</span> Array.prototype.toReversed ( )</h1>
+
+                <p>When the <emu-val>toReversed</emu-val> method is called, the following steps are taken:</p>
+
+                <emu-alg><ol><li>Let <var>O</var> be ?&nbsp;<emu-xref aoid="ToObject" id="_ref_31"><a href="https://tc39.es/ecma262/#sec-toobject">ToObject</a></emu-xref>(<emu-val>this</emu-val> value).</li><li>Let <var>len</var> be ?&nbsp;<emu-xref aoid="LengthOfArrayLike" id="_ref_32"><a href="https://tc39.es/ecma262/#sec-lengthofarraylike">LengthOfArrayLike</a></emu-xref>(<var>O</var>).</li><li>Let <var>A</var> be ?&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_33"><a href="https://tc39.es/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>len</var>)).</li><li>Let <var>k</var> be 0.</li><li>Repeat, while <var>k</var> &lt; <var>len</var>,<ol><li>Let <var>from</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_34"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>len</var> - <var>k</var> - 1)).</li><li>Let <var>Pk</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_35"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>k</var>)).</li><li>Let <var>fromValue</var> be ?&nbsp;<emu-xref aoid="Get" id="_ref_36"><a href="https://tc39.es/ecma262/#sec-get-o-p">Get</a></emu-xref>(<var>O</var>, <var>from</var>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_37"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>A</var>, <var>Pk</var>, <var>fromValue</var>).</li><li>Set <var>k</var> to <var>k</var> + 1.</li></ol></li><li>Return <var>A</var>.</li></ol></emu-alg>
+            </emu-clause>
+
+            <emu-clause id="sec-array.prototype.toSorted">
+                <h1><span class="secnum">1.1.1.5</span> Array.prototype.toSorted ( <var>comparefn</var> )</h1>
+
+                <p>When the <emu-val>toSorted</emu-val> method is called, the following steps are taken:</p>
+
+                <emu-alg><ol><li>If <var>comparefn</var> is not <emu-val>undefined</emu-val> and <emu-xref aoid="IsCallable" id="_ref_38"><a href="https://tc39.es/ecma262/#sec-iscallable">IsCallable</a></emu-xref>(<var>comparefn</var>) is <emu-val>false</emu-val>, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>O</var> be ?&nbsp;<emu-xref aoid="ToObject" id="_ref_39"><a href="https://tc39.es/ecma262/#sec-toobject">ToObject</a></emu-xref>(<emu-val>this</emu-val> value).</li><li>Let <var>len</var> be ?&nbsp;<emu-xref aoid="LengthOfArrayLike" id="_ref_40"><a href="https://tc39.es/ecma262/#sec-lengthofarraylike">LengthOfArrayLike</a></emu-xref>(<var>O</var>).</li><li>Let <var>A</var> be ?&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_41"><a href="https://tc39.es/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>len</var>)).</li><li>Let <var>SortCompare</var> be a new Abstract Closure with parameters (<var>x</var>, <var>y</var>) that captures <var>comparefn</var> and performs the following steps when called:<ol><li>Return ?&nbsp;<emu-xref aoid="CompareArrayElements" id="_ref_42"><a href="#sec-comparearrayelements">CompareArrayElements</a></emu-xref>(<var>x</var>, <var>y</var>, <var>comparefn</var>).</li></ol></li><li>Let <var>sortedList</var> be ?&nbsp;<emu-xref aoid="SortIndexedProperties" id="_ref_43"><a href="#sec-sortindexedproperties">SortIndexedProperties</a></emu-xref>(<var>obj</var>, <var>len</var>, <var>SortCompare</var>, <emu-val>false</emu-val>).</li><li>Let <var>j</var> be 0.</li><li>Repeat, while <var>j</var> &lt; <var>len</var>,<ol><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_44"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>A</var>, !&nbsp;<emu-xref aoid="ToString" id="_ref_45"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>j</var>)), <var>sortedList</var>[<var>j</var>]).</li><li>Set <var>j</var> to <var>j</var> + 1.</li></ol></li><li>Return <var>A</var>.</li></ol></emu-alg>
+            </emu-clause>
+
+            <emu-clause id="sec-array.prototype.toSpliced">
+                <h1><span class="secnum">1.1.1.6</span> Array.prototype.toSpliced ( <var>start</var>, <var>deleteCount</var>, ...<var>items</var> )</h1>
+
+                <p>When the <emu-val>toSpliced</emu-val> method is called, the following steps are taken:</p>
+
+                <emu-alg><ol><li>Let <var>O</var> be ?&nbsp;<emu-xref aoid="ToObject" id="_ref_46"><a href="https://tc39.es/ecma262/#sec-toobject">ToObject</a></emu-xref>(<emu-val>this</emu-val> value).</li><li>Let <var>len</var> be ?&nbsp;<emu-xref aoid="LengthOfArrayLike" id="_ref_47"><a href="https://tc39.es/ecma262/#sec-lengthofarraylike">LengthOfArrayLike</a></emu-xref>(<var>O</var>).</li><li>Let <var>relativeStart</var> be ?&nbsp;ToIntegerOrInfinity(<var>start</var>).</li><li>If <var>relativeStart</var> is -∞, let <var>actualStart</var> be 0.</li><li>Else if <var>relativeStart</var> &lt; 0, let <var>actualStart</var> be <emu-xref aoid="max"><a href="https://tc39.es/ecma262/#eqn-max">max</a></emu-xref>(<var>len</var> + <var>relativeStart</var>, 0).</li><li>Else, let <var>actualStart</var> be <emu-xref aoid="min"><a href="https://tc39.es/ecma262/#eqn-min">min</a></emu-xref>(<var>relativeStart</var>, <var>len</var>).</li><li>Let <var>insertCount</var> be the number of elements in <var>items</var>.</li><li>If <var>start</var> is not present, then<ol><li>Let <var>actualDeleteCount</var> be 0.</li></ol></li><li>Else if <var>deleteCount</var> is not present, then<ol><li>Let <var>actualDeleteCount</var> be <var>len</var> - <var>actualStart</var>.</li></ol></li><li>Else,<ol><li>Let <var>dc</var> be ?&nbsp;ToIntegerOrInfinity(<var>deleteCount</var>).</li><li>Let <var>actualDeleteCount</var> be the result of clamping <var>dc</var> between 0 and <var>len</var> - <var>actualStart</var>.</li></ol></li><li>Let <var>newLen</var> be <var>len</var> + <var>insertCount</var> - <var>actualDeleteCount</var>.</li><li>If <var>newLen</var> &gt; 2<sup>53</sup> - 1, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>A</var> be ?&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_48"><a href="https://tc39.es/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>newLen</var>)).</li><li>Let <var>i</var> be 0.</li><li>Let <var>r</var> be <var>actualStart</var> + <var>actualDeleteCount</var>.</li><li>Repeat, while <var>i</var> &lt; <var>actualStart</var>,<ol><li>Let <var>Pi</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_49"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>i</var>)).</li><li>Let <var>iValue</var> be ?&nbsp;<emu-xref aoid="Get" id="_ref_50"><a href="https://tc39.es/ecma262/#sec-get-o-p">Get</a></emu-xref>(<var>O</var>, <var>Pi</var>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_51"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>A</var>, <var>Pi</var>, <var>iValue</var>).</li><li>Set <var>i</var> to <var>i</var> + 1.</li></ol></li><li>For each element <var>E</var> of <var>items</var>, do<ol><li>Let <var>Pi</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_52"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>i</var>)).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_53"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>A</var>, <var>Pi</var>, <var>E</var>).</li><li>Set <var>i</var> to <var>i</var> + 1.</li></ol></li><li>Repeat, while <var>i</var> &lt; <var>newLen</var>,<ol><li>Let <var>Pi</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_54"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>i</var>)).</li><li>Let <var>from</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_55"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>r</var>)).</li><li>Let <var>fromValue</var> be ?&nbsp;<emu-xref aoid="Get" id="_ref_56"><a href="https://tc39.es/ecma262/#sec-get-o-p">Get</a></emu-xref>(<var>O</var>, <var>from</var>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_57"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>A</var>, <var>Pi</var>, <var>fromValue</var>).</li><li>Set <var>i</var> to <var>i</var> + 1.</li><li>Set <var>r</var> to <var>r</var> + 1.</li></ol></li><li>Return <var>A</var>.</li></ol></emu-alg>
+            </emu-clause>
+
+            <emu-clause id="sec-array.prototype.with">
+                <h1><span class="secnum">1.1.1.7</span> Array.prototype.with ( <var>index</var>, <var>value</var> )</h1>
+
+                <p>When the <emu-val>with</emu-val> method is called, the following steps are taken:</p>
+
+                <emu-alg><ol><li>Let <var>O</var> be ?&nbsp;<emu-xref aoid="ToObject" id="_ref_58"><a href="https://tc39.es/ecma262/#sec-toobject">ToObject</a></emu-xref>(<emu-val>this</emu-val> value).</li><li>Let <var>len</var> be ?&nbsp;<emu-xref aoid="LengthOfArrayLike" id="_ref_59"><a href="https://tc39.es/ecma262/#sec-lengthofarraylike">LengthOfArrayLike</a></emu-xref>(<var>O</var>).</li><li>Let <var>relativeIndex</var> be ?&nbsp;ToIntegerOrInfinity(<var>index</var>).</li><li>If <var>relativeIndex</var> ≥ 0, let <var>actualIndex</var> be <var>relativeIndex</var>.</li><li>Else, let <var>actualIndex</var> be <var>len</var> + <var>relativeIndex</var>.</li><li>If <var>actualIndex</var> ≥ <var>len</var> or <var>actualIndex</var> &lt; 0, throw a <emu-val>RangeError</emu-val> exception.</li><li>Let <var>A</var> be ?&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_60"><a href="https://tc39.es/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>len</var>)).</li><li>Let <var>k</var> be 0.</li><li>Repeat, while <var>k</var> &lt; <var>len</var>,<ol><li>Let <var>Pk</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_61"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>k</var>)).</li><li>If <var>k</var> is <var>actualIndex</var>, let <var>fromValue</var> be <var>value</var>.</li><li>Else, let <var>fromValue</var> be ?&nbsp;<emu-xref aoid="Get" id="_ref_62"><a href="https://tc39.es/ecma262/#sec-get-o-p">Get</a></emu-xref>(<var>O</var>, <var>Pk</var>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_63"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>A</var>, <var>Pk</var>, <var>fromValue</var>).</li><li>Set <var>k</var> to <var>k</var> + 1.</li></ol></li><li>Return <var>A</var>.</li></ol></emu-alg>
+            </emu-clause>
+
+            <emu-clause id="sec-array.prototype-@@unscopables">
+                <h1><span class="secnum">1.1.1.8</span> Array.prototype [ @@unscopables ]</h1>
+                <p>The initial value of the @@unscopables <emu-xref href="#sec-object-type"><a href="https://tc39.es/ecma262/#sec-object-type">data property</a></emu-xref> is an object created by the following steps:</p>
+                <emu-alg><ol><li>Let <var>unscopableList</var> be !&nbsp;OrdinaryObjectCreate(<emu-val>null</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_64"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"at"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_65"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"copyWithin"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_66"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"entries"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_67"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"fill"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_68"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"find"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_69"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"findIndex"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_70"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"flat"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_71"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"flatMap"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_72"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"includes"</emu-val>, <emu-val>true</emu-val>).</li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_73"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"keys"</emu-val>, <emu-val>true</emu-val>).</li><li><ins>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_74"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"toReversed"</emu-val>, <emu-val>true</emu-val>).</ins></li><li><ins>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_75"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"toSorted"</emu-val>, <emu-val>true</emu-val>).</ins></li><li><ins>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_76"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"toSpliced"</emu-val>, <emu-val>true</emu-val>).</ins></li><li>Perform !&nbsp;<emu-xref aoid="CreateDataPropertyOrThrow" id="_ref_77"><a href="https://tc39.es/ecma262/#sec-createdatapropertyorthrow">CreateDataPropertyOrThrow</a></emu-xref>(<var>unscopableList</var>, <emu-val>"values"</emu-val>, <emu-val>true</emu-val>).</li><li>Return <var>unscopableList</var>.</li></ol></emu-alg>
+                <p>This property has the attributes { [[Writable]]: <emu-val>false</emu-val>, [[Enumerable]]: <emu-val>false</emu-val>, [[Configurable]]: <emu-val>true</emu-val> }.</p>
+                <emu-note><span class="note">Note</span><div class="note-contents">
+                    <p>The reason that <emu-val>"with"</emu-val> is not included in the <var>unscopableList</var> is because it is already a <emu-xref href="#sec-keywords-and-reserved-words"><a href="https://tc39.es/ecma262/#sec-keywords-and-reserved-words">reserved word</a></emu-xref>.</p>
+                </div></emu-note>
+            </emu-clause>
+        </emu-clause>
+    </emu-clause>
+
+    <emu-clause id="sec-typedarray-objects">
+        <h1><span class="secnum">1.2</span> TypedArray Objects</h1>
+
+        <emu-clause id="sec-abstract-operations-for-typedarray-objects">
+            <h1><span class="secnum">1.2.1</span> Abstract Operations for TypedArray Objects</h1>
+
+            <emu-clause id="typedarray-create-same-type" type="abstract operation" aoid="TypedArrayCreateSameType">
+                <h1><span class="secnum">1.2.1.1</span> TypedArrayCreateSameType ( <var>exemplar</var>, <var>argumentList</var> )</h1>
+                <p>The abstract operation TypedArrayCreateSameType takes arguments <var>exemplar</var> (a TypedArray) and <var>argumentList</var>. It is used to specify the creation of a new TypedArray using a <emu-xref href="#constructor"><a href="https://tc39.es/ecma262/#constructor">constructor</a></emu-xref> function that is derived from <var>exemplar</var>. Unlike <emu-xref aoid="TypedArraySpeciesCreate" id="_ref_78"><a href="https://tc39.es/ecma262/#typedarray-species-create">TypedArraySpeciesCreate</a></emu-xref>, which can construct custom TypedArray subclasses through the use of @@species, this operation always uses one of the built-in TypedArray constructors. It performs the following steps when called:</p>
+                <emu-alg><ol><li><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: <var>exemplar</var> is an Object that has [[TypedArrayName]] and [[ContentType]] internal slots.</li><li>Let <var>constructor</var> be the intrinsic object listed in column one of <emu-xref href="#table-the-typedarray-constructors"><a href="https://tc39.es/ecma262/#table-the-typedarray-constructors">Table 63</a></emu-xref> for <var>exemplar</var>.[[TypedArrayName]].</li><li>Let <var>result</var> be ?&nbsp;<emu-xref aoid="TypedArrayCreate" id="_ref_79"><a href="https://tc39.es/ecma262/#typedarray-create">TypedArrayCreate</a></emu-xref>(<var>constructor</var>, <var>argumentList</var>).</li><li><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: <var>result</var> has [[TypedArrayName]] and [[ContentType]] internal slots.</li><li><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: <var>result</var>.[[ContentType]] is <var>exemplar</var>.[[ContentType]].</li><li>Return <var>result</var>.</li></ol></emu-alg>
+            </emu-clause>
+        </emu-clause>
+
+        <emu-clause id="sec-%typedarray%-intrinsic-object">
+            <h1><span class="secnum">1.2.2</span> The %TypedArray% Intrinsic Object</h1>
+
+            <emu-clause id="sec-properties-of-the-%typedarrayprototype%-object">
+                <h1><span class="secnum">1.2.2.1</span> Properties of the %TypedArray% Prototype Object</h1>
+
+                <emu-clause id="sec-%typedarray%.prototype.sort" oldids="sec-typedarraysortcompare"><span id="sec-typedarraysortcompare"></span>
+                    <h1><span class="secnum">1.2.2.1.1</span> %TypedArray%.prototype.sort ( <var>comparefn</var> )</h1>
+
+                    <p>The following steps are performed:</p>
+                    <emu-alg><ol><li>If <var>comparefn</var> is not <emu-val>undefined</emu-val> and <emu-xref aoid="IsCallable" id="_ref_80"><a href="https://tc39.es/ecma262/#sec-iscallable">IsCallable</a></emu-xref>(<var>comparefn</var>) is <emu-val>false</emu-val>, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>obj</var> be the <emu-val>this</emu-val> value.</li><li>Perform ?&nbsp;<emu-xref aoid="ValidateTypedArray" id="_ref_81"><a href="https://tc39.es/ecma262/#sec-validatetypedarray">ValidateTypedArray</a></emu-xref>(<var>obj</var>).</li><li>Let <var>len</var> be <var>obj</var>.[[ArrayLength]].</li><li>NOTE: The following closure performs a numeric comparison rather than the string comparison used in <emu-xref href="#sec-array.prototype.sort" id="_ref_1"><a href="#sec-array.prototype.sort">1.1.1.1</a></emu-xref>.</li><li>Let <var>SortCompare</var> be a new Abstract Closure with parameters (<var>x</var>, <var>y</var>) that captures <var>comparefn</var> and performs the following steps when called:<ol><li><del><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: <var>x</var> is a Number and <var>y</var> is a Number, or <var>x</var> is a BigInt and <var>y</var> is a BigInt.</del></li><li><del>If <var>comparefn</var> is not <emu-val>undefined</emu-val>, then</del><ol><li><del>Let <var>v</var> be ?&nbsp;<emu-xref aoid="ToNumber" id="_ref_82"><a href="https://tc39.es/ecma262/#sec-tonumber">ToNumber</a></emu-xref>(? <emu-xref aoid="Call" id="_ref_83"><a href="https://tc39.es/ecma262/#sec-call">Call</a></emu-xref>(<var>comparefn</var>, <emu-val>undefined</emu-val>, « <var>x</var>, <var>y</var> »)).</del></li><li><del>If <var>v</var> is <emu-val>NaN</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</del></li><li><del>Return <var>v</var>.</del></li></ol></li><li><del>If <var>x</var> and <var>y</var> are both <emu-val>NaN</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>x</var> is <emu-val>NaN</emu-val>, return <emu-val>1</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>y</var> is <emu-val>NaN</emu-val>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>x</var> &lt; <var>y</var>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>x</var> &gt; <var>y</var>, return <emu-val>1</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>x</var> is <emu-val>-0</emu-val><sub>𝔽</sub> and <var>y</var> is <emu-val>+0</emu-val><sub>𝔽</sub>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</del></li><li><del>If <var>x</var> is <emu-val>+0</emu-val><sub>𝔽</sub> and <var>y</var> is <emu-val>-0</emu-val><sub>𝔽</sub>, return <emu-val>1</emu-val><sub>𝔽</sub>.</del></li><li><del>Return <emu-val>+0</emu-val><sub>𝔽</sub>.</del></li><li><ins>Return ?&nbsp;<emu-xref aoid="CompareTypedArrayElements" id="_ref_84"><a href="#sec-comparetypedarrayelements">CompareTypedArrayElements</a></emu-xref>(<var>x</var>, <var>y</var>, <var>comparefn</var>).</ins></li></ol></li><li><del>Return ?&nbsp;<emu-xref aoid="SortIndexedProperties" id="_ref_85"><a href="#sec-sortindexedproperties">SortIndexedProperties</a></emu-xref>(<var>obj</var>, <var>len</var>, <var>SortCompare</var>).</del></li><li><ins>Let <var>sortedList</var> be ?&nbsp;<emu-xref aoid="SortIndexedProperties" id="_ref_86"><a href="#sec-sortindexedproperties">SortIndexedProperties</a></emu-xref>(<var>obj</var>, <var>len</var>, <var>SortCompare</var>, <emu-val>false</emu-val>).</ins></li><li><ins>Let <var>j</var> be 0.</ins></li><li><ins>Repeat, while <var>j</var> &lt; <var>len</var>,</ins><ol><li><ins>Perform !&nbsp;<emu-xref aoid="Set" id="_ref_87"><a href="https://tc39.es/ecma262/#sec-set-o-p-v-throw">Set</a></emu-xref>(<var>obj</var>, !&nbsp;<emu-xref aoid="ToString" id="_ref_88"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>j</var>)), <var>sortedList</var>[<var>j</var>], <emu-val>true</emu-val>).</ins></li><li><ins>Set <var>j</var> to <var>j</var> + 1.</ins></li></ol></li><li><ins>Return <var>obj</var>.</ins></li></ol></emu-alg>
+                </emu-clause>
+
+                <emu-clause id="sec-comparetypedarrayelements" type="abstract operation" aoid="CompareTypedArrayElements">
+                    <h1><span class="secnum">1.2.2.1.2</span> CompareTypedArrayElements ( <var>x</var>, <var>y</var>, <var>comparefn</var> )</h1>
+                    <p>The abstract operation CompareTypedArrayElements takes arguments <var>x</var>, <var>y</var>, and <var>comparefn</var> (a <emu-xref href="#function-object"><a href="https://tc39.es/ecma262/#function-object">function object</a></emu-xref> or <emu-val>undefined</emu-val>) and returns either a normal completion containing a Number or an <emu-xref href="#sec-completion-record-specification-type"><a href="https://tc39.es/ecma262/#sec-completion-record-specification-type">abrupt completion</a></emu-xref>. It performs the following steps when called:</p>
+                    <emu-alg><ol><li><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: <var>x</var> is a Number and <var>y</var> is a Number, or <var>x</var> is a BigInt and <var>y</var> is a BigInt.</li><li>If <var>comparefn</var> is not <emu-val>undefined</emu-val>, then<ol><li>Let <var>v</var> be ?&nbsp;<emu-xref aoid="ToNumber" id="_ref_89"><a href="https://tc39.es/ecma262/#sec-tonumber">ToNumber</a></emu-xref>(? <emu-xref aoid="Call" id="_ref_90"><a href="https://tc39.es/ecma262/#sec-call">Call</a></emu-xref>(<var>comparefn</var>, <emu-val>undefined</emu-val>, « <var>x</var>, <var>y</var> »)).</li><li>If <var>v</var> is <emu-val>NaN</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</li><li>Return <var>v</var>.</li></ol></li><li>If <var>x</var> and <var>y</var> are both <emu-val>NaN</emu-val>, return <emu-val>+0</emu-val><sub>𝔽</sub>.</li><li>If <var>x</var> is <emu-val>NaN</emu-val>, return <emu-val>1</emu-val><sub>𝔽</sub>.</li><li>If <var>y</var> is <emu-val>NaN</emu-val>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</li><li>If <var>x</var> &lt; <var>y</var>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</li><li>If <var>x</var> &gt; <var>y</var>, return <emu-val>1</emu-val><sub>𝔽</sub>.</li><li>If <var>x</var> is <emu-val>-0</emu-val><sub>𝔽</sub> and <var>y</var> is <emu-val>+0</emu-val><sub>𝔽</sub>, return <emu-val>-1</emu-val><sub>𝔽</sub>.</li><li>If <var>x</var> is <emu-val>+0</emu-val><sub>𝔽</sub> and <var>y</var> is <emu-val>-0</emu-val><sub>𝔽</sub>, return <emu-val>1</emu-val><sub>𝔽</sub>.</li><li>Return <emu-val>+0</emu-val><sub>𝔽</sub>.</li></ol></emu-alg>
+                    <emu-note><span class="note">Note</span><div class="note-contents">
+                        This performs a numeric comparison rather than the string comparison used in <emu-xref href="#sec-comparearrayelements" id="_ref_2"><a href="#sec-comparearrayelements">1.1.1.2</a></emu-xref>.
+                    </div></emu-note>
+                </emu-clause>
+
+                <emu-clause id="sec-%typedarray%.prototype.toReversed">
+                    <h1><span class="secnum">1.2.2.1.3</span> %TypedArray%.prototype.toReversed ( )</h1>
+
+                    <p>When the <emu-val>toReversed</emu-val> method is called, the following steps are taken:</p>
+
+                    <emu-alg><ol><li>Let <var>O</var> be the <emu-val>this</emu-val> value.</li><li>Perform ?&nbsp;<emu-xref aoid="ValidateTypedArray" id="_ref_91"><a href="https://tc39.es/ecma262/#sec-validatetypedarray">ValidateTypedArray</a></emu-xref>(<var>O</var>).</li><li>Let <var>length</var> be <var>O</var>.[[ArrayLength]].</li><li>Let <var>A</var> be ?&nbsp;<emu-xref aoid="TypedArrayCreateSameType" id="_ref_92"><a href="#typedarray-create-same-type">TypedArrayCreateSameType</a></emu-xref>(<var>O</var>, « <emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>length</var>) »).</li><li>Let <var>k</var> be 0.</li><li>Repeat, while <var>k</var> &lt; <var>length</var>,<ol><li>Let <var>from</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_93"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>length</var> - <var>k</var> - 1)).</li><li>Let <var>Pk</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_94"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>k</var>)).</li><li>Let <var>fromValue</var> be !&nbsp;<emu-xref aoid="Get" id="_ref_95"><a href="https://tc39.es/ecma262/#sec-get-o-p">Get</a></emu-xref>(<var>O</var>, <var>from</var>).</li><li>Perform !&nbsp;<emu-xref aoid="Set" id="_ref_96"><a href="https://tc39.es/ecma262/#sec-set-o-p-v-throw">Set</a></emu-xref>(<var>A</var>, <var>Pk</var>, <var>fromValue</var>, <emu-val>true</emu-val>).</li><li>Set <var>k</var> to <var>k</var> + 1.</li></ol></li><li>Return <var>A</var>.</li></ol></emu-alg>
+                </emu-clause>
+
+                <emu-clause id="sec-%typedarray%.prototype.toSorted">
+                    <h1><span class="secnum">1.2.2.1.4</span> %TypedArray%.prototype.toSorted ( <var>comparefn</var> )</h1>
+
+                    <p>When the <emu-val>toSorted</emu-val> method is called, the following steps are taken:</p>
+
+                    <emu-alg><ol><li>If <var>comparefn</var> is not <emu-val>undefined</emu-val> and <emu-xref aoid="IsCallable" id="_ref_97"><a href="https://tc39.es/ecma262/#sec-iscallable">IsCallable</a></emu-xref>(<var>comparefn</var>) is <emu-val>false</emu-val>, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>O</var> be the <emu-val>this</emu-val> value.</li><li>Perform ?&nbsp;<emu-xref aoid="ValidateTypedArray" id="_ref_98"><a href="https://tc39.es/ecma262/#sec-validatetypedarray">ValidateTypedArray</a></emu-xref>(<var>O</var>).</li><li>Let <var>len</var> be <var>O</var>.[[ArrayLength]].</li><li>Let <var>A</var> be ?&nbsp;<emu-xref aoid="TypedArrayCreateSameType" id="_ref_99"><a href="#typedarray-create-same-type">TypedArrayCreateSameType</a></emu-xref>(<var>O</var>, « <emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>len</var>) »).</li><li>NOTE: The following closure performs a numeric comparison rather than the string comparison used in <emu-xref href="#sec-array.prototype.toSorted" id="_ref_3"><a href="#sec-array.prototype.toSorted">1.1.1.5</a></emu-xref>.</li><li>Let <var>SortCompare</var> be a new Abstract Closure with parameters (<var>x</var>, <var>y</var>) that captures <var>comparefn</var> and performs the following steps when called:<ol><li>Return ?&nbsp;<emu-xref aoid="CompareTypedArrayElements" id="_ref_100"><a href="#sec-comparetypedarrayelements">CompareTypedArrayElements</a></emu-xref>(<var>x</var>, <var>y</var>, <var>comparefn</var>).</li></ol></li><li>Let <var>sortedList</var> be ?&nbsp;<emu-xref aoid="SortIndexedProperties" id="_ref_101"><a href="#sec-sortindexedproperties">SortIndexedProperties</a></emu-xref>(<var>obj</var>, <var>len</var>, <var>SortCompare</var>, <emu-val>false</emu-val>).</li><li>Let <var>j</var> be 0.</li><li>Repeat, while <var>j</var> &lt; <var>len</var>,<ol><li>Perform !&nbsp;<emu-xref aoid="Set" id="_ref_102"><a href="https://tc39.es/ecma262/#sec-set-o-p-v-throw">Set</a></emu-xref>(<var>A</var>, !&nbsp;<emu-xref aoid="ToString" id="_ref_103"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>j</var>)), <var>sortedList</var>[<var>j</var>], <emu-val>true</emu-val>).</li><li>Set <var>j</var> to <var>j</var> + 1.</li></ol></li><li>Return <var>A</var>.</li></ol></emu-alg>
+                </emu-clause>
+
+                <emu-clause id="sec-%typedarray%.prototype.with">
+                    <h1><span class="secnum">1.2.2.1.5</span> %TypedArray%.prototype.with ( <var>index</var>, <var>value</var> )</h1>
+
+                    <p>When the <emu-val>with</emu-val> method is called, the following steps are taken:</p>
+
+                    <emu-alg><ol><li>Let <var>O</var> be the <emu-val>this</emu-val> value.</li><li>Perform ?&nbsp;<emu-xref aoid="ValidateTypedArray" id="_ref_104"><a href="https://tc39.es/ecma262/#sec-validatetypedarray">ValidateTypedArray</a></emu-xref>(<var>O</var>).</li><li>Let <var>len</var> be <var>O</var>.[[ArrayLength]].</li><li>Let <var>relativeIndex</var> be ?&nbsp;ToIntegerOrInfinity(<var>index</var>).</li><li>If <var>relativeIndex</var> ≥ 0, let <var>actualIndex</var> be <var>relativeIndex</var>.</li><li>Else, let <var>actualIndex</var> be <var>len</var> + <var>relativeIndex</var>.</li><li>If <var>O</var>.[[ContentType]] is <emu-const>BigInt</emu-const>, set <var>value</var> to ?&nbsp;<emu-xref aoid="ToBigInt" id="_ref_105"><a href="https://tc39.es/ecma262/#sec-tobigint">ToBigInt</a></emu-xref>(<var>value</var>).</li><li>Else, set <var>value</var> to ?&nbsp;<emu-xref aoid="ToNumber" id="_ref_106"><a href="https://tc39.es/ecma262/#sec-tonumber">ToNumber</a></emu-xref>(<var>value</var>).</li><li>If !&nbsp;<emu-xref aoid="IsValidIntegerIndex" id="_ref_107"><a href="https://tc39.es/ecma262/#sec-isvalidintegerindex">IsValidIntegerIndex</a></emu-xref>(<var>O</var>, <emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>actualIndex</var>)) is <emu-val>false</emu-val>, throw a <emu-val>RangeError</emu-val> exception.</li><li>Let <var>A</var> be ?&nbsp;<emu-xref aoid="TypedArrayCreateSameType" id="_ref_108"><a href="#typedarray-create-same-type">TypedArrayCreateSameType</a></emu-xref>(<var>O</var>, « <emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>len</var>) »).</li><li>Let <var>k</var> be 0.</li><li>Repeat, while <var>k</var> &lt; <var>len</var>,<ol><li>Let <var>Pk</var> be !&nbsp;<emu-xref aoid="ToString" id="_ref_109"><a href="https://tc39.es/ecma262/#sec-tostring">ToString</a></emu-xref>(<emu-xref href="#𝔽"><a href="https://tc39.es/ecma262/#𝔽">𝔽</a></emu-xref>(<var>k</var>)).</li><li>If <var>k</var> is <var>actualIndex</var>, let <var>fromValue</var> be <var>value</var>.</li><li>Else, let <var>fromValue</var> be !&nbsp;<emu-xref aoid="Get" id="_ref_110"><a href="https://tc39.es/ecma262/#sec-get-o-p">Get</a></emu-xref>(<var>O</var>, <var>Pk</var>).</li><li>Perform !&nbsp;<emu-xref aoid="Set" id="_ref_111"><a href="https://tc39.es/ecma262/#sec-set-o-p-v-throw">Set</a></emu-xref>(<var>A</var>, <var>Pk</var>, <var>fromValue</var>, <emu-val>true</emu-val>).</li><li>Set <var>k</var> to <var>k</var> + 1.</li></ol></li><li>Return <var>A</var>.</li></ol></emu-alg>
+                </emu-clause>
+            </emu-clause>
+        </emu-clause>
+    </emu-clause>
+</emu-clause><emu-annex id="sec-copyright-and-software-license">
+      <h1><span class="secnum">A</span> Copyright &amp; Software License</h1>
+      
+      <h2>Copyright Notice</h2>
+      <p>© 2023 Robin Ricard, Ashley Claymore</p>
+
+      <h2>Software License</h2>
+      <p>All Software contained in this document ("Software") is protected by copyright and is being made available under the "BSD License", included below. This Software may be subject to third party rights (rights from parties other than Ecma International), including patent rights, and no licenses under such third party rights are granted under this license even if the third party concerned is a member of Ecma International. SEE THE ECMA CODE OF CONDUCT IN PATENT MATTERS AVAILABLE AT https://ecma-international.org/memento/codeofconduct.htm FOR INFORMATION REGARDING THE LICENSING OF PATENT CLAIMS THAT ARE REQUIRED TO IMPLEMENT ECMA INTERNATIONAL STANDARDS.</p>
+
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+
+<ol>
+  <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+  <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+  <li>Neither the name of the authors nor Ecma International may be used to endorse or promote products derived from this software without specific prior written permission.</li>
+</ol>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE ECMA INTERNATIONAL "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ECMA INTERNATIONAL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+
+    </emu-annex>
+</div></body>

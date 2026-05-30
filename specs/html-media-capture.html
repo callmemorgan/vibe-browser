@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      HTML Media Capture
+    </title>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c' class=
+    'remove' async>
+    </script>
+    <script class='remove'>
+      var respecConfig = {
+          specStatus:           "REC",
+          errata:               "https://github.com/w3c/html-media-capture/labels/errata",
+          editors: [
+              {name: "Anssi Kostiainen", company: "Intel", w3cid: 41974},
+              {name: "Ilkka Oksanen", company: "Nokia", retiredDate: "2012-05-10"},
+              {name: "Dominique Hazaël-Massieux", company: "W3C", retiredDate: "2012-05-10"}
+          ],
+          publishDate:          "2018-02-01",
+          previousPublishDate:  "2017-11-28",
+          previousMaturity:     "PR",
+          crEnd:                "2017-06-20",
+          prEnd:                "2017-12-26",
+          group: "das",
+          github: "w3c/html-media-capture",
+          testSuiteURI: "https://wpt.fyi/results/html-media-capture",
+          implementationReportURI: "https://www.w3.org/2009/dap/wiki/ImplementationStatus",
+          otherLinks: [
+            {
+              key: "Translations",
+              data: [
+                {
+                  "value": "ру́сский язы́к",
+                  "href": "http://topolyan.com/w3c/html_media_capture_ru.html"
+                },
+                {
+                  "value": "한국어",
+                  "href": "https://techhtml.github.io/html-media-capture/"
+                },
+                {
+                  "value": "日本語",
+                  "href": "http://www.asahi-net.or.jp/~ax2s-kmtn/internet/media/REC-html-media-capture-20180201.html"
+                }
+              ]
+            }
+          ],
+        xref: "web-platform",
+      };
+    </script>
+  </head>
+  <body data-cite="FILEAPI MEDIACAPTURE-STREAMS">
+    <section id="abstract">
+      The <cite>HTML Media Capture</cite> specification defines an HTML form
+      extension that facilitates user access to a device's <a>media capture
+      mechanism</a>, such as a camera, or microphone, from within a file upload
+      control.
+    </section>
+    <section id="sotd">
+      <p>
+        An HTML Media Capture <a href="https://www.w3.org/TR/2017/PR-html-media-capture-20171128/">Proposed Recommendation</a> was published on 28 November 2017, no further normative changes have been made since then.
+
+        Errata for this document are recorded as issues.
+
+        The <a href="https://www.w3.org/2009/dap/wiki/ImplementationStatus">implementation report</a> produced for this version demonstrates there are two independent interoperable implementations.
+      </p>
+    </section>
+    <section class="informative">
+      <h2>
+        Introduction
+      </h2>
+      <p>
+        The <cite>HTML Media Capture</cite> specification extends the
+        {{HTMLInputElement}} interface with a {{HTMLInputElement/capture}} attribute. The
+        [^input/capture^] attribute allows authors to declaratively request use of
+        a <a>media capture mechanism</a>, such as a camera or microphone, from
+        within a file upload control, for capturing media on the spot.
+      </p>
+      <p>
+        This extension is specifically designed to be simple and declarative,
+        and covers a subset of the media capture functionality of the web
+        platform. Specifically, the extension does not provide detailed author
+        control over capture. Use cases requiring more fine-grained author
+        control may be met by using another specification, <cite>Media Capture
+        and Streams</cite> [[MEDIACAPTURE-STREAMS]]. For example, access to
+        real-time media streams from the hosting device is out of scope for
+        this specification.
+      </p>
+    </section>
+    <section id="conformance">
+      <p>
+        This specification defines conformance criteria that apply to a single
+        product: the <dfn>user agent</dfn> that implements the interfaces that
+        it contains.
+      </p>
+      <p>
+        Implementations that use ECMAScript to implement the APIs defined in
+        this specification must implement them in a manner consistent with the
+        ECMAScript Bindings defined in the Web IDL specification [[WEBIDL]],
+        as this specification uses that specification and terminology.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Terminology
+      </h2>
+      <p>
+        <dfn data-cite="HTML/input.html#file-upload-state-(type=file)">File
+        Upload</dfn> state, <dfn data-cite=
+        "HTML/common-microsyntaxes.html#enumerated-attribute">enumerated attribute</dfn>,
+        <dfn data-cite="HTML/infrastructure.html#missing-value-default">missing value
+        default</dfn>, <dfn data-cite="HTML/infrastructure.html#invalid-value-default">invalid
+        value default</dfn>
+        are defined in [[HTML]].
+      </p>
+      <p>
+        In this specification, the term <dfn>capture control type</dfn> refers
+        to a specialized type of a file picker control that is optimized, for
+        the user, for directly capturing media of a MIME type specified by the
+        [^input/accept^] attribute, using a <a>media capture mechanism</a> in its
+        <a>preferred facing mode</a>.
+      </p>
+      <p>
+        The term <dfn>media capture mechanism</dfn> refers to a device's local
+        media capture device, such as a camera or microphone.
+      </p>
+      <p>
+        The <dfn>preferred facing mode</dfn> is a hint for the direction of the
+        device's <a>media capture mechanism</a> to be used.
+      </p>
+    </section>
+    <section id="security" class="informative">
+      <h2>
+        Security and privacy considerations
+      </h2>
+      <p>
+        A User Agent implementation of this specification is advised to seek
+        user consent before initiating capture of content by microphone or
+        camera. This may be necessary to meet regulatory, legal and best
+        practice requirements related to the privacy of user data. In addition,
+        the User Agent implementation is advised to provide an indication to
+        the user when an input device is enabled and make it possible for the
+        user to terminate such capture. Similarly, the User Agent is advised to
+        offer user control, such as to allow the user to:
+      </p>
+      <ul>
+        <li>select the exact media capture device to be used if there exist
+        multiple devices of the same type (e.g. a front-facing camera in
+        addition to a primary camera).
+        </li>
+        <li>disable sound capture when in the video capture mode.
+        </li>
+      </ul>
+      <p>
+        This specification builds upon the security and privacy protections
+        provided by the <code>&lt;input type="file"&gt;</code> [[HTML]] and the
+        [[FILE-API]] specifications; in particular, it is expected that any
+        offer to start capturing content from the user’s device would require a
+        specific user interaction on an HTML element that is entirely
+        controlled by the user agent.
+      </p>
+      <p>
+        Implementors should take care to prevent additional leakage of
+        privacy-sensitive data from captured media. For instance, embedding the
+        user’s location in the metadata of captured media (e.g. EXIF) might
+        transmit more private data than the user is expecting.
+      </p>
+    </section>
+    <section data-dfn-for="HTMLInputElement">
+      <h2>
+        The <dfn>capture</dfn> IDL attribute
+      </h2>
+      <p>
+        When an [^input^] element's [^input/type^] attribute is in the <a>File
+        Upload</a> state, and its [^input/accept^] attribute is specified, the
+        rules in this section apply.
+      </p>
+      <pre class="idl">
+        partial interface HTMLInputElement {
+            [CEReactions] attribute DOMString capture;
+        };
+      </pre>
+      <div>
+        <p>
+          The <code><dfn data-dfn-for="input" data-dfn-type="element-attr">capture</dfn></code> content attribute is an <a>enumerated attribute</a> whose
+          state specifies the <a>preferred facing mode</a> for the <a>media
+          capture mechanism</a>.
+        </p>
+        <p>
+          The attribute's keywords are <code><dfn>user</dfn></code>,
+          <code><dfn>environment</dfn></code>, and the empty string, which map
+          to the <var>user</var>, <var>environment</var>, and the
+          <var>implementation-specific</var> state respectively. The semantics
+          of the states <var>user</var> and <var>environment</var> mirror the
+          similarly named enumeration values defined in
+          {{VideoFacingModeEnum}}.
+        </p>
+        <p>
+          The <a>missing value default</a> is the
+          <var>implementation-specific</var> state. The <a>invalid value
+          default</a> is also the <var>implementation-specific</var> state.
+        </p>
+        <p class="note">
+          If the user agent is unable to support the <a>preferred facing
+          mode</a>, it can fall back to the implementation-specific default
+          facing mode that maps to the <var>implementation-specific</var> state
+          that indicates the implementation is to act according to its default
+          behavior.
+        </p>
+        <p>
+          The {{HTMLInputElement/capture}} IDL attribute MUST [=Attr/reflect=] the respective
+          content attribute of the same name.
+        </p>
+        <p>
+          When the [^input/capture^] attribute is specified, the <a>user agent</a>
+          SHOULD invoke a file picker of the specific <a>capture control
+          type</a>.
+        </p>
+        <p>
+          When the [^input/capture^] attribute is specified, the <a>user agent</a>
+          MUST NOT save the captured media to any data storage, local or
+          remote.
+        </p>
+        <div class="note">
+          When scripts gain access to the files selected from the file picker
+          (represented by a {{FileList}} object), they can use various
+          mechanisms to store the captured media. These mechanisms are out of
+          scope for this specification.
+        </div>
+        <p>
+          If the [^input/accept^] attribute's value is set to a MIME type that has
+          no associated <a>capture control type</a>, the <a>user agent</a> MUST
+          act as if there was no [^input/capture^] attribute.
+        </p>
+      </div>
+    </section>
+    <section class="appendix informative">
+      <h2>
+        Examples
+      </h2>
+      <p>
+        The following examples demonstrate how to give hints that it is
+        preferred for the user to capture media of a specific MIME type using
+        the media capture capabilities of the hosting device. Both a simple
+        declarative example using an HTML form, as well as a more advanced
+        example including scripting, are presented.
+      </p>
+      <ul>
+        <li>To take a picture using the device's user-facing
+        camera, and upload the picture taken using an HTML form:
+          <pre class="example html" id="example-1">
+          &lt;form action="server.cgi" method="post" enctype="multipart/form-data"&gt;
+            &lt;input type="file" name="image" accept="image/*" capture="user"&gt;
+            &lt;input type="submit" value="Upload"&gt;
+          &lt;/form&gt;
+        </pre>
+        </li>
+        <li>Or alternatively, to capture video using the device's local video
+        camera facing the environment:
+          <pre class="example html">
+          &lt;form action="server.cgi" method="post" enctype="multipart/form-data"&gt;
+            &lt;input type="file" name="video" accept="video/*" capture="environment"&gt;
+            &lt;input type="submit" value="Upload"&gt;
+          &lt;/form&gt;
+        </pre>
+        </li>
+        <li>Or alternatively, to capture audio using the device's local
+        microphone (without <a>preferred facing mode</a> defined, falls back to
+        the implementation-specific default facing mode):
+          <pre class="example html">
+          &lt;form action="server.cgi" method="post" enctype="multipart/form-data"&gt;
+            &lt;input type="file" name="audio" accept="audio/*" capture&gt;
+            &lt;input type="submit" value="Upload"&gt;
+          &lt;/form&gt;
+        </pre>
+        </li>
+        <li>For more advanced
+        use cases, specify the [^input/capture^] attribute in markup:
+          <pre class="example html" id="example-4">
+          &lt;input type="file" accept="image/*" capture&gt;
+          &lt;canvas&gt;&lt;/canvas&gt;
+        </pre>And handle the file upload in script via `XMLHttpRequest`:
+          <pre class="example js">
+          var input = document.querySelector('input[type=file]'); // see Example 4
+
+          input.onchange = function () {
+            var file = input.files[0];
+
+            upload(file);
+            drawOnCanvas(file);   // see Example 6
+            displayAsImage(file); // see Example 7
+          };
+
+          function upload(file) {
+            var form = new FormData(),
+                xhr = new XMLHttpRequest();
+
+            form.append('image', file);
+            xhr.open('post', 'server.php', true);
+            xhr.send(form);
+          }
+        </pre>
+        <p>
+          The image can also be displayed on the client-side without
+  uploading it e.g. for client-side image editing purposes, using the {{FileReader}} and a [^canvas^] element:
+        </p>
+          <pre class="example js">
+          function drawOnCanvas(file) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+              var dataURL = e.target.result,
+                  c = document.querySelector('canvas'), // see Example 4
+                  ctx = c.getContext('2d'),
+                  img = new Image();
+
+              img.onload = function() {
+                c.width = img.width;
+                c.height = img.height;
+                ctx.drawImage(img, 0, 0);
+              };
+
+              img.src = dataURL;
+            };
+
+            reader.readAsDataURL(file);
+          }
+        </pre>
+        <p>
+          Or alternatively, to just display the image, using the
+          {{URL/createObjectURL()}} method and an [^img^] element:
+        </p>
+          <pre class="example js">
+          function displayAsImage(file) {
+            var imgURL = URL.createObjectURL(file),
+                img = document.createElement('img');
+
+            img.onload = function() {
+              URL.revokeObjectURL(imgURL);
+            };
+
+            img.src = imgURL;
+            document.body.appendChild(img);
+          }
+        </pre>
+        </li>
+      </ul>
+      <p>
+        When an [^input^] element's [^input/accept^] attribute is set to
+        <code>image/*</code> and the [^input/capture^] attribute is specified as
+        in the [[[#example-1]]] or [[[#example-4]]], the file picker can be rendered as
+        presented below:
+      </p>
+      <p style="overflow: visible;">
+        <img alt=
+        "A File picker control in the Image Capture state."
+        src="images/image-capture-state.png">
+      </p>
+      <p>
+        When the attribute is not specified, the file picker can be rendered
+        as represented below:
+      </p>
+      <p style="overflow: visible;">
+        <img alt=
+        "A File picker control in the File Upload state."
+        src="images/file-upload-state.png">
+      </p>
+    </section>
+  </body>
+</html>

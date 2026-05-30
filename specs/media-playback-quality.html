@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang='en-US'>
+  <head>
+    <meta charset='UTF-8'>
+    <title>Media Playback Quality</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" async
+    class='remove'>
+    </script>
+    <script class='remove'>
+      var respecConfig = {
+        specStatus: 'ED',
+        shortName:  'media-playback-quality',
+        editors: [
+          {
+            w3cid: 45389,
+            name: 'Mounir Lamouri',
+            company: 'Google',
+            retiredDate: '2020-02-01',
+          },
+          {
+            w3cid: 114832,
+            name: 'Chris Cunningham',
+            company: 'Google',
+            retiredDate: '2020-02-01',
+          },
+        ],
+        // previousMaturity: 'WD',
+        // previousPublishDate: '2015-11-02',
+        group: 'media',
+        github: 'w3c/media-playback-quality/',
+        xref: "web-platform",
+      };
+    </script>
+  </head>
+  <body data-cite="hr-time">
+    <section id='abstract'>
+      This specification extends {{HTMLVideoElement}} to add
+      new features that can be used to detect the user perceived playback
+      quality.
+    </section>
+
+    <section id='sotd'>
+      <p>This document is extracted from the [[media-source]] specification in
+      order to work on the playback quality problematic in a larger scope.</p>
+    </section>
+
+    <section>
+      <h2>Concepts</h2>
+
+      <p>Each {{HTMLVideoElement}} MUST maintain a <dfn>total video frame
+      count</dfn> variable keeping track of the total number of frames that have
+      been displayed and dropped. It MUST follow these rules:
+        <ul>
+          <li>It is initialized to 0 when the element is created.</li>
+          <li>It is reset to 0 when the
+            <a data-cite="html/media.html#media-element-load-algorithm">media element load algorithm</a> is
+          invoked.</li>
+          <li>It is incremented when a video frame is displayed.</li>
+          <li>It is incremented when the <a>dropped video frame count</a> is
+          incremented</li>
+        </ul>
+      </p>
+
+      <p>Each {{HTMLVideoElement}} MUST maintain a <dfn>dropped video frame
+      count</dfn> variable keeping track of the total number of frames that have
+      been dropped. It MUST follow these rules:
+        <ul>
+          <li>It is initialized to 0 when the element is created.</li>
+          <li>It is reset to 0 when the
+            <a data-cite="html/media.html#media-element-load-algorithm">media element load algorithm</a> is
+          invoked.</li>
+          <li>It is incremented when a video frame is dropped predecode.</li>
+          <li>It is incremented when a video frame is decoded but dropped because
+          it missed a display deadline.</li>
+        </ul>
+      </p>
+
+      <p class='note'>
+        The following <a>corrupted video frame count</a> concept and associated
+        interfaces are deprecated. They may or may not be present in current
+        implementations.
+      </p>
+
+      <p>Each {{HTMLVideoElement}} MUST maintain a
+      <dfn>corrupted video frame count</dfn> variable keeping track of the total
+      number of corrupted frames detected. It MUST follow these rules:
+        <ul>
+          <li>It is initialized to 0 when the element is created.</li>
+          <li>It is reset to 0 when the
+            <a data-cite="html/media.html#media-element-load-algorithm">media element load algorithm</a> is
+          invoked.</li>
+          <li>It is incremented when a corrupted video frame is detected by the
+          decoder.</li>
+        </ul>
+      </p>
+
+      <p>
+        It is up to the implementation to determine whether to display or drop a
+        corrupted frame. However, regardless of the choice made, the <a>total
+        video frame count</a> and <a>dropped video frame count</a> MUST be
+        updated appropriately.
+      </p>
+    </section>
+
+    <section data-dfn-for="HTMLVideoElement">
+      <h2>Extension to the {{HTMLVideoElement}} interface</h2>
+
+      <pre class='idl'>
+        partial interface HTMLVideoElement {
+          VideoPlaybackQuality getVideoPlaybackQuality();
+        };
+      </pre>
+
+      <p>
+        When <dfn>getVideoPlaybackQuality()</dfn> method is
+        called, the user agent MUST run the following steps:
+        <ol data-link-for="VideoPlaybackQuality">
+          <li>Let <var data-type="VideoPlaybackQuality">playbackQuality</var>
+          be a new instance of <a>VideoPlaybackQuality</a>.</li>
+          <li>Set <var>playbackQuality</var>.<a>creationTime</a>
+          to the <a>current high resolution time</a>.
+          <li>Set <var>playbackQuality</var>.<a>totalVideoFrames</a>
+          to the current value of the <a>total video frame count</a>.</li>
+          <li>Set <var>playbackQuality</var>.<a>droppedVideoFrames</a>
+          to the current value of the <a>dropped video frame count</a>.</li>
+          <li><b>[DEPRECATED]</b> Set
+          <var>playbackQuality</var>.<a>corruptedVideoFrames</a>
+          to the current value of the <a>corrupted video frame count</a>.
+          <li>Return <var>playbackQuality</var>.</li>
+        </ol>
+      </p>
+    </section>
+
+    <section data-dfn-for="VideoPlaybackQuality">
+      <h2>`VideoPlaybackQuality` interface</h2>
+
+      <pre class='idl'>
+        [Exposed=Window]
+        interface VideoPlaybackQuality {
+          readonly attribute DOMHighResTimeStamp creationTime;
+          readonly attribute unsigned long droppedVideoFrames;
+          readonly attribute unsigned long totalVideoFrames;
+
+          // Deprecated!
+          readonly attribute unsigned long corruptedVideoFrames;
+        };
+      </pre>
+
+      <p>
+        The <dfn>creationTime</dfn> attribute MUST return the <a>current high
+        resolution time</a> for when object was created.
+      </p>
+
+      <p>
+        The <dfn>droppedVideoFrames</dfn> attribute MUST
+        return the total number of frames dropped predecode or dropped because
+        the frame missed its display deadline.
+      </p>
+
+      <p>
+        The <dfn>totalVideoFrames</dfn> attribute MUST
+        return the total number of frames that would have been displayed if no
+        frames are dropped.
+      </p>
+
+      <p>
+        <b>[DEPRECATED]</b>
+        The <dfn data-lt="foo">corruptedVideoFrames</dfn> attribute MUST
+        return the total number of corrupted frames that have been detected.
+      </p>
+    </section>
+    <section id='conformance'>
+    </section>
+  </body>
+</html>

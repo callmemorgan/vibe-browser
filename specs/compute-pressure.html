@@ -1,0 +1,2646 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Compute Pressure Level 1</title>
+<script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove" defer></script>
+<script class="remove">
+  function experimentalPreProcess(config, document, utils) {
+    const params = new URLSearchParams(location.search);
+    const q = parseInt(params.get("experimental"));
+
+    document.querySelectorAll('.experimental').forEach(el => {
+      if (q) {
+        el.classList.remove("experimental");
+      } else {
+        el.remove();
+      }
+    })
+    document.querySelectorAll('.non-experimental').forEach(el => {
+      if (q) {
+        el.remove();
+      } else {
+        el.classList.add("hidden");
+      }
+    })
+  }
+
+  // All config options at https://respec.org/docs/
+  const respecConfig = {
+    shortName: "compute-pressure",
+    group: "das",
+    specStatus: "ED",
+    xref: "web-platform",
+    github: "https://github.com/w3c/compute-pressure",
+    formerEditors: [
+      {
+        name: "Olivier Yiptong",
+        company: "Google Inc.",
+        companyURL: "https://google.com",
+        w3cid: 81110,
+      },
+      {
+        name: "Victor Costan",
+        company: "Google Inc.",
+        companyURL: "https://google.com",
+        w3cid: 72312,
+      }
+    ],
+    editors: [
+      {
+        name: "Kenneth Rohde Christiansen",
+        company: "Intel Corporation",
+        companyURL: "https://intel.com",
+        w3cid: 57705,
+      },
+      {
+        name: "Arnaud Mandy",
+        company: "Intel Corporation",
+        companyURL: "https://intel.com",
+        w3cid: 126342,
+      }
+    ],
+    formerEditors: [
+      {
+        name: "Raphael Kubo da Costa",
+        company: "Intel Corporation",
+        companyURL: "https://intel.com",
+        w3cid: 95850,
+      },
+    ],
+    testSuiteURI: "https://github.com/web-platform-tests/wpt/labels/compute-pressure",
+    xref: {
+      profile: "web-platform",
+      specs: [
+        "permissions-policy", "hr-time", "picture-in-picture", "mediacapture-streams"
+      ]
+    },
+    preProcess: [experimentalPreProcess],
+    implementationReportURI: "https://wpt.fyi/results/compute-pressure"
+  };
+</script>
+<style>
+  @counter-style pressure-states-emoji {
+    system: cyclic;
+    symbols: "\026AA" "\01F7E2" "\01F7E1" "\01F534";
+    suffix: " ";
+  }
+  .pressure-states {
+    list-style-type: pressure-states-emoji;
+  }
+  @counter-style pressure-source-emoji {
+    system: cyclic;
+    symbols: "\1F321" "\1F4A1";
+    suffix: " ";
+  }
+  .pressure-source {
+    list-style-type: pressure-source-emoji;
+  }
+  ul li::marker {
+    font-family: "Segoe UI Emoji", "Noto Color Emoji";
+  }
+  .experimental, .hidden {
+    display: none;
+  }
+</style>
+<section id="abstract">
+  <p>
+    The <cite>Compute Pressure API</cite> provides a way for websites to react to changes
+    in the CPU pressure of the target device, such that websites can trade off
+    resources for an improved user experience.
+  </p>
+</section>
+<section id="sotd">
+  <p class="advisement">
+    This specification is implemented in Chromium-based browsers. WebKit has <a href="https://github.com/WebKit/standards-positions/issues/255">published a position opposing this specification</a>. Mozilla's position is pending.
+  </p>
+  <p>
+    For this specification to exit the CR stage,
+    at least 2 independent implementations of every feature defined in this specification need to be documented in the implementation report.
+  </p>
+</section>
+<section class="informative">
+  <h2>Introduction</h2>
+  <p>
+    Modern applications often need to balance the trade offs and advantages of fully utilizing
+    the system's computing resources, in order to provide a modern and delightful user experience.
+  </p>
+  <p>
+    As an example, many applications can render video effects with varying degrees of sophistication.
+    These applications aim to provide the best user experience, while avoiding driving the user's
+    device into a high pressure regime.
+  </p>
+  <p>
+    Utilization of [=processing units=] close to and often reaching 100% can lead to a bad
+    user experience, as different tasks are fighting for the processing time.
+    This can lead to slowless, which is especially noticeable with input delay.
+
+    Further, a prolonged utilization close 100% can cause the [=processing units=] to heat up due to prolonged
+    boosting, which can lead to throttling, resulting in an even worse user experience.
+  </p>
+  <p>
+    As a result of thermal limits, many smartphones, tablets and laptops can become uncomfortably hot
+    to the touch. The fans in laptops and desktops can become so loud that they disrupt conversations
+    or the users’ ability to focus.
+  </p>
+  <p>
+    In many cases, a device under high pressure appears to be unresponsive, as the operating
+    system may fail to schedule the threads advancing the task that the user is waiting for. See also
+    <a href="https://github.com/wicg/compute-pressure/#goals--motivating-use-cases">Use Cases</a>.
+  </p>
+</section>
+<section>
+  <h2>A Note on Feature Detection</h2>
+  <p><i>This section is non-normative.</i></p>
+  <p>
+    Feature detection is an established web development best practice. Resources on the topic are plentiful on- and
+    offline and the purpose of this section is not to discuss it further, but rather to put it in the context of
+    detecting hardware-dependent features.
+  </p>
+  <p>
+    Consider the below feature detection examples:
+  </p>
+  <aside class="example" title="Checking existence of PressureObserver interface">
+    <p>
+      This simple example illustrates how to check whether the [=User Agent=] exposes the
+      {{PressureObserver}} interface
+    </p>
+    <pre class="js">
+      if ("PressureObserver" in globalThis) {
+        // Use PressureObserver interface
+      }
+    </pre>
+  </aside>
+  <aside class="note">
+    <p>
+      Checking against {{globalThis/globalThis}} will work on any [=ECMAScript/agent=] as defined by
+      [[ECMAScript]], thus also in workers.
+    </p>
+    <p>
+      It does however not tell you whether that API is actually connected to a
+      real [=platform collector=], whether the [=platform collector=] is collecting real telemetry
+      readings, or whether the user is going to allow you to access it.
+    </p>
+  </aside>
+</section>
+<section>
+  <h2>Concepts</h2>
+  <p>
+    This specification defines the following concepts:
+  </p>
+  <section>
+    <h3>Processing Units</h3>
+    <p>
+      Computing devices consist of a multitude of different <dfn>processing units</dfn> such as the Central
+      Processing Unit (CPU), the Graphics Processing Unit (GPU) and many specialized
+      processing units. The latter are becoming popular such as ones designed to accelerate specific
+      tasks like machine learning or computer vision.
+    </p>
+  </section>
+  <section>
+    <h3>Pressure sources</h3>
+    <p>
+      The specification currently defines the <dfn>valid source types</dfn> as
+      <span class="experimental"><em>global system thermals</em> and </span>
+      the <em>central [=processing unit=]</em>, also known as the CPU.
+      Future levels of this specification MAY introduce additional [=source types=].
+    </p>
+    <pre class="non-experimental idl">
+      enum PressureSource { "cpu" };
+    </pre>
+    <pre class="experimental idl">
+      enum PressureSource { "cpu", "thermals" };
+    </pre>
+    <p>
+      The <dfn>PressureSource</dfn> enum represents the [=valid source types=]:
+    </p>
+    <p>
+      <ul class="pressure-source">
+        <li class="experimental">
+          {{PressureSource/"thermals"}} represents the global thermal state of the system.
+          <aside class="issue" data-number="294">
+            <p>
+              The thermal pressure source is at-risk given implementation difficulties.
+            </p>
+          </aside>
+        </li>
+        <li>
+          {{PressureSource/"cpu"}} represents the average pressure of the central [=processing unit=]
+          across all its cores.
+        </li>
+      </ul>
+    </p>
+    <aside class="note">
+      <p>
+        If a user calls {{PressureObserver/observe()}} with a [=source type=] not part of
+        {{PressureSource}}, at the level of this specification the [=user agent=] supports,
+        the method will throw a {{TypeError}}.
+      </p>
+      <p>
+        If the [=source type=] is known by the [=user agent=] (part of {{PressureSource}}),
+        but not supported by it, the host OS or the underlying hardware, the method will instead
+        throw {{NotSupportedError}}.
+      </p>
+      <p>
+        To list the known [=source types=], a user can call the static attribute
+        {{PressureObserver/knownSources}}.
+      </p>
+    </aside>
+  </section>
+  <section>
+    <h3>Sampling and Reporting Rate</h3>
+    <p>
+      The <dfn>requested sampling interval</dfn> represents the desired
+      interval between samples to be obtained from the hardware,
+      expressed in milliseconds.
+    </p>
+    <p>
+      Interval and frequency are inverses of each other, so the
+      [=requested sampling interval=] can also be expressed as a
+      <dfn>requested sampling rate</dfn> in Hertz (cycles per second) by
+      dividing 1000 by the [=requested sampling interval=] value.
+    </p>
+    <p>
+      The <dfn>sampling rate</dfn> for a [=platform collector=] is defined as a rate
+      at which the [=user agent=] obtains telemetry readings from the underlying platform,
+      and it might differ from the pressure observers' [=requested sampling rates=].
+      The rate is measured in Hertz (cycles per second).
+    </p>
+    <p>
+      The <dfn>reporting rate</dfn> for a pressure observer is the rate at which it runs
+      the [=data collection=] steps, and it will never exceed the [=sampling rate=].
+    </p>
+    <p>
+      The [=sampling rate=] differs from the [=requested sampling rate=] when the
+      [=requested sampling rate=] exceeds upper or lower sampling rate bounds
+      supported or accepted by the underlying platform and [=user agent=]<sup>†</sup>.
+    </p>
+    <p>
+      <sup>†</sup>The specification additionally obfuscates the rate as outlined
+      in [[[#rate-obfuscation]]].
+    </p>
+    <p>
+      In case the user didn't request a [=sampling rate=], the [=sampling rate=]
+      is [=implementation-defined=].
+    </p>
+    <aside class="note">
+      In case there are multiple instances of {{PressureObserver}} active with different
+      [=requested sampling intervals=], it is up to the [=user agent=] to set a
+      [=platform collector=] level [=sampling rate=] that best fulfills these requests,
+      while making sure that the [=reporting rate=] of all {{PressureObserver}}s does
+      not exceed their respective [=requested sampling rates=].
+    </aside>
+  </section>
+</section>
+
+<section> <h2>Platform primitives</h2>
+  <p>
+    A <dfn>pressure source</dfn> is an abstract, [=implementation-defined=]
+    interface to hardware counters or an underlying framework that provides
+    telemetry data about a <dfn>source type</dfn>
+    defined by {{PressureSource}}. A [=pressure source=] can make use of data
+    fusion with data from additional sources if that provides more precise
+    results.
+  </p>
+  <p>
+    The telemetry data provided by a [=pressure source=] is represented in this
+    specification as a <dfn>pressure source sample</dfn>, a [=struct=]
+    consisting of the following [=struct/items=]:
+    <ul>
+      <li>
+        <dfn data-dfn-for="pressure source sample">data</dfn>: [=contributing
+        factors=] obtained from the underlying hardware and operating system or,
+        in the case of a [=virtual pressure source=], a {{PressureState}}
+        <span class="experimental">
+          and a {{double?}} representing the {{PressureRecord/ownContributionEstimate}}
+        </span>.
+      </li>
+      <li>
+        <dfn data-dfn-for="pressure source sample">timestamp</dfn>: the
+        [=unsafe shared current time=] when [=pressure source sample/data=] was
+        obtained.
+        <aside class="note">
+          <p>
+            The purpose of [=pressure source sample/timestamp=] is to use the
+            same [=monotonic clock/unsafe current time=] for a sample across
+            all globals and invocations of the [=data collection=] algorithm
+            which are processing the same [=pressure source sample=].
+          </p>
+        </aside>
+      </li>
+    </ul>
+  </p>
+  <p>
+    A [=pressure source=] has an associated <dfn
+    data-dfn-for="pressure source">latest sample</dfn>, a [=pressure source
+    sample=] or null. It is initially null.
+  </p>
+  <p>
+    A <dfn>platform collector</dfn> is an abstract interface responsible for
+    obtaining telemetry samples from a [=pressure source=], transforming them
+    into [=pressure states=] and providing them to the [=user agent=].
+  </p>
+  <p>
+    A [=platform collector=] has the following associated data:
+  </p>
+  <ul>
+    <li>
+      an <dfn data-dfn-for="platform collector">associated pressure
+      source</dfn>, which is a [=pressure source=] or null.
+    </li>
+    <li>
+      an <dfn data-dfn-for="platform collector">activated</dfn> boolean,
+      initially false.
+    </li>
+  </ul>
+  <p>
+    The format of the telemetry data provided by a [=pressure source=]
+    and stored in its [=pressure source/latest sample=]'s [=pressure source
+    sample/data=] is [=implementation-defined=], and so is the process through
+    which a [=platform collector=] transforms it into a [=pressure state=].
+  </p>
+  <p>
+    For this specification's purposes, [=platform collectors=] are scoped to a
+    [=global object=] via the [=platform collector mapping=].
+  </p>
+  <p>
+    For automation purposes, a [=platform collector=] must have the ability to
+    connect to [=virtual pressure sources=] and use their simulated [=pressure
+    source sample/data=] as [=pressure states=] rather than raw platform data
+    that must be transformed into an [=adjusted pressure state=].
+  </p>
+  <p>
+    As collecting telemetry data often means polling hardware counters, it is not a free operation and thus,
+    it should not happen if there are no one observing the data. See [[[#life-cycle]]] for more information.
+  </p>
+  <p>
+    A [=platform collector=] samples data at a specific rate. A [=user agent=] may modify this rate
+    (if possible) for privacy reasons, or ignore and fuse certain readings.
+  </p>
+</section>
+
+<section>
+  <h3>
+    User notifications
+  </h3>
+  <p>
+    It is RECOMMENDED that a [=user agent=] show some form of user-visible
+    notification that informs the user when a pressure observer is active,
+    as well as provides the user with the means to block the ongoing operation,
+    or simply dismiss the notification.
+  </p>
+</section>
+
+<section>
+  <h3>
+    Policy control
+  </h3>
+  <p>
+    The Compute Pressure API defines a [=policy-controlled feature=]
+    identified by the token "compute-pressure".
+    Its [=policy-controlled feature/default allowlist=] is `'self'`.
+  </p>
+  <p>
+    Workers (dedicated and shared) adhere to the permission policy set by their
+    owning document(s).
+  </p>
+  <p>
+    Shared workers often have multiple owning documents as they can be obtained
+    by other documents with the [=same origin=].
+
+    In this case, all owning documents must be [=allowed to use=] the [=policy-controlled
+    feature=] defined by this specification.
+  </p>
+  <p>
+    Dedicated workers can be created from other workers,
+    in which case the permission policy of the first owning document
+    (or owning documents, in case of a shared worker) up the owner
+    chain will be used.
+  </p>
+  <aside class="note">
+    There has been discussion on allowing setting permission policy directly
+    on a worker on creation, in which case that would have to be consulted
+    as well.
+  </aside>
+  <aside class="note">
+    <p>
+      The [=policy-controlled feature/default allowlist=] of `'self'` allows usage in
+      same-origin nested frames but prevents third-party content from using
+      the feature.
+    </p>
+    <p>
+      Third-party usage can be selectively enabled by adding
+      `allow="compute-pressure"` attribute to the frame container element:
+    </p>
+    <pre class="example html" title=
+    "Enabling compute pressure on remote content">
+      &lt;iframe src="https://third-party.com" allow="compute-pressure"/&gt;&lt;/iframe&gt;
+    </pre>
+    <p>
+      Alternatively, the Compute Pressure API can be disabled completely by
+      specifying the permissions policy in a HTTP response header:
+    </p>
+    <pre class="example http" title="Feature Policy over HTTP">
+      Permissions-Policy: {"compute-pressure": []}
+    </pre>
+    <p>
+      See [[[PERMISSIONS-POLICY]]] for more details.
+    </p>
+  </aside>
+</section>
+
+<section>
+  <h3>
+    Internal Slot Definitions
+  </h3>
+  <p>
+    Each [=global object=] has:
+    <ul>
+      <li>
+        a <dfn>pressure observer task queued</dfn> (a boolean), which is initially false.
+      </li>
+      <li>
+        a <dfn>registered observer list</dfn> per supported [=source type=], which is initially empty.
+      </li>
+      <li>
+        a <dfn>platform collector mapping</dfn>, an [=ordered map=] of [=source
+        types=] to [=platform collectors=].
+      </li>
+    </ul>
+    A <dfn>registered observer</dfn> consists of an <dfn>observer</dfn> (a {{PressureObserver}} object).
+  </p>
+  <p>
+    The [=user agent=] has:
+    <ul>
+      <li>
+        a <dfn>max queued records</dfn> integer, which is set to an [=implementation-defined=] value, greater than 0.
+      </li>
+      <li>
+        a <dfn>supported source types</dfn> [=list=] of [=implementation-defined=] {{PressureSource}} values.
+      </li>
+    </ul>
+  </p>
+  <p>
+    A constructed {{PressureObserver}} object has the following internal slots:
+  </p>
+  <ul data-dfn-for="PressureObserver">
+    <li>
+      a <dfn>[[\Callback]]</dfn> of type {{PressureUpdateCallback}} set on creation.
+    </li>
+    <li>
+      a <dfn>[[\PendingObservePromises]]</dfn> [=list=] of zero or more source-promise [=tuples=], initially empty,
+      where source holds a {{PressureSource}} string and promise holds a {{Promise}} object.
+    </li>
+    <li>
+      a <dfn>[[\QueuedRecords]]</dfn> [=queue=] of zero or more {{PressureRecord}}
+      objects, which is initially empty.
+    </li>
+    <li>
+      a <dfn>[[\LastRecordMap]]</dfn> [=ordered map=] of {{PressureSource}} to
+      the latest {{PressureRecord}}.
+    </li>
+    <li>
+      a <dfn>[[\SampleIntervalMap]]</dfn> [=ordered map=] of {{PressureSource}} to
+      positive numbers. It represents the sample interval given source type.
+    </li>
+  </ul>
+  <p>
+    For the [=rate obfuscation=] mitigation the constructed {{PressureObserver}} object additionally
+    has the following internal slots:
+  </p>
+  <ul data-dfn-for="PressureObserver">
+    <li>
+      an <dfn>[[\ObservationWindow]]</dfn> integer set as part of the [=reset observation window=] steps.
+    </li>
+    <li>
+      a <dfn>[[\MaxChangesThreshold]]</dfn> integer set as part of the [=reset observation window=] steps.
+    </li>
+    <li>
+      a <dfn>[[\PenaltyDuration]]</dfn> integer set as part of the [=reset observation window=] steps.
+    </li>
+    <li>
+      a <dfn>[[\ChangesCountMap]]</dfn> [=ordered map=], [=map/keyed=] on a {{PressureSource}},
+      representing the [=source type=] that triggered transition to the current [=pressure state=].
+      The [=ordered map=]'s [=map/value=] is an integer representing the number of state changes in the
+      current observation window timeframe.
+    </li>
+    <li>
+      a <dfn>[[\AfterPenaltyRecordMap]]</dfn> [=ordered map=], [=map/keyed=] on a {{PressureSource}},
+      representing the [=source type=] of the last {{PressureRecord}}.
+      The [=ordered map=]'s [=map/value=] is a {{PressureRecord}}.
+    </li>
+  </ul>
+</section>
+
+<section> <h2>Pressure States</h2>
+  <p>
+    <dfn>Pressure states</dfn> represents the minimal set of useful states that allows websites
+    to react to changes in compute and system pressure with minimal degration in quality or service,
+    or user experience.
+  </p>
+  <pre class="idl">
+    enum PressureState { "nominal", "fair", "serious", "critical" };
+  </pre>
+  <p>
+    The <dfn>PressureState</dfn> enum represents the [=pressure state=] with the following states:
+  </p>
+  <p>
+    <ul class="pressure-states">
+      <li>
+        {{PressureState/"nominal"}}: The conditions of the target device are at an acceptable level with no noticeable
+        adverse effects on the user.
+      </li>
+      <li>
+        {{PressureState/"fair"}}: Target device pressure, temperature and/or energy usage are slightly elevated, potentially
+        resulting in reduced battery-life, as well as fans (or systems with fans) becoming active and audible.
+        Apart from that the target device is running flawlessly and can take on additional work.
+      </li>
+      <li>
+        {{PressureState/"serious"}}: Target device pressure, temperature and/or energy usage is consistently highly elevated.
+        The system may be throttling as a countermeasure to reduce thermals.
+      </li>
+      <li>
+        {{PressureState/"critical"}}: The temperature of the target device or system is significantly elevated and it requires
+        cooling down to avoid any potential issues.
+      </li>
+    </ul>
+  </p>
+  <aside class="note">
+    <p>
+      The [=pressure state=] should be seen as hints. While it is possible to define algorithms like&#8212;utilization above 90% being
+      considered a serious state on many CPUs&#8212;this approach could unintentionally penalize CPUs where such thresholds may not apply.
+    </p>
+    <p>
+      To address this, the API avoids prescribing specific algorithms to accommodate diverse CPU architectures and methodologies
+      for handling pressure states.
+    </p>
+    <p>
+      Additionally, this design enables CPU vendors to contribute to browser engines, ensuring that the states align as closely
+      as possible with their specific SoCs.
+      By maintaining a higher-level approach, the API supports adaptability across devices and browsers as technology evolves.
+    </p>
+  </aside>
+</section>
+
+<section> <h2>Contributing Factors</h2>
+  <p>
+    <dfn>Contributing factors</dfn> represent the underlying hardware and operation system metrics contributing to the
+    current [=pressure state=] and can be [=implementation-defined=].
+    <span class="experimental">
+      These may include information about how the metrics relate to operation system processes, allowing an
+      implementation to estimate the site's contribution to the overall pressure.
+    </span>
+  </p>
+  <p>
+    The <dfn>adjusted pressure state</dfn> is a [=pressure state=] determined by an [=implementation-defined=]
+    algorithm that takes as input [=source type=] and any other [=implementation-defined=] data from
+    [=contributing factors=]. This algorithm MUST not be deterministic to ensure [=break calibration=] mitigation effectiveness.
+  </p>
+  <p>
+    The <dfn>change in contributing factors is substantial</dfn> steps are as follows:
+    <ol>
+      <li>
+        If [=implementation-defined=] low-level hardware metrics that contribute to the
+        current [=pressure state=] drop below or exceed an, per metric,
+        [=implementation-defined=] threshold
+        for the current [=pressure state=], return true.
+      </li>
+      <li>
+        Return false.
+      </li>
+    </ol>
+    <aside class="note">
+      <p>
+        The [=change in contributing factors is substantial=] algorithm allows [=user agents=] to avoid flip-
+        flopping between states in certain circumstances. For example, a state might otherwise change too rapidly
+        in response to a certain system metric that fluctuates around a boundary condition that triggers a state
+        change.
+     </p>
+      <p>
+        This specification does not define the precise algorithm
+        to allow implementations optimize this algorithm to match the underlying hardware platform's behavior.
+        One possible implementation of this algorithm is to use a
+        <a href="https://en.wikipedia.org/wiki/Preisach_model_of_hysteresis#Nonideal_relay">nonideal relay</a>
+        as a model and identify appropriate lower threshold &#945; and upper threshold &#946; for each
+        [=pressure state=] taking special characteristics of each contributing factors into consideration.
+      </p>
+    </aside>
+  </p>
+</section>
+
+<section> <h2>Pressure Observer</h2>
+The Compute Pressure API enables developers to understand the pressure
+of system resources such as the CPU.
+
+<section data-dfn-for="PressureObserverCallback">
+  <h3>The <a>PressureUpdateCallback</a> callback</h3>
+  <pre class="idl">
+    callback PressureUpdateCallback = undefined (
+      sequence&lt;PressureRecord&gt; changes,
+      PressureObserver observer
+    );
+  </pre>
+  This callback will be invoked when the [=pressure state=] changes.
+</section>
+
+<section  data-dfn-for="PressureObserver"> <h2>The <a>PressureObserver</a> object</h2>
+  <p>
+    The {{PressureObserver}} can be used to observe changes in the [=pressure states=].
+  </p>
+  <pre class="idl">
+    [Exposed=(DedicatedWorker,SharedWorker,Window), SecureContext]
+    interface PressureObserver {
+      constructor(PressureUpdateCallback callback);
+
+      Promise&lt;undefined&gt; observe(PressureSource source, optional PressureObserverOptions options = {});
+      undefined unobserve(PressureSource source);
+      undefined disconnect();
+      sequence&lt;PressureRecord&gt; takeRecords();
+
+      [SameObject] static readonly attribute FrozenArray&lt;PressureSource&gt; knownSources;
+    };
+  </pre>
+
+  <p>The <dfn>PressureObserver</dfn> interface represents a {{PressureObserver}}.</p>
+
+  <section>
+    <h3>The <dfn>constructor()</dfn> method</h3>
+    <p>
+      The `new` {{PressureObserver(callback)}} constructor steps are:
+      <ol class="algorithm">
+        <li>
+          Set |this|.{{PressureObserver/[[Callback]]}} to |callback:PressureUpdateCallback|.
+        </li>
+      </ol>
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>observe()</dfn> method</h3>
+    <p>
+      The {{PressureObserver/observe(source, options)}} method steps are:
+      <ol class="algorithm">
+        <li>
+          Let |relevantGlobal| be [=this=]'s [=relevant global object=].
+        </li>
+        <li>
+          [=list/For each=] |document:Document| in |relevantGlobal|'s [=owning document set=]:
+          <ol>
+            <li>
+              If |document| is not [=allowed to use=] the [=policy-controlled
+              feature=] token "compute-pressure", return [=a promise rejected with=] {{NotAllowedError}}.
+            </li>
+          </ol>
+          <aside class="note">
+            Workers have their own [=WorkerGlobalScope/policy container=] which can be set via HTTP
+            headers. See the example in [[[#policy-control]]].
+          </aside>
+        </li>
+        </li>
+        <li>
+          Set [=this=].{{PressureObserver/[[SampleIntervalMap]]}}[|source|] to |options:PressureObserverOptions|'s {{PressureObserverOptions/sampleInterval}}.
+        </li>
+        <li>
+          Let |promise:Promise| be [=a new promise=].
+        </li>
+        <li>
+          Let |pendingPromiseTuple| be (|source|, |promise|).
+        </li>
+        <li>
+          [=list/Append=] |pendingPromiseTuple| to [=this=].{{PressureObserver/[[PendingObservePromises]]}}.
+        </li>
+        <li>
+          [=promise/React=] to |promise|:
+          <ul>
+            <li>
+              If |promise| was [=resolved|fulfilled=] or [=rejected=], then:
+              <ol>
+                <li>
+                  [=list/Remove=] |tuple| from [=this=].{{PressureObserver/[[PendingObservePromises]]}}.
+                </li>
+              </ol>
+            </li>
+          </ul>
+        </li>
+        <li>
+          Run the following steps [=in parallel=]:
+          <ol>
+            <li>
+              Let |platformCollector| be null.
+            </li>
+            <li>
+              If |relevantGlobal|'s [=platform collector mapping=]
+              [=map/contains=] |source|:
+              <ol>
+                <li>
+                  Set |platformCollector| to |relevantGlobal|'s [=platform
+                  collector mapping=][|source|].
+                </li>
+              </ol>
+            </li>
+            <li>
+              Otherwise:
+              <ol>
+                <li>
+                  Let |newCollector| be a new [=platform collector=] whose
+                  [=platform collector/associated pressure source=] is null.
+                </li>
+                <li>
+                  Let |virtualPressureSource:virtual pressure source or null|
+                  be the result of invoking [=get a virtual pressure source=]
+                  with |source| and |relevantGlobal|.
+                </li>
+                <li>
+                  If |virtualPressureSource| is not null:
+                  <ol>
+                    <li>
+                      If |virtualPressureSource|'s [=virtual pressure
+                      source/can provide samples=] is true:
+                      <ol>
+                        <li>
+                          Set |newCollector|'s [=platform collector/associated
+                          pressure source=] to |virtualPressureSource|.
+                        </li>
+                        <li>
+                          [=set/Append=] |newCollector| to
+                          |virtualPressureSource|'s [=virtual pressure
+                          source/connected platform collectors=].
+                        </li>
+                      </ol>
+                    </li>
+                  </ol>
+                </li>
+                <li>
+                  Otherwise:
+                  <ol>
+                    <li>
+                      Let |realPressureSource| be an [=implementation-defined=]
+                      [=pressure source=] that provides telemetry data about
+                      |source|, or null if none exists.
+                    </li>
+                    <li>
+                      Set |newCollector|'s [=platform collector/associated
+                      pressure source=] to |realPressureSource|.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+                  If |newCollector|'s [=platform collector/associated
+                  pressure source=] is not null:
+                  <ol>
+                    <li>
+                      Set |platformCollector| to |newCollector|.
+                    </li>
+                    <li>
+                      Set |relevantGlobal|'s [=platform collector
+                      mapping=][|source|] to |platformCollector|.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+              If |platformCollector| is null, [=queue a global task=] on the
+              [=PressureObserver task source=] given |relevantGlobal| to reject
+              |promise| {{NotSupportedError}} and abort these steps.
+            </li>
+            <li>
+              Invoke [=activate data collection=] with |source| and
+              |relevantGlobal|.
+            </li>
+            <li>
+              [=Queue a global task=] on the [=PressureObserver task source=] given
+              |relevantGlobal| to run these steps:
+              <ol>
+                <li>
+                  If |promise| was rejected, run the following substeps:
+                  <ol>
+                    <li>
+                      If |relevantGlobal|'s [=registered observer list=] for |source| is [=list/empty=],
+                      invoke [=deactivate data collection=] with |source| and |relevantGlobal|.
+                    </li>
+                    <li>
+                      Return.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+                  [=list/Append=] a new [=registered observer=] whose [=observer=] is [=this=]
+                  to |relevantGlobal|'s [=registered observer list=] for |source|.
+                </li>
+                <li>
+                  Resolve |promise|.
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>
+          Return |promise|.
+        </li>
+      </ol>
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>unobserve()</dfn> method</h3>
+    <p>
+      The {{PressureObserver/unobserve(source)}} method steps are:
+      <ol class="algorithm">
+        <li>
+          If |source:PressureSource| is not a [=supported source type=], throw {{"NotSupportedError"}}.
+        </li>
+        <li>
+          [=list/Remove=] from |this|.{{PressureObserver/[[QueuedRecords]]}} all
+          |records| associated with |source|.
+        </li>
+        <li>
+          [=map/Remove=] |this|.{{PressureObserver/[[SampleIntervalMap]]}}[|source|].
+        </li>
+        <li>
+          [=map/Remove=] |this|.{{PressureObserver/[[LastRecordMap]]}}[|source|].
+        </li>
+        <li>
+          [=map/Remove=] |this|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}[|source|].
+        </li>
+        <li>
+          [=list/For each=] (|promiseSource|, |pendingPromise|) of [=this=].{{PressureObserver/[[PendingObservePromises]]}},
+          if |source| is equal to |promiseSource|, [=reject=] |pendingPromise| with an {{AbortError}}.
+        </li>
+        <li>
+          Let |relevantGlobal| be [=this=]'s [=relevant global object=].
+        </li>
+        <li>
+          Let |registeredObserverList| be |relevantGlobal|'s [=registered
+          observer list=] for |source|.
+        <li>
+          [=list/Remove=] any [=registered observer=] from
+          |registeredObserverList| whose [=observer=] is [=this=].
+        </li>
+        <li>
+          If |registeredObserverList| is [=list/empty=]:
+          <ol>
+            <li>
+              Invoke [=deactivate data collection=] with |source| and
+              |relevantGlobal|.
+            </li>
+            <li>
+              [=map/Remove=] |relevantGlobal|'s [=platform collector
+              mapping=][|source|].
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>disconnect()</dfn> method</h3>
+    <p>
+      The {{PressureObserver/disconnect()}} method steps are:
+      <ol class="algorithm">
+        <li>
+          [=list/Empty=] |observer|.{{PressureObserver/[[QueuedRecords]]}}.
+        </li>
+        <li>
+          [=map/Clear=] |this|.{{PressureObserver/[[SampleIntervalMap]]}}.
+        </li>
+        <li>
+          [=map/Clear=] |this|.{{PressureObserver/[[LastRecordMap]]}}.
+        </li>
+        <li>
+          [=map/Clear=] |this|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}.
+        </li>
+        <li>
+          [=list/For each=] (|promiseSource|, |pendingPromise|) of [=this=].{{PressureObserver/[[PendingObservePromises]]}},
+          [=reject=] |pendingPromise| with an {{AbortError}}.
+        </li>
+        <li>
+          Let |relevantGlobal| be [=this=]'s [=relevant global object=].
+        </li>
+        <li>
+          [=map/For each=] |source| → |registeredObserverList| of
+          |relevantGlobal|'s [=registered observer list=] [=ordered map=]:
+          <ol>
+            <li>
+              [=list/Remove=] any [=registered observer=] from
+              |registeredObserverList| whose [=observer=] is [=this=].
+            </li>
+            <li>
+              If |registeredObserverList| is [=list/empty=]:
+              <ol>
+                <li>
+                  Invoke [=deactivate data collection=] with |source| and
+                  |relevantGlobal|.
+                </li>
+                <li>
+                  [=map/Remove=] |relevantGlobal|'s [=platform collector
+                  mapping=][|source|].
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>takeRecords()</dfn> method</h3>
+    <aside class="note">
+      <p>
+        A common use case for this is to immediately fetch all pending state change records
+        immediately prior to disconnecting the observer, so that any pending state changes
+        can be processed when shutting down the observer.
+      </p>
+      <p>
+        Another use case is the ability to receive any pending, already-generated states
+        changes without waiting for the callbacks to be invoked. Callbacks are invoked from
+        a task queue as part of the event loop cycle, so this allows for conferring the
+        current state outside of the event loop cycle.
+      </p>
+    </aside>
+    <p>
+      The {{PressureObserver/takeRecords()}} method steps are:
+      <ol class="algorithm">
+        <li>
+          Let |records| be a [=list/clone=] of |observer|.{{PressureObserver/[[QueuedRecords]]}}.
+        </li>
+        <li>
+          [=list/Empty=] |observer|.{{PressureObserver/[[QueuedRecords]]}}.
+        </li>
+        <li>
+          Return |records|.
+        </li>
+      </ol>
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>knownSources</dfn> attribute</h3>
+    <p>
+      The {{PressureObserver/knownSources}} getter steps are:
+      <ol class="algorithm">
+        <li>
+          Return [=user agent=]'s [=supported source types=] in alphabetical order.
+        </li>
+      </ol>
+    </p>
+    <aside class="note">
+      <p>
+        The attribute property is a merely hint about the [=source types=] the [=user agent=] supports.
+        It is not guaranteed pressure observation will work on the underlying operating system or hardware.
+        Call {{PressureObserver/observe()}} and check for {{NotSupportedError}} if pressure observation is possible.
+      </p>
+    </aside>
+  </section>
+</section>
+
+<section data-dfn-for="PressureRecord">
+  <h3>The <dfn>PressureRecord</dfn> interface</h3>
+  <pre class="idl">
+    [Exposed=(DedicatedWorker,SharedWorker,Window), SecureContext]
+    interface PressureRecord {
+      readonly attribute PressureSource source;
+      readonly attribute PressureState state;
+      readonly attribute DOMHighResTimeStamp time;
+      [Default] object toJSON();
+    };
+  </pre>
+  <pre class="experimental idl">
+    partial interface PressureRecord {
+      readonly attribute double? ownContributionEstimate;
+    };
+  </pre>
+  <p>
+    A constructed  {{PressureRecord}} object has the following internal slots:
+  </p>
+  <ul data-dfn-for="PressureRecord">
+    <li>
+      a <dfn>[[\Source]]</dfn> value of type {{PressureSource}}, which represents the current [=source type=].
+    </li>
+    <li>
+      a <dfn>[[\State]]</dfn> value of type {{PressureState}}, which represents the current [=pressure state=].
+    </li>
+    <li class="experimental">
+      <p>
+        an <dfn>[[\OwnContributionEstimate]]</dfn> value of type double?, which represents an estimated percentage
+        (value between 0 and 1) of the current web site contribution to the global pressure for the current source.
+        If the [=user agent=] cannot provide an estimate, the value will be null.
+      </p>
+      <p>
+        For CPU pressure, this will include the pressure of the CPU core responsible for loading and running the
+        web site, as well as any other associated CPU cores, in the case more than one are used. This can be the
+        case with web workers and shared processes e.g., a compositor or networking process, which some
+        [=user agents=] may use.
+      </p>
+    </li>
+    <li>
+      a <dfn>[[\Time]]</dfn> value of type {{DOMHighResTimeStamp}},
+      which corresponds to the
+      time the data was obtained from the system, relative to the [=environment settings object/time origin=] of the global object associated with
+      the {{PressureObserver}} instance that generated the notification.
+    </li>
+  </ul>
+  <section>
+    <h3>The <dfn>source</dfn> attribute</h3>
+    <p>
+      The {{PressureRecord/source}} [=getter steps=] are to return its {{PressureRecord/[[Source]]}} internal slot.
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>state</dfn> attribute</h3>
+    <p>
+      The {{PressureRecord/state}} [=getter steps=] are to return its {{PressureRecord/[[State]]}} internal slot.
+    </p>
+  </section>
+  <section class="experimental">
+    <h3>The <dfn>ownContributionEstimate</dfn> attribute</h3>
+    <p>
+      The {{PressureRecord/ownContributionEstimate}} [=getter steps=] are to return its {{PressureRecord/[[OwnContributionEstimate]]}} internal slot.
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>time</dfn> attribute</h3>
+    <p>
+      The {{PressureRecord/time}} [=getter steps=] are to return its {{PressureRecord/[[Time]]}} internal slot.
+    </p>
+  </section>
+  <section>
+    <h3>The <dfn>toJSON</dfn> member</h3>
+    <p>
+      When {{PressureRecord.toJSON}} is called, run [[[WebIDL]]]'s [=default toJSON steps=].
+    </p>
+  </section>
+</section>
+
+<section data-dfn-for="PressureObserverOptions">
+  <h3>The <dfn>PressureObserverOptions</dfn> dictionary</h3>
+  <pre class="idl">
+    dictionary PressureObserverOptions {
+      [EnforceRange] unsigned long sampleInterval = 0;
+    };
+  </pre>
+  <section>
+    <h3>The <dfn>sampleInterval</dfn> member</h3>
+    <p>
+      The {{PressureObserverOptions/sampleInterval}} member represents the [=requested sampling
+      interval=] expressed in milliseconds. In the case the value it set to 0, the system will
+      only call the {{PressureUpdateCallback}} in the case there is a change to the {{PressureState}}.
+    </p>
+    <aside class="note">
+      <p>
+        A [=user agent=] might not be able to respect the requested sampling interval. For more information
+        consult [[[#sampling-and-reporting-rate]]], but the {{PressureUpdateCallback}} will not be called more
+        often that the sample interval set.
+      </p>
+    </aside>
+  </section>
+</section>
+
+<section id="life-cycle">
+  <h3>Life-cycle and garbage collection</h3>
+  <p>
+    Each [=global object=] has a
+    strong reference to [=registered observers=] in their [=registered observer list=]
+    (one per source).
+  </p>
+  <aside class="note">
+    <p>
+      A {{PressureObserver}} is observing a |source:PressureSource| if it
+      exists in the [=registered observer list=], modified by invocations of
+      {{PressureObserver/observe()}},
+      {{PressureObserver/unobserve()}}
+      and {{PressureObserver/disconnect()}}.
+    </p>
+    <p>
+      This means that a {{PressureObserver}} object |observer:PressureObserver| will
+      remain alive (thus not be garbage collection) until both of these conditions hold:
+      <ul>
+        <li>
+          There are no scripting references to the |observer|.
+        </li>
+        <li>
+          The |observer| is not observing any |source|.
+        </li>
+      </ul>
+    </p>
+    <p>
+      [[[#cb-observer-example]]] contains an example of how to use the
+      {{PressureObserver/disconnect()}} (or any other {{PressureObserver}}
+      method) from the observer callback.
+    </p>
+  </aside>
+</section>
+
+<section id="processing-model">
+  <h3>Processing Model</h3>
+  <p>
+    This section outlines the steps the user agent must take when implementing the specification.
+  </p>
+  <section>
+    <h3>Supporting algorithms</h3>
+    <p>
+      The <dfn>reset observation window</dfn> steps given the argument |observer:PressureObserver|, are as follows:
+      <ul>
+        <li>
+          set |observer|.{{PressureObserver/[[ObservationWindow]]}} to an [=implementation-defined=] randomized integer value in
+          milliseconds within an [=implementation-defined=] range.
+        </li>
+        <li>
+          set |observer|.{{PressureObserver/[[MaxChangesThreshold]]}} to an [=implementation-defined=] randomized integer
+          value of maximum allowed changes within the |observationWindow| within an [=implementation-defined=] range.
+        </li>
+        <li>
+          set |observer|.{{PressureObserver/[[PenaltyDuration]]}} to an [=implementation-defined=] randomized integer value
+          in milliseconds, within an [=implementation-defined=] range.
+        </li>
+        <li>
+          [=list/Empty=] the observer.{{PressureObserver/[[ChangesCountMap]]}} map.
+        </li>
+      </ul>
+      Run the [=reset observation window=] steps and start a timer to re-run the steps when the observer.{{PressureObserver/[[ObservationWindow]]}}
+      time has passed, using different randomized values.
+    </p>
+    <p>
+      <aside class="note">
+        Readings are available for [=documents=] (incl. [=iframes=] and popup windows) and workers,
+        matching the following criteria:
+        <ul>
+          <li>
+            They are [=Document/fully active=] [=documents=], or
+            they are <a href="https://html.spec.whatwg.org/multipage/workers.html#active-needed-worker">active needed workers</a>.
+          </li>
+          <li>
+            Their [=origin=] is [=same origin=] with the [=Node/node document|document=] containing the
+            <a href="https://html.spec.whatwg.org/multipage/interaction.html#focused">focused</a> [=node=], or an
+            <a href="https://w3c.github.io/picture-in-picture/#initiators-of-active-picture-in-picture-sessions">
+            initiator of an active Picture-in-Picture session</a>, or the browsing [=context is capturing=],
+            including microphone, camera and display.
+          </li>
+        </ul>
+      </aside>
+      <p>
+        To determine the <dfn>owning document set</dfn> for a [=relevant global object=] |relevantGlobal|:
+        <ol>
+          <li>
+            Let |owningDocumentSet| be an empty [=set=].
+          </li>
+          <li>
+            If |relevantGlobal| is {{Window}}, then [=set/append=] |relevantGlobal|'s [=associated document=] to |owningDocumentSet|.
+          </li>
+          <li>
+            Otherwise, [=list/for each=] |owner| in {{WorkerGlobalScope}} |relevantGlobal|'s [=WorkerGlobalScope/owner set=]:
+            <ol>
+              <li>
+                If |owner| is a {{Document}}, then [=set/append=] |owner| to |owningDocumentSet|.
+              </li>
+              <li>
+                If |owner| is a {{WorkerGlobalScope}}, set |owningDocumentSet| to the [=set/union=] of
+                |owningDocumentSet| and |owner|'s [=owning document set=].
+              </li>
+            </ol>
+            <li>
+              Return |owningDocumentSet|.
+            </li>
+          </li>
+        </ol>
+      </p>
+      <p>
+        The <dfn>document has implicit focus</dfn> steps given the argument |document:Document|, are as follows:
+        <ol>
+          <li>
+            If |document| is not [=Document/fully active=], return false.
+          </li>
+          <li>
+            Let |relevantGlobal| be |document|'s [=relevant global object=].
+          </li>
+          <li>
+            [=list/For each=] |origin| in
+            <a href="https://w3c.github.io/picture-in-picture/#initiators-of-active-picture-in-picture-sessions">
+              initiators of active Picture-in-Picture sessions</a>:
+            <ol>
+              <li>
+                If |relevantGlobal|'s [=relevant settings object=]'s [=origin=] is [=same origin=] with |origin|, return true.
+              </li>
+            </ol>
+          </li>
+          <li>
+            If |relevantGlobal|'s [=browsing context=] is [=context is capturing|capturing=], return true.
+          </li>
+          <li>
+            Let |topLevelBC| be |relevantGlobal|'s [=browsing context=]'s [=top-level browsing context=].
+          </li>
+          <li>
+            If |topLevelBC| does not have [=top-level traversable/system focus=], return false.
+          </li>
+          <li>
+            Let |focusedDocument| be the |topLevelBC|'s
+            <a href="https://html.spec.whatwg.org/multipage/interaction.html#currently-focused-area-of-a-top-level-browsing-context">
+              currently focused area</a>'s [=Node/node document=].
+          </li>
+          <li>
+            If |relevantGlobal|'s [=relevant settings object=]'s [=origin=] is [=same origin=] with
+            |focusedDocument|'s [=origin=], return true.
+          </li>
+          <li>
+            Otherwise, return false.
+          </li>
+        </ol>
+      </p>
+      <p>
+        The <dfn>may receive data</dfn> steps given the argument |observer:PressureObserver| are as follows:
+        <ol>
+          <li>
+            Let |relevantGlobal| be |observer|'s [=relevant global object=].
+          </li>
+          <li>
+            If |relevantGlobal| is a {{Window}} object:
+            <ol>
+              <li>
+                Return the result of running [=document has implicit focus=] with |relevantGlobal|'s [=associated Document=].
+              </li>
+            </ol>
+          </li>
+          <li>
+            If |relevantGlobal| is a {{WorkerGlobalScope}} object:
+            <ol>
+              <li>Let |owningDocuments| be |relevantGlobal|'s [=owning document set=].</li>
+              <li>
+                [=list/For each=] |document| in |owningDocuments|:
+                <ol>
+                  <li>
+                    If the result of running [=document has implicit focus=] with |document| is true,
+                    return true.
+                  </li>
+                  <li>
+                    Otherwise, [=iteration/continue=].
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li>
+            Return false.
+          </li>
+        </ol>
+        <aside class="note">
+          As there might be multiple observers, each with a different [=requested sampling rate=], the underlying
+          [=platform collector=] will need to use a [=sampling rate=] that fulfills all these requirements. This also
+          means that not every data sample from the [=platform collector=] needs to be delivered to each active
+          observer.
+        </aside>
+      </p>
+      The <dfn>passes rate test</dfn> steps given the argument |observer:PressureObserver|,
+      |source:PressureSource| and |timestamp:DOMHighResTimeStamp|, are as follows:
+      <ol>
+        <li>
+          If |observer|.{{PressureObserver/[[LastRecordMap]]}}[|source|] does not [=map/exist=], return true.
+        </li>
+        <li>
+          Let |record:PressureRecord| be |observer|.{{PressureObserver/[[LastRecordMap]]}}[|source|].
+        </li>
+        <li>
+          Let |sampleInterval| be |observer|.{{PressureObserver/[[SampleIntervalMap]]}}[|source|].
+        </li>
+        <li>
+          Let |timeDeltaMilliseconds:DOMHighResTimeStamp| = |timestamp| - |record|.{{PressureRecord/[[Time]]}}.
+        </li>
+        <li>
+          If |timeDeltaMilliseconds| &ge; |sampleInterval|, return true, otherwise return false.
+        </li>
+      </ol>
+      The <dfn>should dispatch</dfn> steps given the argument |observer:PressureObserver|, |source:PressureSource|,
+      |state:PressureState|, <span class="experimental">|ownContributionEstimate:double?|,</span> are as follows:
+      <ol>
+        <li>
+          If |observer|.{{PressureObserver/[[SampleIntervalMap]]}}[|source|] > 0, return true.
+        </li>
+        <li>
+          If |observer|.{{PressureObserver/[[LastRecordMap]]}}[|source|] does not [=map/exist=], return true.
+        </li>
+        <li>
+          Let |record:PressureRecord| be |observer|.{{PressureObserver/[[LastRecordMap]]}}[|source|].
+        </li>
+        <li>
+          If |record|.{{PressureRecord/[[State]]}} is not equal to |state|, return true.
+        </li>
+        <li class="experimental">
+          If |record|.{{PressureRecord/[[OwnContributionEstimate]]}} is not equal to |ownContributionEstimate|, return true.
+        </li>
+        <li>
+          Return false.
+        </li>
+      </ol>
+      The <dfn>passes rate obfuscation test</dfn> steps given the argument |observer:PressureObserver|,
+      |source:PressureSource|, are as follows:
+      <ol>
+        <li>
+          Increment observer.{{PressureObserver/[[ChangesCountMap]]}}[|source|].
+        </li>
+        <li>
+          Return observer.{{PressureObserver/[[ChangesCountMap]]}}[|source|]
+          &le; observer.{{PressureObserver/[[MaxChangesThreshold]]}}.
+        </li>
+      </ol>
+    </p>
+    <p>
+      To <dfn>get a virtual pressure source</dfn>, given a [=source type=]
+      |source| and |relevantGlobal|, perform the following steps. They return a
+      [=virtual pressure source=] or null.
+      <ol class="algorithm">
+        <li>Let |topLevelTraversable| be null.</li>
+        <li>
+          If |relevantGlobal| is a {{Window}} object:
+          <ol>
+            <li>
+              Set |topLevelTraversable| to |relevantGlobal|'s [=Window/navigable=]'s [=top-level traversable=].
+            </li>
+          </ol>
+        </li>
+        <li>
+          If |relevantGlobal| is a {{DedicatedWorkerGlobalScope}} object:
+          <ol>
+            <li>
+              Let |owningDocuments| be |relevantGlobal|'s [=owning document set=].
+            </li>
+            <li>
+              If |owningDocuments| is [=set/empty=], return null.
+            </li>
+            <li>
+              [=Assert=]: |owningDocuments|'s [=set/size=] is 1.
+            </li>
+            <li>
+              Set |topLevelTraversable| to |owningDocuments|[0]'s [=node navigable=]'s [=top-level traversable=].
+            </li>
+          </ol>
+        </li>
+        <li>
+          If |topLevelTraversable| is null, return null.
+        </li>
+        <li>
+          Let |topLevelVirtualPressureSourceMapping| be the |topLevelTraversable|'s [=virtual pressure source mapping=].
+        </li>
+        <li>
+          Let |virtualPressureSource| be null.
+        </li>
+        <li>
+          If |topLevelVirtualPressureSourceMapping| [=map/contains=] |source|:
+          <ol>
+            <li>
+              Set |virtualPressureSource| to |topLevelVirtualPressureSourceMapping|[|source|].
+            </li>
+          </ol>
+        </li>
+        <li>
+          Return |virtualPressureSource|.
+        </li>
+      </ol>
+    </p>
+  </section>
+  <section>
+    <h3>Data Collection and Delivery</h3>
+    <p>
+      To <dfn>activate data collection</dfn> given a [=source type=] |source|
+      and |relevantGlobal|, perform the following steps:
+    </p>
+    <ol class="algorithm">
+      <li>
+        If |relevantGlobal|'s [=platform collector mapping=] does not
+        [=map/contain=] |source|, abort these steps.
+      </li>
+      <li>
+        Let |platformCollector| be |relevantGlobal|'s [=platform collector
+        mapping=][|source|].
+      </li>
+      <li>
+        If |platformCollector|'s [=platform collector/activated=] is true,
+        abort these steps.
+      </li>
+      <li>
+        Set |platformCollector|'s [=platform collector/activated=] to true.
+      </li>
+      <li>
+        In an [=implementation-defined=] manner, start running the [=data
+        collection=] steps with |relevantGlobal|, |source|, and
+        |platformCollector|.
+        <aside class="note">
+          <p>
+            This step givens implementations leeway to collect telemetry data
+            via polling or by subscribing to platform- or OS-specific
+            notifications.
+          </p>
+        </aside>
+      </li>
+    </ol>
+    <p>
+      To <dfn>deactivate data collection</dfn> given a [=source type=] |source|
+      and |relevantGlobal|, perform the following steps:
+    </p>
+    <ol class="algorithm">
+      <li>
+        If |relevantGlobal|'s [=platform collector mapping=] does not
+        [=map/contain=] |source|, abort these steps.
+      </li>
+      <li>
+        Let |platformCollector| be |relevantGlobal|'s [=platform collector
+        mapping=][|source|].
+      </li>
+      <li>
+        If |platformCollector|'s [=platform collector/activated=] is false,
+        abort these steps.
+      </li>
+      <li>
+        In an [=implementation-defined=] manner, stop running the [=data
+        collection=] steps with |relevantGlobal|, |source|, and
+        |platformCollector|.
+      </li>
+      <li>
+        Set |platformCollector|'s [=platform collector/activated=] to false.
+      </li>
+      <li>
+        If |platformCollector|'s [=platform collector/associated pressure
+        source=] is a [=virtual pressure source=]:
+        <ol>
+          <li>
+            [=set/Remove=] |platformCollector| from its [=platform
+            collector/associated pressure source=]'s [=virtual pressure
+            source/connected platform collectors=].
+          </li>
+        </ol>
+      </li>
+      <li>
+        Otherwise, perform any [=implementation-defined=] steps to signal to
+        |platformCollector|'s [=platform collector/associated pressure source=]
+        to stop retrieving telemetry data.
+      </li>
+    </ol>
+    <p>
+      The <dfn>data collection</dfn> steps given |relevantGlobal|, |source| and
+      |platformCollector| are as follows:
+      <ol class="algorithm">
+        <li>
+          Let |pressureSource| be |platformCollector|'s [=platform
+          collector/associated pressure source=].
+        </li>
+        <li>
+          If |pressureSource| is null, abort these steps.
+        </li>
+        <li>
+          Let |sample| be |pressureSource|'s [=pressure source/latest sample=].
+        </li>
+        <li>
+          If |sample| is null, abort these steps.
+        </li>
+        <li>
+          Let |state:PressureState| be null.
+        </li>
+        <li class="experimental">
+          Let |ownContributionEstimate| be null.
+        </li>
+        <li>
+          If |pressureSource| is a [=virtual pressure source=]:
+          <ol>
+            <li>
+              Set |state| to the {{PressureState}} stored in |sample|'s [=pressure source sample/data=].
+            </li>
+            <li class="experimental">
+              Set |ownContributionEstimate| to the {{double?}} stored in |sample|'s [=pressure source sample/data=].
+            </li>
+          </ol>
+        </li>
+        <li>
+          Otherwise:
+          <ol>
+            <li>
+              If [=change in contributing factors is substantial=] is false, abort these steps.
+            </li>
+            <li>
+              Set |state| to an [=adjusted pressure state=] calculated from
+              |source| and |sample|'s [=pressure source sample/data=].
+              <aside class="note">
+                <p>
+                  The mapping between |sample|'s [=pressure source
+                  sample/data=] and [=pressure states=] is
+                  [=implementation-defined=] and may use many different
+                  metrics. For instance, for CPU, it might consider processor
+                  frequency and utilization, as well as thermal conditions.
+                </p>
+              </aside>
+            </li>
+            <li class="experimental">
+              If the [=user agent=] can calculate an |estimation| of the current site's
+              contribution to the overall pressure in an [=implementation-defined=] manner,
+              given |sample|'s [=pressure source sample/data=], then set |ownContributionEstimate|
+              to that |estimation|. The |estimation| should be in the range [0...1].
+            </li>
+          </ol>
+        </li>
+        <li>
+          [=Assert=]: |state| is not null.
+        </li>
+        <li>
+          Let |rawTimestamp| be |sample|'s [=pressure source
+          sample/timestamp=].
+        </li>
+        <li>
+          Let |timeValue| be the [=relative high resolution time=] based on
+          |rawTimestamp| and |relevantGlobal|.
+        </li>
+        <li>
+          [=list/For each=] |observer:PressureObserver| in |relevantGlobal|'s
+          [=registered observer list=] for |source|:
+          <ol>
+            <li>
+              If running [=may receive data=] with |observer|
+              returns false, [=iteration/continue=].
+            </li>
+            <li>
+              If running [=passes rate test=] with |observer|, |source| and |timeValue|
+              returns false, [=iteration/continue=].
+            </li>
+            <li>
+              If running [=should dispatch=] with |observer|, |source|, |state|
+              <span class="experimental"> and |ownContributionEstimate|</span>
+              returns false, [=iteration/continue=].
+            </li>
+            <li>
+              Let |record:PressureRecord| be a new {{PressureRecord}} object with its
+              {{PressureRecord/[[Source]]}} set to |source|,
+              {{PressureRecord/[[State]]}} set to |state|,
+              <span class="experimental">
+                {{PressureRecord/[[OwnContributionEstimate]]}} set to |ownContributionEstimate|
+              </span>
+              and {{PressureRecord/[[Time]]}} set to |timeValue|.
+            </li>
+            <li>
+              If |observer|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}[source] [=map/exists=]:
+              <ol>
+                <li>
+                  Set |observer|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}[|source|] to |record|.
+                </li>
+                <li>
+                  [=iteration/Continue=].
+                </li>
+              </ol>
+            </li>
+            <li>
+              If running [=passes rate obfuscation test=] with |observer| and |source| returns false:
+              <ol>
+                <li>
+                  Set |observer|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}[|source|] to |record|.
+                </li>
+                <li>
+                  Set |observer|.{{PressureObserver/[[ChangesCountMap]]}}[|source|] to 0.
+                </li>
+                <li>
+                  Create timer of |observer|.{{PressureObserver/[[PenaltyDuration]]}} duration with the following callback:
+                  <ol>
+                    <li>
+                      If |observer|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}[source] [=map/exists=]:
+                      <ol>
+                        <li>
+                          Let |record| be |observer|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}[|source|].
+                        </li>
+                        <li>
+                          [=map/Remove=] |observer|.{{PressureObserver/[[AfterPenaltyRecordMap]]}}[|source|].
+                        </li>
+                        <li>
+                          Run [=queue a record=] with |observer|, |source|, |record|.
+                        </li>
+                      </ol>
+                    </li>
+                  </ol>
+                </li>
+                <li>
+                  [=iteration/Continue=].
+                </li>
+              </ol>
+            </li>
+            <li>
+              Run [=queue a record=] with |observer|, |source|, |record|.
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </p>
+  </section>
+  <section>
+    <h3>Queue a PressureRecord</h3>
+    <p>
+      To <dfn>queue a record</dfn> given the arguments |observer:PressureObserver|,
+      |source:PressureSource|, |record:PressureRecord|,
+      run these steps:
+    </p>
+    <ol class="algorithm">
+      <li>
+        If [=list/size=] of |observer|.{{PressureObserver/[[QueuedRecords]]}} is greater than
+        [=max queued records=], then [=list/remove=] the first [=list/item=].
+      <li>
+        [=list/Append=] |record| to |observer|.{{PressureObserver/[[QueuedRecords]]}}.
+      </li>
+      <li>
+        Set |observer|.{{PressureObserver/[[LastRecordMap]]}}[|source|] to |record|.
+      </li>
+      <li>
+        [=Queue a pressure observer task=] with |observer|'s [=relevant global object=].
+      </li>
+    </ol>
+  </section>
+  <section>
+    <h3>Queue a Pressure Observer Task</h3>
+    <p>
+      The <dfn>PressureObserver task source</dfn> is a [=task source=] used for scheduling tasks to [[[#notify-observers]]].
+    </p>
+    <p>
+      To <dfn>queue a pressure observer task</dfn> given |relevantGlobal| as input, run these steps:
+    </p>
+    <ol class="algorithm">
+      <li>
+        If the |relevantGlobal|'s [=pressure observer task queued=] is true, then return.
+      </li>
+      <li>
+        Set the |relevantGlobal|'s [=pressure observer task queued=] to true.
+      </li>
+      <li>
+        [=Queue a global task=] on [=PressureObserver task source=] with |relevantGlobal| to [=notify pressure observers=].
+      </li>
+    </ol>
+  </section>
+  <section id="notify-observers">
+    <h3>Notify Pressure Observers</h3>
+    <p>
+      To <dfn>notify pressure observers</dfn> given |relevantGlobal| as input, run these steps:
+    </p>
+    <ol class="algorithm">
+      <li>
+        Set |relevantGlobal|'s [=pressure observer task queued=] to false.
+      </li>
+      <li>
+        Let |notifySet| be a new [=set=] of all [=observers=] in
+        |relevantGlobal|’s [=registered observer lists=].
+      </li>
+      <li>
+        [=list/For each=] |observer:PressureObserver| of |notifySet|:
+        <ol>
+          <li>
+            Let |records| be a [=list/clone=] of |observer|.{{PressureObserver/[[QueuedRecords]]}}.
+          </li>
+          <li>
+            [=list/Empty=] |observer|.{{PressureObserver/[[QueuedRecords]]}}.
+          </li>
+          <li>
+            If |records| is not [=list/empty=], then [=invoke=] |observer|.{{PressureObserver/[[Callback]]}}
+            with « |records|, |observer| » and "`report`".
+          </li>
+        </ol>
+      </li>
+    </ol>
+  </section>
+  <section>
+    <h3>Handling change of [=Document/fully active=] status</h3>
+    <p>
+      This specification defines the following [=unloading document cleanup
+      steps=] given a {{Document}} |document|:
+    </p>
+    <ol class="algorithm">
+      <li>
+        Let |relevantGlobal| be |document:Document|'s [=relevant global
+        object=].
+      </li>
+      <li>
+        [=list/For each=] |source| [=map/key=] of |relevantGlobal|'s
+        [=registered observer list=] [=ordered map=]:
+        <ol>
+          <li>
+            Invoke [=deactivate data collection=] with |source| and
+            |relevantGlobal|.
+          </li>
+          <li>
+            [=map/Remove=] |relevantGlobal|'s [=platform collector
+            mapping=][|source|].
+          </li>
+        </ol>
+      </li>
+    </ol>
+    <p class="issue" data-number="275">
+      This specification previously included steps covering the case of a
+      {{Document}} becoming [=Document/fully active=] again (i.e. integration
+      with {{Document}}'s [=Document/reactivate=] steps). Those steps have been
+      removed while the intended behavior is discussed.
+    </p>
+  </section>
+
+  <section>
+    <h3>Handling changes to worker status</h3>
+
+    <aside class="note">
+      <p>
+        This section is similar to the above, but for workers, which do not
+        have an equivalent for the [=unloading document cleanup steps=].
+      </p>
+    </aside>
+
+    <!--
+      Note: the steps below do not properly fit into the the process model for
+      Workers in the HTML spec (i.e. they are not specifically invoked from one
+      or more locations).
+
+      The WebDriver BiDi spec does something similar with different language
+      that can serve as inspiration:
+      https://w3c.github.io/webdriver-bidi/#event-script-realmDestroyed
+    -->
+
+    <p>
+      Whenever a {{WorkerGlobalScope}} |relevantGlobal|'s
+      [=WorkerGlobalScope/closing=] flag is set to true, perform the following
+      steps:
+    </p>
+
+    <ol class="algorithm">
+      <li>
+        [=list/For each=] |source| [=map/key=] of |relevantGlobal|'s
+        [=registered observer list=] [=ordered map=]:
+        <ol>
+          <li>
+            Invoke [=deactivate data collection=] with |source| and
+            |relevantGlobal|.
+          </li>
+          <li>
+            [=map/Remove=] |relevantGlobal|'s [=platform collector
+            mapping=][|source|].
+          </li>
+        </ol>
+      </li>
+    </ol>
+  </section>
+</section>
+</section> <!-- Pressure Observer -->
+
+<section>
+  <h2>
+    Security and privacy considerations
+  </h2>
+
+  <section>
+    <h3>Types of privacy and security threats</h3>
+    <div class="note">
+      The Working Group will list any known attack vectors, both theoretical and real-world,
+      in this section.
+    </div>
+    <h4>Timing attacks</h4>
+    <p>
+      It may be possible to identify users across non-[=same origin=] sites if unique
+      or very precise values can be accessed at the same time by sites not sharing
+      origin.
+
+      This attack is mitigated by [[[#data-minimization]]], [[[#rate-obfuscation]]],
+      and [[[#same-origin-restriction]]].
+    </p>
+    <h4>Cross-site covert channel</h4>
+    <p>
+      In computer security a covert channel creates a capability to transfer information between processes
+      that are not supposed to be allowed to communicate. In modern multi-process web engines in the generic
+      case each window or tab resides in its own process (documents that have the [=same origin=] or sites that
+      have the [=same site=] typically share the same process). Using this API it may be possible to create a
+      cross-site covert channel C where a site A on one tab first broadcasts to the channel C after having
+      manipulated the state of the CPU. Next a site B (that is not same site with site A) on another tab reads
+      the broadcasted data from the channel C by using this API to learn when the state of the CPU has changed.
+      This process is repeated as long as the scripts run on both the sites A and B.
+    </p>
+    <p>
+      This attack is mitigated by [[[#rate-obfuscation]]] and [[[#break-calibration]]].
+      Implementers are advised to consider all these mitigations for long-running scripts.
+    </p>
+    <div class="note">
+      The longer the scripts run the more information can be transmitted using the proposed cross-site covert channel.
+      For example, if a user is on a video conferencing site and another long-running site that allows for more
+      information to be transferred compared to a regular browsing scenario. On the other hand, a workload such as
+      a video conferencing session will typically exert sustained pressure on the CPU that makes it harder to
+      manipulate the pressure state in a predictive manner.
+    </div>
+    <h4>Targeted de-anonymization attacks</h4>
+    <p>
+      Targeted de-anonymization attacks constitute a critical class of threats that jeopardize a user's anonymity.
+      These attacks allow a malicious or partially compromised website (referred to as the “malicious site”) to
+      ascertain whether a website visitor possesses a specific public identifier, such as an email address or a
+      social media handle.
+    </p>
+    <p>
+      While anonymity may be a luxury for some, for certain individuals, it is far more than that—it is a matter
+      of survival. Consider for instance those who engage in political protests, work as journalists covering
+      sensitive topics, etc.
+    </p>
+    <p>
+      As an example, an attacker can privately share a resource with the target for instance using a public
+      resource sharing service (“victim site”), and then measure side-effects (indicating successful access)
+      on loading the resource via side-channels. If the logged in visitor can access the embedded resource
+      successfully, that indicates that the current visit is indeed the intended target.
+    </p>
+    <p>
+      Specifically, exposing reliable information about the total CPU pressure can let an attacking site
+      understand if a target of a cross-origin navigation (e.g. an iframe or pop-up window from another site)
+      performed a CPU-intensive operation.
+    </p>
+    <p>
+      Techniques such as <a href="https://en.wikipedia.org/wiki/Pop-up_ad#Pop-under_ads">pop-under</a> and
+      <a href="https://www.usenix.org/system/files/sec22-zaheri.pdf">tab-under</a> can be used to hide the loading
+      from the user.
+    </p>
+    <p>
+      One possible attack is that the malicious website opens e.g., a popup to a resource on a victim site
+      to which the user is logged in (e.g. a video streaming site or online document editor) pointing to a
+      resource shared with specific users.
+    </p>
+    <p>
+      Assuming that loading the resource puts increased pressure on the CPU, this would create a side-channel
+      reveals to the attacking site if the user is logged into an account with access to the resource,
+      deanonymizing the user.
+    </p>
+    <p>
+      Given that modern CPUs recover quickly from high pressure, one possible mitigation strategy could be to
+      temporarily disable readings for a few seconds after loading popup and iframe content.
+    </p>
+  </section>
+
+  <section>
+    <h3>Mitigation strategies</h3>
+
+    <div class="note">
+      This section gives a high-level view into mitigation strategies applicable to this specification.
+      The normative definitions of these mitigations are integrated into the respective algorithms of this specification.
+      Implementers are advised to consider the
+      <a href="https://www.w3.org/2001/tag/doc/private-browsing-modes/#features-supporting-private-browsing">TAG guidance
+      on private browsing modes</a> when implementing the mitigations defined in this specification.
+    </div>
+
+    <h4>Data minimization</h4>
+    <p>
+      This specification adheres to the generic
+      <a href="https://www.w3.org/TR/privacy-principles/#data-minimization">data minimization</a> principles
+      to limit exposure of data related to low-level details of the underlying platform to the minimum required to
+      address its high-value use cases. This includes consideration for limiting exposure of
+      <a href="https://w3ctag.github.io/design-principles/#device-ids">identifying information about devices</a>.
+    </p>
+    <p>
+      The specific application of data minimization principles in the context of this specification
+      are discussed in [[[#rate-obfuscation]]] and [[[#same-origin-restriction]]].
+      <section>
+        <h4>Rate obfuscation</h4>
+        <p>
+          The specification requires implementing the <dfn>rate obfuscation</dfn> mitigation
+          to keep track of the number of pressure changes over an [=implementation-defined=]
+          sliding observation window and
+          set a flag if an [=implementation-defined=] threshold for the number of pressure
+          changes is exceeded. Similarly, it is also recommended for the implementation to
+          observe any abnormal activity such as a high number of pressure state changes
+          spanning across multiple states, and set this flag similarly.
+        </p>
+        <p>
+          If this flag is set, the implementation is recommended to give the pressure observer
+          a penalty during which it will not be able to inform scripts of changes in its
+          pressure state as it normally would. The duration of this penalty is
+          [=implementation-defined=] and it is recommended to be randomized.
+          When [=notify pressure observers=] resumes operation after the penalty, it only
+          reports the latest pressure state and disregards any interim state information
+          received from the platform collector during this penalty.
+        </p>
+      </section>
+      <section>
+        <h4>Rate obfuscation normative parameters</h4>
+        <p>
+          Based on implementation experience, implementers must use:
+          <ul>
+            <li>
+              a range in between 50 and 100 changes for PressureObserver's {{PressureObserver/[[MaxChangesThreshold]]}} internal slot.
+            </li>
+            <li>
+              a range in between 5000 milliseconds and 10000 milliseconds for PressureObserver's {{PressureObserver/[[PenaltyDuration]]}} internal slot.
+            </li>
+          </ul>
+          <aside class="note">
+            These values are subject to change and are updated based on further implementation experience and research findings.
+          </aside>
+        <p>
+      </section>
+      <section>
+      <h4>Rate obfuscation non-normative parameters</h4>
+        <p><i>This section is non-normative.</i></p>
+        <p>
+          Based on implementation experience, implementers are advised to use:
+          <ul>
+            <li>
+              a range in between 300000 milliseconds (5 minutes) and 600000 milliseconds (10 minutes) for PressureObserver's
+              {{PressureObserver/[[ObservationWindow]]}} internal slot.
+            </li>
+          </ul>
+          <aside class="note">
+            These values are subject to change and are updated based on further implementation experience and research findings.
+          </aside>
+        </p>
+      </section>
+      <section>
+        <h4>Break calibration</h4>
+        <p>
+          In a calibration process an attacker tries to manipulate the CPU so that this
+          API would report a transition into a certain pressure state with the highest
+          probability in response to the pressure exerted by the fabricated workload.
+          This <dfn>break calibration</dfn> mitigation solution can slow down or prevent this calibration process
+          from succeeding by slightly changing at runtime the [=implementation-defined=]
+          low-level hardware metrics that contribute to these pressure state transitions.
+          Even if the initial calibration would succeed, its results will be invalidated
+          at runtime when this mitigation is running continuously. Any attempts to recalibrate
+          will similarly be mitigated against.
+        </p>
+        <aside class="note">
+          Modern browsers throttle background tabs using [=implementation-defined=]
+          heuristics in order to reduce resource usage. For example, after a period of
+          no user interaction a background tab can be throttled that will influence
+          the global pressure state of the system. This built-in feature of modern
+          browsers further improves the effectiveness of the break calibration
+          mitigation.
+        </aside>
+      </section>
+      <section>
+        <h4>Break calibration parameters</h4>
+        <p><i>This section is non-normative.</i></p>
+        <p>
+          Based on implementation experience, implementers are advised to apply the mitigation
+          to a randomized time value within a range between 120000 milliseconds (2 minutes) and 240000 milliseconds (4 minutes).
+        </p>
+        <aside class="note">
+          These values are subject to change and are updated based on further implementation experience and research findings.
+        </aside>
+      </section>
+      <section>
+        <h4>Same-origin restriction</h4>
+        <p>
+          By <em>default</em> data delivery is restricted to documents served from the same-origin as an
+          <a href="https://w3c.github.io/picture-in-picture/#initiators-of-active-picture-in-picture-sessions">
+          initiator of an active picture-in-picture-session</a>,
+          documents [=context is capturing|capturing=]
+          or the document with [=top-level traversable/system focus=], if any.
+        </p>
+        <p>
+          The documents qualifying for data delivery, under the above rules, can delegate it to documents in [=child navigables=].
+        </p>
+        <p>
+          The feature can be extended to third-party contexts such as iframes only by a
+          <a href="https://www.w3.org/TR/permissions-policy/#permissions-policy-declared-policy">declared policy</a>.
+        </p>
+        <p>
+          Shared workers can be shared across documents, such as top level document and those associated iframes. If one
+          of the documents in the [=WorkerGlobalScope/owner set=] passes the above data delivery requirements, the shared worker will
+          qualify for data delivery. This means that the embedded iframe is able to pass along the data to the embedding document.
+        </p>
+      </section>
+    </p>
+  </section>
+</section>
+
+<section>
+  <h2>
+    Accessibility considerations
+  </h2>
+  <p>
+    The Compute Pressure API is focused on improving the user experience. There are two ways in which applications that build on the API can positively impact accessibility.
+  </p>
+  <ol>
+    <li>
+      Considering users' access needs when making decisions based on information gathered using the API.
+    </li>
+    <li>
+      Designing and making user interfaces based on information gained from the API with accessibility in mind.
+    </li>
+  </ol>
+  <p>
+    As a consumer of the API, it's important to consider both of these opportunities. Here are some examples:
+    <ul>
+      <li>
+        <strong>Decision:</strong> In a video conferencing scenario, there may be multiple video streams. The system may determines that it needs to drop certain streams in order to conserve resources. If one of the video streams comes from a sign language interpreter, then that stream must be prioritized over others, so that the user can still understand the conversation. In practice, this could be simply implemented by allowing the user to "pin" a certain stream, and ensuring that that pinned stream is never automatically dropped by the system.
+      </li>
+      <li>
+        <strong>User Interface:</strong>
+        <ul>
+          <li>
+            A simple load-level meter, in which the current usage level bucket is indicated on the screen. This information must be conveyed using more than just color, so that people who cannot perceive color can still perceive the information. A symbol could be used in conjunction with color. Text could also be used in conjunction with both shape and color.
+          </li>
+          <li>
+            Some applications may present a notification to the user when some functionality is restricted due to compute pressure. These notifications may take the form of "toast" messages, in which case care must be taken to ensure that people using assistive technologies (including screen readers) can be made aware of the notification, and dismiss it, without unduly interrupting their workflow.
+          </li>
+        </ul>
+
+      </li>
+    </ul>
+</section>
+
+<section>
+  <h2>
+    Automation
+  </h2>
+  <p>
+    The Compute Pressure API poses a challenge to test authors, as fully
+    exercising interface requires physical hardware devices that respond in
+    predictable ways.
+  </p>
+  <p>
+    To address this challenge this document defines a [[!WEBDRIVER2]] [=extension
+    commands=] that allows defining and controlling virtual pressure sources that behave
+    like real ones and which can have particular properties and whose readings can be
+    entirely defined by users.
+  </p>
+  <h2>
+    Virtual Pressure Source
+  </h2>
+  <p>
+    A <dfn>virtual pressure source</dfn> is a [=pressure source=] that
+    simulates the behavior of a real one in controlled ways. It reports
+    pressure changes to zero or more [=platform collectors=] connected to it.
+  </p>
+  <p>
+    Contrary to a real [=pressure source=], however, it reports [=pressure
+    state=] values directly instead of [=implementation-defined=] values that
+    must be processed into [=pressure states=] by a [=platform collector=]. In
+    other words, a [=virtual pressure source=]'s [=pressure source sample=]'s
+    [=pressure source sample/data=] is a {{PressureState}}.
+  </p>
+  <p>
+    In addition to the data associated with all [=pressure sources=] (such as
+    [=pressure source sample=]), each [=virtual pressure source=] has:
+    <ul>
+      <li>
+        a <dfn data-dfn-for="virtual pressure source">can provide samples
+        </dfn> boolean.
+      </li>
+      <li>
+        a <dfn data-dfn-for="virtual pressure source">connected platform
+        collectors</dfn> [=set=] of [=platform collectors=].
+      </li>
+    </ul>
+  </p>
+  <p>
+    Each [=top-level traversable=] has a <dfn>virtual pressure source mapping</dfn>, which is an [=ordered map=] of
+    [=source types=] to [=virtual pressure source=].
+  </p>
+  <aside class="note">
+    <p>
+      As currently specified, the [[!WEBDRIVER2]] integration and the
+      [=extension commands=] below do <em>not</em> have an effect on shared
+      workers.
+    </p>
+    <p>
+      Developer feedback and use cases for shared worker support are welcome
+      via GitHub issues.
+    </p>
+  </aside>
+  <aside class="note">
+    <p>
+      As currently specified, [=virtual pressure sources=] only have an effect
+      on a {{Window}} or {{DedicatedWorkerGlobalScope}} when its [=platform
+      collector mapping=] does not have an entry for the [=source type=] the
+      [=virtual pressure source=] represents.
+    </p>
+    <p>
+      In other words, creating a virtual pressure source for a [=source type=]
+      for which {{PressureObserver/observe()}} has already been called will not
+      affect any existing instances until either
+      {{PressureObserver/disconnect()}} or {{PressureObserver/unobserve()}} has
+      been called on them. New instances will only make use of the new
+      [=virtual pressure source=] if {{PressureObserver/observe()}} is called
+      after existing observers have been disconnected.
+    </p>
+    <p>
+      Similarly, if a [=virtual pressure source=] is in use by one or more
+      {{PressureObserver}} instances and it is removed, all instances must stop
+      observation before calls to {{PressureObserver/observe()}} attempt to
+      connect to a real [=pressure source=].
+    </p>
+  </aside>
+  <h3>
+    Extension Commands
+  </h3>
+  <h4>
+    Create virtual pressure source
+  </h4>
+  <table class="def">
+    <tr>
+      <th>
+        HTTP Method
+      </th>
+      <th>
+        [=extension command URI Template|URI Template=]
+      </th>
+    </tr>
+    <tr>
+      <td>
+        POST
+      </td>
+      <td>
+        /session/{session id}/pressuresource
+      </td>
+    </tr>
+  </table>
+  <p>
+    This [=extension command=] creates a new [=virtual pressure source=] of a specified
+    [=source type=]. Calls to {{PressureObserver/observe()}} from {{PressureObserver}} instances
+    of the same [=source type=] will cause this [=virtual pressure source=] to be used as their
+    backing [=pressure source=] until [[[#delete-virtual-pressure-source]]] is run.
+  </p>
+  <table class="data">
+    <caption>
+      Properties of the parameters argument used by this algorithm
+    </caption>
+    <tr>
+      <th>
+        Parameter name
+      </th>
+      <th>
+        Value type
+      </th>
+      <th>
+        Required
+      </th>
+    </tr>
+    <tr>
+      <td>
+        type
+      </td>
+      <td>
+        String
+      </td>
+      <td>
+        yes
+      </td>
+    </tr>
+    <tr>
+      <td>
+        supported
+      </td>
+      <td>
+        Boolean
+      </td>
+      <td>
+        no
+      </td>
+    </tr>
+  </table>
+  <p>
+    The [=remote end steps=]  given |session|, |URL variables| and |parameters| are:
+  </p>
+  <ol class="algorithm" data-cite="!WEBDRIVER2">
+    <li>
+      Let |virtualPressureSourceType| be the result of invoking
+      <a data-cite="!WEBDRIVER2#dfn-getting-properties">get a property</a> "type" from |parameters|.
+    </li>
+    <li>
+      If the [=user agent=]'s [=supported source types=] does not
+      [=list/contain=] |virtualPressureSourceType|, return [=error=] with
+      [=error code|WebDriver error code=] [=invalid argument=].
+    </li>
+    <li>
+      Let |topLevelTraversable| be the <a data-cite="!webdriver2/#dfn-current-browsing-context">current browsing
+      context</a>'s [=browsing context/top-level traversable=].
+    </li>
+    <li>
+      Let |topLevelVirtualPressureSourceMapping| be the |topLevelTraversable|'s [=virtual pressure source mapping=].
+    </li>
+    <li>
+      If |topLevelVirtualPressureSourceMapping| contains |virtualPressureSourceType|, return [=error=] with
+      [=error code|WebDriver error code=] [=invalid argument=].
+    </li>
+    <li>
+      Let |supported| be the result of invoking <a
+      data-cite="!WEBDRIVER2#dfn-getting-the-property-with-default">get a
+      property with default</a>
+      with "supported" and true from |parameters|.
+    </li>
+    <li>
+      Let |virtualPressureSource| be a new [=virtual pressure source=].
+    </li>
+    <li>
+      Set |virtualPressureSource|'s [=virtual pressure source/can provide
+      samples=] to |supported|.
+    </li>
+    <li>
+      Set |topLevelVirtualPressureSourceMapping|[|virtualPressureSourceType|] to |virtualPressureSource|.
+    </li>
+    <li>
+      Return [=success=] with data null.
+    </li>
+  </ol>
+  <h4>
+    Delete virtual pressure source
+  </h4>
+  <table class="def">
+    <tr>
+      <th>
+        HTTP Method
+      </th>
+      <th>
+        [=extension command URI Template|URI Template=]
+      </th>
+    </tr>
+    <tr>
+      <td>
+        DELETE
+      </td>
+      <td>
+        /session/{session id}/pressuresource/{type}
+      </td>
+    </tr>
+  </table>
+  <p>
+    This [=extension command=] deletes a given [=virtual pressure source=], meaning that,
+    if available, data for the given [=source type=] will be delivered the regular way, by non-virtual means.
+  </p>
+  <p>
+    The [=remote end steps=] given |session|, |URL variables| and |parameters| are:
+  </p>
+  <ol class="algorithm" data-cite="!WEBDRIVER2">
+    <li>
+      Let |virtualPressureSourceType| be the value of the |URL variables|["type"].
+    </li>
+    <li>
+      If the [=user agent=]'s [=supported source types=] does not
+      [=list/contain=] |virtualPressureSourceType|, return [=error=] with
+      [=error code|WebDriver error code=] [=invalid argument=].
+    </li>
+    <li>
+      Let |topLevelTraversable| be the <a data-cite="!webdriver2/#dfn-current-browsing-context">current browsing
+      context</a>'s [=browsing context/top-level traversable=].
+    </li>
+    <li>
+      Let |topLevelVirtualPressureSourceMapping| be the |topLevelTraversable|'s [=virtual pressure source mapping=].
+    </li>
+    <li>
+      Let |pressureSource| be |topLevelVirtualPressureSourceMapping|[|virtualPressureSourceType|].
+    </li>
+    <li>
+      [=set/For each=] |platformCollector| of |pressureSource|'s [=virtual
+      pressure source/connected platform collectors=]:
+      <ol>
+        <li>
+          Set |platformCollector|'s [=platform collector/associated pressure
+          source=] to null.
+        </li>
+      </ol>
+    </li>
+    <li>
+      [=map/Remove=] |topLevelVirtualPressureSourceMapping|[|virtualPressureSourceType|].
+    </li>
+    <li>
+      Return [=success=] with data null.
+    </li>
+  </ol>
+
+  <h4>
+    Update virtual pressure source
+  </h4>
+  <table class="def">
+    <tr>
+      <th>
+        HTTP Method
+      </th>
+      <th>
+        [=extension command URI Template|URI Template=]
+      </th>
+    </tr>
+    <tr>
+      <td>
+        POST
+      </td>
+      <td>
+        /session/{session id}/pressuresource/{type}
+      </td>
+    </tr>
+  </table>
+  <p>
+    This [=extension command=] allows updating the state of a [=virtual pressure source=] by pushing
+    a new [=pressure source sample=].
+  </p>
+  <aside class="note" data-cite="!WEBDRIVER2">
+    Additionally, the [=extension command=] can be used to check whether a source type is created
+    via the [[[#create-virtual-pressure-source]]] [=extension command=] by checking the response.
+    If it has not been created the response will contain the [=error=] with
+    [=error code|WebDriver error code=]
+    <a data-cite="!webdriver2/#dfn-unsupported-operation">unsupported operation</a>.
+  </aside>
+  <table class="data">
+    <caption>
+      Properties of the parameters argument used by this algorithm
+    </caption>
+    <tr>
+      <th>
+        Parameter name
+      </th>
+      <th>
+        Value type
+      </th>
+      <th>
+        Required
+      </th>
+    </tr>
+    <tr>
+      <td>
+        sample
+      </td>
+      <td>
+        {{PressureState}}
+      </td>
+      <td>
+        yes
+      </td>
+    </tr>
+    <tr class="experimental">
+      <td>
+        ownContributionEstimate
+      </td>
+      <td>
+        {{double}}
+      </td>
+      <td>
+        no
+      </td>
+    </tr>
+  </table>
+  <p>
+    The [=remote end steps=] given |session|, |URL variables| and |parameters| are:
+  </p>
+  <ol class="algorithm" data-cite="!WEBDRIVER2">
+    <li>
+      Let |virtualPressureSourceType| be the value of the |URL variables|["type"].
+    </li>
+    <li>
+      If the [=user agent=]'s [=supported source types=] does not
+      [=list/contain=] |virtualPressureSourceType|, return [=error=] with
+      [=error code|WebDriver error code=] [=invalid argument=].
+    </li>
+    <li>
+      Let |topLevelTraversable| be the <a data-cite="!webdriver2/#dfn-current-browsing-context">current browsing
+      context</a>'s [=browsing context/top-level traversable=].
+    </li>
+    <li>
+      Let |topLevelVirtualPressureSourceMapping| be the |topLevelTraversable|'s [=virtual pressure source mapping=].
+    </li>
+    <li>
+      If |topLevelVirtualPressureSourceMapping| does not [=map/contain=] |virtualPressureSource|,
+      return [=error=] with [=error code|WebDriver error code=]
+      <a data-cite="!webdriver2/#dfn-unsupported-operation">unsupported operation</a>.
+    </li>
+    <li>
+      Let |virtualPressureSource| be |topLevelVirtualPressureSourceMapping|[|virtualPressureSourceType|].
+    </li>
+    <li>
+      Let |sample| be the result of invoking
+      <a data-cite="!WEBDRIVER2#dfn-getting-properties">get a property</a> "sample" from |parameters|.
+    </li>
+    <li>
+      If |sample| is not of type {{PressureState}}, return [=error=] with [=error code|WebDriver error code=] [=invalid argument=].
+    </li>
+    <li class="experimental">
+      Let |ownContributionEstimate| be the result of invoking
+      <a data-cite="!WEBDRIVER2#dfn-getting-properties">get a property with default</a> with arguments "ownContributionEstimate" and null from |parameters|.
+    </li>
+    <li class="experimental">
+      If |ownContributionEstimate| is not of type {{double?}}, return [=error=] with [=error code|WebDriver error code=] [=invalid argument=].
+    </li>
+    <li>
+      Set |virtualPressureSource|'s [=pressure source/latest sample=] to a new
+      [=pressure source sample=] whose [=pressure source sample/data=] is
+      <span class="experimental">
+        a tuple of |sample| and |ownContributionEstimate|,
+      </span>
+      <span class="non-experimental">
+        |sample|
+      </span>
+      and [=pressure source sample/timestamp=] is the [=unsafe shared
+      current time=].
+    </li>
+    <li>
+      In an [=implementation-defined=] way, make |virtualPressureSource|'s
+      [=pressure source/latest sample=] available to |virtualPressureSource|'s
+      [=virtual pressure source/connected platform collectors=].
+    </li>
+    <li>
+      Return [=success=] with data null.
+    </li>
+  </ol>
+</section>
+
+<section id="examples" class="informative">
+  <h2>
+    Examples
+  </h2>
+  <pre class="example js" title="How to access observer from callback" id="cb-observer-example">
+    const samples = [];
+
+    function pressureChange(records, observer) {
+      for (const record of records) {
+        samples.push(record.state);
+
+        // We only want 20 samples.
+        if (samples.length == 20) {
+          observer.disconnect();
+          return;
+        }
+      }
+    }
+
+    const observer = new PressureObserver(pressureChange);
+    observer.observe("cpu");
+  </pre>
+  <p>
+    In the following example we want to lower the number of concurrent video streams when the
+    pressure becomes critical. For the sake of simplicity we only consider this one state.
+  </p>
+  <p>
+    As lowering the amount of streams might not result in exiting the critical state,
+    or at least not immediately, we use a strategy where we lower one stream at the time
+    every 30 seconds while still in the critical state.
+  </p>
+  <p>
+    We accomplish this by making sure the callback is called at least once every 30 seconds,
+    or when the state actually changes. When the state changes we reset the interval timer.
+  </p>
+  <pre class="example js" title="How to adjust the number of video feeds based on CPU pressure">
+    let timerId = -1;
+    function pressureChange(records) {
+      // Clear timer every time we are called, either by an actual state change,
+      // or when called by setTimeout (see below).
+      if (timerId > 0) {
+        clearTimeout(timerId);
+      }
+
+      // When entering critical state, we want to recheck every 30sec if we are
+      // still in critical state and if so, further reduce our concurrent streams.
+      // For this reason we create a timer for 30 seconds that will call us back
+      // with the last result in there were no change.
+      const lastRecordArray = [records.at(records.length - 1)];
+      timerId = setTimeout(pressureChange.bind(this, lastRecordArray), 30_000);
+
+      for (const record of records) {
+        if (record.state == "critical") {
+          let streamsCount = getStreamsCount();
+          setStreamsCount(streamsCount--);
+        }
+      }
+    }
+
+    const observer = new PressureObserver(pressureChange);
+    observer.observe("cpu");
+  </pre>
+  <p>
+    In the following example, we want to demonstrate the usage of {{PressureObserver/takeRecords()}},
+    by retrieving the remaining |records| accumulated since the the callback was last
+    invoked.
+  </p>
+  <p>
+    It is recommended to do so before {{PressureObserver/disconnect()}},
+    otherwise {{PressureObserver/disconnect()}} will clear them and they will be lost forever.
+  </p>
+  <p>
+    For example, we might want to measure the pressure during a benchmarking workload, and thus
+    want pressure telemetry for the exact duration of the workload. This means disconnecting all
+    observers immediately when the task is completed, and manually requesting any pending pressure
+    telemetry up to this point that might not have been delivered yet as part of the event loop cycle.
+  </p>
+  <pre class="example js" title="How to handle all state changes right up until disconnect">
+    function logWorkloadStatistics(records) {
+      // do something with records.
+    }
+
+    const observer = new PressureObserver(logWorkloadStatistics);
+    observer.observe("cpu");
+
+    // Read pending state change records, otherwise they will be cleared
+    // when we disconnect.
+    const records = observer.takeRecords();
+    logWorkloadStatistics(records);
+
+    observer.disconnect();
+  </pre>
+  <p>
+    In the following example, we show how to tell the observer to stop watching a specific
+    |source:PressureSource| by invoking {{PressureObserver/unobserve()}}
+    with |source|.
+  </p>
+  <aside class="note">
+    The example uses 'gpu', which could be a potential future addition to the specification. It aims to show
+    that the API is extentable to support other types of pressure in the future
+  </aside>
+  <pre class="example js" title="How to tell the observer to stop watching for state changes for a specific source">
+    const observer = new PressureObserver(records => { /* do something with records. */ });
+
+    observer.observe("cpu");
+    observer.observe("gpu");
+
+    // Callback now gets called whenever the pressure state changes for 'cpu' or 'gpu'.
+
+    observer.unobserve("gpu");
+
+    // Callback now only gets called whenever the pressure state changes for 'cpu'.
+  </pre>
+  <p>
+    In the following example, we show how to tell the observer to stop watching for any
+    state changes by calling {{PressureObserver/disconnect()}}. Calling
+    {{PressureObserver/disconnect()}} will stop observing all sources observed
+    by previous {{PressureObserver/observe()}} calls.
+  </p>
+  <p>
+    Additionally it will clear all pending records collected since the last callback was invoked.
+  </p>
+  <pre class="example js" title="how to tell the observer to stop watching for any state changes">
+    const observer = new PressureObserver(records => { // do something with records. });
+    observer.observe("cpu");
+    observer.observe("gpu");
+
+    // some time later...
+
+    observer.disconnect();
+
+    // records will be an empty array, because of the previous disconnect().
+    const records = observer.takeRecords();
+  </pre>
+</section>
+<section id="conformance">
+  <p>
+    This specification defines conformance criteria for a single product: a
+    <dfn>user agent</dfn> that implements the interfaces that it contains.
+  </p>
+</section>
+<section class="appendix informative" id="acknowledgments"> <h2>Acknowledgments</h2>
+  <p>
+    Many thanks for valuable feedback and advice from
+    Anssi Kostiainen,
+    Asaf Yaffe,
+    Benjamin VanderSloot,
+    Chen Xing,
+    Evan Shrubsole,
+    Florian Scholz,
+    François Beaufort,
+    Jan Gora,
+    Jesse Barnes,
+    Joshua Bell,
+    Kamila Hasanbega,
+    Matt Menke,
+    Moh Haghighat,
+    Nicolás Peña Moreno,
+    Opal Voravootivat,
+    Paul Jensen,
+    Peter Djeu,
+    Reilly Grant,
+    Ulan Degenbaev,
+    Victor Miura,
+    Wei Wang,
+    and
+    Zhenyao Mo
+  </p>
+  <p>
+    Thanks to the W3C Privacy Interest Group (PING) and especially Peter Snyder
+    for the privacy review, feedback and the proposed cross-site covert channel
+    attack and its mitigations. Similarly thanks to Ehsan Toreini for his work on
+    the privacy of private browsing and related contributions to this specification.
+  </p>
+  <p>
+    Special thanks to
+    Amanda Zhao,
+    Fidel Tian,
+    Zhiliang Wang
+    and others from the Zoom engineering team for the feedback and hands-on experiments
+    that have helped improve this API in real-world scenarios.
+  </p>
+</section>
+
+<section id="substantive-changes-summary" class="appendix informative">
+  <h2>Summary of substantive changes</h2>
+  <section id="substantive-changes-summary-fpwd">
+    <h3>Changes since the <a href="https://www.w3.org/TR/2022/WD-compute-pressure-20221220/">First Public Working Draft (2022/12/20)</a></h3>
+    <ul>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/302">Remove the limiting of rate as it is replace by obfuscation (PR #302)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/300">Move at-risk to experimental on PressureSource/thermals (PR #300)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/293">Make thermal pressure source at-risk (PR #293)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/292">Get rid of the global current pressure state (PR #292)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/284">Add an Automation section with WebDriver support to the spec (PR #284)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/283">Make PressureObserver.observe() and data delivery algorithm less vague (PR #283)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/280">data delivery: Set timestamp as an "unsafe shared current time" (PR #280)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/276">Rework handling of fully active status (PR #276)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/274">timestamp: Redefine timestamp in Data delivery (PR #274)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/268">Rename supportedSources to knownSources (PR #268)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/263">Associate sample interval with source (PR #263)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/261">Move options to observe() (PR #261)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/254">Change sampleRate to sampleInterval (PR #254)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/241">Provide guidelines for mitigation algorithms (PR #241)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/239">Require all owning documents to have permission policy enabled (PR #239)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/238">Support workers in privacy algos (PR #238)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/236">Use same origin checks instead of same origin-domain ones (PR #236)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/230">Fix penalty algorithm (PR #230)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/227">Fix definition of ChangesCountMap (PR #227)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/225">Break calibration (PR #225)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/223">Add rate obfuscation test requirement (PR #223)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/203">Do not expose contributing factors (PR #203)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/202">Introduce 'thermals' source type (PR #202)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/192">Adjust pressure states and add new explorations as a result (PR #192)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/191">Privacy check: Remove ordered list between worker and window (PR #191)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/180">Add an implementation-defined change threshold exceeded check (PR #180)</a></li>
+      <li><a href="https://github.com/w3c/compute-pressure/pull/175">Add toJSON for PressureRecord, and fix spec link issues (PR #175)</a></li>
+    </ul>
+</section>
+
+<section id="index" class="appendix">
+</section>
+<section id="idl-index" class="appendix">
+  <!-- All the Web IDL will magically appear here -->
+</section>

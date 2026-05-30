@@ -1,0 +1,899 @@
+<!DOCTYPE html><html lang="en" dir="ltr"><head>
+<meta charset="utf-8">
+<meta name="generator" content="ReSpec 34.2.1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+span.example-title{text-transform:none}
+:is(aside,div).example,div.illegal-example{padding:.5em;margin:1em 0;position:relative;clear:both}
+div.illegal-example{color:red}
+div.illegal-example p{color:#000}
+:is(aside,div).example{border-left-width:.5em;border-left-style:solid;border-color:#e0cb52;background:#fcfaee}
+aside.example div.example{border-left-width:.1em;border-color:#999;background:#fff}
+.example pre{background-color:rgba(0,0,0,.03)}
+</style>
+<style>
+.issue-label{text-transform:initial}
+.warning>p:first-child{margin-top:0}
+.warning{padding:.5em;border-left-width:.5em;border-left-style:solid}
+span.warning{padding:.1em .5em .15em}
+.issue.closed span.issue-number{text-decoration:line-through}
+.issue.closed span.issue-number::after{content:" (Closed)";font-size:smaller}
+.warning{border-color:#f11;border-width:.2em;border-style:solid;background:#fbe9e9}
+.warning-title:before{content:"⚠";font-size:1.3em;float:left;padding-right:.3em;margin-top:-.3em}
+li.task-list-item{list-style:none}
+input.task-list-item-checkbox{margin:0 .35em .25em -1.6em;vertical-align:middle}
+.issue a.respec-gh-label{padding:5px;margin:0 2px 0 2px;font-size:10px;text-transform:none;text-decoration:none;font-weight:700;border-radius:4px;position:relative;bottom:2px;border:none;display:inline-block}
+</style>
+<style>
+dfn{cursor:pointer}
+.dfn-panel{position:absolute;z-index:35;min-width:300px;max-width:500px;padding:.5em .75em;margin-top:.6em;font-family:"Helvetica Neue",sans-serif;font-size:small;background:#fff;color:#000;box-shadow:0 1em 3em -.4em rgba(0,0,0,.3),0 0 1px 1px rgba(0,0,0,.05);border-radius:2px}
+.dfn-panel:not(.docked)>.caret{position:absolute;top:-9px}
+.dfn-panel:not(.docked)>.caret::after,.dfn-panel:not(.docked)>.caret::before{content:"";position:absolute;border:10px solid transparent;border-top:0;border-bottom:10px solid #fff;top:0}
+.dfn-panel:not(.docked)>.caret::before{border-bottom:9px solid #a2a9b1}
+.dfn-panel *{margin:0}
+.dfn-panel b{display:block;color:#000;margin-top:.25em}
+.dfn-panel ul a[href]{color:#333}
+.dfn-panel>div{display:flex}
+.dfn-panel a.self-link{font-weight:700;margin-right:auto}
+.dfn-panel .marker{padding:.1em;margin-left:.5em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;color:#040b1c}
+.dfn-panel .marker.dfn-exported{background:#d1edfd;box-shadow:0 0 0 .125em #1ca5f940}
+.dfn-panel .marker.idl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}
+.dfn-panel a[href]:hover{border-bottom-width:1px}
+.dfn-panel ul{padding:0}
+.dfn-panel li{margin-left:1em}
+.dfn-panel.docked{position:fixed;left:.5em;top:unset;bottom:2em;margin:0 auto;max-width:calc(100vw - .75em * 2 - .5em - .2em * 2);max-height:30vh;overflow:auto}
+</style>
+    
+    
+<title>Permissions Registry</title>
+    
+    
+  
+<style id="respec-mainstyle">
+@keyframes pop{
+0%{transform:scale(1,1)}
+25%{transform:scale(1.25,1.25);opacity:.75}
+100%{transform:scale(1,1)}
+}
+:is(h1,h2,h3,h4,h5,h6,a) abbr{border:none}
+dfn{font-weight:700}
+a.internalDFN{color:inherit;border-bottom:1px solid #99c;text-decoration:none}
+a.externalDFN{color:inherit;border-bottom:1px dotted #ccc;text-decoration:none}
+a.bibref{text-decoration:none}
+.respec-offending-element:target{animation:pop .25s ease-in-out 0s 1}
+.respec-offending-element,a[href].respec-offending-element{text-decoration:red wavy underline}
+@supports not (text-decoration:red wavy underline){
+.respec-offending-element:not(pre){display:inline-block}
+.respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}
+}
+#references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}
+cite .bibref{font-style:normal}
+a[href].orcid{padding-left:4px;padding-right:4px}
+a[href].orcid>svg{margin-bottom:-2px}
+.toc a,.tof a{text-decoration:none}
+a .figno,a .secno{color:#000}
+ol.tof,ul.tof{list-style:none outside none}
+.caption{margin-top:.5em;font-style:italic}
+table.simple{border-spacing:0;border-collapse:collapse;border-bottom:3px solid #005a9c}
+.simple th{background:#005a9c;color:#fff;padding:3px 5px;text-align:left}
+.simple th a{color:#fff;padding:3px 5px;text-align:left}
+.simple th[scope=row]{background:inherit;color:inherit;border-top:1px solid #ddd}
+.simple td{padding:3px 10px;border-top:1px solid #ddd}
+.simple tr:nth-child(even){background:#f0f6ff}
+.section dd>p:first-child{margin-top:0}
+.section dd>p:last-child{margin-bottom:0}
+.section dd{margin-bottom:1em}
+.section dl.attrs dd,.section dl.eldef dd{margin-bottom:0}
+#issue-summary>ul{column-count:2}
+#issue-summary li{list-style:none;display:inline-block}
+details.respec-tests-details{margin-left:1em;display:inline-block;vertical-align:top}
+details.respec-tests-details>*{padding-right:2em}
+details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin solid #cad3e2;border-radius:.3em;background-color:#fff;padding-bottom:.5em}
+details.respec-tests-details[open]>summary{border-bottom:thin solid #cad3e2;padding-left:1em;margin-bottom:1em;line-height:2em}
+details.respec-tests-details>ul{width:100%;margin-top:-.3em}
+details.respec-tests-details>li{padding-left:1em}
+.self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
+aside.example .marker>a.self-link{color:inherit}
+.header-wrapper{display:flex;align-items:baseline}
+:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(#toch2)+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.5}
+:is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§";text-decoration:none;color:var(--heading-text)}
+:is(h2,h3)+a.self-link{top:-.2em}
+:is(h4,h5,h6)+a.self-link::before{color:#000}
+@media (max-width:767px){
+dd{margin-left:0}
+}
+@media print{
+.removeOnSave{display:none}
+}
+</style>
+<meta name="revision" content="722c06101c737df2baf963f7c4ef03f97a48d229">
+<meta name="description" content="This document serves as the W3C registry of permissions of the web platform, which
+        includes both policy-controlled features and powerful features.">
+<link rel="canonical" href="https://www.w3.org/TR/permissions-registry/">
+<style>
+var{position:relative;cursor:pointer}
+var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}
+var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#000}
+var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#000;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}
+var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
+</style>
+<script id="initialUserConfig" type="application/json">{
+  "shortName": "permissions-registry",
+  "group": "webappsec",
+  "specStatus": "DRY",
+  "editors": [
+    {
+      "name": "Marcos Cáceres",
+      "url": "https://www.w3.org/",
+      "company": "W3C",
+      "companyURL": "https://www.w3.org/",
+      "w3cid": "39125"
+    },
+    {
+      "name": "Mike Taylor",
+      "url": "https://miketaylr.com/posts/",
+      "companyURL": "https://google.com/",
+      "company": "Google LLC",
+      "w3cid": "90704"
+    }
+  ],
+  "github": {
+    "branch": "main",
+    "repoURL": "w3c/permissions-registry"
+  },
+  "xref": "web-platform",
+  "localBiblio": {
+    "w3c-process": {
+      "href": "https://www.w3.org/Consortium/Process/",
+      "title": "W3C Process",
+      "authors": [
+        "Elika J. Etemad (fantasai)",
+        "Florian Rivoal"
+      ],
+      "id": "w3c-process"
+    }
+  },
+  "gitRevision": "722c06101c737df2baf963f7c4ef03f97a48d229",
+  "publishISODate": "2023-11-12T00:00:00.000Z",
+  "generatedSubtitle": "W3C Draft Registry 12 November 2023"
+}</script>
+<link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-DRY"></head>
+  <body data-cite="permissions permissions-policy w3c-process HTML INFRA URL WEBIDL DOM FETCH" class="h-entry informative"><div class="head">
+    <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
+  </a></p>
+    <h1 id="title" class="title">Permissions Registry</h1> 
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#DRY">W3C Draft Registry</a> <time class="dt-published" datetime="2023-11-12">12 November 2023</time></p>
+    <details open="">
+      <summary>More details about this document</summary>
+      <dl>
+        <dt>This version:</dt><dd>
+                <a class="u-url" href="https://www.w3.org/TR/2023/DRY-permissions-registry-20231112/">https://www.w3.org/TR/2023/DRY-permissions-registry-20231112/</a>
+              </dd>
+        <dt>Latest published version:</dt><dd>
+                <a href="https://www.w3.org/TR/permissions-registry/">https://www.w3.org/TR/permissions-registry/</a>
+              </dd>
+        <dt>Latest editor's draft:</dt><dd><a href="https://w3c.github.io/permissions-registry/">https://w3c.github.io/permissions-registry/</a></dd>
+        <dt>History:</dt><dd>
+                    <a href="https://www.w3.org/standards/history/permissions-registry/">https://www.w3.org/standards/history/permissions-registry/</a>
+                  </dd><dd>
+                    <a href="https://github.com/w3c/permissions-registry/commits/main">Commit history</a>
+                  </dd>
+        
+        
+        
+        
+        
+        <dt>Editors:</dt><dd class="editor p-author h-card vcard" data-editor-id="39125">
+    <a class="u-url url p-name fn" href="https://www.w3.org/">Marcos Cáceres</a> (<a class="p-org org h-org" href="https://www.w3.org/">W3C</a>)
+  </dd><dd class="editor p-author h-card vcard" data-editor-id="90704">
+    <a class="u-url url p-name fn" href="https://miketaylr.com/posts/">Mike Taylor</a> (<a class="p-org org h-org" href="https://google.com/">Google LLC</a>)
+  </dd>
+        
+        
+        <dt>Feedback:</dt><dd>
+        <a href="https://github.com/w3c/permissions-registry/">GitHub w3c/permissions-registry</a>
+        (<a href="https://github.com/w3c/permissions-registry/pulls/">pull requests</a>,
+        <a href="https://github.com/w3c/permissions-registry/issues/new/choose">new issue</a>,
+        <a href="https://github.com/w3c/permissions-registry/issues/">open issues</a>)
+      </dd>
+        
+        
+      </dl>
+    </details>
+    
+    
+    <p class="copyright">
+    <a href="https://www.w3.org/policies/#copyright">Copyright</a>
+    ©
+    2023
+    
+    <a href="https://www.w3.org/">World Wide Web Consortium</a>.
+    <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup>
+    <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>,
+    <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and
+    <a rel="license" href="https://www.w3.org/copyright/software-license-2023/" title="W3C Software and Document Notice and License">permissive document license</a> rules apply.
+  </p>
+    <hr title="Separator for header">
+  </div>
+    <section id="abstract" class="introductory"><h2>Abstract</h2>
+      <p>
+        This document serves as the <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/Consortium/Process/#w3c-registry">W3C registry</a> of <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-permission">permissions</a> of the web platform, which
+        includes both <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled features</a> and <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful features</a>.
+      </p>
+    </section>
+    <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this
+      document at the time of its publication. A list of current <abbr title="World Wide Web Consortium">W3C</abbr>
+      publications and the latest revision of this technical report can be found
+      in the <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at
+      https://www.w3.org/TR/.</em></p>
+      <p>
+        The list of features in this registry is not exhaustive. It is expected that new features
+        will be added to this document as they are implemented across multiple user agents.
+      </p>
+      <p>
+        Please subscribe to the <a href="https://github.com/w3c/permissions-registry/">Permissions
+        Registry Repository</a> on GitHub to be notified of changes.
+      </p>
+    <p>
+    This document was published by the <a href="https://www.w3.org/groups/wg/webappsec">Web Application Security Working Group</a> as
+    a Draft Registry using the
+        <a href="https://www.w3.org/2023/Process-20231103/#recs-and-notes">Registry track</a>. 
+  </p><p>Publication as a Draft Registry does not
+  imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. </p><p>
+    This is a draft document and may be updated, replaced or obsoleted by other
+    documents at any time. It is inappropriate to cite this document as other
+    than work in progress.
+    
+  </p><p data-deliverer="49309">
+    
+        The
+        <a href="https://www.w3.org/Consortium/Patent-Policy/"><abbr title="World Wide Web Consortium">W3C</abbr> Patent
+          Policy</a>
+        does not carry any licensing requirements or commitments on this
+        document.
+      
+    
+  </p><p>
+                  This document is governed by the
+                  <a id="w3c_process_revision" href="https://www.w3.org/2023/Process-20231103/">03 November 2023 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
+                </p></section><nav id="toc"><h2 class="introductory" id="table-of-contents">Table of Contents</h2><ol class="toc"><li class="tocline"><a class="tocxref" href="#abstract">Abstract</a></li><li class="tocline"><a class="tocxref" href="#sotd">Status of This Document</a></li><li class="tocline"><a class="tocxref" href="#purpose"><bdi class="secno">1. </bdi>
+        Purpose
+      </a></li><li class="tocline"><a class="tocxref" href="#change-process"><bdi class="secno">2. </bdi>
+        Change Process
+      </a></li><li class="tocline"><a class="tocxref" href="#registry-table-of-standardized-permissions"><bdi class="secno">3. </bdi>
+        Registry table of standardized permissions
+      </a></li><li class="tocline"><a class="tocxref" href="#registry-table-of-provisional-permissions"><bdi class="secno">4. </bdi>
+        Registry table of provisional permissions
+      </a></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">A. </bdi>References</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#informative-references"><bdi class="secno">A.1 </bdi>Informative references</a></li></ol></li></ol></nav>
+    <section id="purpose"><div class="header-wrapper"><h2 id="x1-purpose"><bdi class="secno">1. </bdi>
+        Purpose
+      </h2><a class="self-link" href="#purpose" aria-label="Permalink for Section 1."></a></div>
+      
+      <p>
+        This <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/Consortium/Process/#w3c-registry">W3C Registry</a> provides a centralized place to find the <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled features</a> and/or <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful features</a> of the web platform. Through the <a data-link-type="dfn|abstract-op" href="#dfn-change-process" class="internalDFN" id="ref-for-dfn-change-process-1">change process</a>
+        it also helps assure permissions in the platform are consistently specified across various
+        specifications.
+      </p>
+      <p>
+        By splitting the registry into standardized permissions and provisional permissions, the
+        registry also provides a way to track the status of these features.
+      </p>
+    </section>
+    <section id="change-process"><div class="header-wrapper"><h2 id="x2-change-process"><bdi class="secno">2. </bdi>
+        Change Process
+      </h2><a class="self-link" href="#change-process" aria-label="Permalink for Section 2."></a></div>
+      
+      <p>
+        The <dfn id="dfn-change-process" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">change process</dfn> for adding and/or updating this registry is as follows:
+      </p>
+      <ol>
+        <li>If necessary, add a "Permissions Policy" section to your specification which includes
+        the following:
+          <ol>
+            <li>The string that identifies the policy controlled feature (e.g., <code>"super-awesome"</code>).
+            Make sure the string is linkable by wrapping it a <code><a data-link-type="element" data-type="element" href="https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-dfn-element">dfn</a></code> element.
+            </li>
+            <li>The <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature-default-allowlist">default allowlist</a> value (e.g. <code>'self'</code>).
+              <aside class="example" id="example-specifying-a-permissions-policy"><div class="marker">
+    <a class="self-link" href="#example-specifying-a-permissions-policy">Example<bdi> 1</bdi></a><span class="example-title">: Specifying a Permissions Policy</span>
+  </div>
+                <p>
+                  An typical example that would meet this criteria:
+                </p>
+                <blockquote>
+                  The Super Awesome API defines a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled feature</a> identified by the
+                  string "super-awesome". Its <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature-default-allowlist">default allowlist</a> is <code>'self'</code>.
+                </blockquote>
+              </aside>
+            </li>
+          </ol>
+        </li>
+        <li>Determine if your feature meets the definition of a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful feature</a> (i.e.,
+        requires <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-express-permission">express permission</a> to be used). If it does:
+          <ol>
+            <li><a data-link-type="dfn|abstract-op" data-lt="Specifies a powerful feature" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-specifies-a-powerful-feature">Specify a powerful feature</a> in your specification
+            in conformance with the <cite><a data-matched-text="[[[Permissions]]]" href="https://www.w3.org/TR/permissions/">Permissions</a></cite> specification.
+            </li>
+          </ol>
+        </li>
+        <li>Modify either the <a data-link-type="dfn|abstract-op" href="#dfn-table-of-standardized-permissions-of-the-web-platform" class="internalDFN" id="ref-for-dfn-table-of-standardized-permissions-of-the-web-platform-1">table of standardized permissions</a> or the <a data-link-type="dfn|abstract-op" href="#dfn-table-of-provisional-permissions" class="internalDFN" id="ref-for-dfn-table-of-provisional-permissions-1">table of provisional permissions</a> filling out each column with the required information.
+        </li>
+        <li>Submit a pull request to the <a href="https://github.com/w3c/permissions/">Powerful
+        Features Registry Repository</a> on GitHub with your changes. The maintainers of the
+        repository will review your pull request and check that everything integrates properly.
+        </li>
+      </ol>
+    </section>
+    <section id="registry-table-of-standardized-permissions"><div class="header-wrapper"><h2 id="x3-registry-table-of-standardized-permissions"><bdi class="secno">3. </bdi>
+        Registry table of standardized permissions
+      </h2><a class="self-link" href="#registry-table-of-standardized-permissions" aria-label="Permalink for Section 3."></a></div>
+      
+      <p>
+        For a permission to appear in the table of standardized permissions, and thus be considered
+        a <dfn id="dfn-standardized-permission" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">standardized permission</dfn>, it needs to meet the following criteria:
+      </p>
+      <ul>
+        <li>Implemented and demonstrably interoperable in at least two browser engines (e.g., has
+        accompanying <a href="https://web-platform-tests.org">Web Platform Tests</a>).
+        </li>
+        <li>Is specified in published as <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/Consortium/Process/#technical-report">technical report</a> by a <abbr title="World Wide Web Consortium">W3C</abbr> <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/Consortium/Process/#GroupsWG">Working Group</a> with
+        maturity of <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/Consortium/Process/#fpwd">first public working draft</a> or above, or is published by the <a href="https://whatwg.org">WHATWG</a> as a standard.
+        </li>
+      </ul>
+      <p>
+        Each <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-permission">permission</a> is identified by a unique literal string. In the case of
+        <cite><a data-matched-text="[[[Permissions-Policy]]]" href="https://www.w3.org/TR/permissions-policy-1/">Permissions Policy</a></cite>, the string identifies a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled features</a>.
+        Similarly, in the <cite><a data-matched-text="[[[Permissions]]]" href="https://www.w3.org/TR/permissions/">Permissions</a></cite> specification the string identifies a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful feature</a>.
+      </p>
+      <div class="note" role="note" id="issue-container-generatedID"><div role="heading" class="note-title marker" id="h-note" aria-level="3"><span>Note</span><span class="issue-label">: Permissions and Permissions Policy</span></div><aside class="">
+        <p>
+          Not every <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled feature</a> is <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful features</a>. For example,
+          "web-share" is a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled feature</a> that is not classified as a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful feature</a> because it doesn't require <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-express-permission">express permission</a> to be used. However, with
+          very few exceptions, most <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful features</a> are also <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled features</a>.
+          For example, "geolocation" is both a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled feature</a> and a <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful feature</a>, as it requires <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-express-permission">express permission</a> to be used. Please refer to the
+          <cite><a data-matched-text="[[[Permissions]]]" href="https://www.w3.org/TR/permissions/">Permissions</a></cite> specification for guidance on how to <a data-link-type="dfn|abstract-op" data-lt="specifies a powerful feature" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-specifies-a-powerful-feature">specify a powerful feature</a>.
+        </p>
+      </aside></div>
+      <table class="simple data">
+        <caption>
+          <dfn data-local-lt="table of standardized permissions" data-lt="Table of standardized permissions of the web platform|table of standardized permissions" id="dfn-table-of-standardized-permissions-of-the-web-platform" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">Table of standardized permissions
+          of the web platform</dfn>
+        </caption>
+        <tbody><tr>
+          <th rowspan="2">
+            Identifying string
+          </th>
+          <th rowspan="2">
+            Is <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled feature</a>?
+          </th>
+          <th rowspan="2">
+            Is <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful feature</a>?
+          </th>
+          <th rowspan="2">
+            Specification
+          </th>
+          <th colspan="3">
+            Implementations
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <a href="https://www.chromium.org/Home/">Chromium</a>
+          </th>
+          <th>
+            <a href="https://developer.mozilla.org/en-US/docs/Glossary/Gecko">Gecko</a>
+          </th>
+          <th>
+            <a href="https://webkit.org/">WebKit</a>
+          </th>
+        </tr>
+        <tr data-cite="geolocation">
+          <td class="string-token">
+            <a data-type="permission" href="https://www.w3.org/TR/geolocation/#dfn-geolocation">"geolocation"</a>
+          </td>
+          <td class="is-policy-controlled">
+            YES
+          </td>
+          <td class="is-powerful-feature">
+            YES
+          </td>
+          <td class="spec">
+            <cite><a data-matched-text="[[[geolocation]]]" href="https://www.w3.org/TR/geolocation/">Geolocation API</a></cite>
+          </td>
+          <td class="imp-chromium">
+            YES
+          </td>
+          <td class="imp-gecko">
+            YES
+          </td>
+          <td class="imp-webkit">
+            YES
+          </td>
+        </tr>
+        <tr data-cite="notifications">
+          <td class="string-token">
+            "<a data-link-type="dfn|abstract-op" data-type="permission" href="https://notifications.spec.whatwg.org/#permissiondef-notifications">notifications</a>"
+          </td>
+          <td class="is-policy-controlled">
+            NO
+          </td>
+          <td class="is-powerful-feature">
+            YES
+          </td>
+          <td class="spec">
+            <cite><a data-matched-text="[[[NOTIFICATIONS]]]" href="https://notifications.spec.whatwg.org/">Notifications API Standard</a></cite>
+          </td>
+          <td class="imp-chromium">
+            YES
+          </td>
+          <td class="imp-gecko">
+            YES
+          </td>
+          <td class="imp-webkit">
+            YES
+          </td>
+        </tr>
+        <tr data-cite="push-api">
+          <td class="string-token">
+            <a data-link-type="dfn|abstract-op" data-type="permission" href="https://www.w3.org/TR/push-api/#dfn-push">"push"</a>
+          </td>
+          <td class="is-policy-controlled">
+            NO
+          </td>
+          <td class="is-powerful-feature">
+            YES
+          </td>
+          <td class="spec">
+            <cite><a data-matched-text="[[[push-api]]]" href="https://www.w3.org/TR/push-api/">Push API</a></cite>
+          </td>
+          <td class="imp-chromium">
+            YES
+          </td>
+          <td class="imp-gecko">
+            YES
+          </td>
+          <td class="imp-webkit">
+            YES
+          </td>
+        </tr>
+        <tr data-cite="Web-share">
+          <td class="string-token">
+            <a data-type="permission" href="https://www.w3.org/TR/web-share/#dfn-web-share">"web-share"</a>
+          </td>
+          <td class="is-policy-controlled">
+            YES
+          </td>
+          <td class="is-powerful-feature">
+            NO
+          </td>
+          <td class="spec">
+            <cite><a data-matched-text="[[[Web-Share]]]" href="https://www.w3.org/TR/web-share/">Web Share API</a></cite>
+          </td>
+          <td class="imp-chromium">
+            NO
+          </td>
+          <td class="imp-gecko">
+            YES
+          </td>
+          <td class="imp-webkit">
+            YES
+          </td>
+        </tr>
+        
+      </tbody></table>
+    </section>
+    <section id="registry-table-of-provisional-permissions"><div class="header-wrapper"><h2 id="x4-registry-table-of-provisional-permissions"><bdi class="secno">4. </bdi>
+        Registry table of provisional permissions
+      </h2><a class="self-link" href="#registry-table-of-provisional-permissions" aria-label="Permalink for Section 4."></a></div>
+      
+      <p>
+        Provisional permissions are permissions that are not yet <a data-link-type="dfn|abstract-op" data-lt="standardized permission" href="#dfn-standardized-permission" class="internalDFN" id="ref-for-dfn-standardized-permission-1">standardized</a> (i.e., they are either experimental, still in the incubation
+        phase, or are only implemented in a single browser engine).
+      </p>
+      <table class="simple data">
+        <caption>
+          <dfn id="dfn-table-of-provisional-permissions" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">Table of provisional permissions</dfn>
+        </caption>
+        <tbody><tr>
+          <th rowspan="2">
+            Identifying string
+          </th>
+          <th rowspan="2">
+            Is <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions-policy-1/#policy-controlled-feature">policy-controlled feature</a>?
+          </th>
+          <th rowspan="2">
+            Is <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/permissions/#dfn-powerful-feature">powerful feature</a>?
+          </th>
+          <th rowspan="2">
+            Specification
+          </th>
+          <th colspan="3">
+            Implementations
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <a href="https://www.chromium.org/Home/">Chromium</a>
+          </th>
+          <th>
+            <a href="https://developer.mozilla.org/en-US/docs/Glossary/Gecko">Gecko</a>
+          </th>
+          <th>
+            <a href="https://webkit.org/">WebKit</a>
+          </th>
+        </tr>
+        <tr data-cite="accelerometer">
+          <td class="string-token">
+            "<a data-link-type="dfn|abstract-op" data-type="permission" href="https://www.w3.org/TR/accelerometer/#permissiondef-accelerometer">accelerometer</a>"
+          </td>
+          <td class="is-policy-controlled">
+            YES
+          </td>
+          <td class="is-powerful-feature">
+            YES
+          </td>
+          <td class="spec">
+            <cite><a data-matched-text="[[[accelerometer]]]" href="https://www.w3.org/TR/accelerometer/">Accelerometer</a></cite>
+          </td>
+          <td class="imp-chromium">
+            YES
+          </td>
+          <td class="imp-gecko">
+            NO
+          </td>
+          <td class="imp-webkit">
+            NO
+          </td>
+        </tr>
+        <tr data-cite="window-management">
+          <td class="string-token">
+            "<a data-link-type="dfn|abstract-op" data-type="permission" href="https://www.w3.org/TR/window-management/#permissiondef-window-management">window-management</a>"
+          </td>
+          <td class="is-policy-controlled">
+            YES
+          </td>
+          <td class="is-powerful-feature">
+            YES
+          </td>
+          <td class="spec">
+            <cite><a data-matched-text="[[[window-management]]]" href="https://www.w3.org/TR/window-management/">Window Management</a></cite>
+          </td>
+          <td class="imp-chromium">
+            YES
+          </td>
+          <td class="imp-gecko">
+            NO
+          </td>
+          <td class="imp-webkit">
+            NO
+          </td>
+        </tr>
+        <tr data-cite="local-font-access">
+          <td class="string-token">
+            "<a data-link-type="dfn|abstract-op" data-type="permission" href="https://wicg.github.io/local-font-access/#permissiondef-local-fonts">local-fonts</a>"
+          </td>
+          <td class="is-policy-controlled">
+            YES
+          </td>
+          <td class="is-powerful-feature">
+            YES
+          </td>
+          <td class="spec">
+            <cite><a data-matched-text="[[[local-font-access]]]" href="https://wicg.github.io/local-font-access/">Local Font Access</a></cite>
+          </td>
+          <td class="imp-chromium">
+            YES
+          </td>
+          <td class="imp-gecko">
+            NO
+          </td>
+          <td class="imp-webkit">
+            NO
+          </td>
+        </tr>
+        
+        
+      </tbody></table>
+    </section>
+  
+
+<section id="references" class="appendix"><div class="header-wrapper"><h2 id="a-references"><bdi class="secno">A. </bdi>References</h2><a class="self-link" href="#references" aria-label="Permalink for Appendix A."></a></div><section id="informative-references"><div class="header-wrapper"><h3 id="a-1-informative-references"><bdi class="secno">A.1 </bdi>Informative references</h3><a class="self-link" href="#informative-references" aria-label="Permalink for Appendix A.1"></a></div>
+    
+    <dl class="bibliography"><dt id="bib-accelerometer">[accelerometer]</dt><dd>
+      <a href="https://www.w3.org/TR/accelerometer/"><cite>Accelerometer</cite></a>. Anssi Kostiainen.  W3C. 2 November 2023. W3C Candidate Recommendation. URL: <a href="https://www.w3.org/TR/accelerometer/">https://www.w3.org/TR/accelerometer/</a>
+    </dd><dt id="bib-geolocation">[geolocation]</dt><dd>
+      <a href="https://www.w3.org/TR/geolocation/"><cite>Geolocation API</cite></a>. Marcos Caceres; Reilly Grant.  W3C. 1 September 2022. W3C Recommendation. URL: <a href="https://www.w3.org/TR/geolocation/">https://www.w3.org/TR/geolocation/</a>
+    </dd><dt id="bib-html">[html]</dt><dd>
+      <a href="https://html.spec.whatwg.org/multipage/"><cite>HTML Standard</cite></a>. Anne van Kesteren; Domenic Denicola; Ian Hickson; Philip Jägenstedt; Simon Pieters.  WHATWG. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+    </dd><dt id="bib-local-font-access">[local-font-access]</dt><dd>
+      <a href="https://wicg.github.io/local-font-access/"><cite>Local Font Access</cite></a>.  WICG. cg-draft. URL: <a href="https://wicg.github.io/local-font-access/">https://wicg.github.io/local-font-access/</a>
+    </dd><dt id="bib-notifications">[NOTIFICATIONS]</dt><dd>
+      <a href="https://notifications.spec.whatwg.org/"><cite>Notifications API Standard</cite></a>. Anne van Kesteren.  WHATWG. Living Standard. URL: <a href="https://notifications.spec.whatwg.org/">https://notifications.spec.whatwg.org/</a>
+    </dd><dt id="bib-permissions">[Permissions]</dt><dd>
+      <a href="https://www.w3.org/TR/permissions/"><cite>Permissions</cite></a>. Marcos Caceres; Mike Taylor.  W3C. 13 June 2023. W3C Working Draft. URL: <a href="https://www.w3.org/TR/permissions/">https://www.w3.org/TR/permissions/</a>
+    </dd><dt id="bib-permissions-policy">[Permissions-Policy]</dt><dd>
+      <a href="https://www.w3.org/TR/permissions-policy-1/"><cite>Permissions Policy</cite></a>. Ian Clelland.  W3C. 17 October 2023. W3C Working Draft. URL: <a href="https://www.w3.org/TR/permissions-policy-1/">https://www.w3.org/TR/permissions-policy-1/</a>
+    </dd><dt id="bib-push-api">[push-api]</dt><dd>
+      <a href="https://www.w3.org/TR/push-api/"><cite>Push API</cite></a>. Peter Beverloo; Martin Thomson; Marcos Caceres.  W3C. 10 October 2023. W3C Working Draft. URL: <a href="https://www.w3.org/TR/push-api/">https://www.w3.org/TR/push-api/</a>
+    </dd><dt id="bib-w3c-process">[w3c-process]</dt><dd>
+      <a href="https://www.w3.org/Consortium/Process/"><cite>W3C Process</cite></a>. Elika J. Etemad (fantasai); Florian Rivoal. URL: <a href="https://www.w3.org/Consortium/Process/">https://www.w3.org/Consortium/Process/</a>
+    </dd><dt id="bib-web-share">[Web-Share]</dt><dd>
+      <a href="https://www.w3.org/TR/web-share/"><cite>Web Share API</cite></a>. Matt Giuca; Eric Willigers; Marcos Caceres.  W3C. 30 May 2023. W3C Recommendation. URL: <a href="https://www.w3.org/TR/web-share/">https://www.w3.org/TR/web-share/</a>
+    </dd><dt id="bib-window-management">[window-management]</dt><dd>
+      <a href="https://www.w3.org/TR/window-management/"><cite>Window Management</cite></a>. Joshua Bell; Mike Wasserman.  W3C. 6 September 2023. W3C Working Draft. URL: <a href="https://www.w3.org/TR/window-management/">https://www.w3.org/TR/window-management/</a>
+    </dd></dl>
+  </section></section><p role="navigation" id="back-to-top">
+    <a href="#title"><abbr title="Back to Top">↑</abbr></a>
+  </p><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-change-process" aria-label="Links in this document to definition: change process">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-change-process" aria-label="Permalink for definition: change process. Activate to close this dialog.">Permalink</a>
+         
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-dfn-change-process-1" title="§ 1. Purpose">§ 1. Purpose</a> 
+    </li>
+  </ul>
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-standardized-permission" aria-label="Links in this document to definition: standardized permission">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-standardized-permission" aria-label="Permalink for definition: standardized permission. Activate to close this dialog.">Permalink</a>
+         
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-dfn-standardized-permission-1" title="§ 4. Registry table of provisional permissions">§ 4. Registry table of provisional permissions</a> 
+    </li>
+  </ul>
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-table-of-standardized-permissions-of-the-web-platform" aria-label="Links in this document to definition: Table of standardized permissions of the web platform">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-table-of-standardized-permissions-of-the-web-platform" aria-label="Permalink for definition: Table of standardized permissions of the web platform. Activate to close this dialog.">Permalink</a>
+         
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-dfn-table-of-standardized-permissions-of-the-web-platform-1" title="§ 2. Change Process">§ 2. Change Process</a> 
+    </li>
+  </ul>
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-table-of-provisional-permissions" aria-label="Links in this document to definition: Table of provisional permissions">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-table-of-provisional-permissions" aria-label="Permalink for definition: Table of provisional permissions. Activate to close this dialog.">Permalink</a>
+         
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-dfn-table-of-provisional-permissions-1" title="§ 2. Change Process">§ 2. Change Process</a> 
+    </li>
+  </ul>
+    </div><script id="respec-dfn-panel">(() => {
+// @ts-check
+if (document.respec) {
+  document.respec.ready.then(setupPanel);
+} else {
+  setupPanel();
+}
+
+function setupPanel() {
+  const listener = panelListener();
+  document.body.addEventListener("keydown", listener);
+  document.body.addEventListener("click", listener);
+}
+
+function panelListener() {
+  /** @type {HTMLElement} */
+  let panel = null;
+  return event => {
+    const { target, type } = event;
+
+    if (!(target instanceof HTMLElement)) return;
+
+    // For keys, we only care about Enter key to activate the panel
+    // otherwise it's activated via a click.
+    if (type === "keydown" && event.key !== "Enter") return;
+
+    const action = deriveAction(event);
+
+    switch (action) {
+      case "show": {
+        hidePanel(panel);
+        /** @type {HTMLElement} */
+        const dfn = target.closest("dfn, .index-term");
+        panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
+        const coords = deriveCoordinates(event);
+        displayPanel(dfn, panel, coords);
+        break;
+      }
+      case "dock": {
+        panel.style.left = null;
+        panel.style.top = null;
+        panel.classList.add("docked");
+        break;
+      }
+      case "hide": {
+        hidePanel(panel);
+        panel = null;
+        break;
+      }
+    }
+  };
+}
+
+/**
+ * @param {MouseEvent|KeyboardEvent} event
+ */
+function deriveCoordinates(event) {
+  const target = /** @type HTMLElement */ (event.target);
+
+  // We prevent synthetic AT clicks from putting
+  // the dialog in a weird place. The AT events sometimes
+  // lack coordinates, so they have clientX/Y = 0
+  const rect = target.getBoundingClientRect();
+  if (
+    event instanceof MouseEvent &&
+    event.clientX >= rect.left &&
+    event.clientY >= rect.top
+  ) {
+    // The event probably happened inside the bounding rect...
+    return { x: event.clientX, y: event.clientY };
+  }
+
+  // Offset to the middle of the element
+  const x = rect.x + rect.width / 2;
+  // Placed at the bottom of the element
+  const y = rect.y + rect.height;
+  return { x, y };
+}
+
+/**
+ * @param {Event} event
+ */
+function deriveAction(event) {
+  const target = /** @type {HTMLElement} */ (event.target);
+  const hitALink = !!target.closest("a");
+  if (target.closest("dfn:not([data-cite]), .index-term")) {
+    return hitALink ? "none" : "show";
+  }
+  if (target.closest(".dfn-panel")) {
+    if (hitALink) {
+      return target.classList.contains("self-link") ? "hide" : "dock";
+    }
+    const panel = target.closest(".dfn-panel");
+    return panel.classList.contains("docked") ? "hide" : "none";
+  }
+  if (document.querySelector(".dfn-panel:not([hidden])")) {
+    return "hide";
+  }
+  return "none";
+}
+
+/**
+ * @param {HTMLElement} dfn
+ * @param {HTMLElement} panel
+ * @param {{ x: number, y: number }} clickPosition
+ */
+function displayPanel(dfn, panel, { x, y }) {
+  panel.hidden = false;
+  // distance (px) between edge of panel and the pointing triangle (caret)
+  const MARGIN = 20;
+
+  const dfnRects = dfn.getClientRects();
+  // Find the `top` offset when the `dfn` can be spread across multiple lines
+  let closestTop = 0;
+  let minDiff = Infinity;
+  for (const rect of dfnRects) {
+    const { top, bottom } = rect;
+    const diffFromClickY = Math.abs((top + bottom) / 2 - y);
+    if (diffFromClickY < minDiff) {
+      minDiff = diffFromClickY;
+      closestTop = top;
+    }
+  }
+
+  const top = window.scrollY + closestTop + dfnRects[0].height;
+  const left = x - MARGIN;
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+
+  // Find if the panel is flowing out of the window
+  const panelRect = panel.getBoundingClientRect();
+  const SCREEN_WIDTH = Math.min(window.innerWidth, window.screen.width);
+  if (panelRect.right > SCREEN_WIDTH) {
+    const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
+    const newCaretOffset = left - newLeft;
+    panel.style.left = `${newLeft}px`;
+    /** @type {HTMLElement} */
+    const caret = panel.querySelector(".caret");
+    caret.style.left = `${newCaretOffset}px`;
+  }
+
+  // As it's a dialog, we trap focus.
+  // TODO: when <dialog> becomes a implemented, we should really
+  // use that.
+  trapFocus(panel, dfn);
+}
+
+/**
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function trapFocus(panel, dfn) {
+  /** @type NodeListOf<HTMLAnchorElement> elements */
+  const anchors = panel.querySelectorAll("a[href]");
+  // No need to trap focus
+  if (!anchors.length) return;
+
+  // Move focus to first anchor element
+  const first = anchors.item(0);
+  first.focus();
+
+  const trapListener = createTrapListener(anchors, panel, dfn);
+  panel.addEventListener("keydown", trapListener);
+
+  // Hiding the panel releases the trap
+  const mo = new MutationObserver(records => {
+    const [record] = records;
+    const target = /** @type HTMLElement */ (record.target);
+    if (target.hidden) {
+      panel.removeEventListener("keydown", trapListener);
+      mo.disconnect();
+    }
+  });
+  mo.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+}
+
+/**
+ *
+ * @param {NodeListOf<HTMLAnchorElement>} anchors
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function createTrapListener(anchors, panel, dfn) {
+  const lastIndex = anchors.length - 1;
+  let currentIndex = 0;
+  return event => {
+    switch (event.key) {
+      // Hitting "Tab" traps us in a nice loop around elements.
+      case "Tab": {
+        event.preventDefault();
+        currentIndex += event.shiftKey ? -1 : +1;
+        if (currentIndex < 0) {
+          currentIndex = lastIndex;
+        } else if (currentIndex > lastIndex) {
+          currentIndex = 0;
+        }
+        anchors.item(currentIndex).focus();
+        break;
+      }
+
+      // Hitting "Enter" on an anchor releases the trap.
+      case "Enter":
+        hidePanel(panel);
+        break;
+
+      // Hitting "Escape" returns focus to dfn.
+      case "Escape":
+        hidePanel(panel);
+        dfn.focus();
+        return;
+    }
+  };
+}
+
+/** @param {HTMLElement} panel */
+function hidePanel(panel) {
+  if (!panel) return;
+  panel.hidden = true;
+  panel.classList.remove("docked");
+}
+})()</script><script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script></body></html>

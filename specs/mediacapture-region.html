@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Region Capture</title>
+    <script class="remove" src="region-capture.js" type="text/javascript"></script>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+  </head>
+  <body>
+    <section id="abstract">
+      <h2>Abstract</h2>
+      <p>
+        This document introduces an API for cropping a video track derived from display-capture of
+        the current tab.
+      </p>
+    </section>
+    <section id="sotd">
+      This First Public Working Draft represents the direction the Web Real-Time Communications
+      Working Group intends to explore to solve the use case of partial capture of browsing
+      contexts. The Working Group is particularly interested in feedback on how well this direction
+      matches the said use case from potential adopters of the API.
+    </section>
+    <section id="conformance"></section>
+    <section id="definitions">
+      <h2>Definitions</h2>
+      <p>
+        This document uses the definition of the following concepts from [[SCREEN-CAPTURE]]:
+        <dfn>display-surface</dfn> and <dfn>browser</dfn> [=display-surface=].
+      </p>
+    </section>
+    <section class="informative" id="use-cases">
+      <h2>Use Cases</h2>
+      <section id="generic-use-case">
+        <h3>Generic Use-Case</h3>
+        <p>
+          Complex applications often comprise multiple [=documents=] in distinct [=iframes=], all
+          displayed within the same [=browsing context=]. Consider such an application. Assume one
+          of these documents, <var>CAPTURING-DOC</var> uses {{MediaDevices/getDisplayMedia()}} or
+          <code>getViewportMedia</code> to capture the entire current [=browsing context=]. If this
+          document then wishes to crop the video track to the coordinates of some sub-section
+          <var>CAPTURE-TARGET</var> of a collaborating document <var>CAPTURED-DOC</var>, how can
+          <var>CAPTURING-DOC</var> do so performantly and reliably? Recall especially that changes
+          in layout due to scrolling, zooming or window resizing present additional challenges.
+        </p>
+      </section>
+      <section id="practical-use-case">
+        <h3>Practical Use-Case</h3>
+        <p>
+          Consider a combo-application consisting of two major parts hosted in different iframes
+          within the same tab - a video-conferencing application and a productivity-suite
+          application. Assume the video-conferencing uses existing/upcoming APIs such as
+          {{MediaDevices/getDisplayMedia()}} and/or <code>getViewportMedia</code> and captures the
+          entire tab. Now it needs to crop away everything other than a particular section of the
+          productivity-suite. It needs to crop away its own video-conferencing content, any speaker
+          notes and other private and/or irrelevant content in the productivity-suite, before
+          transmitting the resulting cropped video remotely.
+        </p>
+        <p>
+          Moreover, consider that it is likely that the two collaborating applications are
+          cross-origin from each other. They can post messages, but all communication is
+          asynchronous, and it's easier and more performant if information is transmitted sparingly
+          between them. That precludes solutions involving posting of entire frames, as well as
+          solutions which are too slow to react to changes in layout (e.g. scrolling, zooming and
+          window-size changes).
+        </p>
+        <p>
+          It is worthwhile to note that most applications would likey prefer to use
+          <code>getViewportMedia</code> in such scenarios. However, as of this writing,
+          <code>getViewportMedia</code> is still unspecified and unimplemented. It will have
+          non-trivial requirements whose adoption will take some time and effort. As such, many
+          applications will likely use a combination of {{MediaDevices/getDisplayMedia()}} and
+          Region Capture for some time to come.
+        </p>
+      </section>
+    </section>
+    <section id="solution-overview">
+      <h2>Solution Overview</h2>
+      <p>The region-capture mechanism comprises two parts:</p>
+      <ol>
+        <li>
+          [=CropTarget production=]: A mechanism for <dfn>tagging</dfn> an {{Element}} as a
+          potential target for the [=cropping mechanism=].
+        </li>
+        <li>
+          [=Cropping mechanism=]: A mechanism for instructing the user agent to start cropping a
+          video track to the contours of a previously [=tagging|tagged=] {{Element}}, or to stop
+          such cropping and revert a track to its [=uncropped=] state.
+        </li>
+      </ol>
+      <p>
+        We define two <dfn>crop-states</dfn> for video tracks - <dfn>cropped</dfn> and
+        <dfn>uncropped</dfn>. Tracks start out [=uncropped=], and may turn to [=cropped=] when
+        {{BrowserCaptureMediaStreamTrack/cropTo}} is successfully called on them.
+      </p>
+    </section>
+    <section id="produce-crop-target">
+      <h2><dfn>CropTarget Production</dfn></h2>
+      <section id="crop-target-motivation">
+        <h3>CropTarget Motivation</h3>
+        <p>
+          The [=cropping mechanism=] presented in this document
+          ({{BrowserCaptureMediaStreamTrack/cropTo}}) relies on [=Crop-session Target=] rather than
+          on direct node references. This serves a dual purpose.
+        </p>
+        <ul>
+          <li>
+            <p>It allows cropping by one document to coordinates specified in another document.</p>
+          </li>
+          <li>
+            <p>
+              [=Tagging=] an {{Element}} as a potential crop-target allows the user agent to avoid
+              unnecessary work on all other elements, like the calculation of bounding boxes and
+              sending such coordinates cross-process.
+            </p>
+          </li>
+        </ul>
+      </section>
+      <section id="crop-target">
+        <h3><dfn>CropTarget</dfn> Definition</h3>
+        <p>
+          CropTarget is an intentionally empty, opaque identifier. Its purpose is to be handed to
+          {{BrowserCaptureMediaStreamTrack/cropTo}} as input.
+        </p>
+        <pre class="idl">
+          [Exposed=(Window,Worker), Serializable]
+          interface CropTarget {
+            [Exposed=Window, SecureContext] static Promise&lt;CropTarget&gt; fromElement(Element element);
+          };
+        </pre>
+        <div class="note">
+          <p>
+            There is no consensus yet on whether {{CropTarget/fromElement}} should be exposed beyond
+            secure contexts.
+          </p>
+        </div>
+        <dl data-link-for="CropTarget" data-dfn-for="CropTarget">
+          <dt>
+            <dfn>fromElement()</dfn>
+          </dt>
+          <dd>
+            <p>
+              Calling {{CropTarget/fromElement}} with an {{Element}} of a supported type associates
+              that {{Element}} with a {{CropTarget}}. This {{CropTarget}} may be used as input to
+              {{BrowserCaptureMediaStreamTrack/cropTo}}. We define a
+              <dfn>valid CropTarget</dfn> as one returned by a call to {{CropTarget.fromElement()}}
+              in a <a data-cite="!HTML#document">document</a> that is still
+              <a data-cite="!HTML#active-document">active</a>.
+            </p>
+            <p>
+              When {{CropTarget/fromElement}} is called with a given <var>element</var>, the user
+              agent [=create a CropTarget|creates a CropTarget=] with <var>element</var> as input.
+              The user agent MUST return a {{Promise}} <var>p</var>. The user agent MUST resolve
+              <var>p</var> only after it has finished all the necessary internal propagation of
+              state associated with the new {{CropTarget}}, at which point the user agent MUST be
+              ready to receive the new {{CropTarget}} as a valid parameter to
+              {{BrowserCaptureMediaStreamTrack/cropTo}}.
+            </p>
+            <p>
+              When cloning an {{Element}} on which {{CropTarget/fromElement}} was previously called,
+              the clone is not associated with any {{CropTarget}}. If {{CropTarget/fromElement}} is
+              later called on the clone, a new {{CropTarget}} will be assigned to it.
+            </p>
+            <div class="note">
+              <p>
+                There is no consensus yet on whether producing a {{CropTarget}} should be done by
+                invoking an asynchronous method like {{CropTarget.fromElement()}}, or a
+                {{CropTarget}} constructor that accepts an {{Element}} as input. This is further
+                discussed on
+                <a href="https://github.com/w3c/mediacapture-region/issues/17">issue #17</a>.
+              </p>
+            </div>
+          </dd>
+        </dl>
+        <p>
+          To <dfn data-export>create a CropTarget</dfn> with <var>element</var> as input, run the
+          following steps:
+        </p>
+        <ol>
+          <li>
+            <p>Let <var>cropTarget</var> be a new object of type {{CropTarget}}.</p>
+          </li>
+          <li>
+            <p>Let <var>weakRef</var> be a weak reference to <var>element</var>.</p>
+            <p>
+              [=Create a CropTarget|Create=]
+              <var>cropTarget</var>.<dfn data-dfn-for="CropTarget" class="export">[[\Element]]</dfn>
+              initialized to <var>weakRef</var>.
+            </p>
+            <div class="note">
+              <p>
+                <var>cropTarget</var> keeps a weak reference to the element it represents. In other
+                words, <var>cropTarget</var> will not prevent garbage collection of its element.
+              </p>
+            </div>
+          </li>
+        </ol>
+        <p>
+          {{CropTarget}} objects are serializable. The [=serialization steps=], given
+          <var>value</var>, <var>serialized</var>, and a boolean <var>forStorage</var>, are:
+        </p>
+        <ol>
+          <li>
+            <p>
+              If <var>forStorage</var> is <code>true</code>, throw with new {{DOMException}} object
+              whose {{DOMException/name}} attribute has the value {{"DataCloneError"}}.
+            </p>
+          </li>
+          <li>
+            <p>
+              Set <var>serialized</var>.[[\CropTargetElement]] to
+              <var>value</var>.{{CropTarget/[[Element]]}}.
+            </p>
+          </li>
+        </ol>
+        <p>The [=deserialization steps=], given <var>serialized</var> and <var>value</var> are:</p>
+        <ol>
+          <li>
+            <p>
+              Set <var>value</var>.{{CropTarget/[[Element]]}} to
+              <var>serialized</var>.[[\CropTargetElement]].
+            </p>
+          </li>
+        </ol>
+      </section>
+    </section>
+    <section id="cropping-a-track">
+      <h2><dfn>Cropping Mechanism</dfn></h2>
+      <section id="browser-capture-media-stream-track">
+        <h3>BrowserCaptureMediaStreamTrack</h3>
+        <p>
+          Recall that, as per [[SCREEN-CAPTURE]], when {{MediaDevices/getDisplayMedia()}} is called,
+          it returns a {{Promise}}&lt;{{MediaStream}}&gt;, and that this {{MediaStream}} contains
+          exactly one video track, whose type is {{MediaStreamTrack}}.
+        </p>
+        <p>
+          We specify that if the user chooses to capture a [=browser=] [=display-surface=], the user
+          agent MUST instantiate the video track as either {{MediaStreamTrack}}, or as some
+          sub-class of {{MediaStreamTrack}}, and that {{BrowserCaptureMediaStreamTrack/cropTo}} MUST
+          be exposed on this track. For simplicity's sake, this document assumes that a subclass
+          called {{BrowserCaptureMediaStreamTrack}} is used by the user agent.
+        </p>
+        <p>The track MUST be initially [=uncropped=].</p>
+        <pre class="idl">
+          [Exposed = Window]
+          interface BrowserCaptureMediaStreamTrack : MediaStreamTrack {
+            Promise&lt;undefined&gt; cropTo(CropTarget? cropTarget);
+            BrowserCaptureMediaStreamTrack clone();
+          };
+        </pre>
+        <dl
+          data-link-for="BrowserCaptureMediaStreamTrack"
+          data-dfn-for="BrowserCaptureMediaStreamTrack"
+        >
+          <dt>
+            <dfn>cropTo()</dfn>
+          </dt>
+          <dd>
+            <p>
+              Calls to this method instruct the user agent to start/stop cropping a video track to
+              the
+              <a href="https://drafts.csswg.org/cssom-view/#dom-element-getboundingclientrect">
+                bounding client rectangle</a
+              >
+              of <var>cropTarget</var>.{{CropTarget/[[Element]]}}. Since the track is restricted to
+              the visible viewport of the [=display-surface=], the captured area will be the
+              intersection of the visible viewport and the element bounding client rectangle.
+              Whenever {{BrowserCaptureMediaStreamTrack/cropTo}} is invoked, the user agent MUST
+              execute the following algorithm:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  If <var>cropTarget</var> is neither a [=valid CropTarget=] nor <code>null</code>,
+                  the user agent MUST return a {{Promise}} [=rejected=] with an {{UnknownError}}.
+                </p>
+              </li>
+              <li>Let <var>p</var> be a new {{Promise}}.</li>
+              <li>
+                <p>Run the following steps in parallel:</p>
+                <ol>
+                  <li>
+                    If <var>cropTarget</var> is neither {{undefined}} nor a [=valid CropTarget=],
+                    reject <var>p</var> with a {{NotAllowedError}} and abort these steps.
+                  </li>
+                  <li>
+                    <p>
+                      If <var>cropTarget</var> is either {{undefined}} or a [=valid CropTarget=],
+                      the user agent MUST update [=this=] video track's [=crop-state=] according to
+                      <var>cropTarget</var>:
+                    </p>
+                    <ul>
+                      <li>
+                        If <var>cropTarget</var> is set to {{undefined}}, the user agent MUST stop
+                        cropping. [=This=] video track reverts to the [=uncropped=] state.
+                      </li>
+                      <li>
+                        If <var>cropTarget</var> is a [=valid CropTarget=], the user agent MUST
+                        start cropping [=this=] video track to the contours of the element
+                        referenced by this {{CropTarget}}. This means that for each new frame
+                        produced on the track, the user agent calculates the bounding box of the
+                        pixels belonging to the element, and crops the frame to the coordinates of
+                        this bounding box.
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <p>
+                      Call the track's state before this method invocation <var>PRE-STATE</var>, and
+                      after this method invocation <var>POST-STATE</var>. The user agent MUST
+                      resolve <var>p</var> when it is guaranteed that no more frames cropped (or
+                      uncropped) according to <var>PRE-STATE</var> will be delivered to the
+                      application, and that any additional frames delivered to the application will
+                      therefore be cropped (or uncropped) according to either
+                      <var>POST-STATE</var> or a later state.
+                    </p>
+                    <div class="note">
+                      <p>
+                        The timing of the cropTo promise resolution and the timing of the actual
+                        cropping of video frames is observable to JavaScript through
+                        <a href="https://w3c.github.io/mediacapture-transform/">
+                          MediaStreamTrack transforms</a
+                        >. It is expected that the first newly cropped video frame will be enqueued
+                        on the MediaStreamTrack ReadableStream just after the cropTo promise is
+                        resolved.
+                      </p>
+                    </div>
+                  </li>
+                </ol>
+              </li>
+              <li>Return <var>p</var>.</li>
+            </ol>
+          </dd>
+          <dt>
+            <dfn>clone()</dfn>
+          </dt>
+          <dd>
+            <p>
+              When a {{BrowserCaptureMediaStreamTrack}} is cloned, the user agent MUST produce a
+              track which is initially [=uncropped=], regardless of the [=crop-state=] of the
+              original track.
+            </p>
+          </dd>
+        </dl>
+      </section>
+      <section id="crop-session-lifetime">
+        <h3>Crop-Session Lifetime</h3>
+        <section id="crop-session-definitions">
+          <h4>Crop-Session Definitions</h4>
+          <p>
+            We define an {{Element}} for which a {{CropTarget}} was produced (through a call to
+            {{CropTarget/fromElement}}) as a <dfn>potential crop-target</dfn>.
+          </p>
+          <p>
+            We define a [=potential crop-target=] which is targeted by a successful call to
+            {{BrowserCaptureMediaStreamTrack/cropTo}} as the <dfn>crop-session target</dfn>.
+          </p>
+          <p>
+            Consider a frame produced on a [=cropped=] video track. The user agent calculates the
+            intersection of (i) the [=top-level browsing context=]'s viewport and (ii) the bounding
+            box of all pixels belonging to the [=crop-session target=]. This intersection is defined
+            as the crop-session target's coordinates for that frame.
+          </p>
+        </section>
+        <section id="crop-session-edge-cases">
+          <h4>Crop-Session Edge Cases</h4>
+          <p>
+            Consider a video track <var>VT</var> [=cropped=] to a given [=crop-session target=]
+            <var>TARGET</var>. We define the behavior of the crop-session of the <var>VT</var> in
+            the face of changes undergone by <var>TARGET</var>.
+          </p>
+          <section id="empty-crop-target">
+            <h5>Empty Crop-Target</h5>
+            <p>
+              We define as an <dfn>empty crop-session target</dfn> the case where a [=crop-session
+              target=] is attached to the DOM, yet consists of zero pixels which are drawn inside of
+              the [=top-level browsing context|top-level browsing context's=] viewport.
+            </p>
+            <div class="note">
+              <p>Some examples of when this could happen include:</p>
+              <ul>
+                <li>The [=crop-session target=] consists of zero pixels.</li>
+                <li>
+                  The [=browsing context|browsing context's=] viewport has been scrolled and the
+                  [=crop-session target=] now lies outside of the viewport.
+                </li>
+              </ul>
+            </div>
+            <p>
+              The user agent MUST NOT produce new frames on tracks with an [=empty crop-session
+              target=]. For such a track, the user agent MUST resume the production of frames if the
+              track either become [=uncropped=], or if its [=crop-session target=] stops being
+              [=empty crop-session target|empty=].
+            </p>
+          </section>
+          <section id="disconnected-crop-target">
+            <h5>Disconnected Crop-Session Target</h5>
+            <p>
+              We define as <dfn>disconnected crop-session target</dfn> a [=crop-session target=]
+              that had been detached from the DOM.
+            </p>
+            <p>
+              The difference between an [=empty crop-session target=] and a [=disconnected
+              crop-session target=], is that a [=disconnected crop-session target|disconnected=] one
+              may become
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management#mark-and-sweep_algorithm"
+                >unreachable</a
+              >, in which case it would not produce any new frames. Nevertheless, the user agent
+              MUST treat a [=disconnected crop-session target=] the same way it treats an [=empty
+              crop-session target=]. The application may call
+              {{BrowserCaptureMediaStreamTrack/cropTo}} on the track with either {{undefined}} or a
+              new {{CropTarget}}, thereby allowing the production of frames on the track to be
+              resumed.
+            </p>
+          </section>
+        </section>
+      </section>
+    </section>
+    <section id="sample-code">
+      <h2>Sample Code</h2>
+      <div class="example">
+        <p>Code in the capture-target:</p>
+        <pre class="javascript">
+          const mainContentArea = navigator.getElementById('mainContentArea');
+          const cropTarget = await CropTarget.fromElement(mainContentArea);
+          sendCropTarget(cropTarget);
+
+          function sendCropTarget(cropTarget) {
+            // Can send the crop-target to another document in this tab
+            // using postMessage() or using any other means.
+            // Possibly there is no other document, and this is just consumed locally.
+          }
+        </pre>
+      </div>
+      <div class="example">
+        <p>Code in the capturing-document:</p>
+        <pre class="javascript">
+          async function startCroppedCapture(cropTarget) {
+            const stream = await navigator.mediaDevices.getDisplayMedia();
+            const [track] = stream.getVideoTracks();
+            if (!!track.cropTo) {
+              handleError(stream);
+              return;
+            }
+            await track.cropTo(cropTarget);
+            transmitVideoRemotely(track);
+          }
+        </pre>
+      </div>
+    </section>
+  </body>
+</html>

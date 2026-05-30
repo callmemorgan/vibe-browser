@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>
+      Device Posture API
+    </title>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c' async class=
+    'remove'></script>
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+    <script class='remove'>
+      const respecConfig = {
+        specStatus: "ED",
+        shortName: "device-posture",
+        editors: [{
+          name: "Kenneth Rohde Christiansen",
+          url: "https://github.com/kenchris",
+          company: "Intel Corporation",
+          companyURL: "https://intel.com/",
+          w3cid: 57705
+        },
+        {
+          name: "Alexis Menard",
+          url: "https://github.com/darktears",
+          company: "Intel Corporation",
+          companyURL: "https://intel.com/",
+          w3cid: 58389
+        }],
+        formerEditors: [{
+          name: "Diego González",
+          url: "https://twitter.com/diekus",
+          company: "Microsoft, formerly on behalf of Samsung",
+          companyURL: "https://microsoft.com",
+          w3cid: 66757
+        }],
+        github: "https://github.com/w3c/device-posture",
+        group: "das",
+        testSuiteURI: "https://wpt.live/device-posture",
+        implementationReportURI: "https://wpt.fyi/results/device-posture",
+        otherLinks: [{
+         key: 'Additional resources',
+         data: [{
+           value: `Explainer`,
+           href: 'https://github.com/w3c/device-posture/blob/gh-pages/README.md'
+         },{
+           value: 'Polyfill',
+           href: 'https://w3c.github.io/device-posture/polyfill/demo.html'
+         }]
+        }],
+        xref: {
+          profile: "web-platform",
+          specs: [
+            "mediaqueries",
+            "screen-orientation",
+          ]
+        }, 
+      };
+    </script>
+    <style>
+      :root {
+        --drawing-size: 15rem;
+      }
+
+      .drawing {
+        height: var(--drawing-size);
+        margin-bottom: 1em;
+        object-fit: contain;
+      }
+
+      .centered {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+      }
+
+      .postures {
+        display: grid;
+        grid-template: 1fr / auto auto;
+        grid-gap: 2rem;
+      }
+
+      section img {
+        width: 70%;
+        height: auto;
+        margin:auto;
+        display: flex;
+      }
+
+      @media (max-width: 500px) { /*for narrow displays like the fold*/
+        .postures {
+          display: flex;
+          flex-flow: column nowrap;
+          justify-content: center;
+        }
+      }
+
+      body {
+        background-repeat: no-repeat !important;
+      }
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+        This document specifies an API that allows web applications to request
+        and be notified of changes of the posture of a device.
+      </p>
+    </section>
+    <section id='sotd'>
+      <p class="advisement">
+        This specification is implemented in Chromium-based browsers. WebKit
+        and Mozilla have not yet published formal positions on this
+        specification.
+      </p>
+      <p>
+        Vendors interested in implementing this specification before it
+        eventually reaches the Candidate Recommendation phase should <a href=
+        "https://github.com/w3c/device-posture">subscribe to the repository on
+        GitHub</a> and take part in the discussions.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Introduction
+      </h2>
+      <p>
+        The device posture is the physical position in which a device holds
+        which may be derived from sensors in addition to the angle. New types
+        of mobile devices are appearing that have some sort of capabilities
+        that allow them to change their posture. The most common types of
+        devices are the ones that can fold (their screen or around their
+        screen), allowing them to physically alter their form factor. The main
+        interest in knowing the posture of a device is to enable new user
+        experiences with responsive design.
+      </p>
+      <p>
+        Among the described "folding" devices, there are mainly two different
+        physical form factors: devices with a single flexible screen
+        (seamless), and devices with two screens (with seam). They can both
+        fold around a hinge, and the current specification applies to both
+        types. It should be clarified as well that both seamless and (devices)
+        with seam can be of different dimension ranging from mobile and tablets
+        to laptop sizes. It should also be noted that different devices will
+        have different default orientations (portrait or landscape), and that
+        the fold might happen in a vertical or horizontal way.
+      </p><span class="centered"><img src="images/form-factors.svg" height=
+      "150" alt="drawing of different type of foldable devices"></span>
+      <p>
+        From enhancing the usability of a website by avoiding the area of a
+        fold, to enabling innovative use cases for the web, knowing the posture
+        of a device can help developers tailor their content to different
+        devices.
+      </p>
+      <p>
+        Content can be consumed and browsed even when the device is not flat,
+        in which case the developer might want to provide a different layout
+        for it depending on the posture state in which the device is being
+        used.
+      </p>
+    </section>
+    <section>
+      <h3>
+        Extensions to the `Document` interface
+      </h3>
+      <p>
+        The following internal slots are added to the {{Document}} interface.
+      </p>
+      <table class="def">
+        <thead>
+          <tr>
+            <th>
+              Internal slot
+            </th>
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <dfn data-dfn-for="Document">[[\CurrentPosture]]</dfn>
+            </td>
+            <td>
+              The device's <dfn>current posture</dfn>.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section data-dfn-for="Navigator">
+      <h2 id="extensions-to-the-navigator-interface">
+        Extensions to the `Navigator` interface
+      </h2>
+      <p>
+        The [[HTML]] specification defines the {{Navigator}} interface, which
+        this specification extends:
+      </p>
+      <pre class="idl">
+        [SecureContext, Exposed=(Window)]
+        partial interface Navigator {
+          [SameObject] readonly attribute DevicePosture devicePosture;
+        };
+      </pre>
+    </section>
+    <section data-dfn-for="DevicePosture">
+      <h2>
+        The <dfn>DevicePosture</dfn> interface
+      </h2>
+      <pre class="idl">
+
+        [SecureContext, Exposed=(Window)]
+        interface DevicePosture : EventTarget {
+          readonly attribute DevicePostureType type;
+          attribute EventHandler onchange;
+        };
+
+        enum DevicePostureType {
+          "continuous",
+          "folded"      
+        };
+      </pre>
+      <section>
+        <h3>
+          The <dfn>type</dfn> attribute: Get current device posture
+        </h3>
+        <p>
+          When getting the type attribute, the user agent MUST return the value
+          of [=this=]'s [=relevant global object=]'s [=associated Document=]'s
+          internal slot {{Document/[[CurrentPosture]]}}.
+        </p>
+      </section>
+      <section>
+        <h3>
+          The <dfn>onchange</dfn> attribute: Handle posture changes
+        </h3>
+        <p data-link-for="DevicePosture">
+          The {{onchange}} attribute is an <a>event handler IDL attribute</a>
+          for the {{onchange}} [=event handler=], whose [=event handler event
+          type=] is "<dfn class="event" data-dfn-for=
+          "DevicePosture">change</dfn>".
+        </p>
+      </section>
+    </section>
+    <section data-link-for="DevicePostureType">
+      <h2>
+        Posture types
+      </h2>
+      <p>
+        This specification defines the following <dfn data-export=
+        "">posture</dfn> values:
+      </p>
+      <ol class="postures">
+        <li>
+          <img src="images/continuos-posture.svg" class="drawing" alt=
+          "drawing of the continuous posture">
+          <p>
+            <a>Continuous</a> posture: The continuous posture refers to a
+            "flat" position. This is the default case for most devices not
+            allowing different postures.
+          </p>
+          <p>
+            It includes devices with no folds, hinges or similar capabilities.
+          </p>
+          <p>
+            Due to the nature of hardware innovation, it also includes devices
+            with dual, foldable, rollable or curved screens, as long as they
+            are in a posture where the {{Document}} is expected to be displayed
+            with a flat layout.
+          </p>
+          <p>
+            Examples of these are:
+          </p>
+          <ul>
+            <li>Foldable device in a flat, fully unfolded posture.
+            </li>
+            <li>Foldable device running the browser in a window/section that
+            does not span across the hinge.
+            </li>
+            <li>2-in-1 device in tablet mode using only 1 screen/side.
+            </li>
+            <li>Devices that do not fold.
+            </li>
+          </ul>
+          <div class="note">
+            <p>
+              In some cases, devices can run several apps and be in a physical
+              posture other than flat, but as long as the browser does not span
+              through several screens/sections, the corresponding posture is
+              continuous.
+            </p>
+          </div>
+        </li>
+        <li>
+          <img src="images/folded-posture.svg" class="drawing" alt=
+          "drawing of the folded posture"> <a>Folded</a> posture: The folded
+          posture refers to devices that can physically fold. These devices can
+          have one flexible screen or two adjacent screens. This posture forms
+          an angle between the displays/sections that does not exceed a 'flat'
+          position.
+          <p>
+            Examples of these are:
+          </p>
+          <ul>
+            <li>Foldable device with a vertical hinge and internal screens
+            being used in a 'book' posture, where the content spans through
+            both sections and forms an angle between ~30° and ~170°.
+            </li>
+            <li>Foldable device with a horizontal hinge and internal screens
+            being used in a 'laptop' posture.
+            </li>
+          </ul>
+          <div class="note">
+            <p>
+              When a foldable is used in a half-folded state (like a book),
+              implementers might need to take into account the effect of text
+              direction and writing mode on the layout and presentation.
+            </p>
+            <p>
+              For example, right-to-left languages (those that use scripts such
+              as Arabic, Hebrew, Syriac, and others) and many vertical writing
+              modes used by, for example, East Asian languages progress pages
+              in the opposite order to that used by an English book, with the
+              lower numbered page on the right.
+            </p>
+            <p>
+              See <a data-cite=
+              "clreq#major_differences_between_horizontal_and_vertical_writing_modes">
+              Chinese</a>, <a data-cite=
+              "jlreq#major_differences_between_horizontal_and_vertical_writing_modes">
+              Japanese</a>, and <a data-cite="klreq/#para-diffs">Korean</a>
+              differences in writing modes for more information.
+            </p>
+          </div>
+        </li>
+      </ol>
+      <p>
+        In the API, the [=posture=] values are represented by the
+        {{DevicePostureType}} enum values.
+      </p>
+    </section>
+    <section data-link-for="DevicePostureType">
+      <h2>
+        Device Posture Media Queries
+      </h2>
+      <h3>
+        The <code><dfn>device-posture</dfn></code> media feature
+      </h3>
+      <p>
+        The <code>[=device-posture=]</code> media feature represents, via a CSS
+        media query [[MEDIAQ]], the <a>posture</a> of the device. All
+        <a>navigables</a> reflect the <a>posture</a> of their
+        [=navigable/top-level traversable=].
+      </p>
+      <dl>
+        <dt>
+          Value:
+        </dt>
+        <dd>
+          <a>continuous</a> | <a>folded</a>
+        </dd>
+        <dt>
+          Applies to:
+        </dt>
+        <dd>
+          visual media types
+        </dd>
+        <dt>
+          Accepts min/max prefixes:
+        </dt>
+        <dd>
+          No
+        </dd>
+      </dl>
+      <p>
+        A user agent MUST reflect the applied <a>posture</a> of the web
+        application via a CSS media query [[MEDIAQ]].
+      </p>
+    </section>
+    <section>
+      <h2>
+        Reading the posture
+      </h2>
+      <p>
+        Every instance of {{Document}} has an internal slot
+        {{Document/[[CurrentPosture]]}}, which should be initialized when the
+        {{Document}} is created, otherwise they MUST be initialized the first
+        time they are accessed and before their value is read. The <a>user
+        agent</a> MUST run the <a>device posture change steps</a> with [=device
+        posture change steps/document=] set to the {{Document}} and [=device
+        posture change steps/disallowRecursion=] set to true to initialize it.
+      </p>
+      <p>
+        For a given {{Document}}, the <a>current posture</a> is derived from
+        the current hinge angle and the <a data-cite=
+        "SCREEN-ORIENTATION#dfn-screen-orientations">screen orientation</a>,
+        and potentially other implementation-specific signals.
+      </p>
+      <p>
+        <i>These tables are non-normative.</i>
+      </p>
+      <h3>
+        <dfn>Posture values table</dfn>
+      </h3>
+      <p>
+        The values are approximations and might differ per device. For
+        instance, a device might not yield exactly 180° when laying flat, but
+        instead values ranging from 175° to 185°. Device makers SHOULD make
+        sure that the physical device postures map correctly to the postures
+        defined by this specification. Device makers are also allowed to
+        determine the posture using more sensors than just the hinge angle. For
+        example, they can also detect if keyboard is docked on the bottom half
+        of the screen or not. Another example is to detect whether the
+        kickstand is deployed or not.
+      </p>
+      <p>
+        Some devices might also lack one or more of the postures due to
+        physical constraints or device design, in which case the device SHOULD
+        make sure that all combinations of angles and device orientation (which
+        can be locked by [[SCREEN-ORIENTATION]] and host OS), as well as device
+        specific signals, maps into one of the defined postures.
+      </p>
+      <h4>
+        Foldables
+      </h4>
+      <table class="def">
+        <caption>
+          Posture values for foldable devices
+        </caption>
+        <tr>
+          <th>
+            Posture
+          </th>
+          <th>
+            Angle value
+          </th>
+        </tr>
+        <tr>
+          <td>
+            continuous
+          </td>
+          <td>
+            &lt; ~180°
+          </td>
+        </tr>
+        <tr>
+          <td>
+            folded
+          </td>
+          <td>
+            ~180°
+          </td>
+        </tr>
+      </table>
+    </section>
+    <section>
+      <h3>
+        Algorithms
+      </h3>
+      <section data-link-for="DevicePosture">
+        <h2>
+          Calculating the device posture information
+        </h2>
+        <p>
+          The steps to <dfn>calculate the device posture information</dfn> of a
+          {{Document}} |document:Document| are as follows:
+        </p>
+        <ol class="algorithm">
+          <li>Let |topLevelTraversable| be |document|'s [=relevant global
+          object=]'s [=navigable=]'s [=top-level traversable=].
+          </li>
+          <li>If |topLevelTraversable|. <a data-link-for=
+          "top-level traversable">[[\PostureOverride]]</a> is non-null, return
+          it.
+          </li>
+          <li>Return a {{DevicePostureType}} value determined in an
+          [=implementation-defined=] way based on the current hinge angle
+          value, current <a data-cite=
+          "SCREEN-ORIENTATION#dfn-screen-orientations">screen orientation</a>,
+          as well as potential implementation-specific signals, according to
+          the [=posture values table=].
+          </li>
+        </ol>
+      </section>
+      <section data-link-for='DevicePosture'>
+        <h2>
+          Device Posture change
+        </h2>
+        <p>
+          When the user agent determines that the screen(s)' fold angle,
+          orientation or device-specific signals have changed for a [=top-level
+          traversable=], it MUST run the [=device posture change steps=] with
+          the [=top-level traversable=]'s [=navigable/active document=].
+        </p>
+        <p>
+          The <dfn>device posture change steps</dfn> for a {{Document}}
+          <dfn data-dfn-for="device posture change steps">document</dfn> and an
+          optional boolean <dfn data-dfn-for=
+          "device posture change steps">disallowRecursion</dfn> (default false)
+          are as follows:
+        </p>
+        <ol class="algorithm">
+          <li>If |document:Document|'s [=Document/visibility state=] is
+          "hidden", then abort these steps.
+          </li>
+          <li>Let |posture| be the result of invoking [=calculate the device
+          posture information=] with |document|.
+          </li>
+          <li>If |posture| is equal to
+          |document|.{{Document/[[CurrentPosture]]}}, abort these steps.
+          </li>
+          <li>[=Queue a global task=] on the [=user interaction task source=]
+          with |document|'s [=relevant global object=] to perform the following
+          steps:
+            <ol>
+              <!-- We should use [=associated `Navigator`=], but the <dfn> is not exported by the
+          HTML spec. -->
+              <li>Set |document|.{{Document/[[CurrentPosture]]}} to |posture|.
+              </li>
+              <li>[=Fire an event=] named "{{DevicePosture/change}}" at the
+              {{DevicePosture}} object associated with |document|'s [=relevant
+              global object=]'s associated {{Navigator}}.
+              </li>
+            </ol>
+          </li>
+          <li>If |disallowRecursion| is true, abort these steps.
+          </li>
+          <li>[=List/For each=] |descendantNavigable| of |document|'s
+          [=Document/descendant navigables=]:
+            <ol>
+              <!-- If we do not set disallowRecursion to true below,
+                   each descendant document will recurse into its
+                   descendants too. -->
+              <li>Run the [=device posture change steps=] with [=device posture
+              change steps/document=] set to |descendantNavigable|'s
+              [=navigable/active document=] and [=device posture change
+              steps/disallowRecursion=] set to true.
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <p>
+          This specification defines the following [=page visibility change
+          steps=] given |visibility state| and |document:Document|:
+        </p>
+        <ol class="algorithm">
+          <li>Run the [=device posture change steps=] on |document| and
+          [=device posture change steps/disallowRecursion=] set to false to
+          initialize it.
+          </li>
+        </ol>
+        <aside class="note">
+          <p>
+            Developers need to be aware that [=documents=] with a "hidden"
+            [=Document/visibility state=] will not receive a device posture
+            change event. However, once the [=document=] becomes visible again,
+            it will receive the change event.
+          </p>
+        </aside>
+        <div class="issue" data-number="103"></div>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Security considerations
+      </h2>
+      <p>
+        No new security considerations have been reported on this
+        specification. However it is encouraged to look at the potential
+        [[[#privacy-considerations]]] listed in this document.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Privacy considerations
+      </h2>
+      <section>
+        <h3>
+          Types of privacy threats
+        </h3>
+        <p>
+          <i>This section is non-normative.</i>
+        </p>
+        <h4 id="identifying-users-across-contexts">
+          Identifying users across contexts
+        </h4>
+        <p>
+          When this API is used simultaneously in different browsing contexts
+          on the same device it may be possible to correlate the user across
+          those two contexts, creating unanticipated tracking mechanisms.
+          However, because the posture value is typically stable for a long
+          time it could only be used to verify that two users are not the same,
+          but it would not help to identify a given user given the fact that
+          there are multiple types and models of foldable devices.
+        </p>
+        <p>
+          The added entropy is comparable to the <a data-xref-type=
+          "css-descriptor" data-xref-for="@media">pointer</a> API which tells
+          whether the user's primary input is touch-based or not. Such a
+          primary input can change on devices where the keyboard can be
+          removed/added or the tablet mode is activated/deactivated.
+        </p>
+        <p>
+          This theoretical attack is mitigated by [[[#data-minimization]]],
+          [[[#user-attention]]] and [[[#user-mediated-action]]].
+        </p>
+        <h4>
+          Cross-origin iframes
+        </h4>
+        <p>
+          Cross-origin iframes have access to the posture through this API and
+          therefore could use this information to identify users similarly to
+          as mentioned in [[[#identifying-users-across-contexts]]]. The same
+          mitigations apply.
+        </p>
+        <h4>
+          Malicious script injection (for advertising or exploitation)
+        </h4>
+        <p>
+          Through iframes, a malicious actor could inject its own code to
+          access the posture information and potentially use it to track users.
+        </p>
+        <p>
+          This theoretical attack is mitigated by [[[#data-minimization]]] as
+          well as the fact that the posture value itself carry little valuable
+          information and stays stable for long period of time.
+        </p>
+      </section>
+      <section>
+        <h3>
+          Mitigation strategies
+        </h3>
+        <section>
+          <h4 id="data-minimization">
+            Data minimization
+          </h4>
+          <p>
+            The API exposes a high-level abstraction referred to as a
+            <a>posture</a> that can be either
+            "{{DevicePostureType/continuous}}" or
+            "{{DevicePostureType/folded}}". Devices that do not support
+            different postures default to "{{DevicePostureType/continuous}}".
+            This means at most one bit of entropy is added to the fingerprint.
+            At most, because revealing this one bit will require a significant,
+            explicit physical action by the user to manipulate the physical
+            posture of the device required to trigger a change.
+          </p>
+          <p>
+            While implementations can use a variety of low-level information to
+            determine the most appropriate high-level posture, no low-level
+            details are exposed through this API. Furthermore, there is no
+            one-to-one mapping from any fine-grained low-level sensor reading
+            to a high-level posture state. An implementation can use e.g. a
+            hinge angle sensor, other sensors, information about whether a
+            keyboard is docked, or whether the kickstand is deployed, or any
+            combination of such information, to determine the most approriate
+            posture for the given form factor. This abstraction ensures only a
+            minimum amount of information necessary to implement the intended
+            functionality is exposed adhering to the data minimization
+            principles.
+          </p>
+        </section>
+        <section>
+          <h4 id="user-attention">
+            User attention
+          </h4>
+          <p>
+            Posture value change events are only fired for each
+            [=navigable/active document=] whose [=Document/visibility state=]
+            is "visible" as explained in [=device posture change steps=], and
+            polling the value while that is not the case, will return a stale
+            value as the value is only updated while the visibility state is
+            "visible" or just changed to "visible".
+          </p>
+        </section>
+        <section>
+          <h4 id="user-mediated-action">
+            User-mediated action
+          </h4>
+          <p>
+            A user's significant and explicit physical action to modify the
+            device posture is required for a posture change. Significant,
+            because the action must cross the implementation-defined threshold
+            per [=posture values table=], and explicit, because the underlying
+            operating system adapts to posture changes similarly matching
+            user's learned expectations for an outcome of such an action.
+          </p>
+        </section>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Accessibility considerations
+      </h2>The main focus of the Device Posture API is to improve the user
+      experience. There are three ways in which applications that build on the
+      API can positively impact accessibility.
+      <ol>
+        <li>Designing and making applications which do not place content in the
+        fold/hinge area, especially buttons. This area is typically hard to
+        interact with with fingers because the curvature of the fold makes
+        touch less precise or impossible.
+        </li>
+        <li>Designing and making applications which do not put large,
+        contiguous content (such as video or a picture) spanning across the
+        fold/hinge area if the device is folded. This area slightly distorts
+        content and colors.
+        </li>
+        <li>Designing and making applications which use the screen estate
+        better by providing a split UI (a user interface where the content is
+        split up across the screen segments), allowing the application to
+        provide a differentiated and more powerful interface.
+        </li>
+      </ol>When using this API it is important to consider the opportunities
+      above with accessibility in mind. Here are few concrete examples:
+      <ul>
+        <li>
+          <strong>Placement of UI elements:</strong> A typical placement logic
+          for dialogs is to center them horizontally and vertically, but in a
+          device folded with a symmetrical fold they may end up in the middle
+          of the fold area making it harder to interact with, for instance
+          clicking on buttons. It might also make it harder to read text due to
+          distortion and light reflection.
+        </li>
+        <li>
+          <strong>Fullscreen mode:</strong> When resizing an element in
+          fullscreen, a typical logic would expand that element to the width
+          and the height of the {{Window}}. If the device is folded, the
+          element will be laid out across the fold, leading to a subpar user
+          experience. An alternative is to display that element either on top
+          or below the fold area.
+        </li>
+        <li>
+          <strong>Improving the user experience:</strong> With this API it is
+          possible to create a different and adapted user experience when the
+          device is folded, allowing for a better user experience and improved
+          accessibility. For example, when watching a video and the device is
+          folded, the video could be displayed on top of the fold while the
+          comments section could be shown below the fold by default. Another
+          example would be a video conferencing application showing the video
+          feed on top of the fold and the chat below the fold.
+        </li>
+        <li>
+          <strong>Content shouldn't be designed for just one
+          {{posture}}:</strong> The idea of foldable devices is their
+          versatility and the ability for the user to change the posture as
+          they see fit. Similarly to the <a href=
+          "https://www.w3.org/WAI/WCAG21/Understanding/orientation.html">orientation</a>,
+          it is important to not always choose for the user as they might have
+          other needs but allowing them to choose the UI that fits their needs
+          better. Ideally it is preferred to make the UI configurable.
+        </li>
+        <li>
+          <strong>Content announcements for assistive devices:</strong> Use
+          ARIA live regions to announce significant layout changes dynamically.
+          For instance, when a fold changes the layout of a webpage, ensure
+          that screen readers announce these changes to users. For example, if
+          a video player is moved to the top of the screen and comments to the
+          bottom, an announcement like "Video player moved to the top screen,
+          comments moved below the fold" can help users navigate better.
+        </li>
+        <li>
+          <strong>Assistive technology compatibility:</strong> Conduct thorough
+          testing with various assistive technologies to ensure compatibility
+          and proper communication of changes when different postures are
+          reached.
+        </li>
+      </ul>
+    </section>
+    <section>
+      <h2>
+        Automation
+      </h2>
+      <p>
+        The Device Posture API pose a challenge to test authors, as fully
+        exercising interface requires physical hardware devices. To address
+        this challenge this document defines a [[WEBDRIVER2]] [=extension
+        commands=] that allows users to control the reported device posture and
+        simulate a real device.
+      </p>
+      <p>
+        To support the [=extension commands=] below and their integration with
+        [[[#algorithms]]], [=top-level traversables=] must have the following
+        internal slots:
+      </p>
+      <table class="def">
+        <thead>
+          <tr>
+            <th>
+              Internal slot
+            </th>
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <dfn data-dfn-for=
+              "top-level traversable">[[\PostureOverride]]</dfn>
+            </td>
+            <td>
+              Overrides the [=current posture=] provided by the hardware.
+              Possible values:
+              <ul>
+                <li>"{{DevicePostureType/continuous}}"
+                </li>
+                <li>"{{DevicePostureType/folded}}"
+                </li>
+                <li>
+                  <code>null</code>: Not overriding. The hardware-provided
+                  value will be used instead.
+                </li>
+              </ul>These values are not exposed directly to script.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>
+        Extension Commands
+      </h3>
+      <h4>
+        Set device posture
+      </h4>
+      <table class="def">
+        <tr>
+          <th>
+            HTTP Method
+          </th>
+          <th>
+            [=extension command URI Template|URI Template=]
+          </th>
+        </tr>
+        <tr>
+          <td>
+            POST
+          </td>
+          <td>
+            /session/{session id}/deviceposture
+          </td>
+        </tr>
+      </table>
+      <p>
+        This [=extension command=] changes device posture to a specific
+        {{DevicePostureType}}.
+      </p>
+      <table class="def">
+        <caption>
+          Properties of the parameters argument used by this algorithm
+        </caption>
+        <tr>
+          <th>
+            Parameter name
+          </th>
+          <th>
+            Value type
+          </th>
+          <th>
+            Required
+          </th>
+        </tr>
+        <tr>
+          <td>
+            posture
+          </td>
+          <td>
+            String
+          </td>
+          <td>
+            yes
+          </td>
+        </tr>
+      </table>
+      <p>
+        The [=remote end steps=] are:
+      </p>
+      <ol class="algorithm" data-cite="WEBDRIVER2">
+        <li>Let |posture| be the result of invoking <a data-cite=
+        "!WEBDRIVER2#dfn-getting-properties">get a property</a> "posture" from
+        |parameters|.
+        </li>
+        <li>If |posture| is not a [=string=], return [=error=] with [=error
+        code|WebDriver error code=] [=invalid argument=].
+        </li>
+        <li>If |posture| is neither "{{DevicePostureType/continuous}}" nor
+        "{{DevicePostureType/folded}}", return [=error=] with [=error
+        code|WebDriver error code=] [=invalid argument=].
+        </li>
+        <li>Let |topLevelTraversable| be the <a data-cite=
+        "webdriver2/#dfn-current-browsing-context">current browsing
+        context</a>'s [=browsing context/top-level traversable=].
+        </li>
+        <li>Set |topLevelTraversable|. <a data-link-for=
+        "top-level traversable">[[\PostureOverride]]</a> to |posture|.
+        </li>
+        <li>Let |document| be |topLevelTraversable|'s [=navigable/active
+        document=].
+        </li>
+        <li>Invoke [=device posture change steps=] with |document|.
+        </li>
+        <li>Return [=success=] with data <code>null</code>.
+        </li>
+      </ol>
+      <h4>
+        Clear device posture
+      </h4>
+      <table class="def">
+        <tr>
+          <th>
+            HTTP Method
+          </th>
+          <th>
+            [=extension command URI Template|URI Template=]
+          </th>
+        </tr>
+        <tr>
+          <td>
+            DELETE
+          </td>
+          <td>
+            /session/{session id}/deviceposture
+          </td>
+        </tr>
+      </table>
+      <p>
+        This [=extension command=] removes device posture override and returns
+        device posture control back to hardware.
+      </p>
+      <p>
+        The [=remote end steps=] are:
+      </p>
+      <ol class="algorithm">
+        <li>Let |topLevelTraversable| be the <a data-cite=
+        "webdriver2/#dfn-current-browsing-context">current browsing
+        context</a>'s [=browsing context/top-level traversable=].
+        </li>
+        <li>If |topLevelTraversable|. <a data-link-for="top-level traversable">
+          [[\PostureOverride]]</a> is <code>null</code>, return [=success=]
+          with data <code>null</code>.
+        </li>
+        <li>Set |topLevelTraversable|. <a data-link-for=
+        "top-level traversable">[[\PostureOverride]]</a> to <code>null</code>.
+        </li>
+        <li>Let |document| be |topLevelTraversable|'s [=navigable/active
+        document=].
+        </li>
+        <li>Invoke [=device posture change steps=] with |document|.
+        </li>
+        <li>Return [=success=] with data <code>null</code>.
+        </li>
+      </ol>
+    </section>
+    <section id="examples" class="informative">
+      <h2>
+        Examples
+      </h2>
+      <h3>
+        Example 1: Posture data
+      </h3>
+      <p>
+        This is a simple use case of the <a>posture</a> being printed on the
+        console.
+      </p>
+      <pre class="example js" title="React to poster change">
+          navigator.devicePosture.addEventListener("change", () =&gt; {
+            console.log(`The current posture is: ${navigator.devicePosture.type}!`);
+          })
+      </pre>
+      <h3>
+        Example 2: device-posture
+      </h3>
+      <p>
+        The device is being used for a video call web service. It can be folded
+        into the laptop <a>posture</a> to enable a hands-free experience when
+        placed on a surface. The UA detects the posture and the UI is enhanced.
+        Similar examples can be drafted for content to adapt to any posture.
+        See the <a href=
+        "https://github.com/SamsungInternet/Explainers/blob/master/Foldables/FoldState.md#key-scenarios">
+        explainer</a> for other key scenarios.
+      </p><img src="images/example-videocall.svg" alt=
+      "An illustration of a video call web service that uses the device-posture media feature and the viewport segment media feature"
+      class="img-example">
+      <pre class="example css" title="Adapting UI to posture">
+        @media (device-posture: folded) and (vertical-viewport-segments: 2) {
+          body {
+            display: flex;
+            flex-flow: column nowrap;
+          }
+
+          .videocall-area, .videocall-controls  {
+            flex: 1 1 env(viewport-segment-bottom 0 0);
+          }
+        }
+      </pre>
+      <h3>
+        Example 3: Feature detection of device-posture media feature
+      </h3>
+      <p>
+        As one of the valid device-posture values will always be true, you can
+        use the following snippet to detect whether a user agent supports the
+        media feature:
+      </p>
+      <pre class="example css" title="Feature detect the device-posture">
+          @media (device-posture) {
+            /*The browser supports device-posture feature*/
+          }
+        </pre>For more information about media features in a boolean context
+please refer to <a data-cite="MEDIAQ#mq-boolean-context">Evaluating Media
+Features in a Boolean Context</a>.
+    </section>
+    <section id="conformance">
+      <p>
+        This specification defines conformance criteria for a single product: a
+        <dfn>user agent</dfn> that implements the interfaces that it contains.
+      </p>
+    </section>
+    <section id="idl-index" class="appendix"></section>
+    <section class="appendix informative" id="acknowledgments">
+      <h2>
+        Acknowledgments
+      </h2>
+      <p>
+        We would like to thank Diego González for his major contributions to the
+        specification as the founding editor, and for creating a visual identity
+        to both this specification and the Devices and Sensors Working Group.
+      </p>
+      <p>
+        We would like to offer our sincere thanks to Daniel Appelquist, Jo
+        Balletti, Michael Blix, Paul Grenier and Laura Morinigo for their
+        contributions to this work.
+      </p>
+    </section>
+    <section id="substantive-changes-summary" class="appendix informative">
+      <h2>
+        Summary of substantive changes
+      </h2>
+      <section id="substantive-changes-summary-fpwd">
+        <h3>
+          Changes since the <a href=
+          "https://www.w3.org/TR/2020/WD-screen-fold-20201217/">First Public
+          Working Draft (2020/12/17)</a>
+        </h3>
+        <ul>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/155">Remove the
+            rate limiting section per PING review</a> (PR #155)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/149">Add two
+            new comments from the accessibility review</a> (PR #149)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/145">Update
+            Privacy considerations</a> (PR #145)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/141">Add
+            automation support via WebDriver</a> (PR #141)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/138">Remove the
+            focus part of the spec</a> (PR #138)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/132">Improve
+            the privacy section</a> (PR #132)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/127">Add
+            accessibility section</a> (PR #127)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/128">device
+            posture change steps: Refer to disallowRecursion by name in
+            calls</a> (PR #128)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/120">Modernize
+            algorithms in "Algorithm" section</a> (PR #120)
+          </li><!-- PR #112 was removed by PR #114 -->
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/100">Remove
+            Folded Over from Device Posture</a> (PR #100)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/87">Updated
+            folding related concepts</a> (PR #87)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/75">Use
+            internal slot</a> (PR #75)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/73">Add info
+            about using additional signals</a> (PR #73)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/71">Move the
+            entry point of the API to the window.navigator interface</a> (PR
+            #71)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/58">Remove fold
+            angle value from the specification</a> (PR #58)
+          </li>
+          <li>
+            <a href="https://github.com/w3c/device-posture/pull/42">Improve the
+            Privacy and Security section</a> (PR #42)
+          </li>
+        </ul>
+      </section>
+    </section>
+  </body>
+</html>

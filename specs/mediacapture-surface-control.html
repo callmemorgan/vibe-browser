@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Captured Surface Control</title>
+    <script class="remove" src="captured-surface-control.js" type="text/javascript"></script>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        Consider a Web application |capturer| which has used {{MediaDevices/getDisplayMedia()}} to
+        start capturing another [=display surface=], |capturee|. This specification introduces a set
+        of APIs that allow |capturer| the following new capabilities:
+      </p>
+      <ul>
+        <li>Read and write |capturee|'s [=zoom level=].</li>
+        <li>
+          Deliver a wheel event over |capturee|'s viewport at coordinates of |capturer|'s choosing.
+        </li>
+      </ul>
+    </section>
+
+    <section id="sotd"></section>
+
+    <section id="background" class="informative">
+      <h1>Background</h1>
+      <p>
+        Nearly all video-conferencing Web applications offer their users the ability to share
+        [=display surfaces=] - typically a browser tab ([=display surface/browser=]), a native app's
+        window ([=display surface/window=]), or an entire screen ([=display surface/monitor=]).
+      </p>
+      <p>
+        Many of these applications also show the local user a "preview tile" with a video of the
+        captured [=display surface=].
+      </p>
+      <p>
+        All these applications suffer from one key drawback - if the user wishes to interact with a
+        captured [=display surface=], the user must first switch to that surface, taking them away
+        from the video-conferencing application. This presents a few issues:
+      </p>
+      <ol>
+        <li>
+          Users can't simultaneously interact with the captured application and see the videos of
+          remote users.
+        </li>
+        <li>
+          Users are burdened by the need to repeatedly switch between the video-conferencing
+          application and the captured surface.
+        </li>
+        <li>
+          Users are limited in their ability to see and interact with controls exposed by the
+          video-conferencing application while they are interacting with the captured surface. A
+          non-comprehensive list of examples of such controls includes - embedded chat applications,
+          emoji reactions, "knock-ins" by users asking to join the call, and multimedia controls.
+        </li>
+      </ol>
+      <p>
+        It bears mentioning that [[DOCUMENT-PICTURE-IN-PICTURE]]
+        goes a long way towards addressing some of these issues. However, it not always a suitable
+        solution, as not all use cases are adequately addressed by a floating window which will
+        often be small, which obscures arbitrary other content on the screen, and whose size and
+        positioning must be manually controlled by the user.
+      </p>
+    </section>
+
+    <section id="feature-policy-integration">
+      <h1>Permissions Policy Integration</h1>
+      <p>
+        This specification defines a [=policy-controlled feature=] identified by the string
+        <dfn class="permission export">`"captured-surface-control"`</dfn>. Its [=policy-controlled
+        feature/default allowlist=] is `"self"`.
+      </p>
+      <div class="note">
+        <p>
+          The API surfaces introduced by this specification can be categorized as either read-access
+          or write-access. Note that only the write-access APIs ({{CaptureController/forwardWheel}},
+          {{CaptureController/increaseZoomLevel}}, {{CaptureController/decreaseZoomLevel}} and
+          {{CaptureController/resetZoomLevel}}) are gated by the <a>"captured-surface-control"</a>
+          permissions policy.
+        </p>
+      </div>
+    </section>
+
+    <section id="zoom">
+      <h1>Zoom</h1>
+      <section id="zoom-definition">
+        <h2>Definition of Zoom</h2>
+        <p>
+          We define a concept of an integer "<dfn>zoom level</dfn>" that can be applied to [=display
+          surfaces=] of any type, and which is independent of the user agent and the platform. It is
+          expected that in the case of [=display surface/browser=] [=display surfaces=], this
+          concept will match the concept of zoom level that user agents typically exposed to the
+          user.
+        </p>
+        <ul>
+          <li>
+            The <dfn>default zoom level</dfn> of any [=display surface=] is defined to be 100. All
+            implementations must support this value for all [=display surface=] of any type.
+          </li>
+          <li>
+            Decreasing [=zoom level=] values represent "zooming out". The minimum theoretical value
+            is 1; however, user agents may cap their support for "zooming out" at a larger values,
+            with 100 being the largest permissible minimum value, representing lack of support for
+            "zooming out".
+          </li>
+          <li>
+            Increasing values represent "zooming in". This specification does not mandate a
+            theoretical maximum. The smallest possible maximum is 100, which represents lack of
+            support for "zooming in".
+          </li>
+        </ul>
+        <p>
+          For a given [=display surface=] of type |surfaceType|, we define the user agent's set of
+          <dfn>supported zoom levels</dfn> for |surfaceType| as a non-empty set of integers
+          including at least the [=default zoom level=] (100), and not including any integers lesser
+          than 1.
+        </p>
+      </section>
+      <section>
+        <h2>Permitted Event Types for zoom-setting</h2>
+        <p>
+          We define the <dfn>permitted event types for zoom-setting</dfn> as a set composed of the
+          following <a data-cite="DOM#dom-event-type">event types</a>:
+        </p>
+        <ul>
+          <li>"[=click=]"</li>
+          <li><a data-cite="uievents#event-type-input">"input"</a></li>
+        </ul>
+      </section>
+      <section id="zoom-control-apis">
+        <h2>Zoom-control APIs</h2>
+        <pre class="idl">
+          partial interface CaptureController {
+            sequence&lt;long&gt; getSupportedZoomLevels();
+            readonly attribute long? zoomLevel;
+            Promise&lt;undefined&gt; increaseZoomLevel();
+            Promise&lt;undefined&gt; decreaseZoomLevel();
+            Promise&lt;undefined&gt; resetZoomLevel();
+            attribute EventHandler onzoomlevelchange;
+          };
+        </pre>
+        <dl data-link-for="CaptureController" data-dfn-for="CaptureController" class="methods">
+          <dt><dfn>getSupportedZoomLevels()</dfn></dt>
+          <dd>
+            <p>
+              This method allows applications to discover the set of [=zoom levels=] supported by
+              the user agent.
+            </p>
+            <p>When invoked, the user agent MUST run the following steps:</p>
+            <ol>
+              <li>
+                If [=this=] is not [=actively capturing=], [=exception/throw=] an
+                "{{InvalidStateError}}" {{DOMException}}.
+              </li>
+              <li>Let |surfaceType| be [=this=].{{CaptureController/[[DisplaySurfaceType]]}}.</li>
+              <li>
+                If |surfaceType| is not a [=supported display surface type=], [=exception/throw=] a
+                "{{NotSupportedError}}" {{DOMException}}.
+              </li>
+              <li>
+                Return a monotonically increasing sequence containing all of the values in the
+                [=supported zoom levels=] for |surfaceType|.
+              </li>
+            </ol>
+          </dd>
+          <dt><dfn>zoomLevel</dfn></dt>
+          <dd>
+            <p>
+              This attribute allows applications to discover the captured [=display surface=]'s
+              [=zoom level=].
+            </p>
+            <p>
+              On getting, the user agent MUST return [=this=].{{CaptureController/[[ZoomLevel]]}}.
+            </p>
+          </dd>
+          <dt><dfn>increaseZoomLevel()</dfn></dt>
+          <dd>
+            <p>
+              This method allows applications to set the captured [=display surface=]'s [=zoom
+              level=] one step higher than its current value.
+            </p>
+            <p>
+              When this method is invoked, the user agent MUST run the [=set zoom level algorithm=]
+              with [=this=] as the |controller| and `"increase"` as the |zoomAction|.
+            </p>
+          </dd>
+          <dt><dfn>decreaseZoomLevel()</dfn></dt>
+          <dd>
+            <p>
+              This method allows applications to set the captured [=display surface=]'s [=zoom
+              level=] one step lower than its current value.
+            </p>
+            <p>
+              When this method is invoked, the user agent MUST run the [=set zoom level algorithm=]
+              with [=this=] as the |controller| and `"decrease"` as the |zoomAction|.
+            </p>
+          </dd>
+          <dt><dfn>resetZoomLevel()</dfn></dt>
+          <dd>
+            <p>
+              This method allows applications to set the captured [=display surface=]'s [=zoom
+              level=] to 100.
+            </p>
+            <p>
+              When this method is invoked, the user agent MUST run the [=set zoom level algorithm=]
+              with [=this=] as the |controller| and `"reset"` as the |zoomAction|.
+            </p>
+          </dd>
+          <dt><dfn>onzoomlevelchange</dfn></dt>
+          <dd>
+            <p>
+              An [=event handler IDL attribute=] whose [=event handler event type=] is
+              `zoomlevelchange`.
+            </p>
+            <p>
+              Whenever [=this=].<a data-cite="!screen-capture/#dfn-source">[[\Source]]</a>'s [=zoom
+              level=] changes to |newZoomLevel|, the user agent MUST [=queue a global task=] on the
+              [=user interaction task source=] given the current realm's global object, which will
+              run the following stpes:
+            </p>
+            <ol>
+              <li>If [=this=] is not [=actively capturing=], abort these steps.</li>
+              <li>Set [=this=].{{CaptureController/[[ZoomLevel]]}} to |newZoomLevel|.</li>
+              <li>[=Fire an event=] named `zoomlevelchange` at [=this=].</li>
+            </ol>
+            <div class="note">
+              <p>Examples of causes include:</p>
+              <ul>
+                <li>
+                  The user interacted with the user agent to change the zoom level of a captured
+                  tab.
+                </li>
+                <li>The capturing application called {{CaptureController/increaseZoomLevel()}}.</li>
+                <li>
+                  The user changed the shared [=display surface=], choosing one which has a
+                  different [=zoom level=].
+                </li>
+              </ul>
+            </div>
+          </dd>
+        </dl>
+      </section>
+    </section>
+
+    <section id="scrolling">
+      <h1>Scroll</h1>
+      <section>
+        <h2>Scrolling APIs</h2>
+        <pre class="idl">
+          partial interface CaptureController {
+            constructor();
+            Promise&lt;undefined&gt; forwardWheel(HTMLElement? element);
+          };
+        </pre>
+        <dl data-link-for="CaptureController" data-dfn-for="CaptureController" class="methods">
+          <dt><dfn>constructor</dfn></dt>
+          <dd>
+            <p>
+              {{CaptureController}}'s
+              <a data-cite="!screen-capture/#dom-capturecontroller-constructor">constructor</a> is
+              extended to also define and initialize the following internal slots:
+            </p>
+            <table class="simple">
+              <thead>
+                <tr>
+                  <th>Internal Slot</th>
+                  <th>Initial value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><dfn>[[\ZoomLevel]]</dfn></td>
+                  <td>`null`</td>
+                </tr>
+                <tr>
+                  <td><dfn>[[\ForwardWheelElement]]</dfn></td>
+                  <td>`null`</td>
+                </tr>
+                <tr>
+                  <td><dfn>[[\ForwardWheelEventListener]]</dfn></td>
+                  <td>`null`</td>
+                </tr>
+              </tbody>
+            </table>
+          </dd>
+          <dt><dfn>forwardWheel()</dfn></dt>
+          <dd>
+            <p>
+              This method allows applications to automatically forward
+              <a data-cite="pointerevents#events-wheelevents">wheel events</a>
+              from an {{HTMLElement}} to the viewport of a captured [=display surface=].
+            </p>
+            <p>When invoked, the user agent MUST run the following steps:</p>
+            <ol>
+              <li>
+                If [=this=] is not [=actively capturing=], return a promise [=reject|rejected=] with
+                a {{DOMException}} object whose {{DOMException/name}} attribute has the value
+                {{InvalidStateError}}.
+              </li>
+              <li>
+                If [=this=] [=is self-capturing=], return a promise [=reject|rejected=] with a
+                {{DOMException}} object whose {{DOMException/name}} attribute has the value
+                {{InvalidStateError}}.
+              </li>
+              <li>Let |surfaceType| be [=this=].{{CaptureController/[[DisplaySurfaceType]]}}.</li>
+              <li>
+                If |surfaceType| is not a [=supported display surface type=], return a promise
+                [=reject|rejected=] with a {{DOMException}} object whose {{DOMException/name}}
+                attribute has the value {{NotSupportedError}}.
+              </li>
+              <li>Let |element| be the method's first argument.</li>
+              <li>Let |P| be a new {{Promise}}.</li>
+              <li>
+                Run the following steps [=in parallel=]:
+                <ol>
+                  <li>
+                    [=Get the current permission state=] of <a>"captured-surface-control"</a>. If
+                    the result is NOT {{PermissionState/"granted"}}, and the [=relevant global
+                    object=] does NOT have [=transient activation=], then:
+                    <ol>
+                      <li>
+                        [=Queue a global task=] on the [=user interaction task source=] given the
+                        current realm's [=global object=] as |global| to [=reject=] |P| with a
+                        {{DOMException}} object whose {{DOMException/name}} attribute has the value
+                        {{InvalidStateError}}.
+                      </li>
+                      <li>Abort these steps.</li>
+                    </ol>
+                    <div class="note">
+                      <p>
+                        This step ensures that on the one hand, permission prompts are not be shown
+                        without [=transient activation=], while on the one hand, if the permission
+                        is already {{PermissionState/"granted"}},
+                        {{CaptureController/forwardWheel()}} may be called immediately after
+                        {{MediaDevices/getDisplayMedia()}} resolves, even if the [=transient
+                        activation=] that permitted the call to {{CaptureController/forwardWheel()}}
+                        has since expired.
+                      </p>
+                    </div>
+                  </li>
+                  <li>
+                    [=Request permission to use=] a {{PermissionDescriptor}} with its
+                    {{PermissionDescriptor/name}} member set to
+                    <a>"captured-surface-control"</a>. If the result of the request is
+                    {{PermissionState/"denied"}}, then:
+                    <ol>
+                      <li>
+                        [=Queue a global task=] on the [=user interaction task source=] given the
+                        current realm's [=global object=] as |global| to [=reject=] |P| with a new
+                        {{DOMException}} object whose {{DOMException/name}} is {{NotAllowedError}}.
+                      </li>
+                      <li>Abort these steps.</li>
+                    </ol>
+                  </li>
+                  <li>
+                    If [=this=].{{CaptureController/[[ForwardWheelElement]]}} is not `null`,
+                    [=remove an event listener=] with
+                    [=this=].{{CaptureController/[[ForwardWheelElement]]}} as |eventTarget| and
+                    [=this=].{{CaptureController/[[ForwardWheelEventListener]]}} as |listener|.
+                  </li>
+                  <li>
+                    Set [=this=].{{CaptureController/[[ForwardWheelEventListener]]}} to `null`.
+                  </li>
+                  <li>Set [=this=].{{CaptureController/[[ForwardWheelElement]]}} to |element|.</li>
+                  <li>
+                    If [=this=].{{CaptureController/[[ForwardWheelElement]]}} is not `null`:
+                    <ol>
+                      <li>
+                        Set [=this=].{{CaptureController/[[ForwardWheelEventListener]]}} to an
+                        [=event listener=] defined as follows:
+                        <dl>
+                          <dt>type</dt>
+                          <dd>`wheel`</dd>
+                          <dt>[=event listener/callback=]</dt>
+                          <dd>
+                            The result of creating a new Web IDL {{EventListener}} instance
+                            representing a reference to a function of one argument of type {{Event}}
+                            |event|. This function executes the [=forward wheel event algorithm=]
+                            given [=this=] and |event|.
+                          </dd>
+                        </dl>
+                      </li>
+                      <li>
+                        [=Add an event listener=] with
+                        [=this=].{{CaptureController/[[ForwardWheelElement]]}} as |eventTarget| and
+                        [=this=].{{CaptureController/[[ForwardWheelEventListener]]}} as |listener|.
+                      </li>
+                    </ol>
+                  </li>
+                  <li>
+                    [=Queue a global task=] on the [=user interaction task source=] given the
+                    current realm's [=global object=] as |global| to [=resolve=] |P|.
+                  </li>
+                </ol>
+              </li>
+              <li>Return |P|.</li>
+            </ol>
+          </dd>
+        </dl>
+      </section>
+      <section>
+        <h2>Extensions to the getDisplayMedia algorithm</h2>
+        <p>
+          Extend the
+          <a data-cite="screen-capture#dom-mediadevices-getdisplaymedia"
+            >getDisplayMedia algorithm</a
+          >
+          as follows:
+        </p>
+        <p>
+          Recall that |p| is the promise which the algorithm returns. Immediately before the step
+          which resolves it, add the following steps:
+        </p>
+        <ol>
+          <li>
+            If |controller| is not `null` and |controller|.<a
+              data-cite="screen-capture/#dfn-displaysurfacetype"
+              >[[\DisplaySurfaceType]]</a
+            >
+            is a [=supported display surface type=], then set
+            |controller|.{{CaptureController/[[ZoomLevel]]}} to |controller|.<a
+              data-cite="!screen-capture/#dfn-source"
+              >[[\Source]]</a
+            >'s [=zoom level=].
+          </li>
+        </ol>
+      </section>
+    </section>
+
+    <section>
+      <h1>Subroutines</h1>
+      <section>
+        <h2>Subroutine: Actively capturing</h2>
+        <p>
+          To determine if a {{CaptureController}} |controller| is
+          <dfn>actively capturing</dfn>, run the following steps:
+        </p>
+        <ol>
+          <li>Let |source| be |controller|.{{CaptureController/[[Source]]}}.</li>
+          <li>If |source| is `null`, return `false`.</li>
+          <li>
+            If |source| has been <a data-cite="GETUSERMEDIA#source-stopped">stopped</a>, return
+            `false`.
+          </li>
+          <li>Return `true`.</li>
+        </ol>
+      </section>
+      <section>
+        <h2>Subroutine: Is self-capturing</h2>
+        <p>
+          To determine if a {{CaptureController}} |controller| is
+          <dfn>is self-capturing</dfn>, run the following steps:
+        </p>
+        <ol>
+          <li>If |controller| is not [=actively capturing=], return `false`.</li>
+          <li>
+            If |controller|.{{CaptureController/[[Source]]}} is a [=display surface=] of type
+            [=display surface/browser=], and represents the [=relevant global object=]'s
+            [=associated `Document`=], return `true`.
+          </li>
+          <li>Return `false`.</li>
+        </ol>
+      </section>
+      <section>
+        <h2>Subroutine: Supported display surface type</h2>
+        <p>
+          To determine if a [=display surface=] |surfaceType| is
+          <dfn>supported display surface type</dfn>, run the following steps:
+        </p>
+        <ol>
+          <li>If |surfaceType| is [=display surface/browser=], return `true`.</li>
+          <li>Return `false`.</li>
+        </ol>
+        <div class="note">
+          <p>Whether [=display surface/window=] should be supported is under discussion.</p>
+        </div>
+      </section>
+      <section>
+        <h2>Subroutine: Setting the zoom level</h2>
+        <p>
+          The <dfn>set zoom level algorithm</dfn>, given a |controller:CaptureController| of type
+          {{CaptureController}} and a |zoomAction:DOMString| of type {{DOMString}} as arguments,
+          consists of running the following steps:
+        </p>
+        <ol>
+          <li>
+            If |controller| is not [=actively capturing=], return a promise [=reject|rejected=] with
+            a {{DOMException}} object whose {{DOMException/name}} attribute has the value
+            {{InvalidStateError}}.
+          </li>
+          <li>
+            If |controller| [=is self-capturing=], return a promise [=reject|rejected=] with a
+            {{DOMException}} object whose {{DOMException/name}} attribute has the value
+            {{InvalidStateError}}.
+          </li>
+          <li>Let |surfaceType| be |controller|.{{CaptureController/[[DisplaySurfaceType]]}}.</li>
+          <li>
+            If |surfaceType| is not a [=supported display surface type=], return a promise
+            [=reject|rejected=] with a {{DOMException}} object whose {{DOMException/name}} attribute
+            has the value {{NotSupportedError}}.
+          </li>
+          <li>
+            <p>
+              Ensure that the code is running from within the context of an event handler which was
+              triggered by the browser agent firing a trusted event, triggered by the user
+              interacting with the user agent. To do so, run the following steps:
+            </p>
+            <ol>
+              <li>Let |currentEvent:Event| be {{Window}}.{{Window/event}}.</li>
+              <li>
+                If |currentEvent| is {{undefined}}, return a promise [=reject|rejected=] with a
+                {{DOMException}} object whose {{DOMException/name}} attribute has the value
+                {{InvalidStateError}}.
+              </li>
+              <li>
+                If |currentEvent|.{{Event/isTrusted}} is `false`, return a promise
+                [=reject|rejected=] with a {{DOMException}} object whose {{DOMException/name}}
+                attribute has the value {{InvalidStateError}}.
+              </li>
+              <li>
+                If |currentEvent|.{{Event/type}} is not in [=permitted event types for
+                zoom-setting=], return a promise [=reject|rejected=] with a {{DOMException}} object
+                whose {{DOMException/name}} attribute has the value {{InvalidStateError}}.
+                <div class="note">
+                  <p>
+                    It follows from these steps that {{CaptureController/increaseZoomLevel()}},
+                    {{CaptureController/decreaseZoomLevel()}} and
+                    {{CaptureController/resetZoomLevel()}} are only callable with [=transient
+                    activation=], because [=permitted event types for zoom-setting=] only contains
+                    <a data-cite="DOM#dom-event-type">event types</a> that confer this activation.
+                  </p>
+                  <p>
+                    In fact, our API shape implies a stronger guarantee - whereas [=transient
+                    activation=] persists for several seconds after the user action, the API shape
+                    here limits zoom-setting to immediately after the user's action.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </li>
+          <li>
+            Let |currentZoomLevel| be |controller|.{{CaptureController/[[Source]]}}'s [=zoom level=]
+          </li>
+          <li>Let |targetZoomLevel| be a {{long}}. Set its value as follows:</li>
+          <ol>
+            <li>
+              <p>If |zoomAction| is `"decrease"` then:</p>
+              <ol>
+                <li>
+                  If |currentZoomLevel| is the minimum value in [=supported zoom levels=], return a
+                  promise [=reject|rejected=] with a {{DOMException}} object whose
+                  {{DOMException/name}} attribute has the value {{InvalidStateError}}.
+                </li>
+                <li>
+                  Otherwise, set |targetZoomLevel| to the value in [=supported zoom levels=] that
+                  appears immediately after |currentZoomLevel|.
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>Else, if |zoomAction| is `"increase"` then:</p>
+              <ol>
+                <li>
+                  If |currentZoomLevel| is the maximum value in [=supported zoom levels=], return a
+                  promise [=reject|rejected=] with a {{DOMException}} object whose
+                  {{DOMException/name}} attribute has the value {{InvalidStateError}}.
+                </li>
+                <li>
+                  Otherwise, set |targetZoomLevel| to the value in [=supported zoom levels=] that
+                  appears immediately after |currentZoomLevel|.
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>Else:</p>
+              <ol>
+                <li>Assert that |zoomAction| is `"reset"`.</li>
+                <li>Set |targetZoomLevel| to `100`.</li>
+              </ol>
+            </li>
+          </ol>
+          <li>Let |P| be a new {{Promise}}.</li>
+          <li>
+            <p>Run the following steps [=in parallel=]:</p>
+            <ol>
+              <li>
+                [=Request permission to use=] a {{PermissionDescriptor}} with its
+                {{PermissionDescriptor/name}} member set to
+                <a>"captured-surface-control"</a>. If the result of the request is
+                {{PermissionState/"denied"}}, then:
+                <ol>
+                  <li>
+                    [=Queue a global task=] on the [=user interaction task source=] given the
+                    current realm's [=global object=] as |global| to [=reject=] |P| with a new
+                    {{DOMException}} object whose {{DOMException/name}} is {{NotAllowedError}}.
+                  </li>
+                  <li>Abort these steps.</li>
+                </ol>
+              </li>
+              <li>
+                Set [=this=].{{CaptureController/[[Source]]}}'s [=zoom level=] to |targetZoomLevel|.
+              </li>
+              <li>
+                [=Queue a global task=] on the [=user interaction task source=] given the current
+                realm's [=global object=] as |global| to [=resolve=] |P|.
+              </li>
+            </ol>
+          </li>
+          <li>Return |P|.</li>
+        </ol>
+      </section>
+      <section>
+        <h2>Subroutine: Forward wheel event</h2>
+        <p>
+          The <dfn>forward wheel event algorithm</dfn> takes a {{CaptureController}} |controller|
+          and a {{WheelEvent}} |event|, and runs the following steps:
+        </p>
+        <ol>
+          <li>If |controller| is not [=actively capturing=], abort these steps.</li>
+          <li>If [=this=] [=is self-capturing=], abort these steps.</li>
+          <li>Let |surfaceType| be |controller|.{{CaptureController/[[DisplaySurfaceType]]}}.</li>
+          <li>If |surfaceType| is not a [=supported display surface type=], abort these steps.</li>
+          <li>
+            Run the following steps [=in parallel=]:
+            <ol>
+              <li>
+                [=Get the current permission state=] of <a>"captured-surface-control"</a>. If the
+                result is NOT {{PermissionState/"granted"}}, abort these steps.
+              </li>
+              <li>If |event|.{{Event/isTrusted}} is `false`, abort these steps.</li>
+              <li>
+                Let [|scaledX|, |scaledY|] be the result of the [=scale element coordinates
+                algorithm=] on [|event|.{{MouseEvent/offsetX}}, |event|.{{MouseEvent/offsetY}}] and
+                [=this=].{{CaptureController/[[ForwardWheelElement]]}}.
+              </li>
+              <li>
+                [=Queue a global task=] on the [=user interaction task source=] of
+                |controller|.[[\Source]]'s current realm, given that
+                <a data-cite="HTML#concept-realm-global">realm's global object</a>, to [=fire an
+                event=] named `"wheel"` using {{WheelEvent}} with the {{MouseEvent//x}} attribute
+                initialized to |scaledX|, the {{MouseEvent//y}} attribute initialized to |scaledY|,
+                the {{WheelEvent/deltaX}} attribute initialized to |event|.|deltaX| and the
+                {{WheelEvent/deltaY}} attribute initialized to |event|.|deltaY|, at the
+                [=topmost event target=].
+              </li>
+            </ol>
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h2>Subroutine: Scale element coordinates</h2>
+        <p>
+          The <dfn>scale element coordinates algorithm</dfn> takes {{double}} coordinates [|x|, |y|]
+          and a {{CaptureController}} |controller|, and run the following steps:
+        </p>
+        <ol>
+          <li>
+            Let |scaleFactorX| be
+            <code
+              >(|x| /
+              |controller|.{{CaptureController/[[ForwardWheelElement]]}}.{{Element/getBoundingClientRect()}}.{{DOMRect/width}})</code
+            >.
+          </li>
+          <li>
+            Let |scaleFactorX| be
+            <code
+              >(|x| /
+              |controller|.{{CaptureController/[[ForwardWheelElement]]}}.{{Element/getBoundingClientRect()}}.{{DOMRect/height}})</code
+            >.
+          </li>
+          <li>
+            Let |surfaceWidth| be |controller|.{{CaptureController/[[Source]]}}'s viewport's width.
+          </li>
+          <li>
+            Let |surfaceHeight| be |controller|.{{CaptureController/[[Source]]}}'s viewport's
+            height.
+          </li>
+          <li>Let |scaledX| be `(|scaleFactorX| * |surfaceWidth|)`.</li>
+          <li>Let |scaledY| be `(|scaleFactorY| * |surfaceHeight|)`.</li>
+          <li>Return [|scaledX|, |scaledY|].</li>
+        </ol>
+        <div class="note">
+          <p>This subroutine assumes that |controller| is [=actively capturing=].</p>
+        </div>
+      </section>
+    </section>
+    <section>
+      <h2>Privacy and Security Considerations</h2>
+      <p>
+        The API surfaces introduced in this specification allow a capturing application limited
+        control over a captured application. These APIs allow the capturing application to gain
+        access to additional pixels in the captured application. This specification employs multiple
+        means to ensure that new capabilities are used in accordance with the user's intentions.
+        Among these means:
+      </p>
+      <ul>
+        <li>
+          All new capabilities introduced here are implicitly gated by the prior mitigations which
+          were employed to render screen-sharing safe.
+        </li>
+        <li>A new {{PermissionsPolicy}} called <a>"captured-surface-control"</a> is used.</li>
+        <li>
+          {{CaptureController/forwardWheel()}} is designed such that only the user's scrolling over
+          an {{Element}} can trigger scrolling in the captured application. This API shape ensures
+          that the capturing application can only [=forward wheel event algorithm|forward wheel
+          events=] to the captured application at the time when the user agent dispatches the
+          trusted wheel event on the capturing application itself.
+        </li>
+        <li>
+          Setting the zoom level is gated by a requirement that is even more stringent than
+          [=transient activation=]. Whereas [=transient activation=] could be used several seconds
+          after the interaction, this specification limits zoom-setting to the time when the user
+          agent is dispatching the event associated with that interaction.
+        </li>
+      </ul>
+      <section>
+        <h3>Zoom-setting: Limitation to specific interactions</h3>
+        <p>
+          {{CaptureController/increaseZoomLevel()}}, {{CaptureController/decreaseZoomLevel()}} and
+          {{CaptureController/resetZoomLevel()}} are only callable from event handlers of specific
+          <a data-cite="DOM#dom-event-type">event types</a> - the [=permitted event types for
+          zoom-setting=]. These are events dispatched directly by the user agent, triggered by user
+          interaction. This specification intentionally excludes from this set such events as
+          "[=mousemove=]", which users are liable to trigger
+          inadvertently.
+        </p>
+      </section>
+      <section>
+        <h3>Scrolling: Limitation to specific interactions</h3>
+        <p>
+          The shape of {{CaptureController/forwardWheel()}} is intentionally chosen to limit the
+          capturing application's control. The application designates a specific element which, when
+          the user scrolls over it, the corresponding wheel events are forwarded to the captured
+          application.
+        </p>
+      </section>
+      <section>
+        <h3>Limiting element types</h3>
+        <p>
+          This specification does not limit the type of {{Element}} for which either
+          {{CaptureController/increaseZoomLevel()}}, {{CaptureController/decreaseZoomLevel()}},
+          {{CaptureController/resetZoomLevel()}} or {{CaptureController/forwardWheel()}} work. Such
+          a limitation would accomplish nothing, because malicious applications could always overlay
+          transparent permitted {{Element}} types on top of visible non-permitted {{Element}}s,
+          thereby bypassing this restriction.
+        </p>
+        <p>
+          The limitation of interaction types is sufficient. This is accomplished by
+          {{CaptureController/forwardWheel()}} through its shape, and by
+          {{CaptureController/increaseZoomLevel()}}, {{CaptureController/decreaseZoomLevel()}} and
+          {{CaptureController/resetZoomLevel()}} through their gating on
+          <a data-cite="DOM#dom-event-type">event types</a>.
+        </p>
+      </section>
+    </section>
+    <section id="conformance"></section>
+  </body>
+</html>

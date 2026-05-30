@@ -1,0 +1,2558 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Geolocation Sensor</title>
+  <meta content="DISC" name="w3c-status">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-DISC" rel="stylesheet">
+  <meta content="Bikeshed version 0ef803fdf, updated Tue Jan 6 11:59:39 2026 -0800" name="generator">
+  <link href="https://www.w3.org/TR/geolocation-sensor/" rel="canonical">
+  <meta content="baba1655273e34641307643f1fc7a1cfc0dad1d2" name="revision">
+  <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example " counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+</style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: 8px;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
+}
+
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
+</style>
+<style>/* Boilerplate: style-idl-highlighting */
+pre.idl.highlight {
+    background: var(--borderedblock-bg, var(--def-bg));
+}
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
+
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+<style>/* Boilerplate: style-syntax-highlighting */
+code.highlight { padding: .1em; border-radius: .3em; }
+pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
+
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
+}
+</style>
+<style>/* Boilerplate: style-var-click-highlighting */
+/*
+Colors were chosen in Lab using https://nixsensor.com/free-color-converter/
+D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
+0 = lab(85,0,85)
+1 = lab(85,80,30)
+2 = lab(85,-40,40)
+3 = lab(85,-50,0)
+4 = lab(85,5,15)
+5 = lab(85,-10,-50)
+6 = lab(85,35,-15)
+
+For darkmode:
+0 = oklab(50%   0%  108%)
+1 = oklab(50% -51%   51%)
+2 = oklab(50% -64%  -20%)
+3 = oklab(50%   6%   19%)
+4 = oklab(50% -12%  -64%)
+5 = oklab(50%  44%  -19%)  
+6 = oklab(50% 102%   38%)
+*/
+
+[data-algorithm] var { cursor: pointer; }
+var[data-var-color] { background-color: var(--var-bg); box-shadow: 0 0 0 2px var(--var-bg); }
+
+var[data-var-color] { --var-bg: #F4D200; }
+var[data-var-color="1"] { --var-bg: #FF87A2; }
+var[data-var-color="2"] { --var-bg: #96E885; }
+var[data-var-color="3"] { --var-bg: #3EEED2; }
+var[data-var-color="4"] { --var-bg: #EACFB6; }
+var[data-var-color="5"] { --var-bg: #82DDFF; }
+var[data-var-color="6"] { --var-vg: #FFBCF2; }
+
+@media (prefers-color-scheme: dark) {
+	var[data-var-color] { --var-bg: #bc1a00; }
+	var[data-var-color="1"] { --var-bg: #007f00; }
+	var[data-var-color="2"] { --var-bg: #008698; }
+	var[data-var-color="3"] { --var-bg: #7f5b2b; }
+	var[data-var-color="4"] { --var-bg: #004df3; }
+	var[data-var-color="5"] { --var-bg: #a1248a; }
+	var[data-var-color="6"] { --var-vg: #ff0000; }
+}
+</style>
+ <body class="h-entry">
+  <div class="head">
+   <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/">
+    <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
+</a>
+</p>
+   <h1 class="no-ref p-name" id="title">Geolocation Sensor</h1>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#DISC">W3C Discontinued Draft</a>,
+    <time class="dt-updated" datetime="2026-02-03">3 February 2026</time></p>
+   <details open>
+    <summary>More details about this document</summary>
+    <div data-fill-with="spec-metadata">
+     <dl>
+      <dt>This version:
+      <dd><a class="u-url" href="https://www.w3.org/TR/2026/DISC-geolocation-sensor-20260203/">https://www.w3.org/TR/2026/DISC-geolocation-sensor-20260203/</a>
+      <dt>Latest published version:
+      <dd><a href="https://www.w3.org/TR/geolocation-sensor/">https://www.w3.org/TR/geolocation-sensor/</a>
+      <dt>Editor's Draft:
+      <dd><a href="https://w3c.github.io/geolocation-sensor/">https://w3c.github.io/geolocation-sensor/</a>
+      <dt>History:
+      <dd><a class="u-url" href="https://www.w3.org/standards/history/geolocation-sensor/">https://www.w3.org/standards/history/geolocation-sensor/</a>
+      <dt>Feedback:
+      <dd><span><a href="mailto:public-device-apis@w3.org?subject=%5Bgeolocation-sensor%5D%20YOUR%20TOPIC%20HERE">public-device-apis@w3.org</a> with subject line “<kbd>[geolocation-sensor] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-device-apis/" rel="discussion">archives</a>)</span>
+      <dd><a href="https://github.com/w3c/geolocation-sensor/issues">Geolocation Sensor Issues Repository</a>
+      <dt class="editor">Editors:
+      <dd class="editor h-card p-author vcard" data-editor-id="41974"><a class="fn p-name u-url url" href="https://intel.com/">Anssi Kostiainen</a> (<span class="org p-org">Intel Corporation</span>)
+      <dd class="editor h-card p-author vcard" data-editor-id="44965"><a class="fn p-name u-url url" href="https://google.com/">Thomas Steiner</a> (<span class="org p-org">Google Inc.</span>)
+      <dd class="editor h-card p-author vcard" data-editor-id="72440"><a class="fn p-name u-url url" href="https://google.com/">Marijn Kruisselbrink</a> (<span class="org p-org">Google Inc.</span>)
+      <dt>Tests:
+      <dd><a href="https://github.com/web-platform-tests/wpt/tree/master/geolocation-sensor">web-platform-tests</a>
+      <dt>Polyfills:
+      <dd><a href="https://github.com/kenchris/sensor-polyfills/blob/master/src/geolocation-sensor.js">geolocation-sensor.js</a><br><a href="https://github.com/w3c/sensors/blob/main/polyfills/geolocation.js">geolocation.js</a>
+     </dl>
+    </div>
+   </details>
+   <div data-fill-with="warning"></div>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2026 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply.
+</p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="heading no-num no-ref no-toc settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>This specification defines the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor">GeolocationSensor</a></code> interface for obtaining
+the <a data-link-type="dfn" href="#geolocation" id="ref-for-geolocation">geolocation</a> of the hosting device.</p>
+  </div>
+  <h2 class="heading no-num no-ref no-toc settled" id="sotd"><span class="content">Status of this document</span></h2>
+  <div data-fill-with="status">
+   <p>
+  <em>This section describes the status of this document at the time of
+  its publication. A list of
+  current W3C publications and the latest revision of this technical report
+  can be found in the <a href="https://www.w3.org/TR/">W3C technical reports
+  index.</a></em>
+</p>
+   <p>
+  This document was published by the
+  <a href="https://www.w3.org/groups/wg/das">Devices and Sensors Working Group</a>
+  as a Discontinued Draft using the <a href="https://www.w3.org/policies/process/20250818/#recs-and-notes">Recommendation
+      track</a>. 
+</p>
+   <p>
+  Publication as a Discontinued Draft implies that this document is no longer intended to advance or to be maintained. 
+  It is inappropriate to cite this document as other than abandoned work.
+</p>
+   <p>
+	This document was produced by a group operating under
+	the <a href="https://www.w3.org/policies/patent-policy/">W3C Patent Policy</a>.
+	W3C maintains a <a href="https://www.w3.org/groups/wg/das/ipr" rel="disclosure">public list of any patent disclosures</a>
+	made in connection with the deliverables of the group;
+	that page also includes instructions for disclosing a patent.
+	An individual who has actual knowledge of a patent that the individual believes contains <a href="https://www.w3.org/policies/patent-policy/#def-essential">Essential Claim(s)</a>
+	must disclose the information in accordance with <a href="https://www.w3.org/policies/patent-policy/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.
+</p>
+   <p>
+  This document is governed by the <a href="https://www.w3.org/policies/process/20250818/" id="w3c_process_revision">18 August 2025 W3C Process Document</a>.
+</p>
+   <p></p>
+   <p>After careful consideration of the feedback received during the
+Working Draft review period, the Devices and Sensors Working Group
+has decided to publish this specification as a <a href="https://www.w3.org/policies/process/#discontinuedREC">Discontinued Draft</a>.
+The Working Group acknowledges that there are still open issues
+and improvements that can be made to the specification, but
+given the limited resources available, it is not feasible to
+continue active development at this time. The Working Group
+encourages the community to continue contributing to the
+<a href="https://github.com/w3c/geolocation/issues/214">
+Background Geolocation use cases</a> for consideration in future work.
+The Working Group remains committed to advancing web standards
+and will explore opportunities to revisit this specification
+in the future when resources permit.</p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-ref no-toc" id="contents">Table of Contents</h2>
+   <ol class="toc">
+    <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
+    <li><a href="#examples"><span class="secno">2</span> <span class="content">Examples</span></a>
+    <li><a href="#security-and-privacy"><span class="secno">3</span> <span class="content">Security and Privacy Considerations</span></a>
+    <li><a href="#model"><span class="secno">4</span> <span class="content">Model</span></a>
+    <li>
+     <a href="#api"><span class="secno">5</span> <span class="content">API</span></a>
+     <ol class="toc">
+      <li>
+       <a href="#geolocationsensor-interface"><span class="secno">5.1</span> <span class="content">The GeolocationSensor Interface</span></a>
+       <ol class="toc">
+        <li><a href="#geolocationsensor-read"><span class="secno">5.1.1</span> <span class="content">GeolocationSensor.read()</span></a>
+        <li><a href="#geolocationsensor-latitude"><span class="secno">5.1.2</span> <span class="content">GeolocationSensor.latitude</span></a>
+        <li><a href="#geolocationsensor-longitude"><span class="secno">5.1.3</span> <span class="content">GeolocationSensor.longitude</span></a>
+        <li><a href="#geolocationsensor-altitude"><span class="secno">5.1.4</span> <span class="content">GeolocationSensor.altitude</span></a>
+        <li><a href="#geolocationsensor-accuracy"><span class="secno">5.1.5</span> <span class="content">GeolocationSensor.accuracy</span></a>
+        <li><a href="#geolocationsensor-altitudeaccuracy"><span class="secno">5.1.6</span> <span class="content">GeolocationSensor.altitudeAccuracy</span></a>
+        <li><a href="#geolocationsensor-heading"><span class="secno">5.1.7</span> <span class="content">GeolocationSensor.heading</span></a>
+        <li><a href="#geolocationsensor-speed"><span class="secno">5.1.8</span> <span class="content">GeolocationSensor.speed</span></a>
+       </ol>
+     </ol>
+    <li>
+     <a href="#abstract-operations"><span class="secno">6</span> <span class="content">Abstract Operations</span></a>
+     <ol class="toc">
+      <li><a href="#construct-a-geolocation-sensor-object"><span class="secno">6.1</span> <span class="content">Construct a geolocation sensor object</span></a>
+     </ol>
+    <li>
+     <a href="#automation"><span class="secno">7</span> <span class="content">Automation</span></a>
+     <ol class="toc">
+      <li><a href="#geolocation-reading-parsing-algorithm"><span class="secno">7.1</span> <span class="content">Geolocation reading parsing algorithm</span></a>
+     </ol>
+    <li>
+     <a href="#use-cases"><span class="secno">8</span> <span class="content">Use Cases</span></a>
+     <ol class="toc">
+      <li><a href="#use-cases-categorization"><span class="secno">8.1</span> <span class="content">Categorization of use cases</span></a>
+      <li>
+       <a href="#use-cases-foreground-one-off"><span class="secno">8.2</span> <span class="content">Foreground—One-off geolocation update</span></a>
+       <ol class="toc">
+        <li><a href="#use-case-locate-a-user-on-a-map"><span class="secno">8.2.1</span> <span class="content">Locate a user on a map</span></a>
+        <li><a href="#use-case-find-points-of-interest-in-the-users-area"><span class="secno">8.2.2</span> <span class="content">Find points of interest in the user’s area</span></a>
+       </ol>
+      <li>
+       <a href="#use-cases-foreground-continuous"><span class="secno">8.3</span> <span class="content">Foreground—Continuous geolocation updates</span></a>
+       <ol class="toc">
+        <li><a href="#use-case-up-to-date-local-information"><span class="secno">8.3.1</span> <span class="content">Up-to-date local information</span></a>
+        <li><a href="#use-case-alerts-when-points-of-interest-are-in-the-users-vicinity"><span class="secno">8.3.2</span> <span class="content">Alerts when points of interest are in the user’s vicinity</span></a>
+        <li><a href="#use-case-show-the-users-position-on-a-map"><span class="secno">8.3.3</span> <span class="content">Show the user’s position on a map</span></a>
+       </ol>
+      <li>
+       <a href="#use-cases-background-continuous"><span class="secno">8.4</span> <span class="content">Background—Continuous geolocation updates</span></a>
+       <ol class="toc">
+        <li><a href="#use-case-location-tagged-status-updates-in-social-networking-applications"><span class="secno">8.4.1</span> <span class="content">Location-tagged status updates in social networking applications</span></a>
+        <li><a href="#use-case-turn-by-turn-route-navigation"><span class="secno">8.4.2</span> <span class="content">Turn-by-turn route navigation</span></a>
+        <li><a href="#use-case-tracking-sports-activity"><span class="secno">8.4.3</span> <span class="content">Tracking sports activity</span></a>
+        <li><a href="#use-case-real-estate-search"><span class="secno">8.4.4</span> <span class="content">Real estate search</span></a>
+        <li><a href="#use-case-cultural-spaces"><span class="secno">8.4.5</span> <span class="content">Cultural spaces</span></a>
+       </ol>
+      <li>
+       <a href="#use-cases-background-geofence"><span class="secno">8.5</span> <span class="content">Background—One-off geolocation fence alert</span></a>
+       <ol class="toc">
+        <li><a href="#use-case-reminder-and-todo-applications"><span class="secno">8.5.1</span> <span class="content">Reminder and to-do applications</span></a>
+        <li><a href="#use-case-travel-applications"><span class="secno">8.5.2</span> <span class="content">Travel applications</span></a>
+        <li><a href="#use-case-ticketing-or-booking-confirmations"><span class="secno">8.5.3</span> <span class="content">Ticketing or booking confirmations</span></a>
+        <li><a href="#use-case-ride-share-applications"><span class="secno">8.5.4</span> <span class="content">Ride share applications</span></a>
+        <li><a href="#use-case-retail-special-offers"><span class="secno">8.5.5</span> <span class="content">Retail special offers</span></a>
+       </ol>
+     </ol>
+    <li><a href="#acknowledgements"><span class="secno">9</span> <span class="content">Acknowledgements</span></a>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
+     </ol>
+    <li><a href="#idl-index"><span class="secno"></span> <span class="content">IDL Index</span></a>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
+   <p>The <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor①">GeolocationSensor</a></code> API extends the <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/sensors/#sensor" id="ref-for-sensor">Sensor</a></code> interface <a data-link-type="biblio" href="#biblio-generic-sensor" title="Generic Sensor API">[GENERIC-SENSOR]</a> to provide
+information about the <a data-link-type="dfn" href="#geolocation" id="ref-for-geolocation①">geolocation</a> of the hosting device.</p>
+   <p>The feature set of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor②">GeolocationSensor</a></code> is similar to that of the Geolocation API
+<a data-link-type="biblio" href="#biblio-geolocation" title="Geolocation">[GEOLOCATION]</a>, but it is surfaced through a modern API that is consistent across
+<a href="https://www.w3.org/das/roadmap">contemporary sensor APIs</a>, improves
+<a data-link-type="dfn" href="https://w3c.github.io/sensors#security-and-privacy" id="ref-for-security-and-privacy">security and privacy</a>, and is <a data-link-type="dfn" href="https://w3c.github.io/sensors#extensibility" id="ref-for-extensibility">extensible</a>. The API aims to be
+<a href="https://github.com/kenchris/sensor-polyfills/blob/master/src/geolocation-sensor.js">polyfillable</a>
+(<a href="https://kenchris.github.io/sensor-polyfills/run-geolocation.html">example</a>)
+on top of the existing Geolocation API.</p>
+   <h2 class="heading settled" data-level="2" id="examples"><span class="secno">2. </span><span class="content">Examples</span><a class="self-link" href="#examples"></a></h2>
+   <p>
+  Get a new geolocation reading every second:
+</p>
+   <div class="example" id="example-c8cdc575">
+    <a class="self-link" href="#example-c8cdc575"></a>
+  
+<pre class="highlight"><c- a>const</c-> geo <c- o>=</c-> <c- ow>new</c-> GeolocationSensor<c- p>({</c-> frequency<c- o>:</c-> <c- mf>1</c-> <c- p>});</c->
+geo<c- p>.</c->start<c- p>();</c->
+
+geo<c- p>.</c->onreading <c- o>=</c-> <c- p>()</c-> <c- p>=></c-> console<c- p>.</c->log<c- p>(</c-><c- sb>`lat: </c-><c- si>${</c->geo<c- p>.</c->latitude<c- si>}</c-><c- sb>, long: </c-><c- si>${</c->geo<c- p>.</c->longitude<c- si>}</c-><c- sb>`</c-><c- p>);</c->
+
+geo<c- p>.</c->onerror <c- o>=</c-> event <c- p>=></c-> console<c- p>.</c->error<c- p>(</c->event<c- p>.</c->error<c- p>.</c->name<c- p>,</c-> event<c- p>.</c->error<c- p>.</c->message<c- p>);</c->
+</pre>
+   </div>
+   <p>
+  Get a one-shot geolocation reading:
+</p>
+   <div class="example" id="example-9488bb9f">
+    <a class="self-link" href="#example-9488bb9f"></a>
+  
+<pre class="highlight">GeolocationSensor<c- p>.</c->read<c- p>()</c->
+  <c- p>.</c->then<c- p>(</c->geo <c- p>=></c-> console<c- p>.</c->log<c- p>(</c-><c- sb>`lat: </c-><c- si>${</c->geo<c- p>.</c->latitude<c- si>}</c-><c- sb>, long: </c-><c- si>${</c->geo<c- p>.</c->longitude<c- si>}</c-><c- sb>`</c-><c- p>))</c->
+  <c- p>.</c-><c- k>catch</c-><c- p>(</c->error <c- p>=></c-> console<c- p>.</c->error<c- p>(</c->error<c- p>.</c->name<c- p>));</c->
+</pre>
+   </div>
+   <h2 class="heading settled" data-level="3" id="security-and-privacy"><span class="secno">3. </span><span class="content">Security and Privacy Considerations</span><a class="self-link" href="#security-and-privacy"></a></h2>
+   <p class="note" role="note"><span class="marker">Note:</span> Investigate any geolocation-specific security and privacy considerations that are not
+mitigated by the Generic Sensor API <a data-link-type="biblio" href="#biblio-generic-sensor" title="Generic Sensor API">[GENERIC-SENSOR]</a>, and define geolocation-specific
+mitigations.</p>
+   <h2 class="heading settled" data-level="4" id="model"><span class="secno">4. </span><span class="content">Model</span><a class="self-link" href="#model"></a></h2>
+   <p>The term <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="geolocation">geolocation</dfn> refers to the real-world geographic location of the
+hosting device represented in geographic coordinates <a data-link-type="biblio" href="#biblio-wgs84" title="Department of Defence World Geodetic System 1984">[WGS84]</a>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> An implementation can use multiple location information sources to acquire
+<a data-link-type="dfn" href="#geolocation" id="ref-for-geolocation②">geolocation</a> information, and this specification is agnostic with respect
+to those sources.</p>
+   <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="geolocation-sensor">Geolocation Sensor</dfn> <a data-link-type="dfn" href="https://w3c.github.io/sensors#sensor-type" id="ref-for-sensor-type">sensor type</a>’s associated <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/sensors/#sensor" id="ref-for-sensor①">Sensor</a></code> subclass is the
+<code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor③">GeolocationSensor</a></code> class.</p>
+   <p>The <a data-link-type="dfn" href="#geolocation-sensor" id="ref-for-geolocation-sensor">Geolocation Sensor</a> has an associated <code class="idl"><u class="link-error" data-lt="PermissionName" title="LINK ERROR: No &apos;idl&apos; refs found for &apos;PermissionName&apos;.">PermissionName</u></code> which is
+<u class="link-error" data-lt="&quot;geolocation&quot;" title="LINK ERROR: No &apos;enum-value&apos; refs found for &apos;&quot;geolocation&quot;&apos;.">"geolocation"</u>.</p>
+   <p>The <a data-link-type="dfn" href="#geolocation-sensor" id="ref-for-geolocation-sensor①">Geolocation Sensor</a> is a <a data-link-type="dfn" href="https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature" id="ref-for-policy-controlled-feature">policy-controlled feature</a> identified by the string "geolocation". Its <a data-link-type="dfn" href="https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist" id="ref-for-policy-controlled-feature-default-allowlist">default allowlist</a> is <code>'self'</code>.</p>
+   <p>The <a data-link-type="dfn" href="#geolocation-sensor" id="ref-for-geolocation-sensor②">Geolocation Sensor</a> has an associated <a data-link-type="dfn" href="https://w3c.github.io/sensors/#virtual-sensor-type" id="ref-for-virtual-sensor-type">virtual sensor type</a> which is
+"<code><dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="geolocation virtual sensor type" data-noexport id="geolocation-virtual-sensor-type">geolocation</dfn></code>".</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="latest-geolocation-reading">latest geolocation reading</dfn> is a <a data-link-type="dfn" href="https://w3c.github.io/sensors#latest-reading" id="ref-for-latest-reading">latest reading</a> for a <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/sensors/#sensor" id="ref-for-sensor②">Sensor</a></code> of
+<a data-link-type="dfn" href="#geolocation-sensor" id="ref-for-geolocation-sensor③">Geolocation Sensor</a> <a data-link-type="dfn" href="https://w3c.github.io/sensors#sensor-type" id="ref-for-sensor-type①">sensor type</a>. It includes <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-entry" id="ref-for-map-entry">entries</a> whose <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-getting-the-keys" id="ref-for-map-getting-the-keys">keys</a>
+are "latitude", "longitude", "altitude", "accuracy", "altitudeAccuracy", "heading", "speed"
+and whose <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-getting-the-values" id="ref-for-map-getting-the-values">values</a> contain the device’s <a data-link-type="dfn" href="#geolocation" id="ref-for-geolocation③">geolocation</a>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Consider adding a visual of the standard coordinate system for the Earth.</p>
+   <h2 class="heading settled" data-level="5" id="api"><span class="secno">5. </span><span class="content">API</span><a class="self-link" href="#api"></a></h2>
+   <div class="issue no-marker" id="issue-d41d8cd9">
+    <a class="self-link" href="#issue-d41d8cd9"></a><a class="marker" href="https://github.com/w3c/geolocation-sensor/issues/62">Issue #62 on GitHub: “Background geofencing”</a>
+    <p dir="auto">There are a couple of related issues touching on aspects of supporting background geolocation. Let's use this one to track background geofencing specifically.</p>
+    <p dir="auto">For reference, <a class="notranslate user-mention" data-hovercard-type="user" data-hovercard-url="/users/mkruisselbrink/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/mkruisselbrink">@mkruisselbrink</a> sent a <a href="https://lists.w3.org/Archives/Public/public-geolocation//2014Sep/0012.html" rel="nofollow">proposed API</a> to the Geolocation WG mailing list back in 2014. That seems like a reasonable place to start if someone wants to pick up this work.</p>
+    <p dir="auto">Note that at time of writing no implementers appear to be interested in developing an API for background geolocation or geofencing and so any specification work done in this group will be purely speculative.</p>
+   </div>
+   <h3 class="heading settled" data-level="5.1" id="geolocationsensor-interface"><span class="secno">5.1. </span><span class="content">The GeolocationSensor Interface</span><a class="self-link" href="#geolocationsensor-interface"></a></h3>
+<pre class="def highlight idl">[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext" id="ref-for-SecureContext"><c- g>SecureContext</c-></a>,
+ <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed" id="ref-for-Exposed"><c- g>Exposed</c-></a>=(<c- n>DedicatedWorker</c->, <c- n>Window</c->)]
+<c- b>interface</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="interface" data-export id="geolocationsensor"><code><c- g>GeolocationSensor</c-></code></dfn> : <a data-link-type="idl-name" href="https://w3c.github.io/sensors/#sensor" id="ref-for-sensor③"><c- n>Sensor</c-></a> {
+  <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="constructor" data-export data-lt="GeolocationSensor(options)|constructor(options)|GeolocationSensor()|constructor()" id="dom-geolocationsensor-geolocationsensor"><code><c- g>constructor</c-></code></dfn>(<c- b>optional</c-> <a data-link-type="idl-name" href="#dictdef-geolocationsensoroptions" id="ref-for-dictdef-geolocationsensoroptions"><c- n>GeolocationSensorOptions</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor/GeolocationSensor(options), GeolocationSensor/constructor(options), GeolocationSensor/GeolocationSensor(), GeolocationSensor/constructor()" data-dfn-type="argument" data-export id="dom-geolocationsensor-geolocationsensor-options-options"><code><c- g>options</c-></code></dfn> = {});
+  <c- b>static</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise" id="ref-for-idl-promise"><c- b>Promise</c-></a>&lt;<a data-link-type="idl-name" href="#dictdef-geolocationsensorreading" id="ref-for-dictdef-geolocationsensorreading"><c- n>GeolocationSensorReading</c-></a>> <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="method" data-export data-lt="read(readOptions)|read()" id="dom-geolocationsensor-read"><code><c- g>read</c-></code></dfn>(<c- b>optional</c-> <a data-link-type="idl-name" href="#dictdef-readoptions" id="ref-for-dictdef-readoptions"><c- n>ReadOptions</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor/read(readOptions), GeolocationSensor/read()" data-dfn-type="argument" data-export id="dom-geolocationsensor-read-readoptions-readoptions"><code><c- g>readOptions</c-></code></dfn> = {});
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="attribute" data-export data-readonly data-type="unrestricted double?" id="dom-geolocationsensor-latitude"><code><c- g>latitude</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double①"><c- b>unrestricted</c-> <c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="attribute" data-export data-readonly data-type="unrestricted double?" id="dom-geolocationsensor-longitude"><code><c- g>longitude</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double②"><c- b>unrestricted</c-> <c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="attribute" data-export data-readonly data-type="unrestricted double?" id="dom-geolocationsensor-altitude"><code><c- g>altitude</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double③"><c- b>unrestricted</c-> <c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="attribute" data-export data-readonly data-type="unrestricted double?" id="dom-geolocationsensor-accuracy"><code><c- g>accuracy</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double④"><c- b>unrestricted</c-> <c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="attribute" data-export data-readonly data-type="unrestricted double?" id="dom-geolocationsensor-altitudeaccuracy"><code><c- g>altitudeAccuracy</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double⑤"><c- b>unrestricted</c-> <c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="attribute" data-export data-readonly data-type="unrestricted double?" id="dom-geolocationsensor-heading"><code><c- g>heading</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double⑥"><c- b>unrestricted</c-> <c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensor" data-dfn-type="attribute" data-export data-readonly data-type="unrestricted double?" id="dom-geolocationsensor-speed"><code><c- g>speed</c-></code></dfn>;
+};
+
+<c- b>dictionary</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="dictionary" data-export id="dictdef-geolocationsensoroptions"><code><c- g>GeolocationSensorOptions</c-></code></dfn> : <a data-link-type="idl-name" href="https://w3c.github.io/sensors/#dictdef-sensoroptions" id="ref-for-dictdef-sensoroptions"><c- n>SensorOptions</c-></a> {
+  // placeholder for GeolocationSensor-specific options
+};
+
+<c- b>dictionary</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="dictionary" data-export id="dictdef-readoptions"><code><c- g>ReadOptions</c-></code></dfn> : <a data-link-type="idl-name" href="#dictdef-geolocationsensoroptions" id="ref-for-dictdef-geolocationsensoroptions①"><c- n>GeolocationSensorOptions</c-></a> {
+  <a data-link-type="idl-name" href="https://dom.spec.whatwg.org/#abortsignal" id="ref-for-abortsignal"><c- n>AbortSignal</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="ReadOptions" data-dfn-type="dict-member" data-export data-type="AbortSignal?" id="dom-readoptions-signal"><code><c- g>signal</c-></code></dfn>;
+};
+
+<c- b>dictionary</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="dictionary" data-export id="dictdef-geolocationsensorreading"><code><c- g>GeolocationSensorReading</c-></code></dfn> {
+  <a data-link-type="idl-name" href="https://w3c.github.io/hr-time/#typedefdef-domhighrestimestamp" id="ref-for-typedefdef-domhighrestimestamp"><c- n>DOMHighResTimeStamp</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="DOMHighResTimeStamp?" id="dom-geolocationsensorreading-timestamp"><code><c- g>timestamp</c-></code></dfn>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double" id="ref-for-idl-double"><c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="double?" id="dom-geolocationsensorreading-latitude"><code><c- g>latitude</c-></code></dfn>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double" id="ref-for-idl-double①"><c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="double?" id="dom-geolocationsensorreading-longitude"><code><c- g>longitude</c-></code></dfn>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double" id="ref-for-idl-double②"><c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="double?" id="dom-geolocationsensorreading-altitude"><code><c- g>altitude</c-></code></dfn>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double" id="ref-for-idl-double③"><c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="double?" id="dom-geolocationsensorreading-accuracy"><code><c- g>accuracy</c-></code></dfn>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double" id="ref-for-idl-double④"><c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="double?" id="dom-geolocationsensorreading-altitudeaccuracy"><code><c- g>altitudeAccuracy</c-></code></dfn>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double" id="ref-for-idl-double⑤"><c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="double?" id="dom-geolocationsensorreading-heading"><code><c- g>heading</c-></code></dfn>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double" id="ref-for-idl-double⑥"><c- b>double</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="GeolocationSensorReading" data-dfn-type="dict-member" data-export data-type="double?" id="dom-geolocationsensorreading-speed"><code><c- g>speed</c-></code></dfn>;
+};
+</pre>
+   <div class="note" role="note">
+    
+Normative changes to the 
+<code class="idl"><a data-link-type="idl" href="https://w3c.github.io/geolocation/#dom-geolocationcoordinates" id="ref-for-dom-geolocationcoordinates">GeolocationCoordinates</a></code> 
+interface of the Geolocation API are the following:
+
+    <ul>
+     <li>Use <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double" id="ref-for-idl-unrestricted-double⑦">unrestricted double</a></code>
+  to not throw TypeError on NaN, +Infinity or −Infinity.
+  (Geolocation API defines NaN as a valid value for heading, yet uses double as its type.)
+  
+     <li>Use <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#dfn-nullable-type" id="ref-for-dfn-nullable-type">nullable type</a> to allow
+  all attributes to default to null. (Geolocation API does not provide synchronous means to
+  access these attributes, thus latitude, longitude, and altitude are not nullable and "must be
+  supported by all implementations".)
+
+    </ul>
+   </div>
+   <p>To construct a <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor④">GeolocationSensor</a></code> object the user agent must invoke the
+<a data-link-type="dfn" href="#construct-a-geolocation-sensor-object" id="ref-for-construct-a-geolocation-sensor-object">construct a geolocation sensor object</a> abstract operation.</p>
+   <h4 class="heading settled" data-level="5.1.1" id="geolocationsensor-read"><span class="secno">5.1.1. </span><span class="content">GeolocationSensor.read()</span><a class="self-link" href="#geolocationsensor-read"></a></h4>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-geolocationsensor-read" id="ref-for-dom-geolocationsensor-read">read()</a></code> method, when called, must run the following algorithm:</p>
+   <div class="algorithm" data-algorithm="read">
+    <dl>
+     <dt data-md>input
+     <dd data-md>
+      <p><var>options</var>, a <code class="idl"><a data-link-type="idl" href="#dictdef-readoptions" id="ref-for-dictdef-readoptions①">ReadOptions</a></code> object.</p>
+     <dt data-md>output
+     <dd data-md>
+      <p><var>p</var>, a promise.</p>
+    </dl>
+    <ol>
+     <li data-md>
+      <p>Let <var>p</var> be a new promise.</p>
+     <li data-md>
+      <p>Let <var>options</var> be the first argument.</p>
+     <li data-md>
+      <p>Let <var>signal</var> be the <var>options</var>’ dictionary member of the same name if present, or null otherwise.</p>
+     <li data-md>
+      <p>If <var>signal</var> is <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#abortsignal-aborted" id="ref-for-abortsignal-aborted">aborted</a>, then reject <var>p</var> with <var>signal</var>’s <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#abortsignal-abort-reason" id="ref-for-abortsignal-abort-reason">abort reason</a> and return <var>p</var>.</p>
+     <li data-md>
+      <p>Let <var>geo</var> be the result of invoking <a data-link-type="dfn" href="#construct-a-geolocation-sensor-object" id="ref-for-construct-a-geolocation-sensor-object①">construct a Geolocation Sensor object</a> with <var>options</var>. If this throws a <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#idl-DOMException" id="ref-for-idl-DOMException">DOMException</a></code>, catch it, reject <var>p</var> with that <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#idl-DOMException" id="ref-for-idl-DOMException①">DOMException</a></code>, and return <var>p</var>.</p>
+     <li data-md>
+      <p>Invoke <var>geo</var>.<code class="idl"><a data-link-type="idl" href="https://w3c.github.io/sensors/#dom-sensor-start" id="ref-for-dom-sensor-start">start()</a></code>.</p>
+     <li data-md>
+      <p>If <var>signal</var> is not null, then <a data-link-type="dfn" href="https://dom.spec.whatwg.org#abortsignal-add" id="ref-for-abortsignal-add">add the following abort steps</a> to <var>signal</var>:</p>
+      <ol>
+       <li data-md>
+        <p>Invoke <var>geo</var>.<code class="idl"><a data-link-type="idl" href="https://w3c.github.io/sensors/#dom-sensor-stop" id="ref-for-dom-sensor-stop">stop()</a></code>.</p>
+       <li data-md>
+        <p>Reject <var>p</var> with <var>signal</var>’s <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#abortsignal-abort-reason" id="ref-for-abortsignal-abort-reason①">abort reason</a> and abort these steps.</p>
+      </ol>
+     <li data-md>
+      <p>Run these steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel">in parallel</a>:</p>
+      <ol>
+       <li data-md>
+        <p>If <a data-link-type="dfn" href="https://w3c.github.io/sensors/#notify-error" id="ref-for-notify-error">notify error</a> is invoked with <var>geo</var>, invoke <var>geo</var>.<code class="idl"><a data-link-type="idl" href="https://w3c.github.io/sensors/#dom-sensor-stop" id="ref-for-dom-sensor-stop①">stop()</a></code>, and reject <var>p</var> with the <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#idl-DOMException" id="ref-for-idl-DOMException②">DOMException</a></code> passed as input to <a data-link-type="dfn" href="https://w3c.github.io/sensors/#notify-error" id="ref-for-notify-error①">notify error</a>.</p>
+       <li data-md>
+        <p>If <a data-link-type="dfn" href="https://w3c.github.io/sensors/#notify-new-reading" id="ref-for-notify-new-reading">notify new reading</a> is invoked with <var>geo</var>, then <a data-link-type="dfn" href="#resolve-a-geolocation-promise" id="ref-for-resolve-a-geolocation-promise">resolve a geolocation promise</a> with <var>geo</var> and <var>p</var>.</p>
+      </ol>
+     <li data-md>
+      <p>Return <var>p</var>.</p>
+    </ol>
+   </div>
+   <p class="note" role="note">
+Implementations can reuse the same promise for multiple concurrent calls within the same browsing context if the arguments passed to <code class="idl"><a data-link-type="idl" href="#dom-geolocationsensor-read" id="ref-for-dom-geolocationsensor-read①">read()</a></code> are the same.
+</p>
+   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="resolve-a-geolocation-promise">resolve a geolocation promise</dfn> means to run the following steps:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>reading</var> be a <code class="idl"><a data-link-type="idl" href="#dictdef-geolocationsensorreading" id="ref-for-dictdef-geolocationsensorreading①">GeolocationSensorReading</a></code>.</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list-iterate" id="ref-for-list-iterate">For each</a> <var>key</var> → <var>value</var> of <a data-link-type="dfn" href="#latest-geolocation-reading" id="ref-for-latest-geolocation-reading">latest geolocation reading</a>:</p>
+     <ol>
+      <li data-md>
+       <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-set" id="ref-for-map-set">Set</a> <var>reading</var>[key] to <var>value</var>.</p>
+     </ol>
+    <li data-md>
+     <p>Invoke <var>geo</var>.<code class="idl"><a data-link-type="idl" href="https://w3c.github.io/sensors/#dom-sensor-stop" id="ref-for-dom-sensor-stop②">stop()</a></code>.</p>
+    <li data-md>
+     <p>Resolve <var>p</var> with <var>reading</var>.</p>
+   </ol>
+   <h4 class="heading settled" data-level="5.1.2" id="geolocationsensor-latitude"><span class="secno">5.1.2. </span><span class="content">GeolocationSensor.latitude</span><a class="self-link" href="#geolocationsensor-latitude"></a></h4>
+   <p>The <code class="idl"><a class="idl-code" data-link-type="attribute" href="#dom-geolocationsensor-latitude" id="ref-for-dom-geolocationsensor-latitude">latitude</a></code> attribute of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor⑤">GeolocationSensor</a></code> interface
+returns the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#get-value-from-latest-reading" id="ref-for-get-value-from-latest-reading">get value from latest reading</a> with <code>this</code> and "latitude" as
+arguments. It represents the latitude coordinate of the <a data-link-type="dfn" href="#geolocation" id="ref-for-geolocation④">geolocation</a> in decimal degrees
+<a data-link-type="biblio" href="#biblio-wgs84" title="Department of Defence World Geodetic System 1984">[WGS84]</a>.</p>
+   <h4 class="heading settled" data-level="5.1.3" id="geolocationsensor-longitude"><span class="secno">5.1.3. </span><span class="content">GeolocationSensor.longitude</span><a class="self-link" href="#geolocationsensor-longitude"></a></h4>
+   <p>The <code class="idl"><a class="idl-code" data-link-type="attribute" href="#dom-geolocationsensor-longitude" id="ref-for-dom-geolocationsensor-longitude">longitude</a></code> attribute of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor⑥">GeolocationSensor</a></code> interface
+returns the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#get-value-from-latest-reading" id="ref-for-get-value-from-latest-reading①">get value from latest reading</a> with <code>this</code> and "longitude" as
+arguments. It represents the longitude coordinate of the <a data-link-type="dfn" href="#geolocation" id="ref-for-geolocation⑤">geolocation</a> in decimal degrees
+<a data-link-type="biblio" href="#biblio-wgs84" title="Department of Defence World Geodetic System 1984">[WGS84]</a>.</p>
+   <h4 class="heading settled" data-level="5.1.4" id="geolocationsensor-altitude"><span class="secno">5.1.4. </span><span class="content">GeolocationSensor.altitude</span><a class="self-link" href="#geolocationsensor-altitude"></a></h4>
+   <p>The <code class="idl"><a class="idl-code" data-link-type="attribute" href="#dom-geolocationsensor-altitude" id="ref-for-dom-geolocationsensor-altitude">altitude</a></code> attribute of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor⑦">GeolocationSensor</a></code> interface
+returns the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#get-value-from-latest-reading" id="ref-for-get-value-from-latest-reading②">get value from latest reading</a> with <code>this</code> and "altitude" as
+arguments. It represents the <a data-link-type="dfn" href="#geolocation" id="ref-for-geolocation⑥">geolocation</a> in meters above the WGS 84 ellipsoid <a data-link-type="biblio" href="#biblio-wgs84" title="Department of Defence World Geodetic System 1984">[WGS84]</a>.</p>
+   <h4 class="heading settled" data-level="5.1.5" id="geolocationsensor-accuracy"><span class="secno">5.1.5. </span><span class="content">GeolocationSensor.accuracy</span><a class="self-link" href="#geolocationsensor-accuracy"></a></h4>
+   <p>The <code class="idl"><a class="idl-code" data-link-type="attribute" href="#dom-geolocationsensor-accuracy" id="ref-for-dom-geolocationsensor-accuracy">accuracy</a></code> attribute of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor⑧">GeolocationSensor</a></code> interface
+returns the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#get-value-from-latest-reading" id="ref-for-get-value-from-latest-reading③">get value from latest reading</a> with <code>this</code> and "accuracy" as
+arguments. It represents the accuracy of the <a data-link-type="dfn" href="https://w3c.github.io/sensors#latest-reading" id="ref-for-latest-reading①">latest reading</a>["latitude"] value and
+<a data-link-type="dfn" href="https://w3c.github.io/sensors#latest-reading" id="ref-for-latest-reading②">latest reading</a>["longitude"] value in meters with a 95% confidence level.</p>
+   <p>If the <a data-link-type="dfn" href="https://w3c.github.io/sensors#latest-reading" id="ref-for-latest-reading③">latest reading</a>["latitude"] value is null or <a data-link-type="dfn" href="https://w3c.github.io/sensors#latest-reading" id="ref-for-latest-reading④">latest reading</a>["longitude"] value is
+null, it must return null.</p>
+   <h4 class="heading settled" data-level="5.1.6" id="geolocationsensor-altitudeaccuracy"><span class="secno">5.1.6. </span><span class="content">GeolocationSensor.altitudeAccuracy</span><a class="self-link" href="#geolocationsensor-altitudeaccuracy"></a></h4>
+   <p>The <code class="idl"><a class="idl-code" data-link-type="attribute" href="#dom-geolocationsensor-altitudeaccuracy" id="ref-for-dom-geolocationsensor-altitudeaccuracy">altitudeAccuracy</a></code> attribute of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor⑨">GeolocationSensor</a></code>
+interface returns the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#get-value-from-latest-reading" id="ref-for-get-value-from-latest-reading④">get value from latest reading</a> with <code>this</code> and
+"altitudeAccuracy" as arguments. It represents the accuracy of the
+<a data-link-type="dfn" href="https://w3c.github.io/sensors#latest-reading" id="ref-for-latest-reading⑤">latest reading</a>["altitude"] value in meters with a 95% confidence level.</p>
+   <p>If the <a data-link-type="dfn" href="https://w3c.github.io/sensors#latest-reading" id="ref-for-latest-reading⑥">latest reading</a>["altitude"] value is null, it must return null.</p>
+   <h4 class="heading settled" data-level="5.1.7" id="geolocationsensor-heading"><span class="secno">5.1.7. </span><span class="content">GeolocationSensor.heading</span><a class="self-link" href="#geolocationsensor-heading"></a></h4>
+   <p>The <code class="idl"><a class="idl-code" data-link-type="attribute" href="#dom-geolocationsensor-heading" id="ref-for-dom-geolocationsensor-heading">heading</a></code> attribute of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor①⓪">GeolocationSensor</a></code> interface
+returns the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#get-value-from-latest-reading" id="ref-for-get-value-from-latest-reading⑤">get value from latest reading</a> with <code>this</code> and "heading" as
+arguments. It represents the direction of travel in degrees counting clockwise relative to the
+true north in the range 0 ≤ heading ≤ 360.</p>
+   <h4 class="heading settled" data-level="5.1.8" id="geolocationsensor-speed"><span class="secno">5.1.8. </span><span class="content">GeolocationSensor.speed</span><a class="self-link" href="#geolocationsensor-speed"></a></h4>
+   <p>The <code class="idl"><a class="idl-code" data-link-type="attribute" href="#dom-geolocationsensor-speed" id="ref-for-dom-geolocationsensor-speed">speed</a></code> attribute of the <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor①①">GeolocationSensor</a></code> interface
+returns the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#get-value-from-latest-reading" id="ref-for-get-value-from-latest-reading⑥">get value from latest reading</a> with <code>this</code> and "speed" as
+arguments. It represents the magnitude of the horizontal component of the velocity in meters
+per second.</p>
+   <h2 class="heading settled" data-level="6" id="abstract-operations"><span class="secno">6. </span><span class="content">Abstract Operations</span><a class="self-link" href="#abstract-operations"></a></h2>
+   <h3 class="dfn-paneled heading settled" data-dfn-type="dfn" data-export data-level="6.1" data-lt="Construct a geolocation sensor object" id="construct-a-geolocation-sensor-object"><span class="secno">6.1. </span><span class="content">Construct a geolocation sensor object</span><a class="self-link" href="#construct-a-geolocation-sensor-object" id="ref-for-construct-a-geolocation-sensor-object②"></a></h3>
+   <div class="algorithm" data-algorithm="construct a geolocation sensor object">
+    <dl>
+     <dt data-md>input
+     <dd data-md>
+      <p><var>options</var>, a <code class="idl"><a data-link-type="idl" href="#dictdef-geolocationsensoroptions" id="ref-for-dictdef-geolocationsensoroptions②">GeolocationSensorOptions</a></code> object.</p>
+     <dt data-md>output
+     <dd data-md>
+      <p>A <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor①②">GeolocationSensor</a></code> object.</p>
+    </dl>
+    <ol>
+     <li data-md>
+      <p>Let <var>allowed</var> be the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors#check-sensor-policy-controlled-features" id="ref-for-check-sensor-policy-controlled-features">check sensor policy-controlled features</a>
+  with <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor①③">GeolocationSensor</a></code>.</p>
+     <li data-md>
+      <p>If <var>allowed</var> is false, then:</p>
+      <ol>
+       <li data-md>
+        <p><a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#dfn-throw" id="ref-for-dfn-throw">Throw</a> a <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#securityerror" id="ref-for-securityerror">SecurityError</a></code> <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#idl-DOMException" id="ref-for-idl-DOMException③">DOMException</a></code>.</p>
+      </ol>
+     <li data-md>
+      <p>Let <var>geo</var> be the new <code class="idl"><a data-link-type="idl" href="#geolocationsensor" id="ref-for-geolocationsensor①④">GeolocationSensor</a></code> object.</p>
+     <li data-md>
+      <p>Invoke <a data-link-type="dfn" href="https://w3c.github.io/sensors#initialize-a-sensor-object" id="ref-for-initialize-a-sensor-object">initialize a sensor object</a> with <var>geo</var> and <var>options</var>.</p>
+     <li data-md>
+      <p>Return <var>geo</var>.</p>
+    </ol>
+   </div>
+   <h2 class="heading settled" data-level="7" id="automation"><span class="secno">7. </span><span class="content">Automation</span><a class="self-link" href="#automation"></a></h2>
+   <p>This section extends <a href="https://w3c.github.io/sensors/#automation"><cite>Generic Sensor API</cite> § 9 Automation</a> by providing <a data-link-type="dfn" href="#geolocation-sensor" id="ref-for-geolocation-sensor④">Geolocation Sensor</a>-specific virtual sensor metadata.</p>
+   <p>The <a data-link-type="dfn" href="https://w3c.github.io/sensors/#per-type-virtual-sensor-metadata" id="ref-for-per-type-virtual-sensor-metadata">per-type virtual sensor metadata</a> <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map">map</a> must have the following <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-entry" id="ref-for-map-entry①">entry</a>:</p>
+   <dl>
+    <dt data-md><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-key" id="ref-for-map-key">key</a>
+    <dd data-md>
+     <p>"<code><a data-link-type="dfn" href="#geolocation-virtual-sensor-type" id="ref-for-geolocation-virtual-sensor-type">geolocation</a></code>"</p>
+    <dt data-md><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-value" id="ref-for-map-value">value</a>
+    <dd data-md>
+     <p>A <a data-link-type="dfn" href="https://w3c.github.io/sensors/#virtual-sensor-metadata" id="ref-for-virtual-sensor-metadata">virtual sensor metadata</a> whose <a data-link-type="dfn" href="https://w3c.github.io/sensors/#virtual-sensor-metadata-reading-parsing-algorithm" id="ref-for-virtual-sensor-metadata-reading-parsing-algorithm">reading parsing algorithm</a> is the <a data-link-type="dfn" href="#geolocation-reading-parsing-algorithm" id="ref-for-geolocation-reading-parsing-algorithm">geolocation reading parsing algorithm</a>.</p>
+   </dl>
+   <h3 class="dfn-paneled heading settled" data-dfn-type="dfn" data-level="7.1" data-lt="Geolocation reading parsing algorithm" data-noexport id="geolocation-reading-parsing-algorithm"><span class="secno">7.1. </span><span class="content">Geolocation reading parsing algorithm</span><a class="self-link" href="#geolocation-reading-parsing-algorithm" id="ref-for-geolocation-reading-parsing-algorithm①"></a></h3>
+   <div class="algorithm" data-algorithm="geolocation reading parsing algorithm">
+    <dl>
+     <dt data-md>input
+     <dd data-md>
+      <p><var>parameters</var>, a JSON <code class="idl"><a data-link-type="idl" href="https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-object-objects" id="ref-for-sec-object-objects">Object</a></code></p>
+     <dt data-md>output
+     <dd data-md>
+      <p>A <a data-link-type="dfn" href="https://w3c.github.io/sensors/#sensor-reading" id="ref-for-sensor-reading">sensor reading</a> or <strong>undefined</strong></p>
+    </dl>
+    <ol>
+     <li data-md>
+      <p>Let <var>reading</var> be a new <a data-link-type="dfn" href="https://w3c.github.io/sensors/#sensor-reading" id="ref-for-sensor-reading①">sensor reading</a>.</p>
+     <li data-md>
+      <p>Let <var>keys</var> be the <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list">list</a> « "<code>latitude</code>", "<code>longitude</code>", "<code>altitude</code>", "<code>accuracy</code>", "<code>altitudeAccuracy</code>", "<code>heading</code>", "<code>speed</code>" ».</p>
+     <li data-md>
+      <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list-iterate" id="ref-for-list-iterate①">For each</a> <var>key</var> of <var>keys</var></p>
+      <ol>
+       <li data-md>
+        <p>Let <var>value</var> be the result of invoking <a data-link-type="dfn" href="https://w3c.github.io/sensors/#parse-single-value-number-reading" id="ref-for-parse-single-value-number-reading">parse single-value number reading</a> with <var>parameters</var> and <var>key</var>.</p>
+        <ol>
+         <li data-md>
+          <p>If <var>value</var> is <strong>undefined</strong>.</p>
+          <ol>
+           <li data-md>
+            <p>Return <strong>undefined</strong>.</p>
+          </ol>
+        </ol>
+       <li data-md>
+        <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-set" id="ref-for-map-set①">Set</a> <var>reading</var>[<var>key</var>] to <var>value</var>[<var>key</var>].</p>
+      </ol>
+     <li data-md>
+      <p>Return <var>reading</var>.</p>
+    </ol>
+   </div>
+   <h2 class="heading settled" data-level="8" id="use-cases"><span class="secno">8. </span><span class="content">Use Cases</span><a class="self-link" href="#use-cases"></a></h2>
+   <h3 class="heading settled" data-level="8.1" id="use-cases-categorization"><span class="secno">8.1. </span><span class="content">Categorization of use cases</span><a class="self-link" href="#use-cases-categorization"></a></h3>
+   <p>The mentioned use cases can roughly be grouped into four categories:</p>
+   <ul>
+    <li data-md>
+     <p><strong>Foreground</strong> operations:</p>
+     <ul>
+      <li data-md>
+       <p>Getting a <strong>one-off geolocation update</strong>.</p>
+      <li data-md>
+       <p>Getting <strong>continuous geolocation updates</strong> (<em>aka.</em> foreground geotracking).</p>
+     </ul>
+    <li data-md>
+     <p><strong>Background</strong> operations:</p>
+     <ul>
+      <li data-md>
+       <p>Getting <strong>continuous geolocation updates</strong> (<em>aka.</em> background geotracking).</p>
+      <li data-md>
+       <p>Getting a <strong>one-off geolocation fence alert</strong> (<em>aka.</em> background geofencing).</p>
+     </ul>
+   </ul>
+   <p class="note" role="note"><span class="marker">Note:</span> Only the <strong>foreground operations</strong> were possible with <a data-link-type="biblio" href="#biblio-geolocation" title="Geolocation">[GEOLOCATION]</a>,
+the <strong>background operations</strong> are completely novel.</p>
+   <p>Core constraints when obtaining the gelocation are <strong>accuracy</strong> (<em>how close to the
+actual position of the user is the determined position</em>) and <strong>latency</strong>
+(<em>how long does the user want to wait for a result</em>). Both are tradeoffs:
+one can trade faster results for lower accuracy and vice versa.</p>
+   <p>A common theme is to first obtain a rough estimation that then gets refined over time,
+for example based initially on surrounding WiFi signals (which is fast to obtain)
+and then eventually based on precise GPS data (which may take some time to find a signal).</p>
+   <p>In the following, we list use cases based on the previously defined categories.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> The categories are not mutually exclusive and overlaps exist.
+A task might start in the foreground, then continue in the background (for example,
+while the user quickly responds to an incoming email),
+and then eventually terminate in the foreground when the user multitasks back.</p>
+   <h3 class="heading settled" data-level="8.2" id="use-cases-foreground-one-off"><span class="secno">8.2. </span><span class="content">Foreground—One-off geolocation update</span><a class="self-link" href="#use-cases-foreground-one-off"></a></h3>
+   <h4 class="heading settled" data-level="8.2.1" id="use-case-locate-a-user-on-a-map"><span class="secno">8.2.1. </span><span class="content">Locate a user on a map</span><a class="self-link" href="#use-case-locate-a-user-on-a-map"></a></h4>
+   <p>A mapping application can use the Geolocation Sensor API data of a user to locate them
+on the map, essentially responding to the question "Where am I right now?"</p>
+   <h4 class="heading settled" data-level="8.2.2" id="use-case-find-points-of-interest-in-the-users-area"><span class="secno">8.2.2. </span><span class="content">Find points of interest in the user’s area</span><a class="self-link" href="#use-case-find-points-of-interest-in-the-users-area"></a></h4>
+   <p>Someone visiting a foreign city could access a web application that allows users
+to search or browse through a database of tourist attractions. Using the Geolocation Sensor API,
+the web application has access to the user’s approximate current position
+and is therefore able to rank the search results by proximity to the user’s location.</p>
+   <h3 class="heading settled" data-level="8.3" id="use-cases-foreground-continuous"><span class="secno">8.3. </span><span class="content">Foreground—Continuous geolocation updates</span><a class="self-link" href="#use-cases-foreground-continuous"></a></h3>
+   <h4 class="heading settled" data-level="8.3.1" id="use-case-up-to-date-local-information"><span class="secno">8.3.1. </span><span class="content">Up-to-date local information</span><a class="self-link" href="#use-case-up-to-date-local-information"></a></h4>
+   <p>A widget-like web application that shows the weather or news that are relevant
+to the user’s current area can use the Geolocation Sensor API to register for location updates.
+If the user’s position changes, the widget can adapt the content accordingly.</p>
+   <h4 class="heading settled" data-level="8.3.2" id="use-case-alerts-when-points-of-interest-are-in-the-users-vicinity"><span class="secno">8.3.2. </span><span class="content">Alerts when points of interest are in the user’s vicinity</span><a class="self-link" href="#use-case-alerts-when-points-of-interest-are-in-the-users-vicinity"></a></h4>
+   <p>A tour guide web application can use the Geolocation Sensor API to monitor the user’s position
+and trigger visual or audio notifications when interesting places are in the vicinity.
+An online task management system can trigger reminders when the user is in the proximity
+of landmarks that are associated with certain tasks.
+This use case assumes active usage of the application in the foreground.</p>
+   <h4 class="heading settled" data-level="8.3.3" id="use-case-show-the-users-position-on-a-map"><span class="secno">8.3.3. </span><span class="content">Show the user’s position on a map</span><a class="self-link" href="#use-case-show-the-users-position-on-a-map"></a></h4>
+   <p>A user finds themselves in an unfamiliar area. They want to check their position
+so they use their handheld device to navigate to a web-based mapping application
+that can pinpoint their exact location on the map using the Geolocation Sensor API.
+They then ask the web application to provide driving directions from their current position
+to their desired destination, essentially responding to the question "Where am I going?".</p>
+   <h3 class="heading settled" data-level="8.4" id="use-cases-background-continuous"><span class="secno">8.4. </span><span class="content">Background—Continuous geolocation updates</span><a class="self-link" href="#use-cases-background-continuous"></a></h3>
+   <h4 class="heading settled" data-level="8.4.1" id="use-case-location-tagged-status-updates-in-social-networking-applications"><span class="secno">8.4.1. </span><span class="content">Location-tagged status updates in social networking applications</span><a class="self-link" href="#use-case-location-tagged-status-updates-in-social-networking-applications"></a></h4>
+   <p>A social networking application allows its users to automatically tag their status updates with
+location information. It does this by monitoring the user’s position with the Geolocation Sensor API.
+Each user can control the granularity of the location information (e.g., city or neighborhood level)
+that is shared with the other users. Any user can also see their network of friends
+and get real-time updates about their current location,
+granted they have opted in to their location data being shared.
+This use case intentionally conflates foreground location tagging and background location sharing.</p>
+   <h4 class="heading settled" data-level="8.4.2" id="use-case-turn-by-turn-route-navigation"><span class="secno">8.4.2. </span><span class="content">Turn-by-turn route navigation</span><a class="self-link" href="#use-case-turn-by-turn-route-navigation"></a></h4>
+   <p>A mapping application can help the user navigate along a routeby providing detailed turn-by-turn directions.
+The application does this by registering with the Geolocation Sensor API to receive
+repeated location updates of the user’s position. These updates are delivered as soon as the implementing
+user agent determines that the position of the user has changed, which allows the application
+to anticipate any changes of direction that the user might need to do.
+The application can be in the foreground, but likewise can be backgrounded, for example,
+when the user turns their device off to save battery on a long highway route section without side roads.</p>
+   <h4 class="heading settled" data-level="8.4.3" id="use-case-tracking-sports-activity"><span class="secno">8.4.3. </span><span class="content">Tracking sports activity</span><a class="self-link" href="#use-case-tracking-sports-activity"></a></h4>
+   <p>A web application can track a user’s sports activity, for example, a marathon run or a bicycle race.
+Therefore, the application does not need to be on the screen, but would be backgrounded
+while the user performs their activity, maybe with their handheld device strapped to their arm.</p>
+   <h4 class="heading settled" data-level="8.4.4" id="use-case-real-estate-search"><span class="secno">8.4.4. </span><span class="content">Real estate search</span><a class="self-link" href="#use-case-real-estate-search"></a></h4>
+   <p>A web application on a handheld device can notify a user of interesting available properties
+in a neighborhood they are passing by where the property fits the user’s previously specified search criteria,
+for example, 3 bedroom apartments with balcony.
+This is based on the assumption that the number of possible matches is high,
+that is, impossible to realize with geofences as the amount of required geofences would be too high.</p>
+   <h4 class="heading settled" data-level="8.4.5" id="use-case-cultural-spaces"><span class="secno">8.4.5. </span><span class="content">Cultural spaces</span><a class="self-link" href="#use-case-cultural-spaces"></a></h4>
+   <p>In cultural spaces like museums, festivals, exhibitions, etc., web applications can react to where the user is
+or what they are seeing to cue different experiences and content.</p>
+   <h3 class="heading settled" data-level="8.5" id="use-cases-background-geofence"><span class="secno">8.5. </span><span class="content">Background—One-off geolocation fence alert</span><a class="self-link" href="#use-cases-background-geofence"></a></h3>
+   <h4 class="heading settled" data-level="8.5.1" id="use-case-reminder-and-todo-applications"><span class="secno">8.5.1. </span><span class="content">Reminder and to-do applications</span><a class="self-link" href="#use-case-reminder-and-todo-applications"></a></h4>
+   <p>Reminder and to-do web applications can use a geofence to remind the user to do something when they cross it,
+for example, to buy milk when they are near the supermarket.</p>
+   <h4 class="heading settled" data-level="8.5.2" id="use-case-travel-applications"><span class="secno">8.5.2. </span><span class="content">Travel applications</span><a class="self-link" href="#use-case-travel-applications"></a></h4>
+   <p>Travel applications can show venue specific data like WiFi passwords,
+the user’s booking confirmation etc. only within geofence boundaries.</p>
+   <h4 class="heading settled" data-level="8.5.3" id="use-case-ticketing-or-booking-confirmations"><span class="secno">8.5.3. </span><span class="content">Ticketing or booking confirmations</span><a class="self-link" href="#use-case-ticketing-or-booking-confirmations"></a></h4>
+   <p>Ticketing or booking applications can bring up a ticket notification with a QR or bar code
+once the user is near the venue of a concert or sports event or when they reach their rental car counter or similar.</p>
+   <h4 class="heading settled" data-level="8.5.4" id="use-case-ride-share-applications"><span class="secno">8.5.4. </span><span class="content">Ride share applications</span><a class="self-link" href="#use-case-ride-share-applications"></a></h4>
+   <p>Users can be informed if their designated driver reaches a pre-defined pickup point.</p>
+   <h4 class="heading settled" data-level="8.5.5" id="use-case-retail-special-offers"><span class="secno">8.5.5. </span><span class="content">Retail special offers</span><a class="self-link" href="#use-case-retail-special-offers"></a></h4>
+   <p>Given their previous consent, a user with a retailer’s web application installed on their handheld device
+can be alerted about special offers or location-based coupons when they are
+in vicinity of a physical presence of the retailer. Further, the in-store experience can be enriched,
+for example, the retailer can let the user know something they have looked at before is actually available for pick up nearby.</p>
+   <h2 class="heading settled" data-level="9" id="acknowledgements"><span class="secno">9. </span><span class="content">Acknowledgements</span><a class="self-link" href="#acknowledgements"></a></h2>
+   <p>Thanks to Tobie Langel for the work on Generic Sensor API and the early geolocation.js polyfill.</p>
+   <p>Thanks to Kenneth Rohde Christiansen for the geolocation-sensor.js polyfill and design proposals
+during the incubation phase.</p>
+   <p>Special thanks to the Geolocation Working Group participants for their work on the Geolocation API
+from 2008 until 2017.</p>
+  </main>
+  <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <h2 class="heading no-num no-ref settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li>
+    accuracy
+    <ul>
+     <li><a href="#dom-geolocationsensor-accuracy">attribute for GeolocationSensor</a><span>, in § 5.1</span>
+     <li><a href="#dom-geolocationsensorreading-accuracy">dict-member for GeolocationSensorReading</a><span>, in § 5.1</span>
+    </ul>
+   <li>
+    altitude
+    <ul>
+     <li><a href="#dom-geolocationsensor-altitude">attribute for GeolocationSensor</a><span>, in § 5.1</span>
+     <li><a href="#dom-geolocationsensorreading-altitude">dict-member for GeolocationSensorReading</a><span>, in § 5.1</span>
+    </ul>
+   <li>
+    altitudeAccuracy
+    <ul>
+     <li><a href="#dom-geolocationsensor-altitudeaccuracy">attribute for GeolocationSensor</a><span>, in § 5.1</span>
+     <li><a href="#dom-geolocationsensorreading-altitudeaccuracy">dict-member for GeolocationSensorReading</a><span>, in § 5.1</span>
+    </ul>
+   <li><a href="#construct-a-geolocation-sensor-object">Construct a geolocation sensor object</a><span>, in § 6</span>
+   <li><a href="#dom-geolocationsensor-geolocationsensor">constructor()</a><span>, in § 5.1</span>
+   <li><a href="#dom-geolocationsensor-geolocationsensor">constructor(options)</a><span>, in § 5.1</span>
+   <li><a href="#geolocation">geolocation</a><span>, in § 4</span>
+   <li><a href="#geolocation-reading-parsing-algorithm">Geolocation reading parsing algorithm</a><span>, in § 7</span>
+   <li><a href="#geolocation-sensor">Geolocation Sensor</a><span>, in § 4</span>
+   <li><a href="#geolocationsensor">GeolocationSensor</a><span>, in § 5.1</span>
+   <li><a href="#dom-geolocationsensor-geolocationsensor">GeolocationSensor()</a><span>, in § 5.1</span>
+   <li><a href="#dom-geolocationsensor-geolocationsensor">GeolocationSensor(options)</a><span>, in § 5.1</span>
+   <li><a href="#dictdef-geolocationsensoroptions">GeolocationSensorOptions</a><span>, in § 5.1</span>
+   <li><a href="#dictdef-geolocationsensorreading">GeolocationSensorReading</a><span>, in § 5.1</span>
+   <li><a href="#geolocation-virtual-sensor-type">geolocation virtual sensor type</a><span>, in § 4</span>
+   <li>
+    heading
+    <ul>
+     <li><a href="#dom-geolocationsensor-heading">attribute for GeolocationSensor</a><span>, in § 5.1</span>
+     <li><a href="#dom-geolocationsensorreading-heading">dict-member for GeolocationSensorReading</a><span>, in § 5.1</span>
+    </ul>
+   <li><a href="#latest-geolocation-reading">latest geolocation reading</a><span>, in § 4</span>
+   <li>
+    latitude
+    <ul>
+     <li><a href="#dom-geolocationsensor-latitude">attribute for GeolocationSensor</a><span>, in § 5.1</span>
+     <li><a href="#dom-geolocationsensorreading-latitude">dict-member for GeolocationSensorReading</a><span>, in § 5.1</span>
+    </ul>
+   <li>
+    longitude
+    <ul>
+     <li><a href="#dom-geolocationsensor-longitude">attribute for GeolocationSensor</a><span>, in § 5.1</span>
+     <li><a href="#dom-geolocationsensorreading-longitude">dict-member for GeolocationSensorReading</a><span>, in § 5.1</span>
+    </ul>
+   <li><a href="#dom-geolocationsensor-read">read()</a><span>, in § 5.1</span>
+   <li><a href="#dictdef-readoptions">ReadOptions</a><span>, in § 5.1</span>
+   <li><a href="#dom-geolocationsensor-read">read(readOptions)</a><span>, in § 5.1</span>
+   <li><a href="#resolve-a-geolocation-promise">resolve a geolocation promise</a><span>, in § 5.1.1</span>
+   <li><a href="#dom-readoptions-signal">signal</a><span>, in § 5.1</span>
+   <li>
+    speed
+    <ul>
+     <li><a href="#dom-geolocationsensor-speed">attribute for GeolocationSensor</a><span>, in § 5.1</span>
+     <li><a href="#dom-geolocationsensorreading-speed">dict-member for GeolocationSensorReading</a><span>, in § 5.1</span>
+    </ul>
+   <li><a href="#dom-geolocationsensorreading-timestamp">timestamp</a><span>, in § 5.1</span>
+  </ul>
+  <h3 class="heading no-num no-ref settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="index">
+   <li>
+    <a data-link-type="biblio">[DOM]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="cca3cdb2">AbortSignal</span>
+     <li><span class="dfn-paneled" id="28e64574">abort reason</span>
+     <li><span class="dfn-paneled" id="535dd335">aborted</span>
+     <li><span class="dfn-paneled" id="3d623128">add the following abort steps</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[ECMASCRIPT]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="a6e67972">Object</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[GENERIC-SENSOR]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="1b956603">Sensor</span>
+     <li><span class="dfn-paneled" id="207de9db">SensorOptions</span>
+     <li><span class="dfn-paneled" id="120b5cd7">check sensor policy-controlled features</span>
+     <li><span class="dfn-paneled" id="636827fa">extensible</span>
+     <li><span class="dfn-paneled" id="fd4ad34f">get value from latest reading</span>
+     <li><span class="dfn-paneled" id="b152f730">initialize a sensor object</span>
+     <li><span class="dfn-paneled" id="3e7f3108">latest reading</span>
+     <li><span class="dfn-paneled" id="beb835bb">notify error</span>
+     <li><span class="dfn-paneled" id="56716251">notify new reading</span>
+     <li><span class="dfn-paneled" id="c1bbb186">parse single-value number reading</span>
+     <li><span class="dfn-paneled" id="5d47b5a4">per-type virtual sensor metadata</span>
+     <li><span class="dfn-paneled" id="611c5008">reading parsing algorithm</span>
+     <li><span class="dfn-paneled" id="1894a607">security and privacy</span>
+     <li><span class="dfn-paneled" id="5afb8cab">sensor reading</span>
+     <li><span class="dfn-paneled" id="44637b0a">sensor type</span>
+     <li><span class="dfn-paneled" id="c29c300e">start()</span>
+     <li><span class="dfn-paneled" id="8bcc9280">stop()</span>
+     <li><span class="dfn-paneled" id="bb15fee5">virtual sensor metadata</span>
+     <li><span class="dfn-paneled" id="4fa114dd">virtual sensor type</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[GEOLOCATION]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="00bdbbd4">GeolocationCoordinates</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[HR-TIME-3]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="00c8c5e6">DOMHighResTimeStamp</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[HTML]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="a72449dd">in parallel</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[INFRA]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="8958b003">entry</span>
+     <li><span class="dfn-paneled" id="16d07e10">for each</span>
+     <li><span class="dfn-paneled" id="d14a6f26">key</span>
+     <li><span class="dfn-paneled" id="31db57e6">keys</span>
+     <li><span class="dfn-paneled" id="649608b9">list</span>
+     <li><span class="dfn-paneled" id="3fca5a9e">map</span>
+     <li><span class="dfn-paneled" id="0e6b2056">set</span>
+     <li><span class="dfn-paneled" id="802b0fdd">value</span>
+     <li><span class="dfn-paneled" id="12d6b9a8">values</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[PERMISSIONS-POLICY-1]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="1570624a">default allowlist</span>
+     <li><span class="dfn-paneled" id="cc890cc1">policy-controlled feature</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WEBIDL]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="dca2de17">DOMException</span>
+     <li><span class="dfn-paneled" id="889e932f">Exposed</span>
+     <li><span class="dfn-paneled" id="bdbd19d1">Promise</span>
+     <li><span class="dfn-paneled" id="b75bb3bd">SecureContext</span>
+     <li><span class="dfn-paneled" id="c3e881ef">SecurityError</span>
+     <li><span class="dfn-paneled" id="8c800cdf">double</span>
+     <li><span class="dfn-paneled" id="51978e94">nullable type</span>
+     <li><span class="dfn-paneled" id="b4cfa5ce">throw</span>
+     <li><span class="dfn-paneled" id="11e0b87f">unrestricted double</span>
+    </ul>
+  </ul>
+  <h2 class="heading no-num no-ref settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-dom">[DOM]
+   <dd>Anne van Kesteren. <a href="https://dom.spec.whatwg.org/"><cite>DOM Standard</cite></a>. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a>
+   <dt id="biblio-ecmascript">[ECMASCRIPT]
+   <dd><a href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript Language Specification</cite></a>. URL: <a href="https://tc39.es/ecma262/multipage/">https://tc39.es/ecma262/multipage/</a>
+   <dt id="biblio-generic-sensor">[GENERIC-SENSOR]
+   <dd>Rick Waldron. <a href="https://w3c.github.io/sensors/"><cite>Generic Sensor API</cite></a>. URL: <a href="https://w3c.github.io/sensors/">https://w3c.github.io/sensors/</a>
+   <dt id="biblio-hr-time-3">[HR-TIME-3]
+   <dd>Yoav Weiss. <a href="https://w3c.github.io/hr-time/"><cite>High Resolution Time</cite></a>. URL: <a href="https://w3c.github.io/hr-time/">https://w3c.github.io/hr-time/</a>
+   <dt id="biblio-html">[HTML]
+   <dd>Anne van Kesteren; et al. <a href="https://html.spec.whatwg.org/multipage/"><cite>HTML Standard</cite></a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+   <dt id="biblio-infra">[INFRA]
+   <dd>Anne van Kesteren; Domenic Denicola. <a href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
+   <dt id="biblio-permissions-policy-1">[PERMISSIONS-POLICY-1]
+   <dd>Ian Clelland. <a href="https://w3c.github.io/webappsec-permissions-policy/"><cite>Permissions Policy</cite></a>. URL: <a href="https://w3c.github.io/webappsec-permissions-policy/">https://w3c.github.io/webappsec-permissions-policy/</a>
+   <dt id="biblio-webidl">[WEBIDL]
+   <dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+   <dt id="biblio-wgs84">[WGS84]
+   <dd>National Imagery and Mapping Agency. <a href="https://web.archive.org/web/20210304035901/https://earth-info.nga.mil/GandG/publications/tr8350.2/wgs84fin.pdf"><cite>Department of Defence World Geodetic System 1984</cite></a>. Technical Report, Third Edition. URL: <a href="https://web.archive.org/web/20210304035901/https://earth-info.nga.mil/GandG/publications/tr8350.2/wgs84fin.pdf">https://web.archive.org/web/20210304035901/https://earth-info.nga.mil/GandG/publications/tr8350.2/wgs84fin.pdf</a>
+  </dl>
+  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <dl>
+   <dt id="biblio-geolocation">[GEOLOCATION]
+   <dd>Marcos Caceres; Reilly Grant. <a href="https://w3c.github.io/geolocation/"><cite>Geolocation</cite></a>. URL: <a href="https://w3c.github.io/geolocation/">https://w3c.github.io/geolocation/</a>
+  </dl>
+  <h2 class="heading no-num no-ref settled" id="idl-index"><span class="content">IDL Index</span><a class="self-link" href="#idl-index"></a></h2>
+<pre class="def highlight idl">[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext"><c- g>SecureContext</c-></a>,
+ <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed"><c- g>Exposed</c-></a>=(<c- n>DedicatedWorker</c->, <c- n>Window</c->)]
+<c- b>interface</c-> <a href="#geolocationsensor"><code><c- g>GeolocationSensor</c-></code></a> : <a data-link-type="idl-name" href="https://w3c.github.io/sensors/#sensor"><c- n>Sensor</c-></a> {
+  <a href="#dom-geolocationsensor-geolocationsensor"><code><c- g>constructor</c-></code></a>(<c- b>optional</c-> <a data-link-type="idl-name" href="#dictdef-geolocationsensoroptions"><c- n>GeolocationSensorOptions</c-></a> <a href="#dom-geolocationsensor-geolocationsensor-options-options"><code><c- g>options</c-></code></a> = {});
+  <c- b>static</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise"><c- b>Promise</c-></a>&lt;<a data-link-type="idl-name" href="#dictdef-geolocationsensorreading"><c- n>GeolocationSensorReading</c-></a>> <a href="#dom-geolocationsensor-read"><code><c- g>read</c-></code></a>(<c- b>optional</c-> <a data-link-type="idl-name" href="#dictdef-readoptions"><c- n>ReadOptions</c-></a> <a href="#dom-geolocationsensor-read-readoptions-readoptions"><code><c- g>readOptions</c-></code></a> = {});
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <a data-readonly data-type="unrestricted double?" href="#dom-geolocationsensor-latitude"><code><c- g>latitude</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <a data-readonly data-type="unrestricted double?" href="#dom-geolocationsensor-longitude"><code><c- g>longitude</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <a data-readonly data-type="unrestricted double?" href="#dom-geolocationsensor-altitude"><code><c- g>altitude</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <a data-readonly data-type="unrestricted double?" href="#dom-geolocationsensor-accuracy"><code><c- g>accuracy</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <a data-readonly data-type="unrestricted double?" href="#dom-geolocationsensor-altitudeaccuracy"><code><c- g>altitudeAccuracy</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <a data-readonly data-type="unrestricted double?" href="#dom-geolocationsensor-heading"><code><c- g>heading</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><c- b>unrestricted</c-> <c- b>double</c-></a>? <a data-readonly data-type="unrestricted double?" href="#dom-geolocationsensor-speed"><code><c- g>speed</c-></code></a>;
+};
+
+<c- b>dictionary</c-> <a href="#dictdef-geolocationsensoroptions"><code><c- g>GeolocationSensorOptions</c-></code></a> : <a data-link-type="idl-name" href="https://w3c.github.io/sensors/#dictdef-sensoroptions"><c- n>SensorOptions</c-></a> {
+  // placeholder for GeolocationSensor-specific options
+};
+
+<c- b>dictionary</c-> <a href="#dictdef-readoptions"><code><c- g>ReadOptions</c-></code></a> : <a data-link-type="idl-name" href="#dictdef-geolocationsensoroptions"><c- n>GeolocationSensorOptions</c-></a> {
+  <a data-link-type="idl-name" href="https://dom.spec.whatwg.org/#abortsignal"><c- n>AbortSignal</c-></a>? <a data-type="AbortSignal?" href="#dom-readoptions-signal"><code><c- g>signal</c-></code></a>;
+};
+
+<c- b>dictionary</c-> <a href="#dictdef-geolocationsensorreading"><code><c- g>GeolocationSensorReading</c-></code></a> {
+  <a data-link-type="idl-name" href="https://w3c.github.io/hr-time/#typedefdef-domhighrestimestamp"><c- n>DOMHighResTimeStamp</c-></a>? <a data-type="DOMHighResTimeStamp?" href="#dom-geolocationsensorreading-timestamp"><code><c- g>timestamp</c-></code></a>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double"><c- b>double</c-></a>? <a data-type="double?" href="#dom-geolocationsensorreading-latitude"><code><c- g>latitude</c-></code></a>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double"><c- b>double</c-></a>? <a data-type="double?" href="#dom-geolocationsensorreading-longitude"><code><c- g>longitude</c-></code></a>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double"><c- b>double</c-></a>? <a data-type="double?" href="#dom-geolocationsensorreading-altitude"><code><c- g>altitude</c-></code></a>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double"><c- b>double</c-></a>? <a data-type="double?" href="#dom-geolocationsensorreading-accuracy"><code><c- g>accuracy</c-></code></a>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double"><c- b>double</c-></a>? <a data-type="double?" href="#dom-geolocationsensorreading-altitudeaccuracy"><code><c- g>altitudeAccuracy</c-></code></a>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double"><c- b>double</c-></a>? <a data-type="double?" href="#dom-geolocationsensorreading-heading"><code><c- g>heading</c-></code></a>;
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-double"><c- b>double</c-></a>? <a data-type="double?" href="#dom-geolocationsensorreading-speed"><code><c- g>speed</c-></code></a>;
+};
+
+</pre>
+<script>/* Boilerplate: script-dom-helper */
+"use strict";
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"00bdbbd4": {"dfnID":"00bdbbd4","dfnText":"GeolocationCoordinates","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationcoordinates"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://w3c.github.io/geolocation/#dom-geolocationcoordinates"},
+"00c8c5e6": {"dfnID":"00c8c5e6","dfnText":"DOMHighResTimeStamp","external":true,"refSections":[{"refs":[{"id":"ref-for-typedefdef-domhighrestimestamp"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://w3c.github.io/hr-time/#typedefdef-domhighrestimestamp"},
+"0e6b2056": {"dfnID":"0e6b2056","dfnText":"set","external":true,"refSections":[{"refs":[{"id":"ref-for-map-set"}],"title":"5.1.1. GeolocationSensor.read()"},{"refs":[{"id":"ref-for-map-set\u2460"}],"title":"7.1. Geolocation reading parsing algorithm"}],"url":"https://infra.spec.whatwg.org/#map-set"},
+"11e0b87f": {"dfnID":"11e0b87f","dfnText":"unrestricted double","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-unrestricted-double"},{"id":"ref-for-idl-unrestricted-double\u2460"},{"id":"ref-for-idl-unrestricted-double\u2461"},{"id":"ref-for-idl-unrestricted-double\u2462"},{"id":"ref-for-idl-unrestricted-double\u2463"},{"id":"ref-for-idl-unrestricted-double\u2464"},{"id":"ref-for-idl-unrestricted-double\u2465"},{"id":"ref-for-idl-unrestricted-double\u2466"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://webidl.spec.whatwg.org/#idl-unrestricted-double"},
+"120b5cd7": {"dfnID":"120b5cd7","dfnText":"check sensor policy-controlled features","external":true,"refSections":[{"refs":[{"id":"ref-for-check-sensor-policy-controlled-features"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"https://w3c.github.io/sensors#check-sensor-policy-controlled-features"},
+"12d6b9a8": {"dfnID":"12d6b9a8","dfnText":"values","external":true,"refSections":[{"refs":[{"id":"ref-for-map-getting-the-values"}],"title":"4. Model"}],"url":"https://infra.spec.whatwg.org/#map-getting-the-values"},
+"1570624a": {"dfnID":"1570624a","dfnText":"default allowlist","external":true,"refSections":[{"refs":[{"id":"ref-for-policy-controlled-feature-default-allowlist"}],"title":"4. Model"}],"url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist"},
+"16d07e10": {"dfnID":"16d07e10","dfnText":"for each","external":true,"refSections":[{"refs":[{"id":"ref-for-list-iterate"}],"title":"5.1.1. GeolocationSensor.read()"},{"refs":[{"id":"ref-for-list-iterate\u2460"}],"title":"7.1. Geolocation reading parsing algorithm"}],"url":"https://infra.spec.whatwg.org/#list-iterate"},
+"1894a607": {"dfnID":"1894a607","dfnText":"security and privacy","external":true,"refSections":[{"refs":[{"id":"ref-for-security-and-privacy"}],"title":"1. Introduction"}],"url":"https://w3c.github.io/sensors#security-and-privacy"},
+"1b956603": {"dfnID":"1b956603","dfnText":"Sensor","external":true,"refSections":[{"refs":[{"id":"ref-for-sensor"}],"title":"1. Introduction"},{"refs":[{"id":"ref-for-sensor\u2460"},{"id":"ref-for-sensor\u2461"}],"title":"4. Model"},{"refs":[{"id":"ref-for-sensor\u2462"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://w3c.github.io/sensors/#sensor"},
+"207de9db": {"dfnID":"207de9db","dfnText":"SensorOptions","external":true,"refSections":[{"refs":[{"id":"ref-for-dictdef-sensoroptions"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://w3c.github.io/sensors/#dictdef-sensoroptions"},
+"28e64574": {"dfnID":"28e64574","dfnText":"abort reason","external":true,"refSections":[{"refs":[{"id":"ref-for-abortsignal-abort-reason"},{"id":"ref-for-abortsignal-abort-reason\u2460"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://dom.spec.whatwg.org/#abortsignal-abort-reason"},
+"31db57e6": {"dfnID":"31db57e6","dfnText":"keys","external":true,"refSections":[{"refs":[{"id":"ref-for-map-getting-the-keys"}],"title":"4. Model"}],"url":"https://infra.spec.whatwg.org/#map-getting-the-keys"},
+"3d623128": {"dfnID":"3d623128","dfnText":"add the following abort steps","external":true,"refSections":[{"refs":[{"id":"ref-for-abortsignal-add"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://dom.spec.whatwg.org#abortsignal-add"},
+"3e7f3108": {"dfnID":"3e7f3108","dfnText":"latest reading","external":true,"refSections":[{"refs":[{"id":"ref-for-latest-reading"}],"title":"4. Model"},{"refs":[{"id":"ref-for-latest-reading\u2460"},{"id":"ref-for-latest-reading\u2461"},{"id":"ref-for-latest-reading\u2462"},{"id":"ref-for-latest-reading\u2463"}],"title":"5.1.5. GeolocationSensor.accuracy"},{"refs":[{"id":"ref-for-latest-reading\u2464"},{"id":"ref-for-latest-reading\u2465"}],"title":"5.1.6. GeolocationSensor.altitudeAccuracy"}],"url":"https://w3c.github.io/sensors#latest-reading"},
+"3fca5a9e": {"dfnID":"3fca5a9e","dfnText":"map","external":true,"refSections":[{"refs":[{"id":"ref-for-ordered-map"}],"title":"7. Automation"}],"url":"https://infra.spec.whatwg.org/#ordered-map"},
+"44637b0a": {"dfnID":"44637b0a","dfnText":"sensor type","external":true,"refSections":[{"refs":[{"id":"ref-for-sensor-type"},{"id":"ref-for-sensor-type\u2460"}],"title":"4. Model"}],"url":"https://w3c.github.io/sensors#sensor-type"},
+"4fa114dd": {"dfnID":"4fa114dd","dfnText":"virtual sensor type","external":true,"refSections":[{"refs":[{"id":"ref-for-virtual-sensor-type"}],"title":"4. Model"}],"url":"https://w3c.github.io/sensors/#virtual-sensor-type"},
+"51978e94": {"dfnID":"51978e94","dfnText":"nullable type","external":true,"refSections":[{"refs":[{"id":"ref-for-dfn-nullable-type"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://webidl.spec.whatwg.org/#dfn-nullable-type"},
+"535dd335": {"dfnID":"535dd335","dfnText":"aborted","external":true,"refSections":[{"refs":[{"id":"ref-for-abortsignal-aborted"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://dom.spec.whatwg.org/#abortsignal-aborted"},
+"56716251": {"dfnID":"56716251","dfnText":"notify new reading","external":true,"refSections":[{"refs":[{"id":"ref-for-notify-new-reading"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://w3c.github.io/sensors/#notify-new-reading"},
+"5afb8cab": {"dfnID":"5afb8cab","dfnText":"sensor reading","external":true,"refSections":[{"refs":[{"id":"ref-for-sensor-reading"},{"id":"ref-for-sensor-reading\u2460"}],"title":"7.1. Geolocation reading parsing algorithm"}],"url":"https://w3c.github.io/sensors/#sensor-reading"},
+"5d47b5a4": {"dfnID":"5d47b5a4","dfnText":"per-type virtual sensor metadata","external":true,"refSections":[{"refs":[{"id":"ref-for-per-type-virtual-sensor-metadata"}],"title":"7. Automation"}],"url":"https://w3c.github.io/sensors/#per-type-virtual-sensor-metadata"},
+"611c5008": {"dfnID":"611c5008","dfnText":"reading parsing algorithm","external":true,"refSections":[{"refs":[{"id":"ref-for-virtual-sensor-metadata-reading-parsing-algorithm"}],"title":"7. Automation"}],"url":"https://w3c.github.io/sensors/#virtual-sensor-metadata-reading-parsing-algorithm"},
+"636827fa": {"dfnID":"636827fa","dfnText":"extensible","external":true,"refSections":[{"refs":[{"id":"ref-for-extensibility"}],"title":"1. Introduction"}],"url":"https://w3c.github.io/sensors#extensibility"},
+"649608b9": {"dfnID":"649608b9","dfnText":"list","external":true,"refSections":[{"refs":[{"id":"ref-for-list"}],"title":"7.1. Geolocation reading parsing algorithm"}],"url":"https://infra.spec.whatwg.org/#list"},
+"802b0fdd": {"dfnID":"802b0fdd","dfnText":"value","external":true,"refSections":[{"refs":[{"id":"ref-for-map-value"}],"title":"7. Automation"}],"url":"https://infra.spec.whatwg.org/#map-value"},
+"889e932f": {"dfnID":"889e932f","dfnText":"Exposed","external":true,"refSections":[{"refs":[{"id":"ref-for-Exposed"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://webidl.spec.whatwg.org/#Exposed"},
+"8958b003": {"dfnID":"8958b003","dfnText":"entry","external":true,"refSections":[{"refs":[{"id":"ref-for-map-entry"}],"title":"4. Model"},{"refs":[{"id":"ref-for-map-entry\u2460"}],"title":"7. Automation"}],"url":"https://infra.spec.whatwg.org/#map-entry"},
+"8bcc9280": {"dfnID":"8bcc9280","dfnText":"stop()","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-sensor-stop"},{"id":"ref-for-dom-sensor-stop\u2460"},{"id":"ref-for-dom-sensor-stop\u2461"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://w3c.github.io/sensors/#dom-sensor-stop"},
+"8c800cdf": {"dfnID":"8c800cdf","dfnText":"double","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-double"},{"id":"ref-for-idl-double\u2460"},{"id":"ref-for-idl-double\u2461"},{"id":"ref-for-idl-double\u2462"},{"id":"ref-for-idl-double\u2463"},{"id":"ref-for-idl-double\u2464"},{"id":"ref-for-idl-double\u2465"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://webidl.spec.whatwg.org/#idl-double"},
+"a6e67972": {"dfnID":"a6e67972","dfnText":"Object","external":true,"refSections":[{"refs":[{"id":"ref-for-sec-object-objects"}],"title":"7.1. Geolocation reading parsing algorithm"}],"url":"https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-object-objects"},
+"a72449dd": {"dfnID":"a72449dd","dfnText":"in parallel","external":true,"refSections":[{"refs":[{"id":"ref-for-in-parallel"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel"},
+"b152f730": {"dfnID":"b152f730","dfnText":"initialize a sensor object","external":true,"refSections":[{"refs":[{"id":"ref-for-initialize-a-sensor-object"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"https://w3c.github.io/sensors#initialize-a-sensor-object"},
+"b4cfa5ce": {"dfnID":"b4cfa5ce","dfnText":"throw","external":true,"refSections":[{"refs":[{"id":"ref-for-dfn-throw"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"https://webidl.spec.whatwg.org/#dfn-throw"},
+"b75bb3bd": {"dfnID":"b75bb3bd","dfnText":"SecureContext","external":true,"refSections":[{"refs":[{"id":"ref-for-SecureContext"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://webidl.spec.whatwg.org/#SecureContext"},
+"bb15fee5": {"dfnID":"bb15fee5","dfnText":"virtual sensor metadata","external":true,"refSections":[{"refs":[{"id":"ref-for-virtual-sensor-metadata"}],"title":"7. Automation"}],"url":"https://w3c.github.io/sensors/#virtual-sensor-metadata"},
+"bdbd19d1": {"dfnID":"bdbd19d1","dfnText":"Promise","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-promise"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://webidl.spec.whatwg.org/#idl-promise"},
+"beb835bb": {"dfnID":"beb835bb","dfnText":"notify error","external":true,"refSections":[{"refs":[{"id":"ref-for-notify-error"},{"id":"ref-for-notify-error\u2460"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://w3c.github.io/sensors/#notify-error"},
+"c1bbb186": {"dfnID":"c1bbb186","dfnText":"parse single-value number reading","external":true,"refSections":[{"refs":[{"id":"ref-for-parse-single-value-number-reading"}],"title":"7.1. Geolocation reading parsing algorithm"}],"url":"https://w3c.github.io/sensors/#parse-single-value-number-reading"},
+"c29c300e": {"dfnID":"c29c300e","dfnText":"start()","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-sensor-start"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"https://w3c.github.io/sensors/#dom-sensor-start"},
+"c3e881ef": {"dfnID":"c3e881ef","dfnText":"SecurityError","external":true,"refSections":[{"refs":[{"id":"ref-for-securityerror"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"https://webidl.spec.whatwg.org/#securityerror"},
+"cc890cc1": {"dfnID":"cc890cc1","dfnText":"policy-controlled feature","external":true,"refSections":[{"refs":[{"id":"ref-for-policy-controlled-feature"}],"title":"4. Model"}],"url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature"},
+"cca3cdb2": {"dfnID":"cca3cdb2","dfnText":"AbortSignal","external":true,"refSections":[{"refs":[{"id":"ref-for-abortsignal"}],"title":"5.1. The GeolocationSensor Interface"}],"url":"https://dom.spec.whatwg.org/#abortsignal"},
+"construct-a-geolocation-sensor-object": {"dfnID":"construct-a-geolocation-sensor-object","dfnText":"6.1. Construct a geolocation sensor object","external":false,"refSections":[{"refs":[{"id":"ref-for-construct-a-geolocation-sensor-object"}],"title":"5.1. The GeolocationSensor Interface"},{"refs":[{"id":"ref-for-construct-a-geolocation-sensor-object\u2460"}],"title":"5.1.1. GeolocationSensor.read()"},{"refs":[{"id":"ref-for-construct-a-geolocation-sensor-object"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"#construct-a-geolocation-sensor-object"},
+"d14a6f26": {"dfnID":"d14a6f26","dfnText":"key","external":true,"refSections":[{"refs":[{"id":"ref-for-map-key"}],"title":"7. Automation"}],"url":"https://infra.spec.whatwg.org/#map-key"},
+"dca2de17": {"dfnID":"dca2de17","dfnText":"DOMException","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-DOMException"},{"id":"ref-for-idl-DOMException\u2460"},{"id":"ref-for-idl-DOMException\u2461"}],"title":"5.1.1. GeolocationSensor.read()"},{"refs":[{"id":"ref-for-idl-DOMException\u2462"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"https://webidl.spec.whatwg.org/#idl-DOMException"},
+"dictdef-geolocationsensoroptions": {"dfnID":"dictdef-geolocationsensoroptions","dfnText":"GeolocationSensorOptions","external":false,"refSections":[{"refs":[{"id":"ref-for-dictdef-geolocationsensoroptions"},{"id":"ref-for-dictdef-geolocationsensoroptions\u2460"}],"title":"5.1. The GeolocationSensor Interface"},{"refs":[{"id":"ref-for-dictdef-geolocationsensoroptions\u2461"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"#dictdef-geolocationsensoroptions"},
+"dictdef-geolocationsensorreading": {"dfnID":"dictdef-geolocationsensorreading","dfnText":"GeolocationSensorReading","external":false,"refSections":[{"refs":[{"id":"ref-for-dictdef-geolocationsensorreading"}],"title":"5.1. The GeolocationSensor Interface"},{"refs":[{"id":"ref-for-dictdef-geolocationsensorreading\u2460"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"#dictdef-geolocationsensorreading"},
+"dictdef-readoptions": {"dfnID":"dictdef-readoptions","dfnText":"ReadOptions","external":false,"refSections":[{"refs":[{"id":"ref-for-dictdef-readoptions"}],"title":"5.1. The GeolocationSensor Interface"},{"refs":[{"id":"ref-for-dictdef-readoptions\u2460"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"#dictdef-readoptions"},
+"dom-geolocationsensor-accuracy": {"dfnID":"dom-geolocationsensor-accuracy","dfnText":"accuracy","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-accuracy"}],"title":"5.1.5. GeolocationSensor.accuracy"}],"url":"#dom-geolocationsensor-accuracy"},
+"dom-geolocationsensor-altitude": {"dfnID":"dom-geolocationsensor-altitude","dfnText":"altitude","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-altitude"}],"title":"5.1.4. GeolocationSensor.altitude"}],"url":"#dom-geolocationsensor-altitude"},
+"dom-geolocationsensor-altitudeaccuracy": {"dfnID":"dom-geolocationsensor-altitudeaccuracy","dfnText":"altitudeAccuracy","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-altitudeaccuracy"}],"title":"5.1.6. GeolocationSensor.altitudeAccuracy"}],"url":"#dom-geolocationsensor-altitudeaccuracy"},
+"dom-geolocationsensor-geolocationsensor": {"dfnID":"dom-geolocationsensor-geolocationsensor","dfnText":"constructor","external":false,"refSections":[],"url":"#dom-geolocationsensor-geolocationsensor"},
+"dom-geolocationsensor-geolocationsensor-options-options": {"dfnID":"dom-geolocationsensor-geolocationsensor-options-options","dfnText":"options","external":false,"refSections":[],"url":"#dom-geolocationsensor-geolocationsensor-options-options"},
+"dom-geolocationsensor-heading": {"dfnID":"dom-geolocationsensor-heading","dfnText":"heading","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-heading"}],"title":"5.1.7. GeolocationSensor.heading"}],"url":"#dom-geolocationsensor-heading"},
+"dom-geolocationsensor-latitude": {"dfnID":"dom-geolocationsensor-latitude","dfnText":"latitude","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-latitude"}],"title":"5.1.2. GeolocationSensor.latitude"}],"url":"#dom-geolocationsensor-latitude"},
+"dom-geolocationsensor-longitude": {"dfnID":"dom-geolocationsensor-longitude","dfnText":"longitude","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-longitude"}],"title":"5.1.3. GeolocationSensor.longitude"}],"url":"#dom-geolocationsensor-longitude"},
+"dom-geolocationsensor-read": {"dfnID":"dom-geolocationsensor-read","dfnText":"read","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-read"},{"id":"ref-for-dom-geolocationsensor-read\u2460"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"#dom-geolocationsensor-read"},
+"dom-geolocationsensor-read-readoptions-readoptions": {"dfnID":"dom-geolocationsensor-read-readoptions-readoptions","dfnText":"readOptions","external":false,"refSections":[],"url":"#dom-geolocationsensor-read-readoptions-readoptions"},
+"dom-geolocationsensor-speed": {"dfnID":"dom-geolocationsensor-speed","dfnText":"speed","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-geolocationsensor-speed"}],"title":"5.1.8. GeolocationSensor.speed"}],"url":"#dom-geolocationsensor-speed"},
+"dom-geolocationsensorreading-accuracy": {"dfnID":"dom-geolocationsensorreading-accuracy","dfnText":"accuracy","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-accuracy"},
+"dom-geolocationsensorreading-altitude": {"dfnID":"dom-geolocationsensorreading-altitude","dfnText":"altitude","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-altitude"},
+"dom-geolocationsensorreading-altitudeaccuracy": {"dfnID":"dom-geolocationsensorreading-altitudeaccuracy","dfnText":"altitudeAccuracy","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-altitudeaccuracy"},
+"dom-geolocationsensorreading-heading": {"dfnID":"dom-geolocationsensorreading-heading","dfnText":"heading","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-heading"},
+"dom-geolocationsensorreading-latitude": {"dfnID":"dom-geolocationsensorreading-latitude","dfnText":"latitude","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-latitude"},
+"dom-geolocationsensorreading-longitude": {"dfnID":"dom-geolocationsensorreading-longitude","dfnText":"longitude","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-longitude"},
+"dom-geolocationsensorreading-speed": {"dfnID":"dom-geolocationsensorreading-speed","dfnText":"speed","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-speed"},
+"dom-geolocationsensorreading-timestamp": {"dfnID":"dom-geolocationsensorreading-timestamp","dfnText":"timestamp","external":false,"refSections":[],"url":"#dom-geolocationsensorreading-timestamp"},
+"dom-readoptions-signal": {"dfnID":"dom-readoptions-signal","dfnText":"signal","external":false,"refSections":[],"url":"#dom-readoptions-signal"},
+"fd4ad34f": {"dfnID":"fd4ad34f","dfnText":"get value from latest reading","external":true,"refSections":[{"refs":[{"id":"ref-for-get-value-from-latest-reading"}],"title":"5.1.2. GeolocationSensor.latitude"},{"refs":[{"id":"ref-for-get-value-from-latest-reading\u2460"}],"title":"5.1.3. GeolocationSensor.longitude"},{"refs":[{"id":"ref-for-get-value-from-latest-reading\u2461"}],"title":"5.1.4. GeolocationSensor.altitude"},{"refs":[{"id":"ref-for-get-value-from-latest-reading\u2462"}],"title":"5.1.5. GeolocationSensor.accuracy"},{"refs":[{"id":"ref-for-get-value-from-latest-reading\u2463"}],"title":"5.1.6. GeolocationSensor.altitudeAccuracy"},{"refs":[{"id":"ref-for-get-value-from-latest-reading\u2464"}],"title":"5.1.7. GeolocationSensor.heading"},{"refs":[{"id":"ref-for-get-value-from-latest-reading\u2465"}],"title":"5.1.8. GeolocationSensor.speed"}],"url":"https://w3c.github.io/sensors/#get-value-from-latest-reading"},
+"geolocation": {"dfnID":"geolocation","dfnText":"geolocation","external":false,"refSections":[{"refs":[{"id":"ref-for-geolocation\u2460"}],"title":"1. Introduction"},{"refs":[{"id":"ref-for-geolocation\u2461"},{"id":"ref-for-geolocation\u2462"}],"title":"4. Model"},{"refs":[{"id":"ref-for-geolocation\u2463"}],"title":"5.1.2. GeolocationSensor.latitude"},{"refs":[{"id":"ref-for-geolocation\u2464"}],"title":"5.1.3. GeolocationSensor.longitude"},{"refs":[{"id":"ref-for-geolocation\u2465"}],"title":"5.1.4. GeolocationSensor.altitude"}],"url":"#geolocation"},
+"geolocation-reading-parsing-algorithm": {"dfnID":"geolocation-reading-parsing-algorithm","dfnText":"7.1. Geolocation reading parsing algorithm","external":false,"refSections":[{"refs":[{"id":"ref-for-geolocation-reading-parsing-algorithm"}],"title":"7. Automation"},{"refs":[{"id":"ref-for-geolocation-reading-parsing-algorithm"}],"title":"7.1. Geolocation reading parsing algorithm"}],"url":"#geolocation-reading-parsing-algorithm"},
+"geolocation-sensor": {"dfnID":"geolocation-sensor","dfnText":"Geolocation Sensor","external":false,"refSections":[{"refs":[{"id":"ref-for-geolocation-sensor"},{"id":"ref-for-geolocation-sensor\u2460"},{"id":"ref-for-geolocation-sensor\u2461"},{"id":"ref-for-geolocation-sensor\u2462"}],"title":"4. Model"},{"refs":[{"id":"ref-for-geolocation-sensor\u2463"}],"title":"7. Automation"}],"url":"#geolocation-sensor"},
+"geolocation-virtual-sensor-type": {"dfnID":"geolocation-virtual-sensor-type","dfnText":"geolocation","external":false,"refSections":[{"refs":[{"id":"ref-for-geolocation-virtual-sensor-type"}],"title":"7. Automation"}],"url":"#geolocation-virtual-sensor-type"},
+"geolocationsensor": {"dfnID":"geolocationsensor","dfnText":"GeolocationSensor","external":false,"refSections":[{"refs":[{"id":"ref-for-geolocationsensor\u2460"},{"id":"ref-for-geolocationsensor\u2461"}],"title":"1. Introduction"},{"refs":[{"id":"ref-for-geolocationsensor\u2462"}],"title":"4. Model"},{"refs":[{"id":"ref-for-geolocationsensor\u2463"}],"title":"5.1. The GeolocationSensor Interface"},{"refs":[{"id":"ref-for-geolocationsensor\u2464"}],"title":"5.1.2. GeolocationSensor.latitude"},{"refs":[{"id":"ref-for-geolocationsensor\u2465"}],"title":"5.1.3. GeolocationSensor.longitude"},{"refs":[{"id":"ref-for-geolocationsensor\u2466"}],"title":"5.1.4. GeolocationSensor.altitude"},{"refs":[{"id":"ref-for-geolocationsensor\u2467"}],"title":"5.1.5. GeolocationSensor.accuracy"},{"refs":[{"id":"ref-for-geolocationsensor\u2468"}],"title":"5.1.6. GeolocationSensor.altitudeAccuracy"},{"refs":[{"id":"ref-for-geolocationsensor\u2460\u24ea"}],"title":"5.1.7. GeolocationSensor.heading"},{"refs":[{"id":"ref-for-geolocationsensor\u2460\u2460"}],"title":"5.1.8. GeolocationSensor.speed"},{"refs":[{"id":"ref-for-geolocationsensor\u2460\u2461"},{"id":"ref-for-geolocationsensor\u2460\u2462"},{"id":"ref-for-geolocationsensor\u2460\u2463"}],"title":"6.1. Construct a geolocation sensor object"}],"url":"#geolocationsensor"},
+"latest-geolocation-reading": {"dfnID":"latest-geolocation-reading","dfnText":"latest geolocation reading","external":false,"refSections":[{"refs":[{"id":"ref-for-latest-geolocation-reading"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"#latest-geolocation-reading"},
+"resolve-a-geolocation-promise": {"dfnID":"resolve-a-geolocation-promise","dfnText":"resolve a geolocation promise","external":false,"refSections":[{"refs":[{"id":"ref-for-resolve-a-geolocation-promise"}],"title":"5.1.1. GeolocationSensor.read()"}],"url":"#resolve-a-geolocation-promise"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#construct-a-geolocation-sensor-object": {"displayText":"construct a geolocation sensor object","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"construct a geolocation sensor object","type":"dfn","url":"#construct-a-geolocation-sensor-object"},
+"#dictdef-geolocationsensoroptions": {"displayText":"GeolocationSensorOptions","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"GeolocationSensorOptions","type":"dictionary","url":"#dictdef-geolocationsensoroptions"},
+"#dictdef-geolocationsensorreading": {"displayText":"GeolocationSensorReading","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"GeolocationSensorReading","type":"dictionary","url":"#dictdef-geolocationsensorreading"},
+"#dictdef-readoptions": {"displayText":"ReadOptions","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"ReadOptions","type":"dictionary","url":"#dictdef-readoptions"},
+"#dom-geolocationsensor-accuracy": {"displayText":"accuracy","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"accuracy","type":"attribute","url":"#dom-geolocationsensor-accuracy"},
+"#dom-geolocationsensor-altitude": {"displayText":"altitude","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"altitude","type":"attribute","url":"#dom-geolocationsensor-altitude"},
+"#dom-geolocationsensor-altitudeaccuracy": {"displayText":"altitudeAccuracy","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"altitudeAccuracy","type":"attribute","url":"#dom-geolocationsensor-altitudeaccuracy"},
+"#dom-geolocationsensor-heading": {"displayText":"heading","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"heading","type":"attribute","url":"#dom-geolocationsensor-heading"},
+"#dom-geolocationsensor-latitude": {"displayText":"latitude","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"latitude","type":"attribute","url":"#dom-geolocationsensor-latitude"},
+"#dom-geolocationsensor-longitude": {"displayText":"longitude","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"longitude","type":"attribute","url":"#dom-geolocationsensor-longitude"},
+"#dom-geolocationsensor-read": {"displayText":"read()","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"read()","type":"method","url":"#dom-geolocationsensor-read"},
+"#dom-geolocationsensor-speed": {"displayText":"speed","export":true,"for_":["GeolocationSensor"],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"speed","type":"attribute","url":"#dom-geolocationsensor-speed"},
+"#geolocation": {"displayText":"geolocation","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"geolocation","type":"dfn","url":"#geolocation"},
+"#geolocation-reading-parsing-algorithm": {"displayText":"geolocation reading parsing algorithm","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"geolocation reading parsing algorithm","type":"dfn","url":"#geolocation-reading-parsing-algorithm"},
+"#geolocation-sensor": {"displayText":"geolocation sensor","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"geolocation sensor","type":"dfn","url":"#geolocation-sensor"},
+"#geolocation-virtual-sensor-type": {"displayText":"geolocation virtual sensor type","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"geolocation virtual sensor type","type":"dfn","url":"#geolocation-virtual-sensor-type"},
+"#geolocationsensor": {"displayText":"GeolocationSensor","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"GeolocationSensor","type":"interface","url":"#geolocationsensor"},
+"#latest-geolocation-reading": {"displayText":"latest geolocation reading","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"latest geolocation reading","type":"dfn","url":"#latest-geolocation-reading"},
+"#resolve-a-geolocation-promise": {"displayText":"resolve a geolocation promise","export":true,"for_":[],"level":"","normative":true,"shortname":"geolocation-sensor","spec":"geolocation-sensor","status":"local","text":"resolve a geolocation promise","type":"dfn","url":"#resolve-a-geolocation-promise"},
+"https://dom.spec.whatwg.org#abortsignal-add": {"displayText":"add the following abort steps","export":true,"for_":[],"level":"","normative":true,"shortname":"dom","spec":"dom","status":"anchor-block","text":"add the following abort steps","type":"dfn","url":"https://dom.spec.whatwg.org#abortsignal-add"},
+"https://dom.spec.whatwg.org/#abortsignal": {"displayText":"AbortSignal","export":true,"for_":[],"level":"1","normative":true,"shortname":"dom","spec":"dom","status":"current","text":"AbortSignal","type":"interface","url":"https://dom.spec.whatwg.org/#abortsignal"},
+"https://dom.spec.whatwg.org/#abortsignal-abort-reason": {"displayText":"abort reason","export":true,"for_":["AbortSignal"],"level":"1","normative":true,"shortname":"dom","spec":"dom","status":"current","text":"abort reason","type":"dfn","url":"https://dom.spec.whatwg.org/#abortsignal-abort-reason"},
+"https://dom.spec.whatwg.org/#abortsignal-aborted": {"displayText":"aborted","export":true,"for_":["AbortSignal"],"level":"1","normative":true,"shortname":"dom","spec":"dom","status":"current","text":"aborted","type":"dfn","url":"https://dom.spec.whatwg.org/#abortsignal-aborted"},
+"https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel": {"displayText":"in parallel","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"in parallel","type":"dfn","url":"https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel"},
+"https://infra.spec.whatwg.org/#list": {"displayText":"list","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"list","type":"dfn","url":"https://infra.spec.whatwg.org/#list"},
+"https://infra.spec.whatwg.org/#list-iterate": {"displayText":"for each","export":true,"for_":["list","set"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"for each","type":"dfn","url":"https://infra.spec.whatwg.org/#list-iterate"},
+"https://infra.spec.whatwg.org/#map-entry": {"displayText":"entry","export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"entry","type":"dfn","url":"https://infra.spec.whatwg.org/#map-entry"},
+"https://infra.spec.whatwg.org/#map-getting-the-keys": {"displayText":"keys","export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"keys","type":"dfn","url":"https://infra.spec.whatwg.org/#map-getting-the-keys"},
+"https://infra.spec.whatwg.org/#map-getting-the-values": {"displayText":"values","export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"values","type":"dfn","url":"https://infra.spec.whatwg.org/#map-getting-the-values"},
+"https://infra.spec.whatwg.org/#map-key": {"displayText":"key","export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"key","type":"dfn","url":"https://infra.spec.whatwg.org/#map-key"},
+"https://infra.spec.whatwg.org/#map-set": {"displayText":"set","export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"set","type":"dfn","url":"https://infra.spec.whatwg.org/#map-set"},
+"https://infra.spec.whatwg.org/#map-value": {"displayText":"value","export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"value","type":"dfn","url":"https://infra.spec.whatwg.org/#map-value"},
+"https://infra.spec.whatwg.org/#ordered-map": {"displayText":"map","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"map","type":"dfn","url":"https://infra.spec.whatwg.org/#ordered-map"},
+"https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-object-objects": {"displayText":"Object","export":true,"for_":[],"level":"1","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"current","text":"Object","type":"interface","url":"https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-object-objects"},
+"https://w3c.github.io/geolocation/#dom-geolocationcoordinates": {"displayText":"GeolocationCoordinates","export":true,"for_":[],"level":"1","normative":true,"shortname":"geolocation","spec":"geolocation","status":"current","text":"GeolocationCoordinates","type":"interface","url":"https://w3c.github.io/geolocation/#dom-geolocationcoordinates"},
+"https://w3c.github.io/hr-time/#typedefdef-domhighrestimestamp": {"displayText":"DOMHighResTimeStamp","export":true,"for_":[],"level":"3","normative":true,"shortname":"hr-time","spec":"hr-time-3","status":"current","text":"DOMHighResTimeStamp","type":"typedef","url":"https://w3c.github.io/hr-time/#typedefdef-domhighrestimestamp"},
+"https://w3c.github.io/sensors#check-sensor-policy-controlled-features": {"displayText":"check sensor policy-controlled features","export":true,"for_":[],"level":"","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"anchor-block","text":"check sensor policy-controlled features","type":"dfn","url":"https://w3c.github.io/sensors#check-sensor-policy-controlled-features"},
+"https://w3c.github.io/sensors#extensibility": {"displayText":"extensible","export":true,"for_":[],"level":"","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"anchor-block","text":"extensible","type":"dfn","url":"https://w3c.github.io/sensors#extensibility"},
+"https://w3c.github.io/sensors#initialize-a-sensor-object": {"displayText":"initialize a sensor object","export":true,"for_":[],"level":"","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"anchor-block","text":"initialize a sensor object","type":"dfn","url":"https://w3c.github.io/sensors#initialize-a-sensor-object"},
+"https://w3c.github.io/sensors#latest-reading": {"displayText":"latest reading","export":true,"for_":[],"level":"","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"anchor-block","text":"latest reading","type":"dfn","url":"https://w3c.github.io/sensors#latest-reading"},
+"https://w3c.github.io/sensors#security-and-privacy": {"displayText":"security and privacy","export":true,"for_":[],"level":"","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"anchor-block","text":"security and privacy","type":"dfn","url":"https://w3c.github.io/sensors#security-and-privacy"},
+"https://w3c.github.io/sensors#sensor-type": {"displayText":"sensor type","export":true,"for_":[],"level":"","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"anchor-block","text":"sensor type","type":"dfn","url":"https://w3c.github.io/sensors#sensor-type"},
+"https://w3c.github.io/sensors/#dictdef-sensoroptions": {"displayText":"SensorOptions","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"SensorOptions","type":"dictionary","url":"https://w3c.github.io/sensors/#dictdef-sensoroptions"},
+"https://w3c.github.io/sensors/#dom-sensor-start": {"displayText":"start()","export":true,"for_":["Sensor"],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"start()","type":"method","url":"https://w3c.github.io/sensors/#dom-sensor-start"},
+"https://w3c.github.io/sensors/#dom-sensor-stop": {"displayText":"stop()","export":true,"for_":["Sensor"],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"stop()","type":"method","url":"https://w3c.github.io/sensors/#dom-sensor-stop"},
+"https://w3c.github.io/sensors/#get-value-from-latest-reading": {"displayText":"get value from latest reading","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"get value from latest reading","type":"dfn","url":"https://w3c.github.io/sensors/#get-value-from-latest-reading"},
+"https://w3c.github.io/sensors/#notify-error": {"displayText":"notify error","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"notify error","type":"dfn","url":"https://w3c.github.io/sensors/#notify-error"},
+"https://w3c.github.io/sensors/#notify-new-reading": {"displayText":"notify new reading","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"notify new reading","type":"dfn","url":"https://w3c.github.io/sensors/#notify-new-reading"},
+"https://w3c.github.io/sensors/#parse-single-value-number-reading": {"displayText":"parse single-value number reading","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"parse single-value number reading","type":"dfn","url":"https://w3c.github.io/sensors/#parse-single-value-number-reading"},
+"https://w3c.github.io/sensors/#per-type-virtual-sensor-metadata": {"displayText":"per-type virtual sensor metadata","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"per-type virtual sensor metadata","type":"dfn","url":"https://w3c.github.io/sensors/#per-type-virtual-sensor-metadata"},
+"https://w3c.github.io/sensors/#sensor": {"displayText":"Sensor","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"Sensor","type":"interface","url":"https://w3c.github.io/sensors/#sensor"},
+"https://w3c.github.io/sensors/#sensor-reading": {"displayText":"sensor reading","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"sensor reading","type":"dfn","url":"https://w3c.github.io/sensors/#sensor-reading"},
+"https://w3c.github.io/sensors/#virtual-sensor-metadata": {"displayText":"virtual sensor metadata","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"virtual sensor metadata","type":"dfn","url":"https://w3c.github.io/sensors/#virtual-sensor-metadata"},
+"https://w3c.github.io/sensors/#virtual-sensor-metadata-reading-parsing-algorithm": {"displayText":"reading parsing algorithm","export":true,"for_":["virtual sensor metadata"],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"reading parsing algorithm","type":"dfn","url":"https://w3c.github.io/sensors/#virtual-sensor-metadata-reading-parsing-algorithm"},
+"https://w3c.github.io/sensors/#virtual-sensor-type": {"displayText":"virtual sensor type","export":true,"for_":[],"level":"1","normative":true,"shortname":"generic-sensor","spec":"generic-sensor","status":"current","text":"virtual sensor type","type":"dfn","url":"https://w3c.github.io/sensors/#virtual-sensor-type"},
+"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature": {"displayText":"policy-controlled feature","export":true,"for_":[],"level":"1","normative":true,"shortname":"permissions-policy","spec":"permissions-policy-1","status":"current","text":"policy-controlled feature","type":"dfn","url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature"},
+"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist": {"displayText":"default allowlist","export":true,"for_":["policy-controlled feature"],"level":"1","normative":true,"shortname":"permissions-policy","spec":"permissions-policy-1","status":"current","text":"default allowlist","type":"dfn","url":"https://w3c.github.io/webappsec-permissions-policy/#policy-controlled-feature-default-allowlist"},
+"https://webidl.spec.whatwg.org/#Exposed": {"displayText":"Exposed","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"Exposed","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#Exposed"},
+"https://webidl.spec.whatwg.org/#SecureContext": {"displayText":"SecureContext","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"SecureContext","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#SecureContext"},
+"https://webidl.spec.whatwg.org/#dfn-nullable-type": {"displayText":"nullable type","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"nullable type","type":"dfn","url":"https://webidl.spec.whatwg.org/#dfn-nullable-type"},
+"https://webidl.spec.whatwg.org/#dfn-throw": {"displayText":"throw","export":true,"for_":["exception"],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"throw","type":"dfn","url":"https://webidl.spec.whatwg.org/#dfn-throw"},
+"https://webidl.spec.whatwg.org/#idl-DOMException": {"displayText":"DOMException","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"DOMException","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-DOMException"},
+"https://webidl.spec.whatwg.org/#idl-double": {"displayText":"double","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"double","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-double"},
+"https://webidl.spec.whatwg.org/#idl-promise": {"displayText":"Promise","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"Promise","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-promise"},
+"https://webidl.spec.whatwg.org/#idl-unrestricted-double": {"displayText":"unrestricted double","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"unrestricted double","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-unrestricted-double"},
+"https://webidl.spec.whatwg.org/#securityerror": {"displayText":"SecurityError","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"SecurityError","type":"exception","url":"https://webidl.spec.whatwg.org/#securityerror"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.displayText)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
+}
+</script>
+<script>/* Boilerplate: script-var-click-highlighting */
+"use strict";
+{
+/*
+Color-choosing design:
+
+* Colors are ordered by goodness.
+* On clicking a var, give it the earliest color
+    with the lowest usage in the algorithm.
+* On re-clicking, re-use the var's most recent color
+    if that's not currently being used elsewhere.
+*/
+
+const COLOR_COUNT = 7;
+
+document.addEventListener("click", e=>{
+    if(e.target.nodeName == "VAR") {
+        highlightSameAlgoVars(e.target);
+    }
+});
+
+function highlightSameAlgoVars(v) {
+    // Find the algorithm container.
+    let algoContainer = findAlgoContainer(v);
+
+    // Not highlighting document-global vars,
+    // too likely to be unrelated.
+    if(algoContainer == null) return;
+
+    const varName = nameFromVar(v);
+    if(!v.hasAttribute("data-var-color")) {
+        const newColor = chooseHighlightColor(algoContainer, v);
+        for(const el of algoContainer.querySelectorAll("var")) {
+            if(nameFromVar(el) == varName) {
+                el.setAttribute("data-var-color", newColor);
+                el.setAttribute("data-var-last-color", newColor);
+            }
+        }
+    } else {
+        for(const el of algoContainer.querySelectorAll("var")) {
+            if(nameFromVar(el) == varName) {
+                el.removeAttribute("data-var-color");
+            }
+        }
+    }
+}
+function findAlgoContainer(el) {
+    while(el != document.body) {
+        if(el.hasAttribute("data-algorithm")) return el;
+        el = el.parentNode;
+    }
+    return null;
+}
+function nameFromVar(el) {
+    return el.textContent.replace(/(\s|\xa0)+/g, " ").trim();
+}
+function colorCountsFromContainer(container) {
+    const namesFromColor = Array.from({length:COLOR_COUNT}, x=>new Set());
+    for(let v of container.querySelectorAll("var[data-var-color]")) {
+        let color = +v.getAttribute("data-var-color");
+        namesFromColor[color].add(nameFromVar(v));
+    }
+
+    return namesFromColor.map(x=>x.size);
+}
+function leastUsedColor(colors) {
+    // Find the earliest color with the lowest count.
+    let minCount = Infinity;
+    let minColor = null;
+    for(var i = 0; i < colors.length; i++) {
+        if(colors[i] < minCount) {
+            minColor = i;
+            minCount = colors[i];
+        }
+    }
+    return minColor;
+}
+function chooseHighlightColor(container, v) {
+    const colorCounts = colorCountsFromContainer(container);
+    if(v.hasAttribute("data-var-last-color")) {
+        let color = +v.getAttribute("data-var-last-color");
+        if(colorCounts[color] == 0) return color;
+    }
+    return leastUsedColor(colorCounts);
+}
+}
+</script>
