@@ -1,0 +1,3047 @@
+
+
+
+
+
+
+
+
+
+<!doctype html>
+<html 
+      lang="en"
+      dir="ltr">
+  <head>
+    <meta name="google-signin-client-id" content="721724668570-nbkv1cfusk7kk4eni4pjvepaus73b13t.apps.googleusercontent.com"><meta name="google-signin-scope"
+          content="profile email https://www.googleapis.com/auth/developerprofiles https://www.googleapis.com/auth/developerprofiles.award https://www.googleapis.com/auth/devprofiles.full_control.firstparty"><meta property="og:site_name" content="Google for Developers">
+    <meta property="og:type" content="website"><meta name="theme-color" content="#1e8e3e"><meta charset="utf-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+    <link rel="manifest" href="/_pwa/developers/manifest.json"
+          crossorigin="use-credentials">
+    <link rel="preconnect" href="//www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="//fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="//www.google-analytics.com" crossorigin><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700&display=swap">
+      <link rel="stylesheet"
+            href="//fonts.googleapis.com/css2?family=Material+Icons&family=Material+Symbols+Outlined&display=block"><link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers/css/app.css">
+      <link rel="shortcut icon" href="https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers/images/favicon-new.png">
+    <link rel="apple-touch-icon" href="https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers/images/touchicon-180-new.png"><link rel="canonical" href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification"><link rel="search" type="application/opensearchdescription+xml"
+            title="Google for Developers" href="https://developers.google.com/s/opensearch.xml">
+      <link rel="alternate" hreflang="en"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification" /><link rel="alternate" hreflang="x-default" href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification" /><link rel="alternate" hreflang="ar"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=ar" /><link rel="alternate" hreflang="bn"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=bn" /><link rel="alternate" hreflang="zh-Hans"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=zh-cn" /><link rel="alternate" hreflang="zh-Hant"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=zh-tw" /><link rel="alternate" hreflang="fa"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=fa" /><link rel="alternate" hreflang="fr"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=fr" /><link rel="alternate" hreflang="de"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=de" /><link rel="alternate" hreflang="he"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=he" /><link rel="alternate" hreflang="hi"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=hi" /><link rel="alternate" hreflang="id"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=id" /><link rel="alternate" hreflang="it"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=it" /><link rel="alternate" hreflang="ja"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=ja" /><link rel="alternate" hreflang="ko"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=ko" /><link rel="alternate" hreflang="pl"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=pl" /><link rel="alternate" hreflang="pt-BR"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=pt-br" /><link rel="alternate" hreflang="ru"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=ru" /><link rel="alternate" hreflang="es-419"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=es-419" /><link rel="alternate" hreflang="th"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=th" /><link rel="alternate" hreflang="tr"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=tr" /><link rel="alternate" hreflang="vi"
+          href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?hl=vi" /><title>Specification for WebP Lossless Bitstream &nbsp;|&nbsp; Google for Developers</title>
+
+<meta property="og:title" content="Specification for WebP Lossless Bitstream &nbsp;|&nbsp; Google for Developers"><meta property="og:url" content="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification"><meta property="og:image" content="https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers/images/opengraph/google-green.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675"><meta property="og:locale" content="en"><meta name="twitter:card" content="summary_large_image"><script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    
+    "headline": "Specification for WebP Lossless Bitstream"
+  }
+</script><script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "WebP",
+      "item": "https://developers.google.com/speed/webp"
+    },{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Specification for WebP Lossless Bitstream",
+      "item": "https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification"
+    }]
+  }
+  </script>
+  
+
+  
+
+  
+
+
+    </head>
+  <body class="color-scheme--light"
+        template="page"
+        theme="google-green"
+        type="article"
+        
+        
+        
+        layout="docs"
+        
+        
+        
+        
+        
+          
+            concierge='closed'
+          
+        
+        display-toc
+        pending>
+  
+    <devsite-progress type="indeterminate" id="app-progress"></devsite-progress>
+  
+  
+    <a href="#main-content" class="skip-link button">
+      
+      Skip to main content
+    </a>
+    <section class="devsite-wrapper">
+      <devsite-cookie-notification-bar></devsite-cookie-notification-bar>
+        <devsite-header role="banner">
+  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="devsite-header--inner" data-nosnippet>
+  <div class="devsite-top-logo-row-wrapper-wrapper">
+    <div class="devsite-top-logo-row-wrapper">
+      <div class="devsite-top-logo-row">
+        <button type="button" id="devsite-hamburger-menu"
+          class="devsite-header-icon-button button-flat material-icons gc-analytics-event"
+          data-category="Site-Wide Custom Events"
+          data-label="Navigation menu button"
+          visually-hidden
+          aria-label="Open menu">
+        </button>
+        
+<div class="devsite-product-name-wrapper">
+
+  
+    
+  
+  <a href="https://developers.google.com/speed/webp">
+    
+  <div class="devsite-product-logo-container"
+       
+       
+       
+    size="medium"
+  >
+  
+    <picture>
+      
+      <img class="devsite-product-logo"
+           alt="WebP"
+           src="https://developers.google.com/static/speed/webp/images/webp-devsite-icon.png"
+           srcset="https://developers.google.com/static/speed/webp/images/webp-devsite-icon_36.png 36w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_48.png 48w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_72.png 72w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_96.png 96w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_480.png 480w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_720.png 720w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_856.png 856w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_960.png 960w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_1440.png 1440w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_1920.png 1920w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_2880.png 2880w"
+           sizes="64px"
+           loading="lazy"
+           >
+    </picture>
+  
+  </div>
+  
+  </a>
+  
+
+  
+
+
+
+  
+  
+  <span class="devsite-product-name">
+    <ul class="devsite-breadcrumb-list"
+  >
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+      
+        
+  <a href="https://developers.google.com/speed/webp"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Upper Header"
+      
+        data-value="1"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="1"
+      
+        track-metadata-eventdetail="WebP"
+      
+    >
+    
+          WebP
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+  </span>
+
+</div>
+        <div class="devsite-top-logo-row-middle">
+          <div class="devsite-header-upper-tabs">
+            
+           </div>
+          
+<devsite-search
+    enable-signin
+    enable-search
+    enable-suggestions
+      enable-query-completion
+    
+    enable-search-summaries
+    project-name="WebP"
+    tenant-name="Google for Developers"
+    project-scope="/speed/webp"
+    url-scoped="https://developers.google.com/s/results/speed/webp"
+    
+    
+    
+    >
+  <form class="devsite-search-form" action="https://developers.google.com/s/results" method="GET">
+    <div class="devsite-search-container">
+      <button type="button"
+              search-open
+              class="devsite-search-button devsite-header-icon-button button-flat material-icons"
+              
+              aria-label="Open search"></button>
+      <div class="devsite-searchbox">
+        <input
+          aria-activedescendant=""
+          aria-autocomplete="list"
+          
+          aria-label="Search"
+          aria-expanded="false"
+          aria-haspopup="listbox"
+          autocomplete="off"
+          class="devsite-search-field devsite-search-query"
+          name="q"
+          
+          placeholder="Search"
+          role="combobox"
+          type="text"
+          value=""
+          >
+          <div class="devsite-search-image material-icons" aria-hidden="true">
+            
+              <svg class="devsite-search-ai-image" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_6641_386)">
+                    <path d="M19.6 21L13.3 14.7C12.8 15.1 12.225 15.4167 11.575 15.65C10.925 15.8833 10.2333 16 9.5 16C7.68333 16 6.14167 15.375 4.875 14.125C3.625 12.8583 3 11.3167 3 9.5C3 7.68333 3.625 6.15 4.875 4.9C6.14167 3.63333 7.68333 3 9.5 3C10.0167 3 10.5167 3.05833 11 3.175C11.4833 3.275 11.9417 3.43333 12.375 3.65L10.825 5.2C10.6083 5.13333 10.3917 5.08333 10.175 5.05C9.95833 5.01667 9.73333 5 9.5 5C8.25 5 7.18333 5.44167 6.3 6.325C5.43333 7.19167 5 8.25 5 9.5C5 10.75 5.43333 11.8167 6.3 12.7C7.18333 13.5667 8.25 14 9.5 14C10.6667 14 11.6667 13.625 12.5 12.875C13.35 12.1083 13.8417 11.15 13.975 10H15.975C15.925 10.6333 15.7833 11.2333 15.55 11.8C15.3333 12.3667 15.05 12.8667 14.7 13.3L21 19.6L19.6 21ZM17.5 12C17.5 10.4667 16.9667 9.16667 15.9 8.1C14.8333 7.03333 13.5333 6.5 12 6.5C13.5333 6.5 14.8333 5.96667 15.9 4.9C16.9667 3.83333 17.5 2.53333 17.5 0.999999C17.5 2.53333 18.0333 3.83333 19.1 4.9C20.1667 5.96667 21.4667 6.5 23 6.5C21.4667 6.5 20.1667 7.03333 19.1 8.1C18.0333 9.16667 17.5 10.4667 17.5 12Z" fill="#5F6368"/>
+                  </g>
+                <defs>
+                <clipPath id="clip0_6641_386">
+                <rect width="24" height="24" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+            
+          </div>
+          <div class="devsite-search-shortcut-icon-container" aria-hidden="true">
+            <kbd class="devsite-search-shortcut-icon">/</kbd>
+          </div>
+      </div>
+    </div>
+  </form>
+  <button type="button"
+          search-close
+          class="devsite-search-button devsite-header-icon-button button-flat material-icons"
+          
+          aria-label="Close search"></button>
+</devsite-search>
+
+        </div>
+
+        
+
+          
+
+          
+
+          
+
+          
+
+          
+<devsite-language-selector>
+  <ul role="presentation">
+    
+    
+    <li role="presentation">
+      <a role="menuitem" lang="en"
+        >English</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="de"
+        >Deutsch</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es"
+        >Español</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es_419"
+        >Español – América Latina</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fr"
+        >Français</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="id"
+        >Indonesia</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="it"
+        >Italiano</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pl"
+        >Polski</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pt_br"
+        >Português – Brasil</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="vi"
+        >Tiếng Việt</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="tr"
+        >Türkçe</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ru"
+        >Русский</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="he"
+        >עברית</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ar"
+        >العربيّة</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fa"
+        >فارسی</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="hi"
+        >हिंदी</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="bn"
+        >বাংলা</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="th"
+        >ภาษาไทย</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_cn"
+        >中文 – 简体</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_tw"
+        >中文 – 繁體</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ja"
+        >日本語</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ko"
+        >한국어</a>
+    </li>
+    
+  </ul>
+</devsite-language-selector>
+
+
+          
+
+        
+
+        
+          <devsite-user 
+                        
+                        
+                          enable-profiles
+                        
+                        
+                          fp-auth
+                        
+                        id="devsite-user">
+            
+              
+              <span class="button devsite-top-button" aria-hidden="true" visually-hidden>Sign in</span>
+            
+          </devsite-user>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="devsite-collapsible-section
+    ">
+    <div class="devsite-header-background">
+      
+        
+      
+      
+        <div class="devsite-doc-set-nav-row">
+          
+          
+            
+            
+  <devsite-tabs class="lower-tabs">
+
+    <nav class="devsite-tabs-wrapper" aria-label="Lower tabs">
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/speed/webp"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/speed/webp"
+    
+       track-type="nav"
+       track-metadata-position="nav - home"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Home"
+         
+           track-name="home"
+         
+       >
+    Home
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/speed/webp/docs/using"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/speed/webp/docs/using"
+    
+       track-type="nav"
+       track-metadata-position="nav - guides"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Guides"
+         
+           track-name="guides"
+         
+       >
+    Guides
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  class="devsite-active">
+            
+    <a href="https://developers.google.com/speed/webp/faq"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/speed/webp/faq"
+    
+       track-type="nav"
+       track-metadata-position="nav - reference"
+       track-metadata-module="primary nav"
+       aria-label="Reference, selected" 
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Reference"
+         
+           track-name="reference"
+         
+       >
+    Reference
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/speed/webp/gallery"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/speed/webp/gallery"
+    
+       track-type="nav"
+       track-metadata-position="nav - samples"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Samples"
+         
+           track-name="samples"
+         
+       >
+    Samples
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/speed/webp/community"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/speed/webp/community"
+    
+       track-type="nav"
+       track-metadata-position="nav - support"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Support"
+         
+           track-name="support"
+         
+       >
+    Support
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+    </nav>
+
+  </devsite-tabs>
+
+          
+          
+        </div>
+      
+    </div>
+  </div>
+
+</div>
+
+
+
+  
+</devsite-header>
+        <devsite-book-nav scrollbars >
+          
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="devsite-book-nav-filter"
+     >
+  <span class="filter-list-icon material-icons" aria-hidden="true"></span>
+  <input type="text"
+         placeholder="Filter"
+         
+         aria-label="Type to filter"
+         role="searchbox">
+  
+  <span class="filter-clear-button hidden"
+        data-title="Clear filter"
+        aria-label="Clear filter"
+        role="button"
+        tabindex="0"></span>
+</div>
+
+<nav class="devsite-book-nav devsite-nav nocontent" data-nosnippet
+     aria-label="Side menu">
+  <div class="devsite-mobile-header">
+    <button type="button"
+            id="devsite-close-nav"
+            class="devsite-header-icon-button button-flat material-icons gc-analytics-event"
+            data-category="Site-Wide Custom Events"
+            data-label="Close navigation"
+            aria-label="Close navigation">
+    </button>
+    <div class="devsite-product-name-wrapper">
+
+  
+    
+  
+  <a href="https://developers.google.com/speed/webp">
+    
+  <div class="devsite-product-logo-container"
+       
+       
+       
+    size="medium"
+  >
+  
+    <picture>
+      
+      <img class="devsite-product-logo"
+           alt="WebP"
+           src="https://developers.google.com/static/speed/webp/images/webp-devsite-icon.png"
+           srcset="https://developers.google.com/static/speed/webp/images/webp-devsite-icon_36.png 36w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_48.png 48w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_72.png 72w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_96.png 96w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_480.png 480w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_720.png 720w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_856.png 856w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_960.png 960w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_1440.png 1440w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_1920.png 1920w, https://developers.google.com/static/speed/webp/images/webp-devsite-icon_2880.png 2880w"
+           sizes="64px"
+           loading="lazy"
+           >
+    </picture>
+  
+  </div>
+  
+  </a>
+  
+
+  
+
+
+  
+      <span class="devsite-product-name">
+        
+        
+        <ul class="devsite-breadcrumb-list"
+  >
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+      
+        
+  <a href="https://developers.google.com/speed/webp"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Upper Header"
+      
+        data-value="1"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="1"
+      
+        track-metadata-eventdetail="WebP"
+      
+    >
+    
+          WebP
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+      </span>
+    
+
+</div>
+  </div>
+
+  <div class="devsite-book-nav-wrapper">
+    <div class="devsite-mobile-nav-top">
+      
+        <ul class="devsite-nav-list">
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/speed/webp"
+    
+       class="devsite-nav-title gc-analytics-event
+              
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Home"
+      
+        track-name="home"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Home"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Home
+   </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/speed/webp/docs/using"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Guides"
+      
+        track-name="guides"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Guides"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Guides
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/speed/webp/faq"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              devsite-nav-active"
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Reference"
+      
+        track-name="reference"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Reference"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Reference
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/speed/webp/gallery"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Samples"
+      
+        track-name="samples"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Samples"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Samples
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/speed/webp/community"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Support"
+      
+        track-name="support"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Support"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Support
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+          
+          
+        </ul>
+      
+    </div>
+    
+      <div class="devsite-mobile-nav-bottom">
+        
+          
+          <ul class="devsite-nav-list" menu="_book">
+            <li class="devsite-nav-item"><a href="/speed/webp/faq"
+        class="devsite-nav-title"
+      ><span class="devsite-nav-text" tooltip>FAQ</span></a></li>
+
+  <li class="devsite-nav-item"><a href="/speed/webp/docs/compression"
+        class="devsite-nav-title"
+      ><span class="devsite-nav-text" tooltip>Compression Techniques</span></a></li>
+
+  <li class="devsite-nav-item"><a href="/speed/webp/docs/riff_container"
+        class="devsite-nav-title"
+      ><span class="devsite-nav-text" tooltip>Container Specification</span></a></li>
+
+  <li class="devsite-nav-item"><a href="/speed/webp/docs/webp_lossless_bitstream_specification"
+        class="devsite-nav-title"
+      ><span class="devsite-nav-text" tooltip>Lossless Bitstream Specification</span></a></li>
+
+  <li class="devsite-nav-item
+           devsite-nav-expandable"><div class="devsite-expandable-nav">
+      <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button">
+        <span class="devsite-nav-text" tooltip>Studies</span>
+      </div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="/speed/webp/docs/webp_lossless_alpha_study"
+        class="devsite-nav-title"
+      ><span class="devsite-nav-text" tooltip>WebP Lossless and Alpha Study</span></a></li><li class="devsite-nav-item"><a href="/speed/webp/docs/webp_study"
+        class="devsite-nav-title"
+      ><span class="devsite-nav-text" tooltip>WebP Lossy Study</span></a></li></ul></div></li>
+          </ul>
+        
+        
+        
+          
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+        
+      </div>
+    
+  </div>
+</nav>
+          
+        </devsite-book-nav>
+      
+      <section id="gc-wrapper">
+        <main role="main" id="main-content" class="devsite-main-content"
+            
+              has-book-nav
+              has-sidebar
+            >
+          <div class="devsite-sidebar">
+            <div class="devsite-sidebar-content">
+                
+                <devsite-toc class="devsite-nav"
+                            role="navigation"
+                            aria-label="On this page"
+                            depth="2"
+                            scrollbars
+                            data-nosnippet
+                  ></devsite-toc>
+                <devsite-recommendations-sidebar class="nocontent devsite-nav" data-nosnippet>
+                </devsite-recommendations-sidebar>
+            </div>
+          </div>
+          <devsite-content>
+            
+              
+
+
+
+
+
+
+
+
+
+
+<article class="devsite-article">
+  
+  
+  
+  
+  
+
+  <div class="devsite-article-meta nocontent" role="navigation" data-nosnippet>
+    
+    
+    <ul class="devsite-breadcrumb-list"
+  
+    aria-label="Breadcrumb">
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="1"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="1"
+      
+        track-metadata-eventdetail=""
+      
+    >
+    
+          Home
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/products"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="2"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="2"
+      
+        track-metadata-eventdetail=""
+      
+    >
+    
+          Products
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/speed"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="3"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="3"
+      
+        track-metadata-eventdetail="Make the Web Faster"
+      
+    >
+    
+          Make the Web Faster
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/speed/webp"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="4"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="4"
+      
+        track-metadata-eventdetail="WebP"
+      
+    >
+    
+          WebP
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/speed/webp/faq"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="5"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="5"
+      
+        track-metadata-eventdetail=""
+      
+    >
+    
+          Reference
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+    
+      
+    <devsite-thumb-rating position="header">
+    </devsite-thumb-rating>
+  
+    
+  </div>
+  
+    <h1 class="devsite-page-title" tabindex="-1">
+      Specification for WebP Lossless Bitstream<devsite-actions hidden data-nosnippet><devsite-feature-tooltip
+      ack-key="AckCollectionsBookmarkTooltipDismiss"
+      analytics-category="Site-Wide Custom Events"
+      analytics-action-show="Callout Profile displayed"
+      analytics-action-close="Callout Profile dismissed"
+      analytics-label="Create Collection Callout"
+      class="devsite-page-bookmark-tooltip nocontent"
+      data-nosnippet
+      dismiss-button="true"
+      id="devsite-collections-dropdown"
+      
+      dismiss-button-text="Dismiss"
+
+      
+      close-button-text="Got it">
+
+    
+    
+      <devsite-bookmark></devsite-bookmark>
+    
+
+    <span slot="popout-heading">
+      
+      Stay organized with collections
+    </span>
+    <span slot="popout-contents">
+      
+      Save and categorize content based on your preferences.
+    </span>
+  </devsite-feature-tooltip>
+    <devsite-llm-tools></devsite-llm-tools></devsite-actions>
+  
+      
+    </h1>
+  <div class="devsite-page-title-meta"><devsite-view-release-notes></devsite-view-release-notes></div>
+  
+
+  <devsite-toc class="devsite-nav"
+    depth="2"
+    devsite-toc-embedded
+    >
+  </devsite-toc>
+  <div class="devsite-article-body clearfix
+  ">
+
+  
+    
+      <devsite-key-takeaways-panel role="region" aria-labelledby="key-takeaways-panel-title">
+  <div class="devsite-key-takeaways-panel-header" aria-labelledby="key-takeaways-panel-title" aria-expanded="false" role="button" tabindex="0">
+    
+    <img src="/_static/images/icons/spark.svg" alt="Spark icon" />
+    <div class="devsite-key-takeaways-panel-title">
+      
+      <h2 class="no-link hide-from-toc" id="key-takeaways-panel-title" data-tooltip="Generated with AI">Page Summary</h2>
+    </div>
+    <span
+      class="material-icons devsite-key-takeaways-panel-toggle-button" aria-hidden="true"></span>
+  </div>
+  <div class="devsite-key-takeaways-panel-content">
+    <devsite-feedback
+      product-id="5123748"
+      bucket="8963846920012181156"
+      disable-product-feedback>
+      <button
+        class="button-flat button-primary devsite-key-takeaways-report-button"
+        
+        data-title="Report Key Takeaways!"
+        
+        aria-label="Report Key Takeaways!">
+        <span
+          class="material-icons"
+          
+          aria-label="Report Key Takeaways!"
+          >outlined_flag</span
+        >
+      </button>
+    </devsite-feedback>
+    <ul class="devsite-key-takeaways-panel-list">
+      
+        <li>
+          <p>WebP Lossless uses a combination of entropy coding, LZ77 compression, and optional transforms to achieve lossless image compression.</p>
+
+        </li>
+      
+        <li>
+          <p>The format structure includes a RIFF header, image header, and image stream containing the compressed pixel data.</p>
+
+        </li>
+      
+        <li>
+          <p>Optional transforms like predictor, color, subtract-green, and color indexing are applied before entropy coding to improve compression efficiency.</p>
+
+        </li>
+      
+        <li>
+          <p>Image data is encoded using prefix codes for entropy coding and LZ77 backward references for redundancy reduction, potentially utilizing a color cache.</p>
+
+        </li>
+      
+        <li>
+          <p>Decoding involves reversing the transforms and entropy coding to reconstruct the original image from the compressed data.</p>
+
+        </li>
+      
+    </ul>
+  </div>
+</devsite-key-takeaways-panel>
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><em>Jyrki Alakuijala, Ph.D., Google, Inc., 2023-03-09</em></p>
+
+<h2 id="abstract" data-text="Abstract" tabindex="-1">Abstract</h2>
+
+<p>WebP lossless is an image format for lossless compression of ARGB images. The
+lossless format stores and restores the pixel values exactly, including the
+color values for fully transparent pixels. A universal algorithm for sequential
+data compression (LZ77), prefix coding, and a color cache are used for
+compression of the bulk data. Decoding speeds faster than PNG have been
+demonstrated, as well as 25% denser compression than can be achieved using
+today&#39;s PNG format.</p>
+
+<h2 id="1_introduction" data-text="1 Introduction" tabindex="-1">1 Introduction</h2>
+
+<p>This document describes the compressed data representation of a WebP lossless
+image. It is intended as a detailed reference for the WebP lossless encoder and
+decoder implementation.</p>
+
+<p>In this document, we extensively use C programming language syntax to describe
+the bitstream and assume the existence of a function for reading bits,
+<code translate="no" dir="ltr">ReadBits(n)</code>. The bytes are read in the natural order of the stream containing
+them, and bits of each byte are read in least-significant-bit-first order. When
+multiple bits are read at the same time, the integer is constructed from the
+original data in the original order. The most significant bits of the returned
+integer are also the most significant bits of the original data. Thus, the
+statement</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">b = ReadBits(2);
+</code></pre></devsite-code>
+<p>is equivalent with the two statements below:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">b = ReadBits(1);
+b |= ReadBits(1) &lt;&lt; 1;
+</code></pre></devsite-code>
+<p>We assume that each color component, that is, alpha, red, blue, and green, is
+represented using an 8-bit byte. We define the corresponding type as uint8. A
+whole ARGB pixel is represented by a type called uint32, which is an unsigned
+integer consisting of 32 bits. In the code showing the behavior of the
+transforms, these values are codified in the following bits: alpha in bits
+31..24, red in bits 23..16, green in bits 15..8, and blue in bits 7..0; however,
+implementations of the format are free to use another representation internally.</p>
+
+<p>Broadly, a WebP lossless image contains header data, transform information, and
+actual image data. Headers contain the width and height of the image. A WebP
+lossless image can go through four different types of transforms before being
+entropy encoded. The transform information in the bitstream contains the data
+required to apply the respective inverse transforms.</p>
+
+<h2 id="2_nomenclature" data-text="2 Nomenclature" tabindex="-1">2 Nomenclature</h2>
+
+<dl>
+<dt>ARGB</dt>
+<dd>A pixel value consisting of alpha, red, green, and blue values.</dd>
+<dt>ARGB image</dt>
+<dd>A two-dimensional array containing ARGB pixels.</dd>
+<dt>color cache</dt>
+<dd>A small hash-addressed array to store recently used colors to be able to
+recall them with shorter codes.</dd>
+<dt>color indexing image</dt>
+<dd>A one-dimensional image of colors that can be indexed using a small integer
+(up to 256 within WebP lossless).</dd>
+<dt>color transform image</dt>
+<dd>A two-dimensional subresolution image containing data about correlations of
+color components.</dd>
+<dt>distance mapping</dt>
+<dd>Changes LZ77 distances to have the smallest values for pixels in
+two-dimensional proximity.</dd>
+<dt>entropy image</dt>
+<dd>A two-dimensional subresolution image indicating which entropy coding should
+be used in a respective square in the image, that is, each pixel is a meta
+prefix code.</dd>
+<dt>LZ77</dt>
+<dd>A dictionary-based sliding window compression algorithm that either emits
+symbols or describes them as sequences of past symbols.</dd>
+<dt>meta prefix code</dt>
+<dd>A small integer (up to 16 bits) that indexes an element in the meta prefix
+table.</dd>
+<dt>predictor image</dt>
+<dd>A two-dimensional subresolution image indicating which spatial predictor is
+used for a particular square in the image.</dd>
+<dt>prefix code</dt>
+<dd>A classic way to do entropy coding where a smaller number of bits are used
+for more frequent codes.</dd>
+<dt>prefix coding</dt>
+<dd>A way to entropy code larger integers, which codes a few bits of the integer
+using an entropy code and codifies the remaining bits raw. This allows for
+the descriptions of the entropy codes to remain relatively small even when
+the range of symbols is large.</dd>
+<dt>scan-line order</dt>
+<dd>A processing order of pixels (left to right and top to bottom), starting
+from the left-hand-top pixel. Once a row is completed, continue from the
+left-hand column of the next row.</dd>
+</dl>
+
+<h2 id="3_riff_header" data-text="3 RIFF Header" tabindex="-1">3 RIFF Header</h2>
+
+<p>The beginning of the header has the RIFF container. This consists of the
+following 21 bytes:</p>
+
+<ol>
+<li>String &#39;RIFF&#39;.</li>
+<li>A little-endian, 32-bit value of the chunk length, which is the whole size
+  of the chunk controlled by the RIFF header. Normally, this equals
+  the payload size (file size minus 8 bytes: 4 bytes for the &#39;RIFF&#39;
+  identifier and 4 bytes for storing the value itself).</li>
+<li>String &#39;WEBP&#39; (RIFF container name).</li>
+<li>String &#39;VP8L&#39; (FourCC for lossless-encoded image data).</li>
+<li>A little-endian, 32-bit value of the number of bytes in the
+  lossless stream.</li>
+<li>1-byte signature 0x2f.</li>
+</ol>
+
+<p>The first 28 bits of the bitstream specify the width and height of the image.
+Width and height are decoded as 14-bit integers as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int image_width = ReadBits(14) + 1;
+int image_height = ReadBits(14) + 1;
+</code></pre></devsite-code>
+<p>The 14-bit precision for image width and height limits the maximum size of a
+WebP lossless image to 16384✕16384 pixels.</p>
+
+<p>The alpha_is_used bit is a hint only, and should not impact decoding. It should
+be set to 0 when all alpha values are 255 in the picture, and 1 otherwise.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int alpha_is_used = ReadBits(1);
+</code></pre></devsite-code>
+<p>The version_number is a 3 bit code that must be set to 0. Any other value should
+be treated as an error.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int version_number = ReadBits(3);
+</code></pre></devsite-code>
+<h2 id="4_transforms" data-text="4 Transforms" tabindex="-1">4 Transforms</h2>
+
+<p>The transforms are reversible manipulations of the image data that can reduce
+the remaining symbolic entropy by modeling spatial and color correlations. They
+can make the final compression more dense.</p>
+
+<p>An image can go through four types of transforms. A 1 bit indicates the
+presence of a transform. Each transform is allowed to be used only once. The
+transforms are used only for the main-level ARGB image; the subresolution images
+(color transform image, entropy image, and predictor image) have no transforms,
+not even the 0 bit indicating the end of transforms.</p>
+
+<p>Typically, an encoder would use these transforms to reduce the Shannon entropy
+in the residual image. Also, the transform data can be decided based on entropy
+minimization.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="GDScript" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-k">while</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">ReadBits</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-p">))</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">{</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-o">//</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nb devsite-syntax-nb-Type">Transform</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">present</span><span class="devsite-syntax-o">.</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-o">//</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">Decode</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">transform</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">type</span><span class="devsite-syntax-o">.</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-k">enum</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">TransformType</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">transform_type</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">ReadBits</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-mi">2</span><span class="devsite-syntax-p">);</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-o">//</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">Decode</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">transform</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">data</span><span class="devsite-syntax-o">.</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-o">...</span>
+<span class="devsite-syntax-p">}</span>
+
+<span class="devsite-syntax-o">//</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">Decode</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">actual</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">image</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">data</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">Section</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">5</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-o">.</span>
+</code></pre></devsite-code>
+<p>If a transform is present, then the next two bits specify the transform type.
+There are four types of transforms.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="GDScript" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-k">enum</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">TransformType</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">{</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-n">PREDICTOR_TRANSFORM</span><span class="devsite-syntax-w">             </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">0</span><span class="devsite-syntax-p">,</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-n">COLOR_TRANSFORM</span><span class="devsite-syntax-w">                 </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-p">,</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-n">SUBTRACT_GREEN_TRANSFORM</span><span class="devsite-syntax-w">        </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">2</span><span class="devsite-syntax-p">,</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-n">COLOR_INDEXING_TRANSFORM</span><span class="devsite-syntax-w">        </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">3</span><span class="devsite-syntax-p">,</span>
+<span class="devsite-syntax-p">};</span>
+</code></pre></devsite-code>
+<p>The transform type is followed by the transform data. Transform data contains
+the information required to apply the inverse transform and depends on the
+transform type. The inverse transforms are applied in the reverse order that
+they are read from the bitstream, that is, last one first.</p>
+
+<p>Next, we describe the transform data for different types.</p>
+
+<h3 id="41_predictor_transform" data-text="4.1 Predictor Transform" tabindex="-1">4.1 Predictor Transform</h3>
+
+<p>The predictor transform can be used to reduce entropy by exploiting the fact
+that neighboring pixels are often correlated. In the predictor transform, the
+current pixel value is predicted from the pixels already decoded (in scan-line
+order) and only the residual value (actual - predicted) is encoded. The green
+component of a pixel defines which of the 14 predictors is used within a
+particular block of the ARGB image. The <em>prediction mode</em> determines the type of
+prediction to use. We divide the image into squares, and all the pixels in a
+square use the same prediction mode.</p>
+
+<p>The first 3 bits of prediction data define the block width and height in number
+of bits.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int size_bits = ReadBits(3) + 2;
+int block_width = (1 &lt;&lt; size_bits);
+int block_height = (1 &lt;&lt; size_bits);
+<span class="devsite-syntax-gh">#</span>define DIV_ROUND_UP(num, den) (((num) + (den) - 1) / (den))
+int transform_width = DIV_ROUND_UP(image_width, 1 &lt;&lt; size_bits);
+</code></pre></devsite-code>
+<p>The transform data contains the prediction mode for each block of the image. It
+is a subresolution image where the green component of a pixel defines which of
+the 14 predictors is used for all the <code translate="no" dir="ltr">block_width * block_height</code> pixels within
+a particular block of the ARGB image. This subresolution image is encoded using
+the same techniques described in <a href="#5_image_data">Chapter 5</a>.</p>
+
+<p>The number of block columns, <code translate="no" dir="ltr">transform_width</code>, is used in two-dimensional
+indexing. For a pixel (x, y), one can compute the respective filter block
+address by:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int block_index = (y &gt;&gt; size_bits) * transform_width +
+                  (x &gt;&gt; size_bits);
+</code></pre></devsite-code>
+<p>There are 14 different prediction modes. In each prediction mode, the current
+pixel value is predicted from one or more neighboring pixels whose values are
+already known.</p>
+
+<p>We chose the neighboring pixels (TL, T, TR, and L) of the current pixel (P) as
+follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">O    O    O    O    O    O    O    O    O    O    O
+O    O    O    O    O    O    O    O    O    O    O
+O    O    O    O    TL   T    TR   O    O    O    O
+O    O    O    O    L    P    X    X    X    X    X
+X    X    X    X    X    X    X    X    X    X    X
+X    X    X    X    X    X    X    X    X    X    X
+</code></pre></devsite-code>
+<p>where TL means top-left, T means top, TR means top-right, and L means left. At
+the time of predicting a value for P, all O, TL, T, TR and L pixels have already
+been processed, and the P pixel and all X pixels are unknown.</p>
+
+<p>Given the preceding neighboring pixels, the different prediction modes are
+defined as follows.</p>
+
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Predicted value of each channel of the current pixel</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>0</td>
+<td>0xff000000 (represents solid black color in ARGB)</td>
+</tr>
+<tr>
+<td>1</td>
+<td>L</td>
+</tr>
+<tr>
+<td>2</td>
+<td>T</td>
+</tr>
+<tr>
+<td>3</td>
+<td>TR</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TL</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Average2(Average2(L, TR), T)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Average2(L, TL)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Average2(L, T)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Average2(TL, T)</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Average2(T, TR)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Average2(Average2(L, TL), Average2(T, TR))</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Select(L, T, TL)</td>
+</tr>
+<tr>
+<td>12</td>
+<td>ClampAddSubtractFull(L, T, TL)</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ClampAddSubtractHalf(Average2(L, T), TL)</td>
+</tr>
+</tbody>
+</table>
+
+<p><code translate="no" dir="ltr">Average2</code> is defined as follows for each ARGB component:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">uint8 Average2(uint8 a, uint8 b) {
+  return (a + b) / 2;
+}
+</code></pre></devsite-code>
+<p>The Select predictor is defined as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">uint32 Select(uint32 L, uint32 T, uint32 TL) {
+  // L = left pixel, T = top pixel, TL = top-left pixel.
+
+  // ARGB component estimates for prediction.
+  int pAlpha = ALPHA(L) + ALPHA(T) - ALPHA(TL);
+  int pRed = RED(L) + RED(T) - RED(TL);
+  int pGreen = GREEN(L) + GREEN(T) - GREEN(TL);
+  int pBlue = BLUE(L) + BLUE(T) - BLUE(TL);
+
+  // Manhattan distances to estimates for left and top pixels.
+  int pL = abs(pAlpha - ALPHA(L)) + abs(pRed - RED(L)) +
+           abs(pGreen - GREEN(L)) + abs(pBlue - BLUE(L));
+  int pT = abs(pAlpha - ALPHA(T)) + abs(pRed - RED(T)) +
+           abs(pGreen - GREEN(T)) + abs(pBlue - BLUE(T));
+
+  // Return either left or top, the one closer to the prediction.
+  if (pL &lt; pT) {
+    return L;
+  } else {
+    return T;
+  }
+}
+</code></pre></devsite-code>
+<p>The functions <code translate="no" dir="ltr">ClampAddSubtractFull</code> and <code translate="no" dir="ltr">ClampAddSubtractHalf</code> are performed
+for each ARGB component as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Scilab" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-c1">// Clamp the input value between 0 and 255.</span>
+<span class="devsite-syntax-nb">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">Clamp</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-nb">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">a</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">{</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-k">return</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">a</span><span class="devsite-syntax-w"> &lt; </span><span class="devsite-syntax-mi">0</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span>?<span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">0</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">:</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">a</span><span class="devsite-syntax-w"> &gt; </span><span class="devsite-syntax-mi">255</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span>?<span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">255</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">:</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">a</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-p">}</span>
+</code></pre></devsite-code><div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">int ClampAddSubtractFull(int a, int b, int c) {
+  return Clamp(a + b - c);
+}
+</code></pre></devsite-code><div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">int ClampAddSubtractHalf(int a, int b) {
+  return Clamp(a + (a - b) / 2);
+}
+</code></pre></devsite-code>
+<p>There are special handling rules for some border pixels. If there is a
+predictor transform, regardless of the mode [0..13] for these pixels, the
+predicted value for the left-topmost pixel of the image is 0xff000000, all
+pixels on the top row are L-pixel, and all pixels on the leftmost column are
+T-pixel.</p>
+
+<p>Addressing the TR-pixel for pixels on the rightmost column is
+exceptional. The pixels on the rightmost column are predicted by using the modes
+[0..13], just like pixels not on the border, but the leftmost pixel on the
+same row as the current pixel is instead used as the TR-pixel.</p>
+
+<p>The final pixel value is obtained by adding each channel of the predicted value
+to the encoded residual value.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">void PredictorTransformOutput(uint32 residual, uint32 pred,
+                              uint8* alpha, uint8* red,
+                              uint8* green, uint8* blue) {
+  *alpha = ALPHA(residual) + ALPHA(pred);
+  *red = RED(residual) + RED(pred);
+  *green = GREEN(residual) + GREEN(pred);
+  *blue = BLUE(residual) + BLUE(pred);
+}
+</code></pre></devsite-code>
+<h3 id="42_color_transform" data-text="4.2 Color Transform" tabindex="-1">4.2 Color Transform</h3>
+
+<p>The goal of the color transform is to decorrelate the R, G, and B values of each
+pixel. The color transform keeps the green (G) value as it is, transforms the
+red (R) value based on the green value, and transforms the blue (B) value based
+on the green value and then on the red value.</p>
+
+<p>As is the case for the predictor transform, first the image is divided into
+blocks, and the same transform mode is used for all the pixels in a block. For
+each block, there are three types of color transform elements.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Carbon" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-nx">typedef</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">struct</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">{</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">uint8</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">green_to_red</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">uint8</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">green_to_blue</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">uint8</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">red_to_blue</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-p">}</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">ColorTransformElement</span><span class="devsite-syntax-p">;</span>
+</code></pre></devsite-code>
+<p>The actual color transform is done by defining a color transform delta. The
+color transform delta depends on the <code translate="no" dir="ltr">ColorTransformElement</code>, which is the same
+for all the pixels in a particular block. The delta is subtracted during the
+color transform. The inverse color transform then is just adding those deltas.</p>
+
+<p>The color transform function is defined as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">void ColorTransform(uint8 red, uint8 blue, uint8 green,
+                    ColorTransformElement *trans,
+                    uint8 *new_red, uint8 *new_blue) {
+  // Transformed values of red and blue components
+  int tmp_red = red;
+  int tmp_blue = blue;
+
+  // Applying the transform is just subtracting the transform deltas
+  tmp_red  -= ColorTransformDelta(trans-&gt;green_to_red,  green);
+  tmp_blue -= ColorTransformDelta(trans-&gt;green_to_blue, green);
+  tmp_blue -= ColorTransformDelta(trans-&gt;red_to_blue, red);
+
+  *new_red = tmp_red &amp; 0xff;
+  *new_blue = tmp_blue &amp; 0xff;
+}
+</code></pre></devsite-code>
+<p><code translate="no" dir="ltr">ColorTransformDelta</code> is computed using a signed 8-bit integer representing a
+3.5-fixed-point number and a signed 8-bit RGB color channel (c) [-128..127]
+and is defined as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int8 ColorTransformDelta(int8 t, int8 c) {
+  return (t * c) &gt;&gt; 5;
+}
+</code></pre></devsite-code>
+<p>A conversion from the 8-bit unsigned representation (uint8) to the 8-bit signed
+one (int8) is required before calling <code translate="no" dir="ltr">ColorTransformDelta()</code>. The signed value
+should be interpreted as an 8-bit two&#39;s complement number (that is: uint8 range
+[128..255] is mapped to the [-128..-1] range of its converted int8 value).</p>
+
+<p>The multiplication is to be done using more precision (with at least 16-bit
+precision). The sign extension property of the shift operation does not matter
+here; only the lowest 8 bits are used from the result, and in these bits, the
+sign extension shifting and unsigned shifting are consistent with each other.</p>
+
+<p>Now, we describe the contents of color transform data so that decoding can apply
+the inverse color transform and recover the original red and blue values. The
+first 3 bits of the color transform data contain the width and height of the
+image block in number of bits, just like the predictor transform:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int size_bits = ReadBits(3) + 2;
+int block_width = 1 &lt;&lt; size_bits;
+int block_height = 1 &lt;&lt; size_bits;
+</code></pre></devsite-code>
+<p>The remaining part of the color transform data contains <code translate="no" dir="ltr">ColorTransformElement</code>
+instances, corresponding to each block of the image. Each
+<code translate="no" dir="ltr">ColorTransformElement</code> <code translate="no" dir="ltr">&#39;cte&#39;</code> is treated as a pixel in a subresolution image
+whose alpha component is <code translate="no" dir="ltr">255</code>, red component is <code translate="no" dir="ltr">cte.red_to_blue</code>, green
+component is <code translate="no" dir="ltr">cte.green_to_blue</code>, and blue component is <code translate="no" dir="ltr">cte.green_to_red</code>.</p>
+
+<p>During decoding, <code translate="no" dir="ltr">ColorTransformElement</code> instances of the blocks are decoded and
+the inverse color transform is applied on the ARGB values of the pixels. As
+mentioned earlier, that inverse color transform is just adding
+<code translate="no" dir="ltr">ColorTransformElement</code> values to the red and blue channels. The alpha and green
+channels are left as is.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">void InverseTransform(uint8 red, uint8 green, uint8 blue,
+                      ColorTransformElement *trans,
+                      uint8 *new_red, uint8 *new_blue) {
+  // Transformed values of red and blue components
+  int tmp_red = red;
+  int tmp_blue = blue;
+
+  // Applying the inverse transform is just adding the
+  // color transform deltas
+  tmp_red  += ColorTransformDelta(trans-&gt;green_to_red, green);
+  tmp_blue += ColorTransformDelta(trans-&gt;green_to_blue, green);
+  tmp_blue +=
+      ColorTransformDelta(trans-&gt;red_to_blue, tmp_red &amp; 0xff);
+
+  *new_red = tmp_red &amp; 0xff;
+  *new_blue = tmp_blue &amp; 0xff;
+}
+</code></pre></devsite-code>
+<h3 id="43_subtract_green_transform" data-text="4.3 Subtract Green Transform" tabindex="-1">4.3 Subtract Green Transform</h3>
+
+<p>The subtract green transform subtracts green values from red and blue values of
+each pixel. When this transform is present, the decoder needs to add the green
+value to both the red and blue values. There is no data associated with this
+transform. The decoder applies the inverse transform as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">void AddGreenToBlueAndRed(uint8 green, uint8 *red, uint8 *blue) {
+  *red  = (*red  + green) &amp; 0xff;
+  *blue = (*blue + green) &amp; 0xff;
+}
+</code></pre></devsite-code>
+<p>This transform is redundant, as it can be modeled using the color transform, but
+since there is no additional data here, the subtract green transform can be
+coded using fewer bits than a full-blown color transform.</p>
+
+<h3 id="44_color_indexing_transform" data-text="4.4 Color Indexing Transform" tabindex="-1">4.4 Color Indexing Transform</h3>
+
+<p>If there are not many unique pixel values, it may be more efficient to create a
+color index array and replace the pixel values by the array&#39;s indices. The color
+indexing transform achieves this. (In the context of WebP lossless, we
+specifically do not call this a palette transform because a similar but more
+dynamic concept exists in WebP lossless encoding: color cache.)</p>
+
+<p>The color indexing transform checks for the number of unique ARGB values in the
+image. If that number is below a threshold (256), it creates an array of those
+ARGB values, which is then used to replace the pixel values with the
+corresponding index: the green channel of the pixels are replaced with the
+index, all alpha values are set to 255, and all red and blue values to 0.</p>
+
+<p>The transform data contains the color table size and the entries in the color
+table. The decoder reads the color indexing transform data as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Scilab" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-c1">// 8-bit value for the color table size</span>
+<span class="devsite-syntax-nb">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">color_table_size</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">ReadBits</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-mi">8</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">+</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-p">;</span>
+</code></pre></devsite-code>
+<p>The color table is stored using the image storage format itself. The color table
+can be obtained by reading an image, without the RIFF header, image size, and
+transforms, assuming the height of 1 pixel and the width of <code translate="no" dir="ltr">color_table_size</code>.
+The color table is always subtraction-coded to reduce image entropy. The deltas
+of palette colors contain typically much less entropy than the colors
+themselves, leading to significant savings for smaller images. In decoding,
+every final color in the color table can be obtained by adding the previous
+color component values by each ARGB component separately and storing the least
+significant 8 bits of the result.</p>
+
+<p>The inverse transform for the image is simply replacing the pixel values (which
+are indices to the color table) with the actual color table values. The indexing
+is done based on the green component of the ARGB color.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Scilab" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-c1">// Inverse transform</span>
+<span class="devsite-syntax-n">argb</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">color_table</span><span class="devsite-syntax-p">[</span><span class="devsite-syntax-n">GREEN</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">argb</span><span class="devsite-syntax-p">)];</span>
+</code></pre></devsite-code>
+<p>If the index is equal to or larger than <code translate="no" dir="ltr">color_table_size</code>, the argb color value
+should be set to 0x00000000 (transparent black).</p>
+
+<p>When the color table is small (equal to or less than 16 colors), several pixels
+are bundled into a single pixel. The pixel bundling packs several (2, 4, or 8)
+pixels into a single pixel, reducing the image width respectively. Pixel
+bundling allows for a more efficient joint distribution entropy coding of
+neighboring pixels and gives some arithmetic coding-like benefits to the
+entropy code, but it can only be used when there are 16 or fewer unique values.</p>
+
+<p><code translate="no" dir="ltr">color_table_size</code> specifies how many pixels are combined:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int width_bits;
+if (color_table_size &lt;= 2) {
+  width_bits = 3;
+} else if (color_table_size &lt;= 4) {
+  width_bits = 2;
+} else if (color_table_size &lt;= 16) {
+  width_bits = 1;
+} else {
+  width_bits = 0;
+}
+</code></pre></devsite-code>
+<p><code translate="no" dir="ltr">width_bits</code> has a value of 0, 1, 2, or 3. A value of 0 indicates no pixel
+bundling is to be done for the image. A value of 1 indicates that two pixels are
+combined, and each pixel has a range of [0..15]. A value of 2 indicates that
+four pixels are combined, and each pixel has a range of [0..3]. A value of 3
+indicates that eight pixels are combined and each pixel has a range of [0..1],
+that is, a binary value.</p>
+
+<p>The values are packed into the green component as follows:</p>
+
+<ul>
+<li><code translate="no" dir="ltr">width_bits</code> = 1: For every x value, where x ≡ 0 (mod 2), a green
+value at x is positioned into the 4 least significant bits of the
+green value at x / 2, and a green value at x + 1 is positioned into the
+4 most significant bits of the green value at x / 2.</li>
+<li><code translate="no" dir="ltr">width_bits</code> = 2: For every x value, where x ≡ 0 (mod 4), a green
+value at x is positioned into the 2 least-significant bits of the
+green value at x / 4, and green values at x + 1 to x + 3 are positioned in
+order to the more significant bits of the green value at x / 4.</li>
+<li><code translate="no" dir="ltr">width_bits</code> = 3: For every x value, where x ≡ 0 (mod 8), a green
+value at x is positioned into the least significant bit of the green
+value at x / 8, and green values at x + 1 to x + 7 are positioned in order
+to the more significant bits of the green value at x / 8.</li>
+</ul>
+
+<p>After reading this transform, <code translate="no" dir="ltr">image_width</code> is subsampled by <code translate="no" dir="ltr">width_bits</code>. This
+affects the size of subsequent transforms. The new size can be calculated using
+<code translate="no" dir="ltr">DIV_ROUND_UP</code>, as defined <a href="#41_predictor_transform">earlier</a>.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">image_width = DIV_ROUND_UP(image_width, 1 &lt;&lt; width_bits);
+</code></pre></devsite-code>
+<h2 id="5_image_data" data-text="5 Image Data" tabindex="-1">5 Image Data</h2>
+
+<p>Image data is an array of pixel values in scan-line order.</p>
+
+<h3 id="51_roles_of_image_data" data-text="5.1 Roles of Image Data" tabindex="-1">5.1 Roles of Image Data</h3>
+
+<p>We use image data in five different roles:</p>
+
+<ol>
+<li>ARGB image: Stores the actual pixels of the image.</li>
+<li>Entropy image: Stores the meta prefix codes (see
+ <a href="#622_decoding_of_meta_prefix_codes">&quot;Decoding of Meta Prefix Codes&quot;</a>).</li>
+<li>Predictor image: Stores the metadata for the predictor transform (see
+ <a href="#41_predictor_transform">&quot;Predictor Transform&quot;</a>).</li>
+<li>Color transform image: Created by <code translate="no" dir="ltr">ColorTransformElement</code> values
+ (defined in <a href="#42_color_transform">&quot;Color Transform&quot;</a>) for different blocks
+ of the image.</li>
+<li>Color indexing image: An array of the size of <code translate="no" dir="ltr">color_table_size</code> (up to 256
+ ARGB values) that stores the metadata for the color indexing transform (see
+ <a href="#44_color_indexing_transform">&quot;Color Indexing Transform&quot;</a>).</li>
+</ol>
+
+<h3 id="52_encoding_of_image_data" data-text="5.2 Encoding of Image Data" tabindex="-1">5.2 Encoding of Image Data</h3>
+
+<p>The encoding of image data is independent of its role.</p>
+
+<p>The image is first divided into a set of fixed-size blocks (typically 16x16
+blocks). Each of these blocks are modeled using their own entropy codes. Also,
+several blocks may share the same entropy codes.</p>
+
+<p><strong>Rationale:</strong> Storing an entropy code incurs a cost. This cost can be minimized
+if statistically similar blocks share an entropy code, thereby storing that code
+only once. For example, an encoder can find similar blocks by clustering them
+using their statistical properties or by repeatedly joining a pair of randomly
+selected clusters when it reduces the overall amount of bits needed to encode
+the image.</p>
+
+<p>Each pixel is encoded using one of the three possible methods:</p>
+
+<ol>
+<li>Prefix-coded literals: Each channel (green, red, blue, and alpha) is
+ entropy-coded independently.</li>
+<li>LZ77 backward reference: A sequence of pixels are copied from elsewhere in
+ the image.</li>
+<li>Color cache code: Using a short multiplicative hash code (color cache
+ index) of a recently seen color.</li>
+</ol>
+
+<p>The following subsections describe each of these in detail.</p>
+
+<h4 id="521_prefix-coded_literals" data-text="5.2.1 Prefix-Coded Literals" tabindex="-1">5.2.1 Prefix-Coded Literals</h4>
+
+<p>The pixel is stored as prefix-coded values of green, red, blue, and alpha (in
+that order). See <a href="#623_decoding_entropy-coded_image_data">Section 6.2.3</a> for
+details.</p>
+
+<h4 id="522_lz77_backward_reference" data-text="5.2.2 LZ77 Backward Reference" tabindex="-1">5.2.2 LZ77 Backward Reference</h4>
+
+<p>Backward references are tuples of <em>length</em> and <em>distance code</em>:</p>
+
+<ul>
+<li>Length indicates how many pixels in scan-line order are to be copied.</li>
+<li>Distance code is a number indicating the position of a previously seen
+pixel, from which the pixels are to be copied. The exact mapping is
+described <a href="#distance_mapping">below</a>.</li>
+</ul>
+
+<p>The length and distance values are stored using <strong>LZ77 prefix coding</strong>.</p>
+
+<p>LZ77 prefix coding divides large integer values into two parts: the <em>prefix
+code</em> and the <em>extra bits</em>. The prefix code is stored using an entropy code,
+while the extra bits are stored as they are (without an entropy code).</p>
+
+<p><strong>Rationale</strong>: This approach reduces the storage requirement for the entropy
+code. Also, large values are usually rare, so extra bits would be used for very
+few values in the image. Thus, this approach results in better compression
+overall.</p>
+
+<p>The following table denotes the prefix codes and extra bits used for storing
+different ranges of values.</p>
+<aside class="note"><strong>Note:</strong><span> The maximum backward reference length is limited to 4096. Hence, only the
+first 24 prefix codes (with the respective extra bits) are meaningful for length
+values. For distance values, however, all the 40 prefix codes are valid.</span></aside>
+<table>
+<thead>
+<tr>
+<th>Value range</th>
+<th>Prefix code</th>
+<th>Extra bits</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>3</td>
+<td>0</td>
+</tr>
+<tr>
+<td>5..6</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr>
+<td>7..8</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr>
+<td>9..12</td>
+<td>6</td>
+<td>2</td>
+</tr>
+<tr>
+<td>13..16</td>
+<td>7</td>
+<td>2</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>3072..4096</td>
+<td>23</td>
+<td>10</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>524289..786432</td>
+<td>38</td>
+<td>18</td>
+</tr>
+<tr>
+<td>786433..1048576</td>
+<td>39</td>
+<td>18</td>
+</tr>
+</tbody>
+</table>
+
+<p>The pseudocode to obtain a (length or distance) value from the prefix code is as
+follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">if (prefix_code &lt; 4) {
+  return prefix_code + 1;
+}
+int extra_bits = (prefix_code - 2) &gt;&gt; 1;
+int offset = (2 + (prefix_code &amp; 1)) &lt;&lt; extra_bits;
+return offset + ReadBits(extra_bits) + 1;
+</code></pre></devsite-code>
+<h5 id="distance_mapping" data-text="Distance Mapping" tabindex="-1">Distance Mapping</h5>
+
+<p>As noted previously, a distance code is a number indicating the position of a
+previously seen pixel, from which the pixels are to be copied. This subsection
+defines the mapping between a distance code and the position of a previous
+pixel.</p>
+
+<p>Distance codes larger than 120 denote the pixel distance in scan-line order,
+offset by 120.</p>
+
+<p>The smallest distance codes [1..120] are special and are reserved for a close
+neighborhood of the current pixel. This neighborhood consists of 120 pixels:</p>
+
+<ul>
+<li>Pixels that are 1 to 7 rows above the current pixel and are up to 8 columns
+to the left or up to 7 columns to the right of the current pixel. [Total
+such pixels = <code translate="no" dir="ltr">7 * (8 + 1 + 7) = 112</code>].</li>
+<li>Pixels that are in the same row as the current pixel and are up to 8
+columns to the left of the current pixel. [<code translate="no" dir="ltr">8</code> such pixels].</li>
+</ul>
+
+<p>The mapping between distance code <code translate="no" dir="ltr">distance_code</code> and the neighboring pixel
+offset <code translate="no" dir="ltr">(xi, yi)</code> is as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">(0, 1),  (1, 0),  (1, 1),  (-1, 1), (0, 2),  (2, 0),  (1, 2),
+(-1, 2), (2, 1),  (-2, 1), (2, 2),  (-2, 2), (0, 3),  (3, 0),
+(1, 3),  (-1, 3), (3, 1),  (-3, 1), (2, 3),  (-2, 3), (3, 2),
+(-3, 2), (0, 4),  (4, 0),  (1, 4),  (-1, 4), (4, 1),  (-4, 1),
+(3, 3),  (-3, 3), (2, 4),  (-2, 4), (4, 2),  (-4, 2), (0, 5),
+(3, 4),  (-3, 4), (4, 3),  (-4, 3), (5, 0),  (1, 5),  (-1, 5),
+(5, 1),  (-5, 1), (2, 5),  (-2, 5), (5, 2),  (-5, 2), (4, 4),
+(-4, 4), (3, 5),  (-3, 5), (5, 3),  (-5, 3), (0, 6),  (6, 0),
+(1, 6),  (-1, 6), (6, 1),  (-6, 1), (2, 6),  (-2, 6), (6, 2),
+(-6, 2), (4, 5),  (-4, 5), (5, 4),  (-5, 4), (3, 6),  (-3, 6),
+(6, 3),  (-6, 3), (0, 7),  (7, 0),  (1, 7),  (-1, 7), (5, 5),
+(-5, 5), (7, 1),  (-7, 1), (4, 6),  (-4, 6), (6, 4),  (-6, 4),
+(2, 7),  (-2, 7), (7, 2),  (-7, 2), (3, 7),  (-3, 7), (7, 3),
+(-7, 3), (5, 6),  (-5, 6), (6, 5),  (-6, 5), (8, 0),  (4, 7),
+(-4, 7), (7, 4),  (-7, 4), (8, 1),  (8, 2),  (6, 6),  (-6, 6),
+(8, 3),  (5, 7),  (-5, 7), (7, 5),  (-7, 5), (8, 4),  (6, 7),
+(-6, 7), (7, 6),  (-7, 6), (8, 5),  (7, 7),  (-7, 7), (8, 6),
+(8, 7)
+</code></pre></devsite-code>
+<p>For example, the distance code <code translate="no" dir="ltr">1</code> indicates an offset of <code translate="no" dir="ltr">(0, 1)</code> for the
+neighboring pixel, that is, the pixel above the current pixel (0 pixel
+difference in the X direction and 1 pixel difference in the Y direction).
+Similarly, the distance code <code translate="no" dir="ltr">3</code> indicates the top-left pixel.</p>
+
+<p>The decoder can convert a distance code <code translate="no" dir="ltr">distance_code</code> to a scan-line order
+distance <code translate="no" dir="ltr">dist</code> as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">(xi, yi) = distance_map[distance_code - 1]
+dist = xi + yi * image_width
+if (dist &lt; 1) {
+  dist = 1
+}
+</code></pre></devsite-code>
+<p>where <code translate="no" dir="ltr">distance_map</code> is the mapping noted above, and <code translate="no" dir="ltr">image_width</code> is the width
+of the image in pixels.</p>
+
+<h4 id="523_color_cache_coding" data-text="5.2.3 Color Cache Coding" tabindex="-1">5.2.3 Color Cache Coding</h4>
+
+<p>Color cache stores a set of colors that have been recently used in the image.</p>
+
+<p><strong>Rationale:</strong> This way, the recently used colors can sometimes be referred to
+more efficiently than emitting them using the other two methods (described in
+<a href="#521_prefix_coded_literals">5.2.1</a> and <a href="#522_lz77_backward_reference">5.2.2</a>).</p>
+
+<p>Color cache codes are stored as follows. First, there is a 1-bit value that
+indicates if the color cache is used. If this bit is 0, no color cache codes
+exist, and they are not transmitted in the prefix code that decodes the green
+symbols and the length prefix codes. However, if this bit is 1, the color cache
+size is read next:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int color_cache_code_bits = ReadBits(4);
+int color_cache_size = 1 &lt;&lt; color_cache_code_bits;
+</code></pre></devsite-code>
+<p><code translate="no" dir="ltr">color_cache_code_bits</code> defines the size of the color cache (<code translate="no" dir="ltr">1 &lt;&lt;
+color_cache_code_bits</code>). The range of allowed values for
+<code translate="no" dir="ltr">color_cache_code_bits</code> is [1..11]. Compliant decoders must indicate a
+corrupted bitstream for other values.</p>
+
+<p>A color cache is an array of size <code translate="no" dir="ltr">color_cache_size</code>. Each entry stores one ARGB
+color. Colors are looked up by indexing them by <code translate="no" dir="ltr">(0x1e35a7bd * color) &gt;&gt; (32 -
+color_cache_code_bits)</code>. Only one lookup is done in a color cache; there is no
+conflict resolution.</p>
+
+<p>In the beginning of decoding or encoding of an image, all entries in all color
+cache values are set to zero. The color cache code is converted to this color at
+decoding time. The state of the color cache is maintained by inserting every
+pixel, be it produced by backward referencing or as literals, into the cache in
+the order they appear in the stream.</p>
+
+<h2 id="6_entropy_code" data-text="6 Entropy Code" tabindex="-1">6 Entropy Code</h2>
+
+<h3 id="61_overview" data-text="6.1 Overview" tabindex="-1">6.1 Overview</h3>
+
+<p>Most of the data is coded using a <a href="https://en.wikipedia.org/wiki/Canonical_Huffman_code">canonical prefix code</a>.
+Hence, the codes are transmitted by sending the <em>prefix code lengths</em>, as
+opposed to the actual <em>prefix codes</em>.</p>
+
+<p>In particular, the format uses <strong>spatially variant prefix coding</strong>. In other
+words, different blocks of the image can potentially use different entropy
+codes.</p>
+
+<p><strong>Rationale</strong>: Different areas of the image may have different characteristics.
+So, allowing them to use different entropy codes provides more flexibility and
+potentially better compression.</p>
+
+<h3 id="62_details" data-text="6.2 Details" tabindex="-1">6.2 Details</h3>
+
+<p>The encoded image data consists of several parts:</p>
+
+<ol>
+<li>Decoding and building the prefix codes.</li>
+<li>Meta prefix codes.</li>
+<li>Entropy-coded image data.</li>
+</ol>
+
+<p>For any given pixel (x, y), there is a set of five prefix codes associated with
+it. These codes are (in bitstream order):</p>
+
+<ul>
+<li><strong>Prefix code #1</strong>: Used for green channel, backward-reference length, and
+color cache.</li>
+<li><strong>Prefix code #2, #3, and #4</strong>: Used for red, blue, and alpha channels,
+respectively.</li>
+<li><strong>Prefix code #5</strong>: Used for backward-reference distance.</li>
+</ul>
+
+<p>From here on, we refer to this set as a <strong>prefix code group</strong>.</p>
+
+<h4 id="621_decoding_and_building_the_prefix_codes" data-text="6.2.1 Decoding and Building the Prefix Codes" tabindex="-1">6.2.1 Decoding and Building the Prefix Codes</h4>
+
+<p>This section describes how to read the prefix code lengths from the bitstream.</p>
+
+<p>The prefix code lengths can be coded in two ways. The method used is specified
+by a 1-bit value.</p>
+
+<ul>
+<li>If this bit is 1, it is a <em>simple code length code</em>.</li>
+<li>If this bit is 0, it is a <em>normal code length code</em>.</li>
+</ul>
+
+<p>In both cases, there can be unused code lengths that are still part of the
+stream. This may be inefficient, but it is allowed by the format.
+The described tree must be a complete binary tree. A single leaf node is
+considered a complete binary tree and can be encoded using either the simple
+code length code or the normal code length code. When coding a single leaf
+node using the <em>normal code length code</em>, all but one code length are zeros,
+and the single leaf node value is marked with the length of 1 -- even when no
+bits are consumed when that single leaf node tree is used.</p>
+
+<h5 id="simple_code_length_code" data-text="Simple Code Length Code" tabindex="-1">Simple Code Length Code</h5>
+
+<p>This variant is used in the special case when only 1 or 2 prefix symbols are in
+the range [0..255] with code length <code translate="no" dir="ltr">1</code>. All other prefix code lengths are
+implicitly zeros.</p>
+
+<p>The first bit indicates the number of symbols:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int num_symbols = ReadBits(1) + 1;
+</code></pre></devsite-code>
+<p>The following are the symbol values.</p>
+
+<p>This first symbol is coded using 1 or 8 bits, depending on the value of
+<code translate="no" dir="ltr">is_first_8bits</code>. The range is [0..1] or [0..255], respectively. The second
+symbol, if present, is always assumed to be in the range [0..255] and coded
+using 8 bits.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Transact-SQL" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-nc">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">is_first_8bits</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">ReadBits</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-p">);</span>
+<span class="devsite-syntax-n">symbol0</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">ReadBits</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">+</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">7</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">*</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">is_first_8bits</span><span class="devsite-syntax-p">);</span>
+<span class="devsite-syntax-n">code_lengths</span><span class="devsite-syntax-o">[</span><span class="devsite-syntax-n">symbol0</span><span class="devsite-syntax-o">]</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-k">if</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">num_symbols</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">==</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">2</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-err">{</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-n">symbol1</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">ReadBits</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-mi">8</span><span class="devsite-syntax-p">);</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-n">code_lengths</span><span class="devsite-syntax-o">[</span><span class="devsite-syntax-n">symbol1</span><span class="devsite-syntax-o">]</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-err">}</span>
+</code></pre></devsite-code>
+<p>The two symbols should be different. Duplicate symbols are allowed, but
+inefficient.</p>
+
+<p><strong>Note:</strong> Another special case is when <em>all</em> prefix code lengths are <em>zeros</em> (an
+empty prefix code). For example, a prefix code for distance can be empty if
+there are no backward references. Similarly, prefix codes for alpha, red, and
+blue can be empty if all pixels within the same meta prefix code are produced
+using the color cache. However, this case doesn&#39;t need special handling, as
+empty prefix codes can be coded as those containing a single symbol <code translate="no" dir="ltr">0</code>.</p>
+
+<h5 id="normal_code_length_code" data-text="Normal Code Length Code" tabindex="-1">Normal Code Length Code</h5>
+
+<p>The code lengths of the prefix code fit in 8 bits and are read as follows.
+First, <code translate="no" dir="ltr">num_code_lengths</code> specifies the number of code lengths.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int num_code_lengths = 4 + ReadBits(4);
+</code></pre></devsite-code>
+<p>The code lengths are themselves encoded using prefix codes; lower-level code
+lengths, <code translate="no" dir="ltr">code_length_code_lengths</code>, first have to be read. The rest of those
+<code translate="no" dir="ltr">code_length_code_lengths</code> (according to the order in <code translate="no" dir="ltr">kCodeLengthCodeOrder</code>)
+are zeros.</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Transact-SQL" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-nc">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">kCodeLengthCodes</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">19</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-nc">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">kCodeLengthCodeOrder</span><span class="devsite-syntax-o">[</span><span class="devsite-syntax-n">kCodeLengthCodes</span><span class="devsite-syntax-o">]</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-err">{</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-mi">17</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">18</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">0</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">2</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">3</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">4</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">5</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">16</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">6</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">7</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">8</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">9</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">10</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">11</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">12</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">13</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">14</span><span class="devsite-syntax-p">,</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">15</span>
+<span class="devsite-syntax-err">}</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-nc">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">code_length_code_lengths</span><span class="devsite-syntax-o">[</span><span class="devsite-syntax-n">kCodeLengthCodes</span><span class="devsite-syntax-o">]</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-err">{</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">0</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-err">}</span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-o">//</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-ow">All</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">zeros</span>
+<span class="devsite-syntax-k">for</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">i</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">0</span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">i</span><span class="devsite-syntax-w"> &lt; </span><span class="devsite-syntax-n">num_code_lengths</span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">++</span><span class="devsite-syntax-n">i</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-err">{</span>
+<span class="devsite-syntax-w">  </span><span class="devsite-syntax-n">code_length_code_lengths</span><span class="devsite-syntax-o">[</span><span class="devsite-syntax-n">kCodeLengthCodeOrder[i</span><span class="devsite-syntax-o">]</span><span class="devsite-syntax-err">]</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">ReadBits</span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-mi">3</span><span class="devsite-syntax-p">);</span>
+<span class="devsite-syntax-err">}</span>
+</code></pre></devsite-code>
+<p>Next, if <code translate="no" dir="ltr">ReadBits(1) == 0</code>, the maximum number of different read symbols
+(<code translate="no" dir="ltr">max_symbol</code>) for each symbol type (A, R, G, B, and distance) is set to its
+alphabet size:</p>
+
+<ul>
+<li>G channel: 256 + 24 + <code translate="no" dir="ltr">color_cache_size</code></li>
+<li>Other literals (A, R, and B): 256</li>
+<li>Distance code: 40</li>
+</ul>
+
+<p>Otherwise, it is defined as:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int length_nbits = 2 + 2 * ReadBits(3);
+int max_symbol = 2 + ReadBits(length_nbits);
+</code></pre></devsite-code>
+<p>If <code translate="no" dir="ltr">max_symbol</code> is larger than the size of the alphabet for the symbol type, the
+bitstream is invalid.</p>
+
+<p>A prefix table is then built from <code translate="no" dir="ltr">code_length_code_lengths</code> and used to read up
+to <code translate="no" dir="ltr">max_symbol</code> code lengths.</p>
+
+<ul>
+<li>Code [0..15] indicates literal code lengths.
+<ul>
+<li>Value 0 means no symbols have been coded.</li>
+<li>Values [1..15] indicate the bit length of the respective code.</li>
+</ul></li>
+<li>Code 16 repeats the previous nonzero value [3..6] times, that is,
+<code translate="no" dir="ltr">3 + ReadBits(2)</code> times. If code 16 is used before a nonzero
+value has been emitted, a value of 8 is repeated.</li>
+<li>Code 17 emits a streak of zeros of length [3..10], that is, <code translate="no" dir="ltr">3 +
+ReadBits(3)</code> times.</li>
+<li>Code 18 emits a streak of zeros of length [11..138], that is,
+<code translate="no" dir="ltr">11 + ReadBits(7)</code> times.</li>
+</ul>
+
+<p>Once code lengths are read, a prefix code for each symbol type (A, R, G, B, and
+distance) is formed using their respective alphabet sizes.</p>
+
+<p>The Normal Code Length Code must code a full decision tree, that is, the sum of
+<code translate="no" dir="ltr">2 ^ (-length)</code> for all non-zero codes must be exactly one. There is however
+one exception to this rule, the single leaf node tree, where the leaf node
+value is marked with value 1 and other values are 0s.</p>
+
+<h4 id="622_decoding_of_meta_prefix_codes" data-text="6.2.2 Decoding of Meta Prefix Codes" tabindex="-1">6.2.2 Decoding of Meta Prefix Codes</h4>
+
+<p>As noted earlier, the format allows the use of different prefix codes for
+different blocks of the image. <em>Meta prefix codes</em> are indexes identifying which
+prefix codes to use in different parts of the image.</p>
+
+<p>Meta prefix codes may be used <em>only</em> when the image is being used in the
+<a href="#51_roles_of_image_data">role</a> of an <em>ARGB image</em>.</p>
+
+<p>There are two possibilities for the meta prefix codes, indicated by a 1-bit
+value:</p>
+
+<ul>
+<li>If this bit is zero, there is only one meta prefix code used everywhere in
+the image. No more data is stored.</li>
+<li>If this bit is one, the image uses multiple meta prefix codes. These meta
+prefix codes are stored as an <em>entropy image</em> (described below).</li>
+</ul>
+
+<p>The red and green components of a pixel define a 16-bit meta prefix code used in
+a particular block of the ARGB image.</p>
+
+<h5 id="entropy_image" data-text="Entropy Image" tabindex="-1">Entropy Image</h5>
+
+<p>The entropy image defines which prefix codes are used in different parts of the
+image.</p>
+
+<p>The first 3 bits contain the <code translate="no" dir="ltr">prefix_bits</code> value. The dimensions of the entropy
+image are derived from <code translate="no" dir="ltr">prefix_bits</code>:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int prefix_bits = ReadBits(3) + 2;
+int prefix_image_width =
+    DIV_ROUND_UP(image_width, 1 &lt;&lt; prefix_bits);
+int prefix_image_height =
+    DIV_ROUND_UP(image_height, 1 &lt;&lt; prefix_bits);
+</code></pre></devsite-code>
+<p>where <code translate="no" dir="ltr">DIV_ROUND_UP</code> is as defined <a href="#41_predictor_transform">earlier</a>.</p>
+
+<p>The next bits contain an entropy image of width <code translate="no" dir="ltr">prefix_image_width</code> and height
+<code translate="no" dir="ltr">prefix_image_height</code>.</p>
+
+<h5 id="interpretation_of_meta_prefix_codes" data-text="Interpretation of Meta Prefix Codes" tabindex="-1">Interpretation of Meta Prefix Codes</h5>
+
+<p>The number of prefix code groups in the ARGB image can be obtained by finding
+the <em>largest meta prefix code</em> from the entropy image:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int num_prefix_groups = max(entropy image) + 1;
+</code></pre></devsite-code>
+<p>where <code translate="no" dir="ltr">max(entropy image)</code> indicates the largest prefix code stored in the
+entropy image.</p>
+
+<p>As each prefix code group contains five prefix codes, the total number of prefix
+codes is:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="scdoc" syntax-guessed><code translate="no" dir="ltr">int num_prefix_codes = 5 * num_prefix_groups;
+</code></pre></devsite-code>
+<p>Given a pixel (x, y) in the ARGB image, we can obtain the corresponding prefix
+codes to be used as follows:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Transact-SQL" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-nc">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-k">position</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span>
+<span class="devsite-syntax-w">    </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">y</span><span class="devsite-syntax-w"> &gt;&gt; </span><span class="devsite-syntax-n">prefix_bits</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">*</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">prefix_image_width</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">+</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">x</span><span class="devsite-syntax-w"> &gt;&gt; </span><span class="devsite-syntax-n">prefix_bits</span><span class="devsite-syntax-p">);</span>
+<span class="devsite-syntax-nc">int</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">meta_prefix_code</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-n">entropy_image</span><span class="devsite-syntax-o">[</span><span class="devsite-syntax-n">position</span><span class="devsite-syntax-o">]</span><span class="devsite-syntax-w"> &gt;&gt; </span><span class="devsite-syntax-mi">8</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> &amp; </span><span class="devsite-syntax-mh">0xffff</span><span class="devsite-syntax-p">;</span>
+<span class="devsite-syntax-n">PrefixCodeGroup</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">prefix_group</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">=</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">prefix_code_groups</span><span class="devsite-syntax-o">[</span><span class="devsite-syntax-n">meta_prefix_code</span><span class="devsite-syntax-o">]</span><span class="devsite-syntax-p">;</span>
+</code></pre></devsite-code>
+<p>where we have assumed the existence of <code translate="no" dir="ltr">PrefixCodeGroup</code> structure, which
+represents a set of five prefix codes. Also, <code translate="no" dir="ltr">prefix_code_groups</code> is an array of
+<code translate="no" dir="ltr">PrefixCodeGroup</code> (of size <code translate="no" dir="ltr">num_prefix_groups</code>).</p>
+
+<p>The decoder then uses prefix code group <code translate="no" dir="ltr">prefix_group</code> to decode the pixel
+(x, y), as explained in <a href="#623_decoding_entropy-coded_image_data">&quot;Decoding Entropy-Coded Image
+Data&quot;</a>.</p>
+
+<h4 id="623_decoding_entropy-coded_image_data" data-text="6.2.3 Decoding Entropy-Coded Image Data" tabindex="-1">6.2.3 Decoding Entropy-Coded Image Data</h4>
+
+<p>For the current position (x, y) in the image, the decoder first identifies the
+corresponding prefix code group (as explained in the last section). Given the
+prefix code group, the pixel is read and decoded as follows.</p>
+
+<p>Next, read the symbol S from the bitstream using prefix code #1. Note that S is
+any integer in the range <code translate="no" dir="ltr">0</code> to
+<code translate="no" dir="ltr">(256 + 24 +</code> <a href="#523_color_cache_coding"><code translate="no" dir="ltr">color_cache_size</code></a><code translate="no" dir="ltr">- 1)</code>.</p>
+
+<p>The interpretation of S depends on its value:</p>
+
+<ol>
+<li>If S &lt; 256
+<ol>
+<li>Use S as the green component.</li>
+<li>Read red from the bitstream using prefix code #2.</li>
+<li>Read blue from the bitstream using prefix code #3.</li>
+<li>Read alpha from the bitstream using prefix code #4.</li>
+</ol></li>
+<li>If S &gt;= 256 &amp; S &lt; 256 + 24
+<ol>
+<li>Use S - 256 as a length prefix code.</li>
+<li>Read extra bits for the length from the bitstream.</li>
+<li>Determine backward-reference length L from length prefix code and the
+extra bits read.</li>
+<li>Read the distance prefix code from the bitstream using prefix code #5.</li>
+<li>Read extra bits for the distance from the bitstream.</li>
+<li>Determine backward-reference distance D from the distance prefix code
+and the extra bits read.</li>
+<li>Copy L pixels (in scan-line order) from the sequence of pixels starting
+at the current position minus D pixels.</li>
+</ol></li>
+<li>If S &gt;= 256 + 24
+<ol>
+<li>Use S - (256 + 24) as the index into the color cache.</li>
+<li>Get ARGB color from the color cache at that index.</li>
+</ol></li>
+</ol>
+
+<h2 id="7_overall_structure_of_the_format" data-text="7 Overall Structure of the Format" tabindex="-1">7 Overall Structure of the Format</h2>
+
+<p>Below is a view into the format in Augmented Backus-Naur Form (ABNF)
+<a href="https://www.rfc-editor.org/rfc/rfc5234">RFC 5234</a> <a href="https://www.rfc-editor.org/rfc/rfc7405">RFC 7405</a>. It does not cover all details. The end-of-image (EOI)
+is only implicitly coded into the number of pixels (image_width * image_height).</p>
+
+<p>Note that <code translate="no" dir="ltr">*element</code> means <code translate="no" dir="ltr">element</code> can be repeated 0 or more times. <code translate="no" dir="ltr">5element</code>
+means <code translate="no" dir="ltr">element</code> is repeated exactly 5 times. <code translate="no" dir="ltr">%b</code> represents a binary value.</p>
+
+<h4 id="71_basic_structure" data-text="7.1 Basic Structure" tabindex="-1">7.1 Basic Structure</h4>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">format        = RIFF-header image-header image-stream
+RIFF-header   = %s"RIFF" 4OCTET %s"WEBPVP8L" 4OCTET
+image-header  = %x2F image-size alpha-is-used version
+image-size    = 14BIT 14BIT ; width - 1, height - 1
+alpha-is-used = 1BIT
+version       = 3BIT ; 0
+image-stream  = optional-transform spatially-coded-image
+</code></pre></devsite-code>
+<h4 id="72_structure_of_transforms" data-text="7.2 Structure of Transforms" tabindex="-1">7.2 Structure of Transforms</h4>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Text only" syntax-guessed><code translate="no" dir="ltr">optional-transform   =  (%b1 transform optional-transform) / %b0
+transform            =  predictor-tx / color-tx / subtract-green-tx
+transform            =/ color-indexing-tx
+
+predictor-tx         =  %b00 predictor-image
+predictor-image      =  3BIT ; sub-pixel code
+                        entropy-coded-image
+
+color-tx             =  %b01 color-image
+color-image          =  3BIT ; sub-pixel code
+                        entropy-coded-image
+
+subtract-green-tx    =  %b10
+
+color-indexing-tx    =  %b11 color-indexing-image
+color-indexing-image =  8BIT ; color count
+                        entropy-coded-image
+</code></pre></devsite-code>
+<h4 id="73_structure_of_the_image_data" data-text="7.3 Structure of the Image Data" tabindex="-1">7.3 Structure of the Image Data</h4>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="Carbon" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-nx">spatially</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">coded</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">color</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">cache</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">info</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">meta</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">data</span>
+<span class="devsite-syntax-nx">entropy</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">coded</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span><span class="devsite-syntax-w">   </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">color</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">cache</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">info</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">data</span>
+
+<span class="devsite-syntax-nx">color</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">cache</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">info</span><span class="devsite-syntax-w">      </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-o">%</span><span class="devsite-syntax-nx">b0</span>
+<span class="devsite-syntax-nx">color</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">cache</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">info</span><span class="devsite-syntax-w">      </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-o">/</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-o">%</span><span class="devsite-syntax-nx">b1</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">4</span><span class="devsite-syntax-nx">BIT</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-mi">1</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">followed</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">by</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">color</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">cache</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">size</span>
+
+<span class="devsite-syntax-nx">meta</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-w">           </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-o">%</span><span class="devsite-syntax-nx">b0</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">/</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">(</span><span class="devsite-syntax-o">%</span><span class="devsite-syntax-nx">b1</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">entropy</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span><span class="devsite-syntax-p">)</span>
+
+<span class="devsite-syntax-nx">data</span><span class="devsite-syntax-w">                  </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">codes</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">lz77</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">coded</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span>
+<span class="devsite-syntax-nx">entropy</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span><span class="devsite-syntax-w">         </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-mi">3</span><span class="devsite-syntax-nx">BIT</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">subsample</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">value</span>
+<span class="devsite-syntax-w">                         </span><span class="devsite-syntax-nx">entropy</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">coded</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span>
+
+<span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">codes</span><span class="devsite-syntax-w">          </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">group</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">*</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">codes</span>
+<span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">group</span><span class="devsite-syntax-w">     </span><span class="devsite-syntax-p">=</span>
+<span class="devsite-syntax-w">    </span><span class="devsite-syntax-mi">5</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">See</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-s">"Interpretation of Meta Prefix Codes"</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">to</span>
+<span class="devsite-syntax-w">                 </span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">understand</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">what</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">each</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">of</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">these</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">five</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">prefix</span>
+<span class="devsite-syntax-w">                 </span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">codes</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">are</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-k">for</span><span class="devsite-syntax-p">.</span>
+
+<span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-w">           </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-nx">simple</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">/</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">normal</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span>
+<span class="devsite-syntax-nx">simple</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-w">    </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">see</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-s">"Simple Code Length Code"</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-k">for</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">details</span>
+<span class="devsite-syntax-nx">normal</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-w">    </span><span class="devsite-syntax-p">=</span><span class="devsite-syntax-w">  </span><span class="devsite-syntax-p">;</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">see</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-s">"Normal Code Length Code"</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-k">for</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">details</span>
+
+<span class="devsite-syntax-nx">lz77</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">coded</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span><span class="devsite-syntax-w">      </span><span class="devsite-syntax-p">=</span>
+<span class="devsite-syntax-w">    </span><span class="devsite-syntax-o">*</span><span class="devsite-syntax-p">((</span><span class="devsite-syntax-nx">argb</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">pixel</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">/</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">lz77</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">copy</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-o">/</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">color</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">cache</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">code</span><span class="devsite-syntax-p">)</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nx">lz77</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">coded</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-nx">image</span><span class="devsite-syntax-p">)</span>
+</code></pre></devsite-code>
+<p>The following is a possible example sequence:</p>
+<div></div><devsite-code><pre class="devsite-click-to-copy" translate="no" dir="ltr" is-upgraded syntax="SWIG" syntax-guessed><code translate="no" dir="ltr"><span class="devsite-syntax-n">RIFF</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">header</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">image</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">size</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nf">%b1</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">subtract</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">green</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">tx</span>
+<span class="devsite-syntax-nf">%b1</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">predictor</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">tx</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-nf">%b0</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">color</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">cache</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">info</span>
+<span class="devsite-syntax-nf">%b0</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">prefix</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">codes</span><span class="devsite-syntax-w"> </span><span class="devsite-syntax-n">lz77</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">coded</span><span class="devsite-syntax-o">-</span><span class="devsite-syntax-n">image</span>
+</code></pre></devsite-code>
+
+  
+
+  
+</div>
+
+  
+    
+      <devsite-recommendations display="in-page" hidden yield>
+      </devsite-recommendations>
+    
+    
+      
+    <devsite-thumb-rating position="footer">
+    </devsite-thumb-rating>
+  
+       
+    
+    
+      <devsite-recommendations id="recommendations-link" yield></devsite-recommendations>
+    
+  
+
+  <div class="devsite-floating-action-buttons"></div></article>
+
+
+<devsite-content-footer class="nocontent" data-nosnippet>
+  <p>Except as otherwise noted, the content of this page is licensed under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 License</a>, and code samples are licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>. For details, see the <a href="https://developers.google.com/site-policies">Google Developers Site Policies</a>. Java is a registered trademark of Oracle and/or its affiliates.</p>
+  <p>Last updated 2025-08-07 UTC.</p>
+</devsite-content-footer>
+
+
+<devsite-notification
+>
+</devsite-notification>
+
+
+  
+<div class="devsite-content-data">
+  
+  
+    <template class="devsite-content-data-template">
+      [[["Easy to understand","easyToUnderstand","thumb-up"],["Solved my problem","solvedMyProblem","thumb-up"],["Other","otherUp","thumb-up"]],[["Missing the information I need","missingTheInformationINeed","thumb-down"],["Too complicated / too many steps","tooComplicatedTooManySteps","thumb-down"],["Out of date","outOfDate","thumb-down"],["Samples / code issue","samplesCodeIssue","thumb-down"],["Other","otherDown","thumb-down"]],["Last updated 2025-08-07 UTC."],[],["WebP lossless compression uses ARGB pixel data, stored within a RIFF container, and starts with header information defining dimensions and format. It employs reversible transforms (Predictor, Color, Subtract Green, Color Indexing) to improve compression by manipulating pixel data. LZ77, prefix coding, and a color cache are used for encoding. Image blocks share entropy codes. Pixels are encoded via prefix-coded literals, LZ77 backward references, or color cache codes. The data stream contains header, transform data, and compressed image data.\n"]]
+    </template>
+  
+</div>
+            
+          </devsite-content>
+        </main>
+        <devsite-footer-promos class="devsite-footer">
+          
+            
+          
+        </devsite-footer-promos>
+        <devsite-footer-linkboxes class="devsite-footer">
+          
+            
+<nav class="devsite-footer-linkboxes nocontent"
+     aria-label="Footer links"
+     data-nosnippet>
+  
+  <ul class="devsite-footer-linkboxes-list">
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Learn</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://www.webmproject.org/code/#webp-repositories"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 1)"
+            >
+            
+          
+            Code Repositories
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://www.webmproject.org/code/contribute/submitting-patches/"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 2)"
+            >
+            
+              
+              
+            
+          
+            Submitting Patches
+          
+          </a>
+          
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Connect</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://groups.google.com/a/webmproject.org/group/webp-discuss"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 1)"
+            >
+            
+          
+            Mailing List
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://issues.webmproject.org"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 2)"
+            >
+            
+              
+              
+            
+          
+            Issue Tracker
+          
+          </a>
+          
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Downloads</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="/speed/webp/download"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 1)"
+            >
+            
+              
+              
+            
+          
+            Source and Binaries
+          
+          </a>
+          
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+  </ul>
+  
+</nav>
+          
+        </devsite-footer-linkboxes>
+        <devsite-footer-utility class="devsite-footer">
+          
+            
+
+<div class="devsite-footer-utility nocontent" data-nosnippet>
+  
+  
+  <nav class="devsite-footer-sites" aria-label="Other Google Developers websites">
+    <a href="https://developers.google.com/"
+       class="devsite-footer-sites-logo-link gc-analytics-event"
+       data-category="Site-Wide Custom Events"
+       data-label="Footer Google Developers Link">
+      <picture>
+        
+        <img class="devsite-footer-sites-logo"
+             src="https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers/images/lockup-google-for-developers.svg"
+             loading="lazy"
+             alt="Google Developers">
+      </picture>
+    </a>
+    <ul class="devsite-footer-sites-list">
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//developer.android.com"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Android Link"
+         
+         >
+          Android
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//developer.chrome.com/home"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Chrome Link"
+         
+         >
+          Chrome
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//firebase.google.com"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Firebase Link"
+         
+         >
+          Firebase
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//cloud.google.com"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Google Cloud Platform Link"
+         
+         >
+          Google Cloud Platform
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//ai.google.dev/"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Google AI Link"
+         
+         >
+          Google AI
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="/products"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer All products Link"
+         
+         >
+          All products
+        </a>
+      </li>
+      
+    </ul>
+  </nav>
+  
+
+  
+  <nav class="devsite-footer-utility-links" aria-label="Utility links">
+    
+    <ul class="devsite-footer-utility-list">
+      
+      <li class="devsite-footer-utility-item
+                 ">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event"
+           href="/terms/site-terms"
+           data-category="Site-Wide Custom Events"
+           data-label="Footer Terms link"
+         >
+          Terms
+        </a>
+        
+      </li>
+      
+      <li class="devsite-footer-utility-item
+                 ">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event"
+           href="//policies.google.com/privacy"
+           data-category="Site-Wide Custom Events"
+           data-label="Footer Privacy link"
+         >
+          Privacy
+        </a>
+        
+      </li>
+      
+      <li class="devsite-footer-utility-item
+                 glue-cookie-notification-bar-control">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event"
+           href="#"
+           data-category="Site-Wide Custom Events"
+           data-label="Footer Manage cookies link"
+         
+           aria-hidden="true"
+         >
+          Manage cookies
+        </a>
+        
+      </li>
+      
+    </ul>
+    
+    
+<devsite-language-selector>
+  <ul role="presentation">
+    
+    
+    <li role="presentation">
+      <a role="menuitem" lang="en"
+        >English</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="de"
+        >Deutsch</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es"
+        >Español</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es_419"
+        >Español – América Latina</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fr"
+        >Français</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="id"
+        >Indonesia</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="it"
+        >Italiano</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pl"
+        >Polski</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pt_br"
+        >Português – Brasil</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="vi"
+        >Tiếng Việt</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="tr"
+        >Türkçe</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ru"
+        >Русский</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="he"
+        >עברית</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ar"
+        >العربيّة</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fa"
+        >فارسی</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="hi"
+        >हिंदी</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="bn"
+        >বাংলা</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="th"
+        >ภาษาไทย</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_cn"
+        >中文 – 简体</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_tw"
+        >中文 – 繁體</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ja"
+        >日本語</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ko"
+        >한국어</a>
+    </li>
+    
+  </ul>
+</devsite-language-selector>
+
+  </nav>
+</div>
+          
+        </devsite-footer-utility>
+        <devsite-panel>
+          
+        </devsite-panel>
+        
+          <devsite-concierge
+  
+  
+    data-info-panel
+  
+  
+    data-ai-panel
+  
+  
+  
+  
+    data-api-explorer-panel
+  >
+</devsite-concierge>
+        
+      </section>
+      </section>
+    <devsite-sitemask></devsite-sitemask>
+    <devsite-snackbar></devsite-snackbar>
+    <devsite-tooltip ></devsite-tooltip>
+    <devsite-heading-link></devsite-heading-link>
+    <devsite-analytics>
+      
+        <script type="application/json" analytics>[{&#34;dimensions&#34;: {&#34;dimension5&#34;: &#34;en&#34;, &#34;dimension3&#34;: false, &#34;dimension4&#34;: &#34;WebP&#34;, &#34;dimension11&#34;: false, &#34;dimension6&#34;: &#34;en&#34;, &#34;dimension1&#34;: &#34;Signed out&#34;}, &#34;gaid&#34;: &#34;UA-24532603-1&#34;, &#34;metrics&#34;: {&#34;ratings_value&#34;: &#34;metric1&#34;, &#34;ratings_count&#34;: &#34;metric2&#34;}, &#34;purpose&#34;: 1}]</script>
+<script type="application/json" tag-management>{&#34;at&#34;: &#34;True&#34;, &#34;ga4&#34;: [{&#34;id&#34;: &#34;G-272J68FCRF&#34;, &#34;purpose&#34;: 1}], &#34;ga4p&#34;: [{&#34;id&#34;: &#34;G-272J68FCRF&#34;, &#34;purpose&#34;: 1}], &#34;gtm&#34;: [{&#34;id&#34;: &#34;GTM-T98GCPGN&#34;, &#34;purpose&#34;: 1}], &#34;parameters&#34;: {&#34;internalUser&#34;: &#34;False&#34;, &#34;language&#34;: {&#34;machineTranslated&#34;: &#34;False&#34;, &#34;requested&#34;: &#34;en&#34;, &#34;served&#34;: &#34;en&#34;}, &#34;pageType&#34;: &#34;article&#34;, &#34;projectName&#34;: &#34;WebP&#34;, &#34;signedIn&#34;: &#34;False&#34;, &#34;tenant&#34;: &#34;developers&#34;, &#34;recommendations&#34;: {&#34;sourcePage&#34;: &#34;&#34;, &#34;sourceType&#34;: 0, &#34;sourceRank&#34;: 0, &#34;sourceIdenticalDescriptions&#34;: 0, &#34;sourceTitleWords&#34;: 0, &#34;sourceDescriptionWords&#34;: 0, &#34;experiment&#34;: &#34;&#34;}, &#34;experiment&#34;: {&#34;ids&#34;: &#34;&#34;}}}</script>
+      
+    </devsite-analytics>
+    
+      <devsite-badger></devsite-badger>
+    
+    
+    
+    
+<script nonce="3XhuDd0PA8eyVWgXcPC+9jSHb7JXck">
+  
+  (function(d,e,v,s,i,t,E){d['GoogleDevelopersObject']=i;
+    t=e.createElement(v);t.async=1;t.src=s;E=e.getElementsByTagName(v)[0];
+    E.parentNode.insertBefore(t,E);})(window, document, 'script',
+    'https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers/js/app_loader.js', '[1,"en",null,"/js/devsite_app_module.js","https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060","https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers","https://developers-dot-devsite-v2-prod.appspot.com",null,null,["/_pwa/developers/manifest.json","https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/images/video-placeholder.svg","https://www.gstatic.com/devrel-devsite/prod/v6ae673272608590539f8a06b3f3271c0f5688cde07499d1c9e644aeb66c8c060/developers/images/favicon-new.png","https://fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700&display=swap"],1,null,[1,6,8,12,14,17,21,25,50,52,63,70,75,76,80,87,91,92,93,97,98,100,101,102,103,104,105,107,108,109,110,112,113,116,117,118,120,122,124,125,126,127,129,130,131,132,133,134,135,136,138,140,141,147,148,149,151,152,156,157,158,159,161,163,164,168,169,170,179,180,182,183,186,191,193,196],"AIzaSyAP-jjEJBzmIyKR4F-3XITp8yM9T1gEEI8","AIzaSyB6xiKGDR5O3Ak2okS4rLkauxGUG7XP0hg","developers.google.com","AIzaSyAQk0fBONSGUqCNznf6Krs82Ap1-NV6J4o","AIzaSyCCxcqdrZ_7QMeLCRY20bh_SXdAYqy70KY",null,null,null,["Profiles__enable_developer_profiles_callout","Cloud__fast_free_trial","Profiles__enable_page_saving","DevPro__enable_free_benefits","DevPro__enable_credits_banner","Concierge__enable_key_takeaways","TpcFeatures__enable_unmirrored_page_left_nav","MiscFeatureFlags__fix_lower_breadcrumbs","Search__enable_ai_eligibility_checks","Profiles__enable_stripe_subscription_management","DevPro__remove_eu_tax_intake_form","Profiles__enable_targeted_hero","Significatio__enable_by_tenant","Profiles__enable_user_type","Cloud__enable_cloud_shell","MiscFeatureFlags__remove_cross_domain_tracking_params","DevPro__enable_devpro_offers","Profiles__enable_release_notes_notifications","Profiles__enable_dashboard_curated_recommendations","Concierge__enable_pushui","Profiles__enable_developer_profile_benefits_ui_redesign","Profiles__require_profile_eligibility_for_signin","DevPro__enable_embed_profile_creation","TpcFeatures__proxy_prod_host","DevPro__enable_cloud_innovators_plus","Profiles__enable_awarding_url","Experiments__reqs_query_experiments","Cloud__cache_serialized_dynamic_content","DevPro__enable_developer_subscriptions","MiscFeatureFlags__enable_variable_operator_index_yaml","MiscFeatureFlags__developers_footer_image","DevPro__enable_google_one_card","Profiles__enable_callout_notifications","Search__enable_dynamic_content_confidential_banner","MiscFeatureFlags__enable_firebase_utm","Concierge__enable_devsite_llm_tools","DevPro__enable_nvidia_credits_card","CloudShell__cloud_shell_button","Profiles__enable_developer_profile_pages_as_content","DevPro__enable_code_assist","Profiles__enable_completequiz_endpoint","Profiles__enable_completecodelab_endpoint","Profiles__enable_complete_playlist_endpoint","MiscFeatureFlags__enable_explicit_template_dependencies","CloudShell__cloud_code_overflow_menu","MiscFeatureFlags__enable_variable_operator","Concierge__enable_key_takeaways_new_ui","Profiles__enable_public_developer_profiles","DevPro__enable_google_payments_buyflow","Cloud__enable_cloud_dlp_service","Search__enable_ai_search_summaries_restricted","Concierge__enable_concierge_restricted","DevPro__enable_g1_integration","Profiles__enable_profile_collections","DevPro__enable_enterprise","Cloud__enable_free_trial_server_call","MiscFeatureFlags__enable_appearance_cookies","MiscFeatureFlags__enable_view_transitions","SignIn__enable_l1_signup_flow","Concierge__enable_concierge","DevPro__enable_devsite_captcha","Cloud__enable_cloud_shell_fte_user_flow","Profiles__enable_auto_apply_credits","MiscFeatureFlags__enable_explain_this_code","Search__enable_suggestions_from_borg","Concierge__enable_remove_info_panel_tags","Cloud__enable_cloudx_experiment_ids","DevPro__enable_vertex_credit_card","Analytics__enable_devpro_interaction_logging","DevPro__enable_google_payments","DevPro__enable_firebase_workspaces_card","Analytics__enable_clearcut_logging","MiscFeatureFlags__enable_project_variables","MiscFeatureFlags__gdp_dashboard_reskin_enabled","Cloud__enable_legacy_calculator_redirect","Concierge__enable_actions_menu","BookNav__enable_tenant_cache_key","MiscFeatureFlags__developers_footer_dark_image","MiscFeatureFlags__enable_framebox_badge_methods","Profiles__enable_purchase_prompts","Profiles__enable_join_program_group_endpoint","EngEduTelemetry__enable_engedu_telemetry","Cloud__enable_llm_concierge_chat","Profiles__enable_recognition_badges","Search__enable_ai_search_summaries_for_all","Search__enable_page_map","Profiles__enable_playlist_community_acl","Search__enable_ai_search_summaries"],null,null,"AIzaSyBLEMok-5suZ67qRPzx0qUtbnLmyT_kCVE","https://developerscontentserving-pa.clients6.google.com","AIzaSyCM4QpTRSqP5qI4Dvjt4OAScIN8sOUlO-k","https://developerscontentsearch-pa.clients6.google.com",1,4,null,"https://developerprofiles-pa.clients6.google.com",[1,"developers","Google for Developers","developers.google.com",null,"developers-dot-devsite-v2-prod.appspot.com",null,null,[1,1,[1],null,null,null,null,null,null,null,null,[1],null,null,null,null,null,null,[1],[1,null,null,[1,20],"/recommendations/information"],null,null,null,[1,1,1],[1,1,null,1,1,null,null,["/meridian"]],[1,null,null,null,null,null,null,["/admob","/ad-manager/mobile-ads-sdk","/ml-kit"]],null,[null,["/meridian","/youtube/devices/"]],1,null,[1]],null,[null,null,null,null,null,null,"/images/lockup-new.svg","/images/touchicon-180-new.png",null,null,null,null,1,null,null,null,null,null,null,null,null,1,null,null,null,"/images/lockup-dark-theme-new.svg",[]],[],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[6,1,14,15,20,22,23,29,32,36],null,[[null,null,null,[3,7,10,2,39,17,4,32,24,11,12,13,34,15,25],null,null,[1,[["docType","Choose a content type",[["Tutorial",null,null,null,null,null,null,null,null,"Tutorial"],["Guide",null,null,null,null,null,null,null,null,"Guide"],["Sample",null,null,null,null,null,null,null,null,"Sample"]]],["product","Choose a product",[["Android",null,null,null,null,null,null,null,null,"Android"],["ARCore",null,null,null,null,null,null,null,null,"ARCore"],["ChromeOS",null,null,null,null,null,null,null,null,"ChromeOS"],["Firebase",null,null,null,null,null,null,null,null,"Firebase"],["Flutter",null,null,null,null,null,null,null,null,"Flutter"],["Assistant",null,null,null,null,null,null,null,null,"Google Assistant"],["GoogleCloud",null,null,null,null,null,null,null,null,"Google Cloud"],["GoogleMapsPlatform",null,null,null,null,null,null,null,null,"Google Maps Platform"],["GooglePay",null,null,null,null,null,null,null,null,"Google Pay & Google Wallet"],["GooglePlay",null,null,null,null,null,null,null,null,"Google Play"],["Tensorflow",null,null,null,null,null,null,null,null,"TensorFlow"]]],["category","Choose a topic",[["AiAndMachineLearning",null,null,null,null,null,null,null,null,"AI and Machine Learning"],["Data",null,null,null,null,null,null,null,null,"Data"],["Enterprise",null,null,null,null,null,null,null,null,"Enterprise"],["Gaming",null,null,null,null,null,null,null,null,"Gaming"],["Mobile",null,null,null,null,null,null,null,null,"Mobile"],["Web",null,null,null,null,null,null,null,null,"Web"]]]]]],[1,1],null,1],[[["UA-24532603-1"],["UA-22084204-5"],null,null,["UA-24532603-5"],["GTM-T98GCPGN"],null,[["G-272J68FCRF"],null,null,[["G-272J68FCRF",2]]],[["UA-24532603-1",2]],null,[["UA-24532603-5",2]],[["GTM-T98GCPGN",2]],1],[[6,5],[11,8],[13,10],[12,9],[1,1],[16,13],[5,4],[3,2],[14,11],[15,12],[4,3]],[[1,1],[2,2]]],null,4,null,null,null,null,null,null,null,null,null,null,null,null,null,"developers.devsite.google",null,null,null,null,null,[]],null,"pk_live_5170syrHvgGVmSx9sBrnWtA5luvk9BwnVcvIi7HizpwauFG96WedXsuXh790rtij9AmGllqPtMLfhe2RSwD6Pn38V00uBCydV4m",1,1,"https://developerscontentinsights-pa.clients6.google.com","AIzaSyCg-ZUslalsEbXMfIo9ZP8qufZgo3LSBDU","AIzaSyDxT0vkxnY_KeINtA4LSePJO-4MAZPMRsE","https://developers.clients6.google.com",["https://codeassist.google.com","https://code-assist-free-tier.corp.google.com"],null,"AIzaSyBQom12tzI-rybN7Sf-KfeL4nwm-Rf7PmI\n",null,null,"https://developers.googleapis.com"]')
+  
+</script>
+
+    <devsite-a11y-announce></devsite-a11y-announce>
+  </body>
+</html>

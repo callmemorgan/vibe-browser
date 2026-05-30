@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The WebM Project | VP9 Video Codec Summary </title>
+  <meta name="google-site-verification" content="k48O6zrnreFHIEU7DjyqpOK8REgb_WD1_OyorIE4Ti0">
+  
+  <!-- Included CSS Files -->
+  <link rel="stylesheet" href="/media/css/bootstrap.css" nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+  <style type="text/css">
+    body {
+      padding-top: 80px;
+    }
+  </style>
+  <link rel="stylesheet" href="/media/css/bootstrap-responsive.css" nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+  <link rel="stylesheet" href="/media/css/webm.css" nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+  
+  
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" nonce="Whk4QSJgAZpP-9LhrOXiEQ"></script>
+  <script src="https://storage.googleapis.com/downloads.webmproject.org/media/js/bootstrap.min.js" nonce="Whk4QSJgAZpP-9LhrOXiEQ"></script>
+  
+  
+  <script nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+    
+    $(function(){
+      setTimeout(function(){
+        var shiftWindow = function() {
+          var hash = "#" + location.hash.replace(/[^A-Za-z0-9_\-]/g, "");
+          if (hash && $(hash).offset()) {
+            var pos = $(hash).offset().top - 60;
+            $(window).scrollTop(pos);
+          }
+        };
+        if (location.hash) shiftWindow();
+        window.addEventListener("hashchange", shiftWindow);
+      },10);
+    })
+  </script>
+
+  
+
+  <link rel="shortcut icon" href="/media/images/webm-48px.png">
+  <!--
+  <link rel="apple-touch-icon" href="/media/images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/media/images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/media/images/apple-touch-icon-114x114.png">
+-->
+  </head>
+<body class="vp9" id="None">
+  <div id="not-footer">
+      <header>
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/" title="The WebM Project" style="padding: 0; margin: 3px 20px 0 0;"><img src="/media/images/webm-558x156.png" alt="" style="height: 46px; padding: 0"></a>
+            <!-- Everything we want hidden at 940px or less, place within .nav-collapse -->
+            <div class="nav-collapse collapse">
+              <ul class="nav">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    About
+                    <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/about/">About WebM</a></li>
+                    <li><a href="/about/press/">Press Info</a></li>
+                    <li><a href="/about/faq/">FAQ</a></li>
+                    <li><a href="/about/discuss/">Discuss</a></li>
+                    <li><a href="/about/supporters/">Supporters</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/vp9/">VP9 Codec</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Developer <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/code/">Overview &amp; Code Repos</a></li>
+                    <li><a href="/code/contribute/">Contribute</a>
+                    <li><a href="/code/contribute/submitting-patches/">Submitting Patches</a></li>
+                    <li><a href="/code/contribute/code-reviews/">Code Reviews</a></li>
+                    <li><a href="/code/contribute/workflow/">Workflow</a></li>
+                    <li><a href="/code/contribute/conventions/">Conventions</a></li>
+                    <li class="divider"></li>
+                    <li><a href="https://build.webmproject.org/jenkins/">Continuous Integration</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/code/bug-reporting/">Bug Reporting</a></li>
+                    <li><a href="/code/build-prerequisites/">Build Prerequisites</a></li>
+                    <li><a href="/code/repository-layout/">Repository Layout</a></li>
+                    <li><a href="/code/releases/">Releases</a></li>
+                    <li><a href="/code/roadmap/">Roadmap</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Docs <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/vp9/">Draft VP9 Bitstream Format</a></li>
+                    <li><a href="/vp9/mp4/">VP Codec ISO Media File Format Binding (MP4)</a></li>
+                    <li><a href="/vp9/levels/">VP9 Levels and Decoder Testing</a></li>
+                    <li><a href="http://datatracker.ietf.org/doc/rfc6386/">RFC 6386: VP8 Data Format</a></li>
+                    <li><a href="/docs/container/">WebM Container Format</a></li>
+                    <li><a href="/docs/webm-encryption/">WebM Encryption</a></li>
+                    <li><a href="http://tools.ietf.org/html/draft-ietf-payload-vp8">VP8 RTP Proposal (Draft)</a></li>
+                    <li><a href="/docs/encoder-parameters/">Encoder Examples</a></li>
+                    <li><a href="http://wiki.webmproject.org/">Wiki</a></li>
+                  </ul>
+                </li>
+                <li><a href="/tools/">Tools</a></li>
+              </ul>
+              <script type="text/javascript" src="https://www.google.com/jsapi" nonce="Whk4QSJgAZpP-9LhrOXiEQ"></script>
+              <script type="text/javascript" nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+                google.load('search', '1');
+                google.setOnLoadCallback(function() {
+                  google.search.CustomSearchControl.attachAutoCompletion(
+                    '003367860376540524942:a7a4auyo1la',
+                    document.getElementById('q'),
+                    'cse-search-box');
+                });
+              </script>
+              <form  action="https://www.google.com/cse" class="navbar-search pull-right searchbox">
+                
+                <div class="control-group">
+                  <div class="controls">
+                    <div class="input-prepend">
+                      <span class="add-on"><i class="icon-search"></i></span><input type="text" name="q" id="q" autocomplete="on" class="span2" placeholder="" style="background-image: none;">
+                      <input type="hidden" name="cx" value="003367860376540524942:a7a4auyo1la">
+                      <input type="hidden" name="ie" value="UTF-8">
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div><!-- /container -->
+        </div>
+      </div>
+    </header>
+
+
+  
+  <div class="container">
+    <div class="row">
+      <div class="span10 offset1">
+      
+
+<ul class="breadcrumb">
+
+  
+  
+    
+  
+    
+  
+      
+        <li><a href="/">
+      
+  
+      
+        
+        Home
+        
+      
+      
+        </a><span class="divider">&gt;</span>
+      
+    </li>
+    
+  
+  
+    
+  
+    
+  
+      
+        <li class="active">
+      
+  
+      
+        
+          
+          VP9
+        
+      
+      
+    </li>
+    
+  
+
+</ul>
+
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="span10 offset1">
+      
+
+<div class="hero-unit">
+  
+  <h1 style="margin-top: 0;">VP9 <span>Video Codec</span></h1>
+  <p>VP9, the WebM Project's next-generation open video codec, became
+  available on June 17, 2013. This page summarizes post-release VP9 topics
+  of interest to the WebM community.</p>
+</div>
+
+
+<p><a class="btn btn-mini btn-primary toggle-all tocbutton pull-right" href="#">Show Contents</a></p>
+<div class="toc">
+<ul>
+<li><a href="#draft-vp9-bitstream-and-decoding-process-specification">Draft VP9 Bitstream and Decoding Process Specification</a><ul>
+<li><a href="#related-documents">Related Documents</a></li>
+</ul>
+</li>
+<li><a href="#vp-codec-iso-media-file-format-binding">VP Codec ISO Media File Format Binding</a></li>
+<li><a href="#vp9-profiles-and-levels">VP9 Profiles and Levels</a></li>
+<li><a href="#hdr10-metadata-handling">HDR10+ Metadata Handling</a></li>
+<li><a href="#acquiring-vp9-libvpx">Acquiring VP9 (libvpx)</a></li>
+<li><a href="#user-contributed-pages">User-Contributed Pages</a></li>
+<li><a href="#product-support">Product Support</a><ul>
+<li><a href="#microsoft-edge">Microsoft Edge</a></li>
+<li><a href="#webrtc">WebRTC</a></li>
+<li><a href="#google-chrome">Google Chrome</a></li>
+<li><a href="#mozilla-firefox">Mozilla Firefox</a></li>
+<li><a href="#vlc">VLC</a></li>
+<li><a href="#ffmpeg-libav">FFMpeg / Libav</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><em>Last modified 2023-10-16</em></p>
+<h3 id="draft-vp9-bitstream-and-decoding-process-specification">Draft VP9 Bitstream and Decoding Process Specification</h3>
+<p>Interested parties are invited to review the current draft of the VP9
+Bitstream Specification.</p>
+<p><strong>Note carefully:</strong></p>
+<ul>
+<li>The specification is <strong>not final</strong>.</li>
+<li>The team has performed one level of review internally, and now seeks
+    external review.</li>
+<li>We have compiled the syntax tables into an application, and verified that
+    <a href="https://www.google.com/search?q=argon+streams+vp9">Argon Design's test streams</a> produce output identical to <code>vpxenc</code>.</li>
+<li>We are particularly interested in verification of the document's textual
+    content.</li>
+</ul>
+<p>Please direct commentary to the <em><a href="https://groups.google.com/a/webmproject.org/group/codec-devel">codec-discuss</a></em> mailing list. Note that
+first-time posts by unsubscribed readers are queued for moderation. You can
+avoid moderation by subscribing first.</p>
+<p><strong>Download: <a href="https://storage.googleapis.com/downloads.webmproject.org/docs/vp9/vp9-bitstream-specification-v0.7-20170222-draft.pdf">vp9-bitstream-specification-v0.7-20170222-draft.pdf</a></strong>
+<em>(2.37MB PDF)</em></p>
+<h4 id="related-documents">Related Documents</h4>
+<ul>
+<li><a href="https://tools.ietf.org/html/draft-ietf-payload-vp9">Draft: RTP Payload Format for VP9 Video</a></li>
+</ul>
+<h3 id="vp-codec-iso-media-file-format-binding">VP Codec ISO Media File Format Binding</h3>
+<ul>
+<li><a href="mp4/"><strong>Version 1.0, 2017-03-27</strong></a></li>
+</ul>
+<h3 id="vp9-profiles-and-levels">VP9 Profiles and Levels</h3>
+<ul>
+<li><strong><a href="/vp9/levels/">VP9 Levels and Decoder Testing</a></strong></li>
+<li><strong><a href="/vp9/profiles/">VP9 Coding Profiles</a></strong></li>
+</ul>
+<h3 id="hdr10-metadata-handling">HDR10+ Metadata Handling</h3>
+<p><a href="https://hdr10plus.org">HDR10+</a> metadata can be specified in the form of ITU-T T.35 terminal codes. See
+the <a href="/docs/container/#BlockAddID">BlockAddID</a> element in the WebM Container Guidelines. ATSC 2094-40/CTA-861.4
+define one of the possible ways to specify HDR10+ metadata.</p>
+<h3 id="acquiring-vp9-libvpx">Acquiring VP9 (libvpx)</h3>
+<p>As of 2013-06-17, VP9 encode and decode support ships in the master
+branch of <a href="https://www.webmproject.org/code/#libvpx-vp8vp9-codec-sdk">libvpx</a>, and is enabled by default.</p>
+<pre><code>git clone https://chromium.googlesource.com/webm/libvpx
+cd libvpx
+git co master    ## likely unnecessary
+./configure
+make</code></pre>
+
+<p>Or consider an out-of-tree build, described in <a href="https://www.webmproject.org/code/build-prerequisites/">Build Prerequisites</a>.</p>
+<p>VP9 encoder options are listed in the usage output for <code>vpxenc</code>, in the
+section "VP9 Specific Options".</p>
+<h3 id="user-contributed-pages">User-Contributed Pages</h3>
+<ul>
+<li><a href="https://sites.google.com/a/webmproject.org/wiki/vp9/vp9-tips">VP9 Tips</a></li>
+<li><a href="https://sites.google.com/a/webmproject.org/wiki/vp9/known-issues">VP9 Known Issues</a></li>
+</ul>
+<h3 id="product-support">Product Support</h3>
+<h4 id="microsoft-edge">Microsoft Edge</h4>
+<p>Microsoft <a href="https://blogs.windows.com/msedgedev/2016/04/18/webm-vp9-and-opus-support-in-microsoft-edge/">announced</a> in April 2016 that the Edge browser will support VP9
+(and Opus).</p>
+<h4 id="webrtc">WebRTC</h4>
+<p>VP9 in WebRTC <a href="https://developers.google.com/web/updates/2016/01/vp9-webrtc">became available</a> in Google Chrome 48 (stable) in
+January 2016, for both desktop and Android.</p>
+<h4 id="google-chrome">Google Chrome</h4>
+<p>VP9 decode support was first enabled by default in Google Chrome 29
+<a href="https://www.chromium.org/getting-involved/dev-channel">Dev channel</a> (r206883) on 2013-06-26.</p>
+<h4 id="mozilla-firefox">Mozilla Firefox</h4>
+<p>VP9 decode support <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=833023">was first added to</a> Firefox Aurora ("pre-beta")
+nightly builds on 2013-12-06.</p>
+<h4 id="vlc">VLC</h4>
+<p>Experimental VP9 decode support was added to VLC in <a href="https://www.videolan.org/vlc/">version 2.1.2</a>.</p>
+<h4 id="ffmpeg-libav">FFMpeg / Libav</h4>
+<ul>
+<li>Search the <a href="https://git.videolan.org/?p=ffmpeg.git&amp;a=search&amp;h=HEAD&amp;st=commit&amp;s=libvpx"><strong>FFMpeg codebase</strong></a> for recent libvpx-related
+    commits</li>
+<li>Search the <a href="https://git.libav.org/?p=libav.git&amp;a=search&amp;h=HEAD&amp;st=commit&amp;s=libvpx"><strong>Libav codebase</strong></a> for recent libvpx-related
+    commits</li>
+</ul>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="span10 offset1">
+        
+      </div>
+    </div>
+  </div> <!-- /container -->
+
+  </div>
+  <footer class="">
+  <div class="container handfoot">
+    <div class="row">
+      <section class="span2 offset1">
+        <h6>About</h6>
+        <ul>
+          <li><a href="/about/">About WebM</a></li>
+          <li><a href="/about/faq/">FAQ</a></li>
+          <li><a href="/about/discuss/">Discuss</a></li>
+          <li><a href="/about/supporters/">Supporters</a></li>
+        </ul>
+        <h6>More</h6>
+        <ul>
+          <li><a href="/tools/">Tools</a></li>
+          <li><a href="/license/">Licenses</a></li>
+          <li><a href="https://storage.googleapis.com/downloads.webmproject.org/releases/webm/index.html" class="no-ext">Downloads</a></li>
+          <li><a href="/cross-license/">VP8 Cross-License</a></li>
+          
+        </ul>
+      </section>
+      <section class="span2">
+        <h6>Developer</h6>
+        <ul>
+          <li><a href="/code/">Overview</a></li>
+          <li><a href="/code/contribute/">Contribute</a></li>
+          <li><a href="/code/contribute/submitting-patches/">Submitting Patches</a></li>
+          <li><a href="/code/contribute/code-reviews/">Code Reviews</a></li>
+          <li><a href="/code/contribute/workflow/">Workflow</a></li>
+          <li><a href="/code/contribute/conventions/">Conventions</a></li>
+          <li><a href="/code/bug-reporting/">Bug Reporting</a></li>
+          <li><a href="/code/build-prerequisites/">Build Prerequisites</a></li>
+          <li><a href="/code/repository-layout/">Repository Layout</a></li>
+          <li><a href="/code/releases/">Releases</a></li>
+          <li><a href="/code/roadmap/">Roadmap</a></li>
+      </ul>
+      </section>
+      <section class="span3">
+        <h6>Docs</h6>
+        <ul>
+          <li><a href="/docs/webm-sdk/">WebM Codec SDK</a></li>
+          <li><a href="/docs/container/">WebM Container Format</a></li>
+          <li><a href="/docs/webm-encryption/">WebM Encryption</a></li>
+          <li><a href="http://tools.ietf.org/html/draft-ietf-payload-vp8">VP8 RTP Proposal (Draft)</a></li>
+          <li><a href="http://datatracker.ietf.org/doc/rfc6386/">RFC 6386: VP8 Data Format</a></li>
+          <li><a href="/docs/encoder-parameters/">Encoder Examples</a></li>
+          <li><a href="http://wiki.webmproject.org/">Wiki</a></li>
+        </ul>
+      </section>
+      <section class="span3 badges" style="text-align: center;">
+        <div class="row">
+          <div class="span3" style="margin-bottom: 1em; margin-top: 1em;">
+            Copyright 2010 - <script type="text/javascript" nonce="Whk4QSJgAZpP-9LhrOXiEQ">document.write(new Date().getFullYear());
+</script><br>
+            The WebM Project
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="span3" style="margin-bottom: 1em;">
+            <a href="http://www.w3.org/html/logo/" class="no-ext"><img src="/media/images/html5-logo.png" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics"></a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span3">
+            <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#x6f;&#58;&#x77;&#101;&#x62;&#x6d;&#97;&#x73;&#116;&#x65;&#x72;&#64;&#x77;&#101;&#x62;&#x6d;&#112;&#x72;&#111;&#x6a;&#x65;&#99;&#x74;&#46;&#x6f;&#x72;&#103;">&#x77;&#101;&#x62;&#x6d;&#97;&#x73;&#116;&#x65;&#x72;&#64;&#x77;&#101;&#x62;&#x6d;&#112;&#x72;&#111;&#x6a;&#x65;&#99;&#x74;&#46;&#x6f;&#x72;&#103;</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</footer>
+
+
+  <script nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+  $(document).ready(function(){
+    $("a.tocbutton").click(function () {
+      $("div.toc").slideToggle("slow");
+      var text = $(this).text() == 'Show Contents' ? 'Hide Contents' : 'Show Contents';
+      $(this).text(text);
+    });
+    $("a[href*='http://']:not([href*='http://www.webmproject.org'])").not("[href^='http://blog.webmproject.org']").not("[href^='http://wiki.webmproject.org']").not("[href^='http://build.webmproject.org']").attr("target","_blank").addClass("ext").attr("title","Opens new window");
+  });
+  </script>
+  
+  
+
+  <!-- Analytics -->
+<script type="text/javascript" nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript" nonce="Whk4QSJgAZpP-9LhrOXiEQ">
+try {
+var pageTracker = _gat._getTracker("UA-16111505-1");
+pageTracker._setDomainName(".webmproject.org");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+</body>
+</html>
