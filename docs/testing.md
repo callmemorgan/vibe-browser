@@ -5,7 +5,9 @@ engineering facts. A submission is evaluated on what it runs, what it proves, an
 how clearly it maps implemented behavior back to the supplied standards corpus.
 
 This document defines the default rubric for benchmark evaluators and the test
-expectations participants should design toward.
+expectations participants should design toward. See
+[Evaluator Procedure](evaluator-procedure.md) for an operational score sheet and
+evidence checklist.
 
 ## Required Submission Artifacts
 
@@ -102,7 +104,9 @@ WPT integration is a milestone, not a day-one dependency. Submissions should:
 
 ## Evaluator Procedure
 
-For each benchmark run:
+Use [Evaluator Procedure](evaluator-procedure.md) for the operational score sheet,
+evidence requirements, and comparison-eligibility checklist. At a high level, for
+each benchmark run:
 
 1. Record model, prompt, tool access, time budget, and repository revision.
 2. Record the meta-harness profile from
