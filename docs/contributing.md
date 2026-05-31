@@ -15,6 +15,9 @@ the task inputs.
 - Prefer explicit status labels over vague claims.
 - Preserve benchmark comparability unless the PR explicitly changes benchmark
   scope.
+- Keep model-generated run outputs on run branches, not on `main`.
+- Treat meta-harness profiles as benchmark conditions, not incidental script
+  settings.
 
 ## Before Changing Benchmark Guidance
 
@@ -35,6 +38,12 @@ Benchmark harnesses, fixtures, and example implementations should:
   intended experimental condition.
 - Include reproducible commands.
 - Keep generated outputs separate from authored rubric or corpus changes.
+
+Run branches should follow [Run Organization](run-organization.md) so harness,
+tool, model, baseline commit, and scoring metadata remain reproducible.
+Controllers that keep models working should follow
+[Meta-Harnesses](meta-harnesses.md) so time, token, turn, and stop-condition
+limits are comparable.
 
 ## Pull Request Expectations
 
@@ -79,6 +88,8 @@ not rediscover from scratch, such as:
 - Scoring rubric changes.
 - Required participant artifacts.
 - Harness architecture.
+- Run branch organization.
+- Meta-harness profiles and budget policy.
 - Telemetry policy for benchmark runs.
 - Major standards scope changes.
 - Compatibility-impacting corpus refreshes.

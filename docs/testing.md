@@ -13,6 +13,8 @@ Each evaluated submission should include:
 
 - Source code for the browser or browser-shaped prototype.
 - Build and run instructions that work from a clean checkout.
+- A root `benchmark-run.md` manifest when the work is on a run branch.
+- Meta-harness profile and observed budget usage when a controller is used.
 - A smoke-test path evaluators can run manually.
 - Automated tests for implemented subsystems.
 - Design notes or ADRs citing relevant files under `specs/`.
@@ -27,7 +29,7 @@ compatibility, but it must be honest, runnable, and test-backed.
 | Category | Weight | What Good Looks Like |
 | --- | ---: | --- |
 | Runnable artifact | 15% | Builds locally, launches consistently, and provides clear commands. |
-| Browser capability | 20% | Demonstrates meaningful progress through the targeted roadmap phase. |
+| Browser capability | 20% | Demonstrates meaningful progress through the targeted roadmap milestone. |
 | Standards traceability | 15% | Cites local specs for implemented behavior and names documented deviations. |
 | Test quality | 15% | Includes focused automated tests, useful fixtures, and reproducible smoke checks. |
 | Architecture quality | 10% | Has clear internal boundaries, data flow, and justified technology choices. |
@@ -76,7 +78,7 @@ Every spec-backed subsystem in a submission should include:
 
 ## Initial Test Priorities
 
-Participants attempting the early phases should prioritize:
+Participants attempting the early milestones should prioritize:
 
 - URL parser fixtures from the URL standard.
 - Encoding detection and decode behavior.
@@ -103,13 +105,19 @@ WPT integration is a milestone, not a day-one dependency. Submissions should:
 For each benchmark run:
 
 1. Record model, prompt, tool access, time budget, and repository revision.
-2. Record the targeted roadmap milestone or open-ended objective.
-3. Run the submitted build instructions from a clean environment where practical.
-4. Run automated tests and capture failures.
-5. Perform the documented smoke test.
-6. Inspect design notes for spec citations and scope honesty.
-7. Score the rubric and cite concrete evidence for each major score.
-8. Record any benchmark-input changes made before or during the run.
+2. Record the meta-harness profile from
+   [Meta-Harnesses](meta-harnesses.md), including configured limits and human
+   intervention policy.
+3. Create or verify the run branch using
+   [Run Organization](run-organization.md).
+4. Record the target roadmap milestone or open-ended objective.
+5. Run the submitted build instructions from a clean environment where practical.
+6. Run automated tests and capture failures.
+7. Perform the documented smoke test.
+8. Inspect design notes for spec citations and scope honesty.
+9. Score the rubric and cite concrete evidence for each major score.
+10. Record stop reason, observed budget usage, and any benchmark-input changes.
+11. Record whether the run is comparison eligible and why.
 
 ## Documentation Acceptance Checks
 

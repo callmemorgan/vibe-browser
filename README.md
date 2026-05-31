@@ -21,9 +21,14 @@ benchmark.
   boundaries participants should consider.
 - [Standards Strategy](docs/standards-strategy.md): benchmark scope tiers and how
   submissions should cite standards.
-- [Roadmap](docs/roadmap.md): task phases and expected submission capabilities.
+- [Roadmap](docs/roadmap.md): task milestones and expected submission
+  capabilities.
 - [Testing](docs/testing.md): evaluation rubric, required artifacts, tests, and
   conformance labels.
+- [Run Organization](docs/run-organization.md): branch naming and metadata rules
+  for model, tool, and harness runs.
+- [Meta-Harnesses](docs/meta-harnesses.md): controller profiles for time, token,
+  turn, and stop-condition limits.
 - [Security Threat Model](docs/security-threat-model.md): security expectations
   used to evaluate submitted browsers.
 - [Privacy Model](docs/privacy-model.md): privacy expectations used to evaluate
@@ -85,10 +90,13 @@ A benchmark submission should include:
 
 An evaluation should record:
 
-- The model, prompt, time budget, tool access, and environment constraints.
-- Which task phase or milestone was attempted.
+- The Run ID, run branch, and `benchmark-run.md` manifest.
+- The model, prompt, budget limits, tool access, and environment constraints.
+- The meta-harness profile, human intervention policy, and observed budget usage.
+- Which target milestone or open-ended objective was attempted.
 - The submitted artifacts and commands used for verification.
 - Rubric scores and qualitative notes from [Testing](docs/testing.md).
+- Whether the run is eligible for comparison with other runs.
 - Any benchmark-input changes made before the run.
 
 ## Repository Layout
@@ -100,7 +108,9 @@ An evaluation should record:
 |   |-- adr/
 |   |-- architecture.md
 |   |-- contributing.md
+|   |-- meta-harnesses.md
 |   |-- privacy-model.md
+|   |-- run-organization.md
 |   |-- roadmap.md
 |   |-- security-threat-model.md
 |   |-- spec-corpus-maintenance.md
