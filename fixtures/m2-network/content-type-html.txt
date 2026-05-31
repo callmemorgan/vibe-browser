@@ -1,0 +1,5 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>HTML Content Type Fixture</title></head>
+<body><p>This file has a .txt extension so servers can test explicit text/html metadata.</p></body>
+</html>
