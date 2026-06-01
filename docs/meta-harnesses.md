@@ -50,7 +50,8 @@ do not increment the turn count unless the model receives a new instruction.
 Harnesses may store profiles in code, configuration, or CI settings, but the
 effective profile for a run must be copied into `benchmark-run.md`.
 
-Example profile:
+Example profile using the initial stable prompt set,
+[Prompt Set: browser-build-v0](prompt-sets/browser-build-v0.md):
 
 ```yaml
 profile: standard-v0
@@ -80,9 +81,30 @@ stop_conditions:
   - evaluator-stop
 ```
 
+## Default Serious Comparison Unit
+
+After `smoke-v0`/M1 and `sprint-v0`/M3 pilots validate harness and prompt
+behavior, the recommended first serious comparison unit is:
+
+```yaml
+profile: standard-v0
+prompt_set: browser-build-v0
+target: m5
+human_intervention_policy: administrative-only
+base_benchmark_commit: fixed per comparison batch
+benchmark_input_digest: fixed per comparison batch
+```
+
+This configuration targets the first visible page load: shell, fetch, minimal
+HTML/DOM, CSS/style/layout, and painting. Runs remain comparable only when the
+fields listed in [Run Organization](run-organization.md#comparison-rules) match
+or are intentionally grouped.
+
 ## Recommended Profiles
 
-Use these profiles until real run data suggests better defaults.
+Use these profiles until real run data suggests better defaults. The
+[Local Test Bench](local-test-bench.md) provides lightweight commands for
+exercising `smoke-v0` locally before building a full controller.
 
 | Profile | Purpose | Wall Clock | Turn Limit | Token Limit | Idle Limit |
 | --- | --- | ---: | ---: | ---: | ---: |

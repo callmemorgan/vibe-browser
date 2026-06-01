@@ -23,12 +23,20 @@ benchmark.
   submissions should cite standards.
 - [Roadmap](docs/roadmap.md): task milestones and expected submission
   capabilities.
+- [Participant Task](docs/participant-task.md): milestone-targeted task template
+  for benchmark participants.
 - [Testing](docs/testing.md): evaluation rubric, required artifacts, tests, and
   conformance labels.
+- [Evaluator Procedure](docs/evaluator-procedure.md): operational score sheet and
+  evidence requirements for reviewing runs.
 - [Run Organization](docs/run-organization.md): branch naming and metadata rules
   for model, tool, and harness runs.
 - [Meta-Harnesses](docs/meta-harnesses.md): controller profiles for time, token,
   turn, and stop-condition limits.
+- [Local Test Bench](docs/local-test-bench.md): lightweight scripts for local-model
+  smoke runs and fixture serving.
+- [Prompt Sets](docs/prompt-sets/browser-build-v0.md): initial stable prompt bundle
+  for comparable browser-building runs.
 - [Security Threat Model](docs/security-threat-model.md): security expectations
   used to evaluate submitted browsers.
 - [Privacy Model](docs/privacy-model.md): privacy expectations used to evaluate
@@ -108,7 +116,11 @@ An evaluation should record:
 |   |-- adr/
 |   |-- architecture.md
 |   |-- contributing.md
+|   |-- evaluator-procedure.md
+|   |-- local-test-bench.md
 |   |-- meta-harnesses.md
+|   |-- participant-task.md
+|   |-- prompt-sets/
 |   |-- privacy-model.md
 |   |-- run-organization.md
 |   |-- roadmap.md
@@ -117,6 +129,8 @@ An evaluation should record:
 |   |-- spec-inventory.md
 |   |-- standards-strategy.md
 |   `-- testing.md
+|-- fixtures/
+|-- scripts/
 |-- specs/
 `-- specs.zip
 ```
