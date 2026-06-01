@@ -614,13 +614,215 @@ class CodexMetaHarnessTests(unittest.TestCase):
         self.assertIn("--wall-clock-limit 10m", joined)
         self.assertIn("--model-provider ollama", joined)
         self.assertIn("--model glm-5.1:cloud", joined)
+        self.assertIn("--turn-limit 100", joined)
         self.assertIn("--stream-agent-events", joined)
+        self.assertIn("baseline-git-status.txt", joined)
+        self.assertIn("participant-git-status.txt", joined)
+        self.assertIn("participant.diff", joined)
+        self.assertIn("participant-untracked-files.tar", joined)
+        self.assertIn("export-submission", joined)
+        self.assertIn("record-version-info", joined)
         pi_docker.assert_no_forbidden_mounts(argv)
         cp_argv = pi_docker.build_docker_cp_argv("rpi", artifacts)
         self.assertEqual(cp_argv[0:2], ["docker", "cp"])
         self.assertIn(".vibe-bench/docker-export/rpi", cp_argv[2])
         self.assertIn("git-status.txt", joined)
         self.assertIn("untracked-files.tar", joined)
+
+    def test_pi_docker_effective_turn_limit_respects_explicit_override(self) -> None:
+        parser = pi_docker.build_parser()
+        args = parser.parse_args(
+            [
+                "run",
+                "--run-id",
+                "rpi",
+                "--wall-clock-limit",
+                "10m",
+                "--turn-limit",
+                "7",
+            ]
+        )
+        self.assertEqual(pi_docker.effective_turn_limit(args), 7)
+
+        args_without_override = parser.parse_args(
+            ["run", "--run-id", "rpi", "--wall-clock-limit", "10m"]
+        )
+        self.assertEqual(
+            pi_docker.effective_turn_limit(args_without_override),
+            pi_docker.DEFAULT_WALL_CLOCK_TURN_LIMIT,
+        )
+
+    def test_git_archive_build_context_uses_committed_baseline_only(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            write_fixture_repo(root)
+            (root / "docs" / "participant-task.md").write_text(
+                "# dirty\n", encoding="utf-8"
+            )
+            (root / "untracked.txt").write_text("nope\n", encoding="utf-8")
+
+            with pi_docker.git_archive_build_context(root) as context_root:
+                archived_task = (
+                    context_root / "docs" / "participant-task.md"
+                ).read_text(encoding="utf-8")
+                self.assertIn("Target:", archived_task)
+                self.assertFalse((context_root / "untracked.txt").exists())
+
+    def test_pi_docker_refuses_dirty_baseline_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            write_fixture_repo(root)
+            (root / "docs" / "participant-task.md").write_text(
+                "# dirty\n", encoding="utf-8"
+            )
+
+            with self.assertRaises(SystemExit) as raised:
+                pi_docker.assert_clean_git_baseline(root)
+
+            self.assertIn("dirty git worktree", str(raised.exception))
+            pi_docker.assert_clean_git_baseline(root, allow_dirty=True)
+
+    def test_pi_docker_prints_summary_without_docker_rm_stdout(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            artifacts = Path(temp)
+            state_dir = artifacts / "run"
+            state_dir.mkdir()
+            (state_dir / "state.json").write_text(
+                json.dumps(
+                    {
+                        "state": "blocked",
+                        "stop_reason": "budget-exhausted-turn-limit",
+                        "latest_verification": "passed",
+                        "observed_turns": 8,
+                        "observed_token_usage": 68765,
+                        "comparison_eligible": "yes",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                pi_docker.print_run_summary(
+                    run_id="rpi",
+                    container="vibe-browser-pi-rpi",
+                    artifacts_dir=artifacts,
+                    container_exit_code=0,
+                    artifact_copy_exit_code=0,
+                )
+
+            summary = output.getvalue()
+            self.assertIn("Benchmark run rpi finished", summary)
+            self.assertIn("Stop reason: budget-exhausted-turn-limit", summary)
+            self.assertIn("Latest verification: passed", summary)
+            self.assertNotEqual(summary.strip(), "vibe-browser-pi-rpi")
+
+    def test_pi_docker_exports_submission_directory_from_status_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "tracked.txt").write_text("tracked\n", encoding="utf-8")
+            (root / "generated").mkdir()
+            (root / "generated" / "browser.py").write_text(
+                "print('browser')\n", encoding="utf-8"
+            )
+            status_file = root / "status.txt"
+            status_file.write_text(
+                " M tracked.txt\n?? generated/browser.py\n D deleted.txt\n",
+                encoding="utf-8",
+            )
+            zlist = root / "untracked.zlist"
+            zlist.write_bytes(b"generated/browser.py\0")
+            output_dir = root / "submission"
+            parser = pi_docker.build_parser()
+            args = parser.parse_args(
+                [
+                    "--repo-root",
+                    str(root),
+                    "export-submission",
+                    "--status-file",
+                    str(status_file),
+                    "--untracked-list-file",
+                    str(zlist),
+                    "--output-dir",
+                    str(output_dir),
+                ]
+            )
+
+            pi_docker.command_export_submission(args)
+
+            self.assertEqual(
+                (output_dir / "tracked.txt").read_text(encoding="utf-8"),
+                "tracked\n",
+            )
+            self.assertTrue((output_dir / "generated" / "browser.py").exists())
+            self.assertFalse((output_dir / "deleted.txt").exists())
+
+    def test_pi_docker_writes_summary_and_turn_metrics(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            artifacts = Path(temp)
+            run_dir = artifacts / "run"
+            checkpoints = run_dir / "checkpoints"
+            checkpoints.mkdir(parents=True)
+            (run_dir / "state.json").write_text(
+                json.dumps(
+                    {
+                        "state": "blocked",
+                        "stop_reason": "budget-exhausted-turn-limit",
+                        "latest_verification": "passed",
+                        "observed_turns": 1,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (run_dir / "config.json").write_text(
+                json.dumps(
+                    {
+                        "agent_kind": "pi",
+                        "model_provider": "ollama",
+                        "model": "glm-5.1:cloud",
+                        "target": "m1",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (checkpoints / "checkpoint-0001.json").write_text(
+                json.dumps(
+                    {
+                        "observed_turns": 1,
+                        "elapsed_seconds": 12,
+                        "latest_agent_elapsed_seconds": 3.5,
+                        "latest_agent_exit_code": 0,
+                        "latest_verification": "passed",
+                        "observed_token_usage": 123,
+                        "latest_material_paths": ["browser/src/shell.py"],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (artifacts / "participant-git-status.txt").write_text(
+                "?? browser/src/shell.py\n",
+                encoding="utf-8",
+            )
+            (artifacts / "participant-untracked-files.zlist").write_bytes(
+                b"browser/src/shell.py\0"
+            )
+
+            summary = pi_docker.write_summary_json(
+                run_id="rpi",
+                container="vibe-browser-pi-rpi",
+                artifacts_dir=artifacts,
+                image="image:test",
+                image_id="sha256:test",
+                container_exit_code=0,
+                artifact_copy_exit_code=0,
+            )
+
+            self.assertEqual(summary["run_id"], "rpi")
+            self.assertEqual(summary["docker"]["build_context"], "git-archive-head")
+            self.assertEqual(summary["participant_files"], ["browser/src/shell.py"])
+            self.assertEqual(summary["turn_metrics"][0]["tokens"], 123)
+            self.assertTrue((artifacts / "summary.json").exists())
+            self.assertTrue((artifacts / "turn-metrics.json").exists())
 
     def test_pi_docker_archives_untracked_files(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -678,6 +880,103 @@ class CodexMetaHarnessTests(unittest.TestCase):
             self.assertIn("$ PYTHONPATH=src python3", log)
             self.assertIn("definitely-missing-vibe-browser-command", log)
             self.assertIn("FileNotFoundError", log)
+
+    def test_verification_auto_runs_browser_unittest_and_headless_smoke(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            write_fixture_repo(root)
+            run_dir = root / ".vibe-bench" / "runs" / "rtest"
+            run_dir.mkdir(parents=True)
+            (root / "benchmark-run.md").write_text(
+                "# Benchmark Run\n\n## Verification\n\n- Build command:\n",
+                encoding="utf-8",
+            )
+            (root / "browser" / "src").mkdir(parents=True)
+            (root / "browser" / "tests").mkdir(parents=True)
+            (root / "browser" / "__init__.py").write_text("", encoding="utf-8")
+            (root / "browser" / "src" / "__init__.py").write_text(
+                "", encoding="utf-8"
+            )
+            (root / "browser" / "src" / "shell.py").write_text(
+                textwrap.dedent(
+                    """\
+                    import sys
+
+                    if __name__ == "__main__":
+                        print("headless smoke " + sys.argv[-1])
+                    """
+                ),
+                encoding="utf-8",
+            )
+            (root / "browser" / "tests" / "test_smoke.py").write_text(
+                textwrap.dedent(
+                    """\
+                    import unittest
+
+                    class SmokeTest(unittest.TestCase):
+                        def test_truth(self):
+                            self.assertTrue(True)
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            result, log_path = harness.run_verification(root, "rtest", 1)
+
+            log = log_path.read_text(encoding="utf-8")
+            self.assertEqual(result, "passed")
+            self.assertIn(
+                "$ python3 -m unittest discover -s browser/tests -v",
+                log,
+            )
+            self.assertIn("Ran 1 test", log)
+            self.assertIn(
+                "$ python3 -m browser.src.shell --headless https://example.com",
+                log,
+            )
+            self.assertIn("headless smoke https://example.com", log)
+
+    def test_auto_verification_detects_nested_browser_tests(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "browser" / "tests" / "unit").mkdir(parents=True)
+            (root / "browser" / "tests" / "unit" / "test_nested.py").write_text(
+                textwrap.dedent(
+                    """\
+                    import unittest
+
+                    class NestedSmokeTest(unittest.TestCase):
+                        def test_truth(self):
+                            self.assertTrue(True)
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            commands = harness.auto_verification_commands(root, [])
+
+            labels = [label for label, _, _ in commands]
+            self.assertIn("auto-browser-unittest", labels)
+
+    def test_auto_verification_includes_gui_smoke_when_xvfb_is_available(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "browser" / "src").mkdir(parents=True)
+            (root / "browser" / "src" / "shell.py").write_text(
+                "import tkinter as tk\n",
+                encoding="utf-8",
+            )
+            old_which = harness.shutil.which
+            try:
+                harness.shutil.which = (
+                    lambda name: "/usr/bin/xvfb-run" if name == "xvfb-run" else None
+                )
+                commands = harness.auto_verification_commands(root, [])
+            finally:
+                harness.shutil.which = old_which
+
+            labels = [label for label, _, _ in commands]
+            self.assertIn("auto-gui-tk-smoke", labels)
 
     def test_status_and_finalize_update_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

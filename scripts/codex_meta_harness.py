@@ -15,6 +15,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import shlex
 import subprocess
 import sys
@@ -1059,7 +1060,8 @@ def run_verification(
         chunks.append(f"\nexit={proc.returncode}\n")
         overall_return = max(overall_return, proc.returncode)
 
-    for label, command in manifest_commands(root):
+    manifest_command_list = manifest_commands(root)
+    for label, command in manifest_command_list:
         if is_noop_manifest_command(command):
             chunks.append(f"\n$ {command}\n")
             chunks.append(f"skipped ({label})\n")
@@ -1078,10 +1080,91 @@ def run_verification(
         chunks.append(f"\nexit={proc.returncode} ({label})\n")
         overall_return = max(overall_return, proc.returncode)
 
+    existing_commands = [command for _, command in manifest_command_list]
+    for label, command, argv in auto_verification_commands(root, existing_commands):
+        proc = run_command(argv, cwd=root, timeout=timeout)
+        chunks.append(f"\n$ {command}\n")
+        chunks.append(proc.stdout)
+        chunks.append(proc.stderr)
+        chunks.append(f"\nexit={proc.returncode} ({label})\n")
+        overall_return = max(overall_return, proc.returncode)
+
     result = "passed" if overall_return == 0 else f"failed exit={overall_return}"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     log_path.write_text("".join(chunks) or "No verification commands found.\n", encoding="utf-8")
     return result, log_path
+
+
+def auto_verification_commands(
+    root: Path,
+    existing_commands: list[str],
+) -> list[tuple[str, str, list[str]]]:
+    commands: list[tuple[str, str, list[str]]] = []
+    existing_text = "\n".join(existing_commands)
+
+    browser_tests = repo_path(root, "browser/tests")
+    has_browser_tests = browser_tests.is_dir() and any(
+        path.is_file() for path in browser_tests.rglob("test*.py")
+    )
+    tests_already_requested = (
+        "browser/tests" in existing_text or "browser.tests" in existing_text
+    )
+    if has_browser_tests and not tests_already_requested:
+        commands.append(
+            (
+                "auto-browser-unittest",
+                "python3 -m unittest discover -s browser/tests -v",
+                [
+                    sys.executable,
+                    "-m",
+                    "unittest",
+                    "discover",
+                    "-s",
+                    "browser/tests",
+                    "-v",
+                ],
+            )
+        )
+
+    shell_path = repo_path(root, "browser/src/shell.py")
+    smoke_already_requested = (
+        "browser.src.shell" in existing_text and "--headless" in existing_text
+    )
+    if shell_path.exists() and not smoke_already_requested:
+        commands.append(
+            (
+                "auto-browser-headless",
+                "python3 -m browser.src.shell --headless https://example.com",
+                [
+                    sys.executable,
+                    "-m",
+                    "browser.src.shell",
+                    "--headless",
+                    "https://example.com",
+                ],
+            )
+        )
+
+    gui_already_requested = "xvfb-run" in existing_text or "--gui-smoke" in existing_text
+    if shell_path.exists() and not gui_already_requested and shutil.which("xvfb-run"):
+        shell_text = shell_path.read_text(encoding="utf-8", errors="replace")
+        if "tkinter" in shell_text or "tk." in shell_text:
+            gui_code = (
+                "import tkinter as tk; "
+                "root = tk.Tk(); "
+                "root.update(); "
+                "root.destroy(); "
+                "print('tk gui smoke ok')"
+            )
+            commands.append(
+                (
+                    "auto-gui-tk-smoke",
+                    'xvfb-run -a python3 -c "import tkinter as tk; root = tk.Tk(); root.update(); root.destroy(); print(\'tk gui smoke ok\')"',
+                    ["xvfb-run", "-a", sys.executable, "-c", gui_code],
+                )
+            )
+
+    return commands
 
 
 def update_manifest_completion(root: Path, state: dict[str, Any]) -> None:
@@ -1134,8 +1217,12 @@ def checkpoint(root: Path, config: dict[str, Any], state: dict[str, Any]) -> Pat
         "latest_prompt": state.get("latest_prompt"),
         "latest_agent_log": state.get("latest_agent_log"),
         "latest_codex_log": state.get("latest_codex_log"),
+        "latest_agent_elapsed_seconds": state.get("latest_agent_elapsed_seconds"),
+        "latest_agent_exit_code": state.get("latest_agent_exit_code"),
         "latest_verification": state.get("latest_verification"),
+        "latest_verification_log": state.get("latest_verification_log"),
         "material_progress": state.get("latest_material_progress", False),
+        "latest_material_paths": state.get("latest_material_paths", []),
         "idle_count": state.get("idle_count", 0),
         "failure_count": state.get("failure_count", 0),
         "stop_reason": state.get("stop_reason"),

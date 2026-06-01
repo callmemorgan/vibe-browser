@@ -119,9 +119,12 @@ Live harness state is written under the ignored `.vibe-bench/` tree:
 The run branch contains the implementation, root `benchmark-run.md`, design
 notes, tests, and normal source files. Raw `.vibe-bench/` logs stay ignored by
 default. If an evaluator wants committed logs, the harness should export a
-reviewed, compact archive such as `run-artifacts/<run-id>/summary.jsonl`; it
-must not commit Codex auth files, provider secrets, or unbounded raw transcripts
-by accident.
+reviewed, compact archive such as `run-artifacts/<run-id>/summary.json`; it must
+not commit Codex auth files, provider secrets, or unbounded raw transcripts by
+accident. Docker-backed runs also export `submission/`, `summary.json`,
+`turn-metrics.json`, `version-info.json`, participant git status, participant
+diffs, and archived newly created files under
+`.vibe-bench/docker-artifacts/<run-id>/`.
 
 ## State Machine
 
@@ -225,7 +228,13 @@ Each turn follows this sequence:
    - changed file summary,
    - whether source, tests, docs, or manifest changed,
    - whether Codex reported completion or blockage.
-6. Run verification when appropriate.
+6. Run verification when appropriate:
+   - repository validator, when available,
+   - manifest-declared build, test, and smoke commands,
+   - generated browser unit tests and headless shell smoke checks when
+     `browser/tests` and `browser/src/shell.py` exist,
+   - a Tk/Xvfb display smoke check when the submitted shell appears to use
+     tkinter and `xvfb-run` is available.
 7. Update budget, idle, failure, and stop-condition counters.
 8. Write a checkpoint.
 9. Either continue, stop, or mark the run invalid.
@@ -403,6 +412,9 @@ At stop, the harness updates `benchmark-run.md` with:
 Then it writes a final checkpoint and exits nonzero only for harness failure. A
 normal benchmark stop due to success, budget exhaustion, idle, or model blockage
 is a completed harness run, even if the submitted browser scores poorly.
+Docker wrappers should write a machine-readable `summary.json` and
+`turn-metrics.json` from the exported state so benchmark runs can be aggregated
+without parsing raw agent transcripts.
 
 ## Minimal CLI Shape
 
