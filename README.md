@@ -33,6 +33,8 @@ benchmark.
   for model, tool, and harness runs.
 - [Meta-Harnesses](docs/meta-harnesses.md): controller profiles for time, token,
   turn, and stop-condition limits.
+- [Local Test Bench](docs/local-test-bench.md): lightweight scripts for local-model
+  smoke runs and fixture serving.
 - [Prompt Sets](docs/prompt-sets/browser-build-v0.md): initial stable prompt bundle
   for comparable browser-building runs.
 - [Security Threat Model](docs/security-threat-model.md): security expectations
@@ -115,6 +117,7 @@ An evaluation should record:
 |   |-- architecture.md
 |   |-- contributing.md
 |   |-- evaluator-procedure.md
+|   |-- local-test-bench.md
 |   |-- meta-harnesses.md
 |   |-- participant-task.md
 |   |-- prompt-sets/
@@ -127,6 +130,7 @@ An evaluation should record:
 |   |-- standards-strategy.md
 |   `-- testing.md
 |-- fixtures/
+|-- scripts/
 |-- specs/
 `-- specs.zip
 ```

@@ -102,7 +102,9 @@ or are intentionally grouped.
 
 ## Recommended Profiles
 
-Use these profiles until real run data suggests better defaults.
+Use these profiles until real run data suggests better defaults. The
+[Local Test Bench](local-test-bench.md) provides lightweight commands for
+exercising `smoke-v0` locally before building a full controller.
 
 | Profile | Purpose | Wall Clock | Turn Limit | Token Limit | Idle Limit |
 | --- | --- | ---: | ---: | ---: | ---: |
