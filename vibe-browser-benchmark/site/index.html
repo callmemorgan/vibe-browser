@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vibe Browser Benchmark Leaderboard</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23126d6a'/%3E%3Cpath d='M3 4h10v2H3zm0 3h7v2H3zm0 3h5v2H3z' fill='%23f8f5ec'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="index.html">Vibe Browser Benchmark</a>
+    <nav>
+      <a href="index.html">Leaderboard</a>
+      <a href="compare.html">Compare</a>
+      <a href="results.json">Data</a>
+    </nav>
+  </header>
+  <main class="shell">
+  <section class="hero">
+    <p class="eyebrow">Local prototype</p>
+    <h1>Evidence-first browser agent leaderboard</h1>
+    <p class="lede">A reproducible view over benchmark runs stored in SQLite, with canonical JSON import and export for review.</p>
+  </section>
+  <section class="controls" aria-label="Leaderboard filters">
+    <label>Provider <select id="providerFilter"><option value="">All</option></select></label>
+    <label>Harness <select id="harnessFilter"><option value="">All</option></select></label>
+    <label>Milestone <select id="milestoneFilter"><option value="">All</option></select></label>
+    <label>Model <input id="modelFilter" type="search" placeholder="filter model"></label>
+  </section>
+  <section class="table-wrap">
+    <table id="leaderboard">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Run</th>
+          <th>Model</th>
+          <th>Agent</th>
+          <th>Profile</th>
+          <th>Milestone</th>
+          <th>Score</th>
+          <th>Conf / Unc</th>
+          <th>Failure</th>
+        </tr>
+      </thead>
+      <tbody><tr><td colspan="9" class="empty">Loading runs...</td></tr></tbody>
+    </table>
+  </section>
+</main>
+  <script src="assets/results.js"></script>
+  <script src="assets/site.js"></script>
+</body>
+</html>

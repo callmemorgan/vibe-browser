@@ -1,0 +1,4307 @@
+window.BENCHMARK_RESULTS = [
+  {
+    "artifacts": [
+      {
+        "artifact_id": "example-summary",
+        "description": "Synthetic example evidence summary.",
+        "kind": "summary",
+        "path": "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md",
+        "sha256": null,
+        "visibility": "public"
+      }
+    ],
+    "attempts": [
+      {
+        "attempt_id": "example-failed-attempt-0001",
+        "exit_code": 1,
+        "finished_at": "2026-06-01T12:01:20+00:00",
+        "restart_of": null,
+        "restart_reason": "initial",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "turn": 1
+      }
+    ],
+    "created_at": "2026-06-01T12:00:00+00:00",
+    "interventions": [],
+    "milestone_assessments": [
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 0.75,
+          "honesty": 0.75,
+          "integration": 0.75,
+          "traceability": 0.75,
+          "verification": 0.75
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m0",
+        "missing_evidence": [],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "pass",
+        "run_id": "example-failed",
+        "score": 0.75
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.2,
+          "honesty": 0.2,
+          "integration": 0.2,
+          "traceability": 0.2,
+          "verification": 0.2
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m1",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "fail",
+        "run_id": "example-failed",
+        "score": 0.2
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m2",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m3",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m4",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m5",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m6",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m7",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m8",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m9",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-failed",
+        "score": 0.0
+      }
+    ],
+    "record_kind": "benchmark_run_result",
+    "rubric_scores": [
+      {
+        "category": "capability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic capability estimate.",
+        "run_id": "example-failed",
+        "score": 0.75,
+        "weight": 0.4
+      },
+      {
+        "category": "verification",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic verification estimate.",
+        "run_id": "example-failed",
+        "score": 0.15,
+        "weight": 0.25
+      },
+      {
+        "category": "traceability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic traceability estimate.",
+        "run_id": "example-failed",
+        "score": 0.65,
+        "weight": 0.15
+      },
+      {
+        "category": "integration",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic integration estimate.",
+        "run_id": "example-failed",
+        "score": 0.6,
+        "weight": 0.1
+      },
+      {
+        "category": "honesty",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic limitation disclosure estimate.",
+        "run_id": "example-failed",
+        "score": 0.7,
+        "weight": 0.1
+      }
+    ],
+    "run": {
+      "agent_tool": "reference-script",
+      "batch_id": "prototype-examples",
+      "comparison_eligible": false,
+      "comparison_reason": "Synthetic prototype fixture.",
+      "cost_limit": "unknown",
+      "finished_at": "2026-06-01T12:03:00+00:00",
+      "harness": "codex-meta-harness",
+      "harness_version": "0.1.0",
+      "model": "broken-baseline",
+      "model_provider": "local",
+      "model_snapshot": "example",
+      "observed_cost": "unknown",
+      "observed_elapsed_seconds": 180,
+      "observed_tokens": 14000,
+      "observed_tool_calls": 24,
+      "observed_turns": 1,
+      "profile": "smoke-v0",
+      "run_id": "example-failed",
+      "started_at": "2026-06-01T12:00:00+00:00",
+      "stop_reason": "verification-failed",
+      "target": "m1",
+      "target_mode": "fixed-milestone",
+      "token_limit": "200000",
+      "tool_call_limit": "unknown",
+      "tool_version": "example",
+      "turn_limit": "8",
+      "visibility": "public",
+      "wall_clock_limit": "10m"
+    },
+    "schema_version": "vibe-browser-result-v0.1",
+    "scores": {
+      "claimed_score": 0.41,
+      "confidence": 0.75,
+      "curve": "quadratic",
+      "evaluator_score": 0.4,
+      "failure_class": "verification-failed",
+      "final_score": 0.35,
+      "highest_claimed_milestone": "m0",
+      "highest_confirmed_milestone": "m0",
+      "highest_public_check_milestone": "m0",
+      "milestones": [
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 0.75,
+          "dimensions": {
+            "capability": 0.75,
+            "honesty": 0.75,
+            "integration": 0.75,
+            "traceability": 0.75,
+            "verification": 0.75
+          },
+          "evaluator_score": 0.75,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m0",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.75,
+          "public_check_score": 1.0,
+          "value": 1
+        },
+        {
+          "claimed_score": 0.2,
+          "dimension_score": 0.2,
+          "dimensions": {
+            "capability": 0.2,
+            "honesty": 0.2,
+            "integration": 0.2,
+            "traceability": 0.2,
+            "verification": 0.2
+          },
+          "evaluator_score": 0.2,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m1",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.8,
+          "public_check_score": 0.0,
+          "value": 4
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m2",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 9
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m3",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 16
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m4",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 25
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m5",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 36
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m6",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 49
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m7",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 64
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m8",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 81
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m9",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 100
+        }
+      ],
+      "public_check_score": 0.23,
+      "quality_multiplier": 0.8695,
+      "rankable": false,
+      "repository_rubric_score": 0.565,
+      "score_version": "scorer-v0.1",
+      "uncertainty": 0.25,
+      "visibility": "public"
+    },
+    "submission": {
+      "artifact_root": "vibe-browser-benchmark/examples/artifacts/example-failed",
+      "diff_path": "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md",
+      "manifest_path": "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md",
+      "run_id": "example-failed",
+      "submission_path": "vibe-browser-benchmark/examples/artifacts/example-failed",
+      "summary_path": "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md",
+      "verification_logs": [
+        "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md"
+      ],
+      "version_info_path": "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md"
+    },
+    "tool_calls": [
+      {
+        "count": 4,
+        "name": "write",
+        "tool_call_id": "example-failed-turn-0001-write",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 3,
+        "name": "bash",
+        "tool_call_id": "example-failed-turn-0001-bash",
+        "turn": 1,
+        "visibility": "public"
+      }
+    ],
+    "turns": [
+      {
+        "agent_elapsed_seconds": 70,
+        "agent_exit_code": 1,
+        "elapsed_seconds": 80,
+        "failure_count": 1,
+        "idle_count": 0,
+        "material_paths": [
+          "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md"
+        ],
+        "material_progress": false,
+        "run_id": "example-failed",
+        "tokens": 14000,
+        "tool_calls": 24,
+        "turn": 1,
+        "verification": "fail",
+        "verification_log": "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md"
+      }
+    ],
+    "verification_results": [
+      {
+        "checker_name": "prototype-fixture-checker",
+        "checker_version": "0.1.0",
+        "command": "synthetic fixture",
+        "duration_ms": 900,
+        "environment_profile": "synthetic-local",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "exit_code": 1,
+        "failure_class": "verification-failed",
+        "inputs_hash": null,
+        "result_id": "example-failed-verification-0001",
+        "run_id": "example-failed",
+        "scope": "public milestone",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "status": "fail",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/example-failed/summary.md",
+        "visibility": "public"
+      }
+    ]
+  },
+  {
+    "artifacts": [
+      {
+        "artifact_id": "example-summary",
+        "description": "Synthetic example evidence summary.",
+        "kind": "summary",
+        "path": "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md",
+        "sha256": null,
+        "visibility": "public"
+      }
+    ],
+    "attempts": [
+      {
+        "attempt_id": "example-messy-attempt-0001",
+        "exit_code": 1,
+        "finished_at": "2026-06-01T12:01:20+00:00",
+        "restart_of": null,
+        "restart_reason": "initial",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "turn": 1
+      }
+    ],
+    "created_at": "2026-06-01T12:00:00+00:00",
+    "interventions": [],
+    "milestone_assessments": [
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.25,
+          "honesty": 0.25,
+          "integration": 0.25,
+          "traceability": 0.25,
+          "verification": 0.25
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m0",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "fail",
+        "run_id": "example-messy",
+        "score": 0.25
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.1,
+          "honesty": 0.1,
+          "integration": 0.1,
+          "traceability": 0.1,
+          "verification": 0.1
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m1",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "fail",
+        "run_id": "example-messy",
+        "score": 0.1
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m2",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m3",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m4",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m5",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m6",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m7",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m8",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m9",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-messy",
+        "score": 0.0
+      }
+    ],
+    "record_kind": "benchmark_run_result",
+    "rubric_scores": [
+      {
+        "category": "capability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic capability estimate.",
+        "run_id": "example-messy",
+        "score": 0.25,
+        "weight": 0.4
+      },
+      {
+        "category": "verification",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic verification estimate.",
+        "run_id": "example-messy",
+        "score": 0.15,
+        "weight": 0.25
+      },
+      {
+        "category": "traceability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic traceability estimate.",
+        "run_id": "example-messy",
+        "score": 0.25,
+        "weight": 0.15
+      },
+      {
+        "category": "integration",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic integration estimate.",
+        "run_id": "example-messy",
+        "score": 0.6,
+        "weight": 0.1
+      },
+      {
+        "category": "honesty",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic limitation disclosure estimate.",
+        "run_id": "example-messy",
+        "score": 0.2,
+        "weight": 0.1
+      }
+    ],
+    "run": {
+      "agent_tool": "unknown-agent",
+      "batch_id": "prototype-examples",
+      "comparison_eligible": false,
+      "comparison_reason": "Synthetic prototype fixture.",
+      "cost_limit": "unknown",
+      "finished_at": "2026-06-01T12:03:00+00:00",
+      "harness": "codex-meta-harness",
+      "harness_version": "0.1.0",
+      "model": "metadata-missing",
+      "model_provider": "unknown",
+      "model_snapshot": "example",
+      "observed_cost": "unknown",
+      "observed_elapsed_seconds": 180,
+      "observed_tokens": 14000,
+      "observed_tool_calls": 24,
+      "observed_turns": 1,
+      "profile": "smoke-v0",
+      "run_id": "example-messy",
+      "started_at": "2026-06-01T12:00:00+00:00",
+      "stop_reason": "invalid-metadata",
+      "target": "m1",
+      "target_mode": "fixed-milestone",
+      "token_limit": "200000",
+      "tool_call_limit": "unknown",
+      "tool_version": "example",
+      "turn_limit": "8",
+      "visibility": "public",
+      "wall_clock_limit": "10m"
+    },
+    "schema_version": "vibe-browser-result-v0.1",
+    "scores": {
+      "claimed_score": 0.13,
+      "confidence": 0.75,
+      "curve": "quadratic",
+      "evaluator_score": 0.17,
+      "failure_class": "verification-failed",
+      "final_score": 0.13,
+      "highest_claimed_milestone": null,
+      "highest_confirmed_milestone": null,
+      "highest_public_check_milestone": null,
+      "milestones": [
+        {
+          "claimed_score": 0.25,
+          "dimension_score": 0.25,
+          "dimensions": {
+            "capability": 0.25,
+            "honesty": 0.25,
+            "integration": 0.25,
+            "traceability": 0.25,
+            "verification": 0.25
+          },
+          "evaluator_score": 0.25,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m0",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.25,
+          "public_check_score": 0.0,
+          "value": 1
+        },
+        {
+          "claimed_score": 0.1,
+          "dimension_score": 0.1,
+          "dimensions": {
+            "capability": 0.1,
+            "honesty": 0.1,
+            "integration": 0.1,
+            "traceability": 0.1,
+            "verification": 0.1
+          },
+          "evaluator_score": 0.1,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m1",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.4,
+          "public_check_score": 0.0,
+          "value": 4
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m2",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 9
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m3",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 16
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m4",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 25
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m5",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 36
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m6",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 49
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m7",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 64
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m8",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 81
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m9",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 100
+        }
+      ],
+      "public_check_score": 0.0,
+      "quality_multiplier": 0.7765,
+      "rankable": false,
+      "repository_rubric_score": 0.255,
+      "score_version": "scorer-v0.1",
+      "uncertainty": 0.25,
+      "visibility": "public"
+    },
+    "submission": {
+      "artifact_root": "vibe-browser-benchmark/examples/artifacts/example-messy",
+      "diff_path": "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md",
+      "manifest_path": "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md",
+      "run_id": "example-messy",
+      "submission_path": "vibe-browser-benchmark/examples/artifacts/example-messy",
+      "summary_path": "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md",
+      "verification_logs": [
+        "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md"
+      ],
+      "version_info_path": "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md"
+    },
+    "tool_calls": [
+      {
+        "count": 4,
+        "name": "write",
+        "tool_call_id": "example-messy-turn-0001-write",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 3,
+        "name": "bash",
+        "tool_call_id": "example-messy-turn-0001-bash",
+        "turn": 1,
+        "visibility": "public"
+      }
+    ],
+    "turns": [
+      {
+        "agent_elapsed_seconds": 70,
+        "agent_exit_code": 1,
+        "elapsed_seconds": 80,
+        "failure_count": 1,
+        "idle_count": 0,
+        "material_paths": [
+          "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md"
+        ],
+        "material_progress": false,
+        "run_id": "example-messy",
+        "tokens": 14000,
+        "tool_calls": 24,
+        "turn": 1,
+        "verification": "error",
+        "verification_log": "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md"
+      }
+    ],
+    "verification_results": [
+      {
+        "checker_name": "prototype-fixture-checker",
+        "checker_version": "0.1.0",
+        "command": "synthetic fixture",
+        "duration_ms": 900,
+        "environment_profile": "synthetic-local",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "exit_code": 1,
+        "failure_class": "invalid-run",
+        "inputs_hash": null,
+        "result_id": "example-messy-verification-0001",
+        "run_id": "example-messy",
+        "scope": "public milestone",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "status": "error",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/example-messy/summary.md",
+        "visibility": "public"
+      }
+    ]
+  },
+  {
+    "artifacts": [
+      {
+        "artifact_id": "example-summary",
+        "description": "Synthetic example evidence summary.",
+        "kind": "summary",
+        "path": "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md",
+        "sha256": null,
+        "visibility": "public"
+      }
+    ],
+    "attempts": [
+      {
+        "attempt_id": "example-partial-attempt-0001",
+        "exit_code": 0,
+        "finished_at": "2026-06-01T12:01:20+00:00",
+        "restart_of": null,
+        "restart_reason": "initial",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "turn": 1
+      }
+    ],
+    "created_at": "2026-06-01T12:00:00+00:00",
+    "interventions": [],
+    "milestone_assessments": [
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 1.0,
+          "honesty": 1.0,
+          "integration": 1.0,
+          "traceability": 1.0,
+          "verification": 1.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m0",
+        "missing_evidence": [],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "pass",
+        "run_id": "example-partial",
+        "score": 1.0
+      },
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 0.75,
+          "honesty": 0.75,
+          "integration": 0.75,
+          "traceability": 0.75,
+          "verification": 0.75
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m1",
+        "missing_evidence": [],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "pass",
+        "run_id": "example-partial",
+        "score": 0.75
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.45,
+          "honesty": 0.45,
+          "integration": 0.45,
+          "traceability": 0.45,
+          "verification": 0.45
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m2",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "fail",
+        "run_id": "example-partial",
+        "score": 0.45
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m3",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-partial",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m4",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-partial",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m5",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-partial",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m6",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-partial",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m7",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-partial",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m8",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-partial",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m9",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-partial",
+        "score": 0.0
+      }
+    ],
+    "record_kind": "benchmark_run_result",
+    "rubric_scores": [
+      {
+        "category": "capability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic capability estimate.",
+        "run_id": "example-partial",
+        "score": 1.0,
+        "weight": 0.4
+      },
+      {
+        "category": "verification",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic verification estimate.",
+        "run_id": "example-partial",
+        "score": 0.85,
+        "weight": 0.25
+      },
+      {
+        "category": "traceability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic traceability estimate.",
+        "run_id": "example-partial",
+        "score": 0.65,
+        "weight": 0.15
+      },
+      {
+        "category": "integration",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic integration estimate.",
+        "run_id": "example-partial",
+        "score": 0.6,
+        "weight": 0.1
+      },
+      {
+        "category": "honesty",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic limitation disclosure estimate.",
+        "run_id": "example-partial",
+        "score": 0.7,
+        "weight": 0.1
+      }
+    ],
+    "run": {
+      "agent_tool": "pi",
+      "batch_id": "prototype-examples",
+      "comparison_eligible": true,
+      "comparison_reason": "Synthetic prototype fixture.",
+      "cost_limit": "unknown",
+      "finished_at": "2026-06-01T12:03:00+00:00",
+      "harness": "codex-meta-harness",
+      "harness_version": "0.1.0",
+      "model": "glm-5.1:cloud",
+      "model_provider": "ollama",
+      "model_snapshot": "example",
+      "observed_cost": "unknown",
+      "observed_elapsed_seconds": 180,
+      "observed_tokens": 14000,
+      "observed_tool_calls": 24,
+      "observed_turns": 1,
+      "profile": "smoke-v0",
+      "run_id": "example-partial",
+      "started_at": "2026-06-01T12:00:00+00:00",
+      "stop_reason": "wall-clock-limit",
+      "target": "m2",
+      "target_mode": "fixed-milestone",
+      "token_limit": "200000",
+      "tool_call_limit": "unknown",
+      "tool_version": "example",
+      "turn_limit": "8",
+      "visibility": "public",
+      "wall_clock_limit": "10m"
+    },
+    "schema_version": "vibe-browser-result-v0.1",
+    "scores": {
+      "claimed_score": 2.24,
+      "confidence": 1.0,
+      "curve": "quadratic",
+      "evaluator_score": 2.09,
+      "failure_class": null,
+      "final_score": 1.99,
+      "highest_claimed_milestone": "m1",
+      "highest_confirmed_milestone": "m1",
+      "highest_public_check_milestone": "m1",
+      "milestones": [
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 1.0,
+          "dimensions": {
+            "capability": 1.0,
+            "honesty": 1.0,
+            "integration": 1.0,
+            "traceability": 1.0,
+            "verification": 1.0
+          },
+          "evaluator_score": 1.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m0",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 1.0,
+          "public_check_score": 1.0,
+          "value": 1
+        },
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 0.75,
+          "dimensions": {
+            "capability": 0.75,
+            "honesty": 0.75,
+            "integration": 0.75,
+            "traceability": 0.75,
+            "verification": 0.75
+          },
+          "evaluator_score": 0.75,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m1",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 3.0,
+          "public_check_score": 1.0,
+          "value": 4
+        },
+        {
+          "claimed_score": 0.45,
+          "dimension_score": 0.45,
+          "dimensions": {
+            "capability": 0.45,
+            "honesty": 0.45,
+            "integration": 0.45,
+            "traceability": 0.45,
+            "verification": 0.45
+          },
+          "evaluator_score": 0.45,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m2",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 4.05,
+          "public_check_score": 0.0,
+          "value": 9
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m3",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 16
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m4",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 25
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m5",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 36
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m6",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 49
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m7",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 64
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m8",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 81
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m9",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 100
+        }
+      ],
+      "public_check_score": 1.24,
+      "quality_multiplier": 0.952,
+      "rankable": true,
+      "repository_rubric_score": 0.84,
+      "score_version": "scorer-v0.1",
+      "uncertainty": 0.0,
+      "visibility": "public"
+    },
+    "submission": {
+      "artifact_root": "vibe-browser-benchmark/examples/artifacts/example-partial",
+      "diff_path": "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md",
+      "manifest_path": "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md",
+      "run_id": "example-partial",
+      "submission_path": "vibe-browser-benchmark/examples/artifacts/example-partial",
+      "summary_path": "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md",
+      "verification_logs": [
+        "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md"
+      ],
+      "version_info_path": "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md"
+    },
+    "tool_calls": [
+      {
+        "count": 4,
+        "name": "write",
+        "tool_call_id": "example-partial-turn-0001-write",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 3,
+        "name": "bash",
+        "tool_call_id": "example-partial-turn-0001-bash",
+        "turn": 1,
+        "visibility": "public"
+      }
+    ],
+    "turns": [
+      {
+        "agent_elapsed_seconds": 70,
+        "agent_exit_code": 0,
+        "elapsed_seconds": 80,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [
+          "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md"
+        ],
+        "material_progress": true,
+        "run_id": "example-partial",
+        "tokens": 14000,
+        "tool_calls": 24,
+        "turn": 1,
+        "verification": "pass",
+        "verification_log": "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md"
+      }
+    ],
+    "verification_results": [
+      {
+        "checker_name": "prototype-fixture-checker",
+        "checker_version": "0.1.0",
+        "command": "synthetic fixture",
+        "duration_ms": 900,
+        "environment_profile": "synthetic-local",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": null,
+        "result_id": "example-partial-verification-0001",
+        "run_id": "example-partial",
+        "scope": "public milestone",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/example-partial/summary.md",
+        "visibility": "public"
+      }
+    ]
+  },
+  {
+    "artifacts": [
+      {
+        "artifact_id": "example-summary",
+        "description": "Synthetic example evidence summary.",
+        "kind": "summary",
+        "path": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md",
+        "sha256": null,
+        "visibility": "public"
+      }
+    ],
+    "attempts": [
+      {
+        "attempt_id": "example-restarted-attempt-0001",
+        "exit_code": 0,
+        "finished_at": "2026-06-01T12:01:20+00:00",
+        "restart_of": null,
+        "restart_reason": "initial",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "turn": 1
+      },
+      {
+        "attempt_id": "example-restarted-attempt-0002",
+        "exit_code": 0,
+        "finished_at": "2026-06-01T12:03:00+00:00",
+        "restart_of": "example-restarted-attempt-0001",
+        "restart_reason": "agent-stopped-before-budget",
+        "started_at": "2026-06-01T12:01:20+00:00",
+        "turn": 2
+      }
+    ],
+    "created_at": "2026-06-01T12:00:00+00:00",
+    "interventions": [
+      {
+        "intervention_id": "example-restarted-admin-0001",
+        "reason": "Agent stopped before wall-clock budget while material progress remained possible.",
+        "turn": 1,
+        "type": "restart-agent",
+        "visibility": "public"
+      }
+    ],
+    "milestone_assessments": [
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 1.0,
+          "honesty": 1.0,
+          "integration": 1.0,
+          "traceability": 1.0,
+          "verification": 1.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m0",
+        "missing_evidence": [],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "pass",
+        "run_id": "example-restarted",
+        "score": 1.0
+      },
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 0.85,
+          "honesty": 0.85,
+          "integration": 0.85,
+          "traceability": 0.85,
+          "verification": 0.85
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m1",
+        "missing_evidence": [],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "pass",
+        "run_id": "example-restarted",
+        "score": 0.85
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m2",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m3",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m4",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m5",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m6",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m7",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m8",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m9",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-restarted",
+        "score": 0.0
+      }
+    ],
+    "record_kind": "benchmark_run_result",
+    "rubric_scores": [
+      {
+        "category": "capability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic capability estimate.",
+        "run_id": "example-restarted",
+        "score": 1.0,
+        "weight": 0.4
+      },
+      {
+        "category": "verification",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic verification estimate.",
+        "run_id": "example-restarted",
+        "score": 0.85,
+        "weight": 0.25
+      },
+      {
+        "category": "traceability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic traceability estimate.",
+        "run_id": "example-restarted",
+        "score": 0.65,
+        "weight": 0.15
+      },
+      {
+        "category": "integration",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic integration estimate.",
+        "run_id": "example-restarted",
+        "score": 0.6,
+        "weight": 0.1
+      },
+      {
+        "category": "honesty",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic limitation disclosure estimate.",
+        "run_id": "example-restarted",
+        "score": 0.7,
+        "weight": 0.1
+      }
+    ],
+    "run": {
+      "agent_tool": "pi",
+      "batch_id": "prototype-examples",
+      "comparison_eligible": true,
+      "comparison_reason": "Synthetic prototype fixture.",
+      "cost_limit": "unknown",
+      "finished_at": "2026-06-01T12:03:00+00:00",
+      "harness": "codex-meta-harness",
+      "harness_version": "0.1.0",
+      "model": "glm-5.1:cloud",
+      "model_provider": "ollama",
+      "model_snapshot": "example",
+      "observed_cost": "unknown",
+      "observed_elapsed_seconds": 180,
+      "observed_tokens": 14000,
+      "observed_tool_calls": 24,
+      "observed_turns": 2,
+      "profile": "smoke-v0",
+      "run_id": "example-restarted",
+      "started_at": "2026-06-01T12:00:00+00:00",
+      "stop_reason": "verification-passed-after-restart",
+      "target": "m1",
+      "target_mode": "fixed-milestone",
+      "token_limit": "200000",
+      "tool_call_limit": "unknown",
+      "tool_version": "example",
+      "turn_limit": "8",
+      "visibility": "public",
+      "wall_clock_limit": "10m"
+    },
+    "schema_version": "vibe-browser-result-v0.1",
+    "scores": {
+      "claimed_score": 1.24,
+      "confidence": 1.0,
+      "curve": "quadratic",
+      "evaluator_score": 1.14,
+      "failure_class": null,
+      "final_score": 1.09,
+      "highest_claimed_milestone": "m1",
+      "highest_confirmed_milestone": "m1",
+      "highest_public_check_milestone": "m1",
+      "milestones": [
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 1.0,
+          "dimensions": {
+            "capability": 1.0,
+            "honesty": 1.0,
+            "integration": 1.0,
+            "traceability": 1.0,
+            "verification": 1.0
+          },
+          "evaluator_score": 1.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m0",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 1.0,
+          "public_check_score": 1.0,
+          "value": 1
+        },
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 0.85,
+          "dimensions": {
+            "capability": 0.85,
+            "honesty": 0.85,
+            "integration": 0.85,
+            "traceability": 0.85,
+            "verification": 0.85
+          },
+          "evaluator_score": 0.85,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m1",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 3.4,
+          "public_check_score": 1.0,
+          "value": 4
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m2",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 9
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m3",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 16
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m4",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 25
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m5",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 36
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m6",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 49
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m7",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 64
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m8",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 81
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m9",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 100
+        }
+      ],
+      "public_check_score": 1.24,
+      "quality_multiplier": 0.952,
+      "rankable": true,
+      "repository_rubric_score": 0.84,
+      "score_version": "scorer-v0.1",
+      "uncertainty": 0.0,
+      "visibility": "public"
+    },
+    "submission": {
+      "artifact_root": "vibe-browser-benchmark/examples/artifacts/example-restarted",
+      "diff_path": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md",
+      "manifest_path": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md",
+      "run_id": "example-restarted",
+      "submission_path": "vibe-browser-benchmark/examples/artifacts/example-restarted",
+      "summary_path": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md",
+      "verification_logs": [
+        "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md"
+      ],
+      "version_info_path": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md"
+    },
+    "tool_calls": [
+      {
+        "count": 4,
+        "name": "write",
+        "tool_call_id": "example-restarted-turn-0001-write",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 3,
+        "name": "bash",
+        "tool_call_id": "example-restarted-turn-0001-bash",
+        "turn": 1,
+        "visibility": "public"
+      }
+    ],
+    "turns": [
+      {
+        "agent_elapsed_seconds": 70,
+        "agent_exit_code": 0,
+        "elapsed_seconds": 80,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [
+          "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md"
+        ],
+        "material_progress": true,
+        "run_id": "example-restarted",
+        "tokens": 14000,
+        "tool_calls": 24,
+        "turn": 1,
+        "verification": "pass",
+        "verification_log": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md"
+      },
+      {
+        "agent_elapsed_seconds": 95,
+        "agent_exit_code": 0,
+        "elapsed_seconds": 180,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [
+          "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md"
+        ],
+        "material_progress": true,
+        "run_id": "example-restarted",
+        "tokens": 21000,
+        "tool_calls": 31,
+        "turn": 2,
+        "verification": "pass",
+        "verification_log": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md"
+      }
+    ],
+    "verification_results": [
+      {
+        "checker_name": "prototype-fixture-checker",
+        "checker_version": "0.1.0",
+        "command": "synthetic fixture",
+        "duration_ms": 900,
+        "environment_profile": "synthetic-local",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": null,
+        "result_id": "example-restarted-verification-0001",
+        "run_id": "example-restarted",
+        "scope": "public milestone",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/example-restarted/summary.md",
+        "visibility": "public"
+      }
+    ]
+  },
+  {
+    "artifacts": [
+      {
+        "artifact_id": "example-summary",
+        "description": "Synthetic example evidence summary.",
+        "kind": "summary",
+        "path": "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md",
+        "sha256": null,
+        "visibility": "public"
+      }
+    ],
+    "attempts": [
+      {
+        "attempt_id": "example-success-short-attempt-0001",
+        "exit_code": 0,
+        "finished_at": "2026-06-01T12:01:20+00:00",
+        "restart_of": null,
+        "restart_reason": "initial",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "turn": 1
+      }
+    ],
+    "created_at": "2026-06-01T12:00:00+00:00",
+    "interventions": [],
+    "milestone_assessments": [
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 1.0,
+          "honesty": 1.0,
+          "integration": 1.0,
+          "traceability": 1.0,
+          "verification": 1.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m0",
+        "missing_evidence": [],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "pass",
+        "run_id": "example-success-short",
+        "score": 1.0
+      },
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 1.0,
+          "honesty": 1.0,
+          "integration": 1.0,
+          "traceability": 1.0,
+          "verification": 1.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m1",
+        "missing_evidence": [],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "pass",
+        "run_id": "example-success-short",
+        "score": 1.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m2",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m3",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m4",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m5",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m6",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m7",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m8",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "milestone": "m9",
+        "missing_evidence": [
+          "stronger verification evidence"
+        ],
+        "notes": "Synthetic v0 example for UI and scorer validation.",
+        "public_check_status": "not-run",
+        "run_id": "example-success-short",
+        "score": 0.0
+      }
+    ],
+    "record_kind": "benchmark_run_result",
+    "rubric_scores": [
+      {
+        "category": "capability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic capability estimate.",
+        "run_id": "example-success-short",
+        "score": 1.0,
+        "weight": 0.4
+      },
+      {
+        "category": "verification",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic verification estimate.",
+        "run_id": "example-success-short",
+        "score": 0.85,
+        "weight": 0.25
+      },
+      {
+        "category": "traceability",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic traceability estimate.",
+        "run_id": "example-success-short",
+        "score": 0.65,
+        "weight": 0.15
+      },
+      {
+        "category": "integration",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic integration estimate.",
+        "run_id": "example-success-short",
+        "score": 0.6,
+        "weight": 0.1
+      },
+      {
+        "category": "honesty",
+        "evidence_links": [
+          "example-summary"
+        ],
+        "max_score": 1.0,
+        "notes": "Synthetic limitation disclosure estimate.",
+        "run_id": "example-success-short",
+        "score": 0.7,
+        "weight": 0.1
+      }
+    ],
+    "run": {
+      "agent_tool": "codex",
+      "batch_id": "prototype-examples",
+      "comparison_eligible": true,
+      "comparison_reason": "Synthetic prototype fixture.",
+      "cost_limit": "unknown",
+      "finished_at": "2026-06-01T12:03:00+00:00",
+      "harness": "codex-meta-harness",
+      "harness_version": "0.1.0",
+      "model": "gpt-5.1",
+      "model_provider": "openai",
+      "model_snapshot": "example",
+      "observed_cost": "unknown",
+      "observed_elapsed_seconds": 180,
+      "observed_tokens": 14000,
+      "observed_tool_calls": 24,
+      "observed_turns": 1,
+      "profile": "smoke-v0",
+      "run_id": "example-success-short",
+      "started_at": "2026-06-01T12:00:00+00:00",
+      "stop_reason": "verification-passed",
+      "target": "m1",
+      "target_mode": "fixed-milestone",
+      "token_limit": "200000",
+      "tool_call_limit": "unknown",
+      "tool_version": "example",
+      "turn_limit": "8",
+      "visibility": "public",
+      "wall_clock_limit": "10m"
+    },
+    "schema_version": "vibe-browser-result-v0.1",
+    "scores": {
+      "claimed_score": 1.24,
+      "confidence": 1.0,
+      "curve": "quadratic",
+      "evaluator_score": 1.3,
+      "failure_class": null,
+      "final_score": 1.24,
+      "highest_claimed_milestone": "m1",
+      "highest_confirmed_milestone": "m1",
+      "highest_public_check_milestone": "m1",
+      "milestones": [
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 1.0,
+          "dimensions": {
+            "capability": 1.0,
+            "honesty": 1.0,
+            "integration": 1.0,
+            "traceability": 1.0,
+            "verification": 1.0
+          },
+          "evaluator_score": 1.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m0",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 1.0,
+          "public_check_score": 1.0,
+          "value": 1
+        },
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 1.0,
+          "dimensions": {
+            "capability": 1.0,
+            "honesty": 1.0,
+            "integration": 1.0,
+            "traceability": 1.0,
+            "verification": 1.0
+          },
+          "evaluator_score": 1.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m1",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 4.0,
+          "public_check_score": 1.0,
+          "value": 4
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m2",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 9
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m3",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 16
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m4",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 25
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m5",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 36
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m6",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 49
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m7",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 64
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m8",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 81
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "example-summary"
+          ],
+          "milestone": "m9",
+          "notes": "Synthetic v0 example for UI and scorer validation.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 100
+        }
+      ],
+      "public_check_score": 1.24,
+      "quality_multiplier": 0.952,
+      "rankable": true,
+      "repository_rubric_score": 0.84,
+      "score_version": "scorer-v0.1",
+      "uncertainty": 0.0,
+      "visibility": "public"
+    },
+    "submission": {
+      "artifact_root": "vibe-browser-benchmark/examples/artifacts/example-success-short",
+      "diff_path": "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md",
+      "manifest_path": "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md",
+      "run_id": "example-success-short",
+      "submission_path": "vibe-browser-benchmark/examples/artifacts/example-success-short",
+      "summary_path": "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md",
+      "verification_logs": [
+        "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md"
+      ],
+      "version_info_path": "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md"
+    },
+    "tool_calls": [
+      {
+        "count": 4,
+        "name": "write",
+        "tool_call_id": "example-success-short-turn-0001-write",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 3,
+        "name": "bash",
+        "tool_call_id": "example-success-short-turn-0001-bash",
+        "turn": 1,
+        "visibility": "public"
+      }
+    ],
+    "turns": [
+      {
+        "agent_elapsed_seconds": 70,
+        "agent_exit_code": 0,
+        "elapsed_seconds": 80,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [
+          "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md"
+        ],
+        "material_progress": true,
+        "run_id": "example-success-short",
+        "tokens": 14000,
+        "tool_calls": 24,
+        "turn": 1,
+        "verification": "pass",
+        "verification_log": "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md"
+      }
+    ],
+    "verification_results": [
+      {
+        "checker_name": "prototype-fixture-checker",
+        "checker_version": "0.1.0",
+        "command": "synthetic fixture",
+        "duration_ms": 900,
+        "environment_profile": "synthetic-local",
+        "evidence_ids": [
+          "example-summary"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": null,
+        "result_id": "example-success-short-verification-0001",
+        "run_id": "example-success-short",
+        "scope": "public milestone",
+        "started_at": "2026-06-01T12:00:00+00:00",
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/example-success-short/summary.md",
+        "visibility": "public"
+      }
+    ]
+  },
+  {
+    "artifacts": [
+      {
+        "artifact_id": "benchmark-run",
+        "description": "Participant benchmark manifest.",
+        "kind": "manifest",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/benchmark-run.md",
+        "sha256": "sha256:7b72ebd124bb8efece610566b3958ccaa19256bb3c519ed3d780c4bbe4f27905",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "worktree-diff",
+        "description": "Tracked code diff.",
+        "kind": "diff",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/worktree.diff",
+        "sha256": "sha256:614d95b1bcfa304c900b35e6d090092e28d4a1b9945e7f149fa1ca2a930e8910",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "git-status",
+        "description": "Participant git status.",
+        "kind": "git-status",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/git-status.txt",
+        "sha256": "sha256:ab7878980ff2389fbdf8b8b9e775e6c6e2e6e904dad72467d3c99e8d84a5fd2a",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0001",
+        "description": "Verification log for turn 1",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0001.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0002",
+        "description": "Verification log for turn 2",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0002.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0003",
+        "description": "Verification log for turn 3",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0003.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0004",
+        "description": "Verification log for turn 4",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0004.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0005",
+        "description": "Verification log for turn 5",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0005.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0006",
+        "description": "Verification log for turn 6",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0006.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0007",
+        "description": "Verification log for turn 7",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0007.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      },
+      {
+        "artifact_id": "artifact-turn-0008",
+        "description": "Verification log for turn 8",
+        "kind": "verification-log",
+        "path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0008.txt",
+        "sha256": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "visibility": "public"
+      }
+    ],
+    "attempts": [
+      {
+        "attempt_id": "pi20260601044042-attempt-0001",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": null,
+        "restart_reason": "initial",
+        "started_at": null,
+        "turn": 1
+      },
+      {
+        "attempt_id": "pi20260601044042-attempt-0002",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": "pi20260601044042-attempt-0001",
+        "restart_reason": "scheduled-continuation",
+        "started_at": null,
+        "turn": 2
+      },
+      {
+        "attempt_id": "pi20260601044042-attempt-0003",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": "pi20260601044042-attempt-0002",
+        "restart_reason": "scheduled-continuation",
+        "started_at": null,
+        "turn": 3
+      },
+      {
+        "attempt_id": "pi20260601044042-attempt-0004",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": "pi20260601044042-attempt-0003",
+        "restart_reason": "scheduled-continuation",
+        "started_at": null,
+        "turn": 4
+      },
+      {
+        "attempt_id": "pi20260601044042-attempt-0005",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": "pi20260601044042-attempt-0004",
+        "restart_reason": "scheduled-continuation",
+        "started_at": null,
+        "turn": 5
+      },
+      {
+        "attempt_id": "pi20260601044042-attempt-0006",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": "pi20260601044042-attempt-0005",
+        "restart_reason": "scheduled-continuation",
+        "started_at": null,
+        "turn": 6
+      },
+      {
+        "attempt_id": "pi20260601044042-attempt-0007",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": "pi20260601044042-attempt-0006",
+        "restart_reason": "scheduled-continuation",
+        "started_at": null,
+        "turn": 7
+      },
+      {
+        "attempt_id": "pi20260601044042-attempt-0008",
+        "exit_code": null,
+        "finished_at": null,
+        "restart_of": "pi20260601044042-attempt-0007",
+        "restart_reason": "scheduled-continuation",
+        "started_at": null,
+        "turn": 8
+      }
+    ],
+    "created_at": "2026-06-01T12:00:00+00:00",
+    "interventions": [],
+    "milestone_assessments": [
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 1.0,
+          "honesty": 1.0,
+          "integration": 1.0,
+          "traceability": 1.0,
+          "verification": 1.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "benchmark-run"
+        ],
+        "milestone": "m0",
+        "missing_evidence": [],
+        "notes": "Manifest, stack, security/privacy assumptions documented.",
+        "public_check_status": "pass",
+        "run_id": "pi20260601044042",
+        "score": 1.0
+      },
+      {
+        "claimed_status": "confirmed",
+        "dimensions": {
+          "capability": 1.0,
+          "honesty": 1.0,
+          "integration": 1.0,
+          "traceability": 1.0,
+          "verification": 1.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "benchmark-run"
+        ],
+        "milestone": "m1",
+        "missing_evidence": [],
+        "notes": "Runnable shell with URL entry, chrome/page distinction; 52 focused tests pass; headless + subprocess integration; no fetch yet.",
+        "public_check_status": "pass",
+        "run_id": "pi20260601044042",
+        "score": 1.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [
+          "benchmark-run"
+        ],
+        "milestone": "m2",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "URL parsing and network fetch not attempted.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [],
+        "milestone": "m3",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "No evidence in parsed manifest.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [],
+        "milestone": "m4",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "No evidence in parsed manifest.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [],
+        "milestone": "m5",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "No evidence in parsed manifest.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [],
+        "milestone": "m6",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "No evidence in parsed manifest.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [],
+        "milestone": "m7",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "No evidence in parsed manifest.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [],
+        "milestone": "m8",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "No evidence in parsed manifest.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      },
+      {
+        "claimed_status": "not-started",
+        "dimensions": {
+          "capability": 0.0,
+          "honesty": 0.0,
+          "integration": 0.0,
+          "traceability": 0.0,
+          "verification": 0.0
+        },
+        "evaluator_status": "provisional",
+        "evidence_ids": [],
+        "milestone": "m9",
+        "missing_evidence": [
+          "implementation evidence"
+        ],
+        "notes": "No evidence in parsed manifest.",
+        "public_check_status": "not-run",
+        "run_id": "pi20260601044042",
+        "score": 0.0
+      }
+    ],
+    "record_kind": "benchmark_run_result",
+    "rubric_scores": [
+      {
+        "category": "capability",
+        "evidence_links": [
+          "benchmark-run"
+        ],
+        "max_score": 1.0,
+        "notes": "Derived from target milestone status and captured verification.",
+        "run_id": "pi20260601044042",
+        "score": 0.8,
+        "weight": 0.4
+      },
+      {
+        "category": "verification",
+        "evidence_links": [
+          "verification-results"
+        ],
+        "max_score": 1.0,
+        "notes": "Derived from latest public verification result.",
+        "run_id": "pi20260601044042",
+        "score": 0.8,
+        "weight": 0.25
+      },
+      {
+        "category": "traceability",
+        "evidence_links": [
+          "benchmark-run"
+        ],
+        "max_score": 1.0,
+        "notes": "Provisional scorer estimate from manifest and documentation artifacts.",
+        "run_id": "pi20260601044042",
+        "score": 0.7,
+        "weight": 0.15
+      },
+      {
+        "category": "integration",
+        "evidence_links": [
+          "worktree-diff"
+        ],
+        "max_score": 1.0,
+        "notes": "Provisional scorer estimate.",
+        "run_id": "pi20260601044042",
+        "score": 0.6,
+        "weight": 0.1
+      },
+      {
+        "category": "honesty",
+        "evidence_links": [
+          "benchmark-run"
+        ],
+        "max_score": 1.0,
+        "notes": "Known limitations are explicitly recorded.",
+        "run_id": "pi20260601044042",
+        "score": 0.85,
+        "weight": 0.1
+      }
+    ],
+    "run": {
+      "agent_tool": "pi",
+      "batch_id": "smoke-v0-dogfood",
+      "comparison_eligible": true,
+      "comparison_reason": "administrative-only intervention policy and captured Docker artifact",
+      "cost_limit": "unknown",
+      "finished_at": "2026-06-01T04:45:48+00:00",
+      "harness": "codex-meta-harness",
+      "harness_version": "0.1.0",
+      "model": "glm-5.1:cloud",
+      "model_provider": "ollama",
+      "model_snapshot": "unknown",
+      "observed_cost": "unknown",
+      "observed_elapsed_seconds": 304,
+      "observed_tokens": 68678,
+      "observed_tool_calls": "unknown",
+      "observed_turns": 8,
+      "profile": "smoke-v0",
+      "run_id": "pi20260601044042",
+      "started_at": "2026-06-01T04:40:43+00:00",
+      "stop_reason": "budget-exhausted-turn-limit",
+      "target": "m1",
+      "target_mode": "fixed-milestone",
+      "token_limit": "200000",
+      "tool_call_limit": "unknown",
+      "tool_version": "unknown",
+      "turn_limit": "8",
+      "visibility": "public",
+      "wall_clock_limit": "10m"
+    },
+    "schema_version": "vibe-browser-result-v0.1",
+    "scores": {
+      "claimed_score": 1.21,
+      "confidence": 1.0,
+      "curve": "quadratic",
+      "evaluator_score": 1.3,
+      "failure_class": "budget-exhausted",
+      "final_score": 1.21,
+      "highest_claimed_milestone": "m1",
+      "highest_confirmed_milestone": "m1",
+      "highest_public_check_milestone": "m1",
+      "milestones": [
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 1.0,
+          "dimensions": {
+            "capability": 1.0,
+            "honesty": 1.0,
+            "integration": 1.0,
+            "traceability": 1.0,
+            "verification": 1.0
+          },
+          "evaluator_score": 1.0,
+          "evidence_ids": [
+            "benchmark-run"
+          ],
+          "milestone": "m0",
+          "notes": "Manifest, stack, security/privacy assumptions documented.",
+          "points": 1.0,
+          "public_check_score": 1.0,
+          "value": 1
+        },
+        {
+          "claimed_score": 1.0,
+          "dimension_score": 1.0,
+          "dimensions": {
+            "capability": 1.0,
+            "honesty": 1.0,
+            "integration": 1.0,
+            "traceability": 1.0,
+            "verification": 1.0
+          },
+          "evaluator_score": 1.0,
+          "evidence_ids": [
+            "benchmark-run"
+          ],
+          "milestone": "m1",
+          "notes": "Runnable shell with URL entry, chrome/page distinction; 52 focused tests pass; headless + subprocess integration; no fetch yet.",
+          "points": 4.0,
+          "public_check_score": 1.0,
+          "value": 4
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [
+            "benchmark-run"
+          ],
+          "milestone": "m2",
+          "notes": "URL parsing and network fetch not attempted.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 9
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [],
+          "milestone": "m3",
+          "notes": "No evidence in parsed manifest.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 16
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [],
+          "milestone": "m4",
+          "notes": "No evidence in parsed manifest.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 25
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [],
+          "milestone": "m5",
+          "notes": "No evidence in parsed manifest.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 36
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [],
+          "milestone": "m6",
+          "notes": "No evidence in parsed manifest.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 49
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [],
+          "milestone": "m7",
+          "notes": "No evidence in parsed manifest.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 64
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [],
+          "milestone": "m8",
+          "notes": "No evidence in parsed manifest.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 81
+        },
+        {
+          "claimed_score": 0.0,
+          "dimension_score": 0.0,
+          "dimensions": {
+            "capability": 0.0,
+            "honesty": 0.0,
+            "integration": 0.0,
+            "traceability": 0.0,
+            "verification": 0.0
+          },
+          "evaluator_score": 0.0,
+          "evidence_ids": [],
+          "milestone": "m9",
+          "notes": "No evidence in parsed manifest.",
+          "points": 0.0,
+          "public_check_score": 0.0,
+          "value": 100
+        }
+      ],
+      "public_check_score": 1.21,
+      "quality_multiplier": 0.931,
+      "rankable": true,
+      "repository_rubric_score": 0.77,
+      "score_version": "scorer-v0.1",
+      "uncertainty": 0.0,
+      "visibility": "public"
+    },
+    "submission": {
+      "artifact_root": "vibe-browser-benchmark/examples/artifacts/pi20260601044042",
+      "diff_path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/worktree.diff",
+      "manifest_path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/benchmark-run.md",
+      "run_id": "pi20260601044042",
+      "submission_path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042",
+      "summary_path": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/benchmark-run.md",
+      "verification_logs": [
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0001.txt",
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0002.txt",
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0003.txt",
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0004.txt",
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0005.txt",
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0006.txt",
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0007.txt",
+        "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0008.txt"
+      ],
+      "version_info_path": ".vibe-bench/docker-artifacts/pi20260601044042/version-info.json"
+    },
+    "tool_calls": [
+      {
+        "count": 61,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0001-bash",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 20,
+        "name": "ls",
+        "tool_call_id": "pi20260601044042-turn-0001-ls",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 46,
+        "name": "read",
+        "tool_call_id": "pi20260601044042-turn-0001-read",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 72,
+        "name": "write",
+        "tool_call_id": "pi20260601044042-turn-0001-write",
+        "turn": 1,
+        "visibility": "public"
+      },
+      {
+        "count": 12,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0002-bash",
+        "turn": 2,
+        "visibility": "public"
+      },
+      {
+        "count": 7,
+        "name": "edit",
+        "tool_call_id": "pi20260601044042-turn-0002-edit",
+        "turn": 2,
+        "visibility": "public"
+      },
+      {
+        "count": 5,
+        "name": "write",
+        "tool_call_id": "pi20260601044042-turn-0002-write",
+        "turn": 2,
+        "visibility": "public"
+      },
+      {
+        "count": 17,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0003-bash",
+        "turn": 3,
+        "visibility": "public"
+      },
+      {
+        "count": 30,
+        "name": "edit",
+        "tool_call_id": "pi20260601044042-turn-0003-edit",
+        "turn": 3,
+        "visibility": "public"
+      },
+      {
+        "count": 5,
+        "name": "read",
+        "tool_call_id": "pi20260601044042-turn-0003-read",
+        "turn": 3,
+        "visibility": "public"
+      },
+      {
+        "count": 13,
+        "name": "write",
+        "tool_call_id": "pi20260601044042-turn-0003-write",
+        "turn": 3,
+        "visibility": "public"
+      },
+      {
+        "count": 24,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0004-bash",
+        "turn": 4,
+        "visibility": "public"
+      },
+      {
+        "count": 18,
+        "name": "edit",
+        "tool_call_id": "pi20260601044042-turn-0004-edit",
+        "turn": 4,
+        "visibility": "public"
+      },
+      {
+        "count": 12,
+        "name": "read",
+        "tool_call_id": "pi20260601044042-turn-0004-read",
+        "turn": 4,
+        "visibility": "public"
+      },
+      {
+        "count": 19,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0005-bash",
+        "turn": 5,
+        "visibility": "public"
+      },
+      {
+        "count": 5,
+        "name": "edit",
+        "tool_call_id": "pi20260601044042-turn-0005-edit",
+        "turn": 5,
+        "visibility": "public"
+      },
+      {
+        "count": 12,
+        "name": "read",
+        "tool_call_id": "pi20260601044042-turn-0005-read",
+        "turn": 5,
+        "visibility": "public"
+      },
+      {
+        "count": 5,
+        "name": "write",
+        "tool_call_id": "pi20260601044042-turn-0005-write",
+        "turn": 5,
+        "visibility": "public"
+      },
+      {
+        "count": 29,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0006-bash",
+        "turn": 6,
+        "visibility": "public"
+      },
+      {
+        "count": 12,
+        "name": "edit",
+        "tool_call_id": "pi20260601044042-turn-0006-edit",
+        "turn": 6,
+        "visibility": "public"
+      },
+      {
+        "count": 12,
+        "name": "read",
+        "tool_call_id": "pi20260601044042-turn-0006-read",
+        "turn": 6,
+        "visibility": "public"
+      },
+      {
+        "count": 18,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0007-bash",
+        "turn": 7,
+        "visibility": "public"
+      },
+      {
+        "count": 6,
+        "name": "edit",
+        "tool_call_id": "pi20260601044042-turn-0007-edit",
+        "turn": 7,
+        "visibility": "public"
+      },
+      {
+        "count": 6,
+        "name": "write",
+        "tool_call_id": "pi20260601044042-turn-0007-write",
+        "turn": 7,
+        "visibility": "public"
+      },
+      {
+        "count": 6,
+        "name": "bash",
+        "tool_call_id": "pi20260601044042-turn-0008-bash",
+        "turn": 8,
+        "visibility": "public"
+      }
+    ],
+    "turns": [
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 112,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 3595,
+        "tool_calls": "unknown",
+        "turn": 1,
+        "verification": "passed",
+        "verification_log": null
+      },
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 125,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 32090,
+        "tool_calls": "unknown",
+        "turn": 2,
+        "verification": "passed",
+        "verification_log": null
+      },
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 170,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 37345,
+        "tool_calls": "unknown",
+        "turn": 3,
+        "verification": "passed",
+        "verification_log": null
+      },
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 207,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 43980,
+        "tool_calls": "unknown",
+        "turn": 4,
+        "verification": "passed",
+        "verification_log": null
+      },
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 241,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 54003,
+        "tool_calls": "unknown",
+        "turn": 5,
+        "verification": "passed",
+        "verification_log": null
+      },
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 274,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 60398,
+        "tool_calls": "unknown",
+        "turn": 6,
+        "verification": "passed",
+        "verification_log": null
+      },
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 299,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 66361,
+        "tool_calls": "unknown",
+        "turn": 7,
+        "verification": "passed",
+        "verification_log": null
+      },
+      {
+        "agent_elapsed_seconds": null,
+        "agent_exit_code": null,
+        "elapsed_seconds": 304,
+        "failure_count": 0,
+        "idle_count": 0,
+        "material_paths": [],
+        "material_progress": true,
+        "run_id": "pi20260601044042",
+        "tokens": 68678,
+        "tool_calls": "unknown",
+        "turn": 8,
+        "verification": "passed",
+        "verification_log": null
+      }
+    ],
+    "verification_results": [
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0001"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-1",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0001.txt",
+        "visibility": "public"
+      },
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0002"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-2",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0002.txt",
+        "visibility": "public"
+      },
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0003"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-3",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0003.txt",
+        "visibility": "public"
+      },
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0004"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-4",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0004.txt",
+        "visibility": "public"
+      },
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0005"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-5",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0005.txt",
+        "visibility": "public"
+      },
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0006"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-6",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0006.txt",
+        "visibility": "public"
+      },
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0007"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-7",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0007.txt",
+        "visibility": "public"
+      },
+      {
+        "checker_name": "meta-harness-verification",
+        "checker_version": "0.1.0",
+        "command": "recorded in verification log",
+        "duration_ms": null,
+        "environment_profile": "docker-admin-v0",
+        "evidence_ids": [
+          "artifact-turn-0008"
+        ],
+        "exit_code": 0,
+        "failure_class": null,
+        "inputs_hash": "sha256:c192b4de23cb7c17a7c461fa026ee2efdd841dd71f1d7b5c39cb67b08540c321",
+        "result_id": "pi20260601044042-verification-8",
+        "run_id": "pi20260601044042",
+        "scope": "public milestone",
+        "started_at": null,
+        "status": "pass",
+        "stderr_artifact": null,
+        "stdout_artifact": "vibe-browser-benchmark/examples/artifacts/pi20260601044042/verification/turn-0008.txt",
+        "visibility": "public"
+      }
+    ]
+  }
+];

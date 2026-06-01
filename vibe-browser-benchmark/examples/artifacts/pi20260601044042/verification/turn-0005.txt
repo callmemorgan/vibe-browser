@@ -1,0 +1,4 @@
+$ python3 scripts/vibe_bench.py validate
+Harness inputs and local Markdown links look OK
+
+exit=0

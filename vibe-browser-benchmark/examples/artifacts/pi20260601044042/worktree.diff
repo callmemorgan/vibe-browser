@@ -1,0 +1,65 @@
+diff --git a/README.md b/README.md
+index a65b827..fff01fb 100644
+--- a/README.md
++++ b/README.md
+@@ -33,6 +33,10 @@ benchmark.
+   for model, tool, and harness runs.
+ - [Meta-Harnesses](docs/meta-harnesses.md): controller profiles for time, token,
+   turn, and stop-condition limits.
++- [Codex Meta-Harness Spec](docs/codex-meta-harness-spec.md): concrete controller
++  contract for long-running Codex CLI benchmark runs.
++- [PI Docker Benchmark](docs/pi-docker-benchmark.md): disposable Docker runner
++  for a 10-minute PI/Ollama smoke benchmark.
+ - [Local Test Bench](docs/local-test-bench.md): lightweight scripts for local-model
+   smoke runs and fixture serving.
+ - [Prompt Sets](docs/prompt-sets/browser-build-v0.md): initial stable prompt bundle
+@@ -55,12 +59,13 @@ The benchmark currently provides:
+ - A local `specs/` directory with roughly 1,015 browser-adjacent specifications.
+ - A compressed `specs.zip` copy of that corpus.
+ - Benchmark documentation in `README.md` and `docs/`.
++- Lightweight local bench and Codex meta-harness scripts under `scripts/`.
+ 
+ The benchmark does not provide:
+ 
+ - Browser executable or UI.
+ - HTML, CSS, DOM, JavaScript, networking, storage, or rendering code.
+-- Build system or test harness.
++- Browser build system or conformance test harness.
+ - Web Platform Tests integration.
+ 
+ Those are intentionally left to benchmark participants or future harness work.
+@@ -116,10 +121,12 @@ An evaluation should record:
+ |   |-- adr/
+ |   |-- architecture.md
+ |   |-- contributing.md
++|   |-- codex-meta-harness-spec.md
+ |   |-- evaluator-procedure.md
+ |   |-- local-test-bench.md
+ |   |-- meta-harnesses.md
+ |   |-- participant-task.md
++|   |-- pi-docker-benchmark.md
+ |   |-- prompt-sets/
+ |   |-- privacy-model.md
+ |   |-- run-organization.md
+@@ -131,6 +138,7 @@ An evaluation should record:
+ |   `-- testing.md
+ |-- fixtures/
+ |-- scripts/
++|-- tests/
+ |-- specs/
+ `-- specs.zip
+ ```
+diff --git a/docs/meta-harnesses.md b/docs/meta-harnesses.md
+index c93706a..50c7bc1 100644
+--- a/docs/meta-harnesses.md
++++ b/docs/meta-harnesses.md
+@@ -8,6 +8,9 @@ Meta-harness configuration is part of the benchmark condition. Two runs are not
+ directly comparable if one model gets unlimited continuation and another gets a
+ single prompt.
+ 
++For a concrete Codex CLI controller contract, see
++[Codex Meta-Harness Spec](codex-meta-harness-spec.md).
++
+ ## What to Configure
+ 
+ Each meta-harness profile should define:

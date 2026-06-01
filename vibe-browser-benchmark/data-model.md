@@ -135,3 +135,33 @@ The ingestion pipeline should prefer:
 - `.vibe-bench/docker-artifacts/<run-id>/turn-metrics.json`
 - `.vibe-bench/docker-artifacts/<run-id>/benchmark-run.md`
 - evaluator score sheets
+
+## Prototype Schema
+
+The runnable prototype uses
+[`schema/result.schema.json`](schema/result.schema.json) as the canonical v0.1
+JSON shape. `scripts/benchmark_ingest.py` converts current Docker harness
+artifacts into that shape, and `scripts/benchmark_score.py` appends the derived
+`scores` block.
+
+The schema intentionally includes the fields needed by the leaderboard spine:
+run identity, attempts, turns, tool-call summaries, artifact links,
+interventions, verification results, milestone assessments, rubric scores, and
+derived score fields. It is not yet a complete public API contract.
+
+## SQLite Store
+
+`scripts/benchmark_db.py` is the prototype datastore implementation. It keeps
+the full scored JSON record in `runs.result_json` and projects the fields needed
+for filtering, ranking, comparison, and artifact inspection into normalized
+tables:
+
+- `runs`: leaderboard fields, score summaries, rankability, and visibility.
+- `attempts`, `turns`, and `interventions`: agent lifecycle and restart data.
+- `artifacts` and `verification_results`: public evidence and checker output.
+- `milestone_scores`: derived per-milestone score rows.
+
+The local database defaults to `vibe-browser-benchmark/benchmark.db` and is a
+generated artifact, not source. Rebuild it from checked-in JSON examples or raw
+harness artifacts, then export canonical JSON through `/results.json` or
+`scripts/benchmark_score.py --json --db <path>`.

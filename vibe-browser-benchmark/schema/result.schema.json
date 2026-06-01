@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibe-browser.local/schemas/result.schema.json",
+  "title": "Vibe Browser Benchmark Result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "record_kind",
+    "created_at",
+    "run",
+    "submission",
+    "attempts",
+    "turns",
+    "tool_calls",
+    "artifacts",
+    "interventions",
+    "verification_results",
+    "milestone_assessments",
+    "rubric_scores",
+    "scores"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "vibe-browser-result-v0.1"
+    },
+    "record_kind": {
+      "const": "benchmark_run_result"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "run": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "batch_id",
+        "model_provider",
+        "model",
+        "agent_tool",
+        "harness",
+        "profile",
+        "target",
+        "target_mode",
+        "started_at",
+        "stop_reason",
+        "comparison_eligible",
+        "visibility"
+      ],
+      "properties": {
+        "run_id": { "type": "string", "minLength": 1 },
+        "batch_id": { "type": "string", "minLength": 1 },
+        "model_provider": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "model_snapshot": { "type": "string" },
+        "agent_tool": { "type": "string", "minLength": 1 },
+        "tool_version": { "type": "string" },
+        "harness": { "type": "string", "minLength": 1 },
+        "harness_version": { "type": "string" },
+        "profile": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "pattern": "^m[0-9]$" },
+        "target_mode": { "enum": ["fixed-milestone", "open-ended"] },
+        "started_at": { "type": "string" },
+        "finished_at": { "type": ["string", "null"] },
+        "stop_reason": { "type": "string" },
+        "comparison_eligible": { "type": "boolean" },
+        "comparison_reason": { "type": "string" },
+        "wall_clock_limit": { "type": ["string", "null"] },
+        "observed_elapsed_seconds": { "type": ["number", "integer", "null"] },
+        "turn_limit": { "type": ["string", "integer", "null"] },
+        "observed_turns": { "type": ["integer", "null"] },
+        "token_limit": { "type": ["string", "integer", "null"] },
+        "observed_tokens": { "type": ["integer", "null"] },
+        "tool_call_limit": { "type": ["string", "integer", "null"] },
+        "observed_tool_calls": { "type": ["integer", "string", "null"] },
+        "cost_limit": { "type": ["string", "number", "null"] },
+        "observed_cost": { "type": ["string", "number", "null"] },
+        "visibility": { "enum": ["public", "private", "hidden"] }
+      }
+    },
+    "submission": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "artifact_root",
+        "submission_path",
+        "manifest_path",
+        "summary_path",
+        "diff_path",
+        "verification_logs",
+        "version_info_path"
+      ]
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["attempt_id", "turn", "exit_code", "restart_reason"]
+      }
+    },
+    "turns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["run_id", "turn", "verification", "material_progress"]
+      }
+    },
+    "tool_calls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tool_call_id", "turn", "name", "count", "visibility"]
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artifact_id", "kind", "path", "visibility", "description"]
+      }
+    },
+    "interventions": {
+      "type": "array"
+    },
+    "verification_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "result_id",
+          "run_id",
+          "checker_name",
+          "scope",
+          "status",
+          "command",
+          "exit_code",
+          "visibility"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "error",
+              "timeout",
+              "skipped",
+              "flaky",
+              "expected-fail",
+              "blocked"
+            ]
+          }
+        }
+      }
+    },
+    "milestone_assessments": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "milestone",
+          "claimed_status",
+          "public_check_status",
+          "evaluator_status",
+          "score",
+          "dimensions",
+          "missing_evidence",
+          "evidence_ids",
+          "notes"
+        ]
+      }
+    },
+    "rubric_scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["run_id", "category", "weight", "score", "max_score", "evidence_links", "notes"]
+      }
+    },
+    "scores": {
+      "type": "object",
+      "required": [
+        "score_version",
+        "curve",
+        "milestones",
+        "repository_rubric_score",
+        "quality_multiplier",
+        "claimed_score",
+        "public_check_score",
+        "evaluator_score",
+        "final_score",
+        "confidence",
+        "uncertainty",
+        "rankable",
+        "visibility"
+      ]
+    }
+  }
+}
