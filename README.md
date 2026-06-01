@@ -33,6 +33,11 @@ benchmark.
   for model, tool, and harness runs.
 - [Meta-Harnesses](docs/meta-harnesses.md): controller profiles for time, token,
   turn, and stop-condition limits.
+- [Codex Meta-Harness Spec](docs/codex-meta-harness-spec.md): concrete controller
+  contract for long-running Codex CLI benchmark runs.
+- [PI Docker Benchmark](docs/pi-docker-benchmark.md): disposable Docker runner
+  for a 10-minute PI/Ollama smoke benchmark, with `docker logs` watching and
+  turn-level agent restart behavior.
 - [Local Test Bench](docs/local-test-bench.md): lightweight scripts for local-model
   smoke runs and fixture serving.
 - [Prompt Sets](docs/prompt-sets/browser-build-v0.md): initial stable prompt bundle
@@ -55,12 +60,13 @@ The benchmark currently provides:
 - A local `specs/` directory with roughly 1,015 browser-adjacent specifications.
 - A compressed `specs.zip` copy of that corpus.
 - Benchmark documentation in `README.md` and `docs/`.
+- Lightweight local bench and Codex meta-harness scripts under `scripts/`.
 
 The benchmark does not provide:
 
 - Browser executable or UI.
 - HTML, CSS, DOM, JavaScript, networking, storage, or rendering code.
-- Build system or test harness.
+- Browser build system or conformance test harness.
 - Web Platform Tests integration.
 
 Those are intentionally left to benchmark participants or future harness work.
@@ -116,10 +122,12 @@ An evaluation should record:
 |   |-- adr/
 |   |-- architecture.md
 |   |-- contributing.md
+|   |-- codex-meta-harness-spec.md
 |   |-- evaluator-procedure.md
 |   |-- local-test-bench.md
 |   |-- meta-harnesses.md
 |   |-- participant-task.md
+|   |-- pi-docker-benchmark.md
 |   |-- prompt-sets/
 |   |-- privacy-model.md
 |   |-- run-organization.md
@@ -131,6 +139,7 @@ An evaluation should record:
 |   `-- testing.md
 |-- fixtures/
 |-- scripts/
+|-- tests/
 |-- specs/
 `-- specs.zip
 ```

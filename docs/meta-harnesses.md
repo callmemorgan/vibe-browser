@@ -8,6 +8,9 @@ Meta-harness configuration is part of the benchmark condition. Two runs are not
 directly comparable if one model gets unlimited continuation and another gets a
 single prompt.
 
+For a concrete Codex CLI controller contract, see
+[Codex Meta-Harness Spec](codex-meta-harness-spec.md).
+
 ## What to Configure
 
 Each meta-harness profile should define:
@@ -44,6 +47,12 @@ wall-clock, turn, and tool-call limits for enforcement.
 A turn means one model response to one meta-harness instruction. Tool calls,
 command executions, browser actions, and checkpoint commits inside that response
 do not increment the turn count unless the model receives a new instruction.
+
+Agent processes may be shorter-lived than benchmark runs. A controller can start
+a fresh agent subprocess for each turn as long as it preserves the recorded
+session identity, run directory, and model-visible prompt sequence. A subprocess
+exit is turn completion when it returns cleanly, and an infrastructure failure
+when it exits unexpectedly.
 
 ## Profile Format
 
@@ -178,6 +187,12 @@ Infrastructure failures should be counted separately from model idleness. Networ
 outages, sandbox failures, or provider rate limits should pause or retry within
 the configured `failure_limit`; repeated failures should stop the run as
 `blocked-infrastructure`.
+
+Restarting a stopped agent subprocess is administrative-only when the restart
+uses the same run id, session directory, prompt, and tool policy. It does not
+change the benchmark condition. Restarting a crashed controller or disposable
+container is also administrative-only only if it resumes from recorded state
+instead of reinitializing the run.
 
 ## Checkpointing
 
